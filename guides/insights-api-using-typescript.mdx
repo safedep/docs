@@ -1,0 +1,348 @@
+---
+title: Insights API with TypeScript
+description: "Build applications that leverage SafeDep Insights API using TypeScript and ConnectRPC"
+---
+
+# Programmatic Access to Insights API
+
+<Info>
+To follow this guide you need a SafeDep Cloud API Key and Tenant Identifier. See [Cloud Quickstart](/cloud/quickstart) on how to onboard to SafeDep Cloud and get an API key.
+</Info>
+
+In this guide, we'll use TypeScript to build a client application that leverages SafeDep Insights API v2 to identify open source package security metadata. Any programming language [supported by our API SDK](https://buf.build/safedep/api/sdks) can be used to achieve the same results.
+
+## Project Setup
+
+### Initialize TypeScript Project
+
+Start by creating a new TypeScript project:
+
+```bash
+npm init -y
+npm install --save-dev typescript @types/node
+```
+
+### Configure Buf Registry
+
+Configure npm to use the [Buf Registry](https://buf.build/docs/bsr/generated-sdks/npm/) for SafeDep API SDKs:
+
+```bash
+npm config set @buf:registry https://buf.build/gen/npm/v1/
+```
+
+### Install SafeDep API SDKs
+
+Install the required SafeDep API libraries:
+
+```bash
+npm install --save @buf/safedep_api.connectrpc_es@latest
+```
+
+## Authentication Setup
+
+### Environment Variables
+
+Set your SafeDep Cloud credentials:
+
+```bash
+export SAFEDEP_API_KEY=your-api-key
+export SAFEDEP_TENANT_ID=your-tenant-id
+```
+
+<Warning>
+Never hardcode API keys in your source code. Always use environment variables or secure configuration management.
+</Warning>
+
+## Implementation
+
+### Import Dependencies
+
+Set up the necessary imports for ConnectRPC client and SafeDep services:
+
+```typescript
+import { createPromiseClient, Interceptor } from "@connectrpc/connect";
+import { createConnectTransport } from "@connectrpc/connect-node";
+import { InsightService } from "@buf/safedep_api.connectrpc_es/safedep/services/insights/v2/insights_connect.js";
+import { Ecosystem } from "@buf/safedep_api.bufbuild_es/safedep/messages/package/v1/ecosystem_pb.js";
+```
+
+### Authentication Interceptor
+
+Create an interceptor to add authentication headers to each API call:
+
+```typescript
+function authenticationInterceptor(token: string, tenant: string): Interceptor {
+  return (next) => async (req) => {
+    req.header.set("authorization", token);
+    req.header.set("x-tenant-id", tenant);
+    return await next(req);
+  }
+}
+```
+
+### Main Application Logic
+
+Implement the main function to query package insights:
+
+```typescript
+async function main() {
+  // Validate environment variables
+  const token = process.env.SAFEDEP_API_KEY;
+  if (!token) {
+    console.error("SAFEDEP_API_KEY is required");
+    process.exit(1);
+  }
+
+  const tenantId = process.env.SAFEDEP_TENANT_ID;
+  if (!tenantId) {
+    console.error("SAFEDEP_TENANT_ID is required");
+    process.exit(1);
+  }
+
+  // Create transport with authentication
+  const transport = createConnectTransport({
+    baseUrl: "https://api.safedep.io",
+    httpVersion: "1.1",
+    interceptors: [authenticationInterceptor(token, tenantId)]
+  });
+
+  // Create client and make API call
+  const client = createPromiseClient(InsightService, transport);
+  const res = await client.getPackageVersionInsight({
+    packageVersion: {
+      package: {
+        ecosystem: Ecosystem.NPM,
+        name: "lodash",
+      },
+      version: "4.17.21",
+    }
+  });
+
+  console.log(res.toJson());
+}
+
+// Run the application
+main().catch(console.error);
+```
+
+## Advanced Examples
+
+### Batch Package Analysis
+
+Analyze multiple packages in a single application:
+
+```typescript
+async function analyzePackages(packages: Array<{ecosystem: Ecosystem, name: string, version: string}>) {
+  const client = createPromiseClient(InsightService, transport);
+  const results = [];
+
+  for (const pkg of packages) {
+    try {
+      const res = await client.getPackageVersionInsight({
+        packageVersion: {
+          package: {
+            ecosystem: pkg.ecosystem,
+            name: pkg.name,
+          },
+          version: pkg.version,
+        }
+      });
+      results.push({
+        package: `${pkg.name}@${pkg.version}`,
+        insights: res.toJson()
+      });
+    } catch (error) {
+      console.error(`Error analyzing ${pkg.name}@${pkg.version}:`, error);
+    }
+  }
+
+  return results;
+}
+
+// Usage
+const packagesToAnalyze = [
+  { ecosystem: Ecosystem.NPM, name: "express", version: "4.18.2" },
+  { ecosystem: Ecosystem.NPM, name: "react", version: "18.2.0" },
+  { ecosystem: Ecosystem.PYPI, name: "requests", version: "2.31.0" }
+];
+
+analyzePackages(packagesToAnalyze).then(results => {
+  console.log("Analysis results:", JSON.stringify(results, null, 2));
+});
+```
+
+### Vulnerability Filtering
+
+Filter packages by vulnerability severity:
+
+```typescript
+interface VulnerabilityReport {
+  package: string;
+  criticalVulns: number;
+  highVulns: number;
+  mediumVulns: number;
+  lowVulns: number;
+}
+
+async function getVulnerabilityReport(packages: Array<{ecosystem: Ecosystem, name: string, version: string}>): Promise<VulnerabilityReport[]> {
+  const client = createPromiseClient(InsightService, transport);
+  const reports: VulnerabilityReport[] = [];
+
+  for (const pkg of packages) {
+    const res = await client.getPackageVersionInsight({
+      packageVersion: {
+        package: { ecosystem: pkg.ecosystem, name: pkg.name },
+        version: pkg.version,
+      }
+    });
+
+    const insights = res.toJson();
+    const vulns = insights.vulnerabilities || [];
+
+    reports.push({
+      package: `${pkg.name}@${pkg.version}`,
+      criticalVulns: vulns.filter(v => v.severity === 'CRITICAL').length,
+      highVulns: vulns.filter(v => v.severity === 'HIGH').length,
+      mediumVulns: vulns.filter(v => v.severity === 'MEDIUM').length,
+      lowVulns: vulns.filter(v => v.severity === 'LOW').length,
+    });
+  }
+
+  return reports;
+}
+```
+
+### Error Handling and Retry Logic
+
+Implement robust error handling:
+
+```typescript
+async function getPackageInsightWithRetry(
+  client: any, 
+  packageInfo: any, 
+  maxRetries: number = 3
+) {
+  let lastError;
+
+  for (let attempt = 1; attempt <= maxRetries; attempt++) {
+    try {
+      return await client.getPackageVersionInsight(packageInfo);
+    } catch (error) {
+      lastError = error;
+      console.warn(`Attempt ${attempt} failed:`, error.message);
+      
+      if (attempt < maxRetries) {
+        // Exponential backoff
+        const delay = Math.pow(2, attempt) * 1000;
+        await new Promise(resolve => setTimeout(resolve, delay));
+      }
+    }
+  }
+
+  throw lastError;
+}
+```
+
+## Integration Examples
+
+### Express.js Web API
+
+Create a web API that exposes package insights:
+
+```typescript
+import express from 'express';
+
+const app = express();
+app.use(express.json());
+
+app.post('/api/package/insights', async (req, res) => {
+  try {
+    const { ecosystem, name, version } = req.body;
+    
+    const insights = await client.getPackageVersionInsight({
+      packageVersion: {
+        package: { ecosystem, name },
+        version,
+      }
+    });
+
+    res.json(insights.toJson());
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.listen(3000, () => {
+  console.log('SafeDep Insights API server running on port 3000');
+});
+```
+
+### CLI Tool
+
+Build a command-line tool for package analysis:
+
+```typescript
+#!/usr/bin/env node
+import { Command } from 'commander';
+
+const program = new Command();
+
+program
+  .name('safedep-insights')
+  .description('CLI tool for SafeDep package insights')
+  .version('1.0.0');
+
+program
+  .command('analyze')
+  .description('Analyze a package for security insights')
+  .requiredOption('-n, --name <name>', 'Package name')
+  .requiredOption('-v, --version <version>', 'Package version')
+  .option('-e, --ecosystem <ecosystem>', 'Package ecosystem', 'NPM')
+  .action(async (options) => {
+    const ecosystem = Ecosystem[options.ecosystem.toUpperCase()];
+    const insights = await getPackageInsights(ecosystem, options.name, options.version);
+    console.log(JSON.stringify(insights, null, 2));
+  });
+
+program.parse();
+```
+
+## API Reference
+
+For complete information on request and response schemas, see the [Insights v2 API Specification](https://buf.build/safedep/api/docs/main:safedep.services.insights.v2#safedep.services.insights.v2.GetPackageVersionInsightRequest).
+
+### Available Ecosystems
+
+The API supports multiple package ecosystems:
+
+- `NPM` - Node.js packages
+- `PYPI` - Python packages
+- `MAVEN` - Java/JVM packages
+- `CARGO` - Rust packages
+- `NUGET` - .NET packages
+- And more...
+
+### Response Data
+
+The API returns comprehensive security metadata including:
+
+- **Vulnerabilities**: Known security vulnerabilities
+- **Licenses**: License information and compliance data
+- **Scorecard**: OpenSSF Scorecard metrics
+- **Malware**: Malware detection results
+- **Metadata**: Package information and statistics
+
+<CardGroup cols={2}>
+  <Card title="API Documentation" icon="book" href="https://buf.build/safedep/api/docs/main:safedep.services.insights.v2">
+    Complete API specification and schema documentation
+  </Card>
+  <Card title="SDK Support" icon="code" href="https://buf.build/safedep/api/sdks">
+    SDKs available for multiple programming languages
+  </Card>
+  <Card title="SafeDep Cloud" icon="cloud" href="/cloud/quickstart">
+    Get started with SafeDep Cloud and API access
+  </Card>
+  <Card title="ConnectRPC" icon="plug" href="https://connectrpc.com/">
+    Learn more about the ConnectRPC framework
+  </Card>
+</CardGroup>

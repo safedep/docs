@@ -1,0 +1,2135 @@
+{
+  "$schema": "http://cyclonedx.org/schema/bom-1.6.schema.json",
+  "bomFormat": "CycloneDX",
+  "specVersion": "1.6",
+  "serialNumber": "urn:uuid:c0b297e0-2723-11f0-97a9-ce0e918120bb",
+  "version": 1,
+  "metadata": {
+    "timestamp": "2025-05-02T07:06:17Z",
+    "tools": {
+      "components": [
+        {
+          "bom-ref": "pkg:golang/safedep/vet@v1.10.3-a77be8f",
+          "type": "application",
+          "manufacturer": {
+            "name": "Safedep",
+            "url": [
+              "https://safedep.io"
+            ]
+          },
+          "group": "Safedep",
+          "name": "vet",
+          "version": "v1.10.3-a77be8f",
+          "purl": "pkg:golang/safedep/vet@v1.10.3-a77be8f"
+        }
+      ]
+    },
+    "component": {
+      "bom-ref": "root-application",
+      "type": "application",
+      "name": "express",
+      "components": [
+        {
+          "bom-ref": "ci.yml",
+          "type": "application",
+          "group": "GitHubActions",
+          "name": "/Users/omkar/Downloads/express/.github/workflows/ci.yml"
+        },
+        {
+          "bom-ref": "codeql.yml",
+          "type": "application",
+          "group": "GitHubActions",
+          "name": "/Users/omkar/Downloads/express/.github/workflows/codeql.yml"
+        },
+        {
+          "bom-ref": "legacy.yml",
+          "type": "application",
+          "group": "GitHubActions",
+          "name": "/Users/omkar/Downloads/express/.github/workflows/legacy.yml"
+        },
+        {
+          "bom-ref": "scorecard.yml",
+          "type": "application",
+          "group": "GitHubActions",
+          "name": "/Users/omkar/Downloads/express/.github/workflows/scorecard.yml"
+        },
+        {
+          "bom-ref": "package.json",
+          "type": "application",
+          "group": "npm",
+          "name": "/Users/omkar/Downloads/express/package.json"
+        }
+      ]
+    }
+  },
+  "components": [
+    {
+      "bom-ref": "pkg:githubactions/actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02",
+      "type": "library",
+      "group": "GitHubActions",
+      "name": "actions/upload-artifact",
+      "version": "ea165f8d65b6e75b540449e92b4886f43607fa02",
+      "licenses": [],
+      "purl": "pkg:githubactions/actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02",
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 0.7,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 0.7,
+                "value": "ci.yml"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "bom-ref": "pkg:githubactions/coverallsapp/github-action@648a8eb78e6d50909eff900e4ec85cab4524a45b",
+      "type": "library",
+      "group": "GitHubActions",
+      "name": "coverallsapp/github-action",
+      "version": "648a8eb78e6d50909eff900e4ec85cab4524a45b",
+      "licenses": [],
+      "purl": "pkg:githubactions/coverallsapp/github-action@648a8eb78e6d50909eff900e4ec85cab4524a45b",
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 0.7,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 0.7,
+                "value": "ci.yml"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "bom-ref": "pkg:githubactions/actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683",
+      "type": "library",
+      "group": "GitHubActions",
+      "name": "actions/checkout",
+      "version": "11bd71901bbe5b1630ceea73d27597364c9af683",
+      "licenses": [],
+      "purl": "pkg:githubactions/actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683",
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 0.7,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 0.7,
+                "value": "ci.yml"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "bom-ref": "pkg:githubactions/actions/download-artifact@95815c38cf2ff2164869cbab79da8d1f422bc89e",
+      "type": "library",
+      "group": "GitHubActions",
+      "name": "actions/download-artifact",
+      "version": "95815c38cf2ff2164869cbab79da8d1f422bc89e",
+      "licenses": [],
+      "purl": "pkg:githubactions/actions/download-artifact@95815c38cf2ff2164869cbab79da8d1f422bc89e",
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 0.7,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 0.7,
+                "value": "ci.yml"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "bom-ref": "pkg:githubactions/actions/setup-node@cdca7365b2dadb8aad0a33bc7601856ffabcc48e",
+      "type": "library",
+      "group": "GitHubActions",
+      "name": "actions/setup-node",
+      "version": "cdca7365b2dadb8aad0a33bc7601856ffabcc48e",
+      "licenses": [],
+      "purl": "pkg:githubactions/actions/setup-node@cdca7365b2dadb8aad0a33bc7601856ffabcc48e",
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 0.7,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 0.7,
+                "value": "ci.yml"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "bom-ref": "pkg:githubactions/github/codeql-action@1b549b9259bda1cb5ddde3b41741a82a2d15a841",
+      "type": "library",
+      "group": "GitHubActions",
+      "name": "github/codeql-action",
+      "version": "1b549b9259bda1cb5ddde3b41741a82a2d15a841",
+      "licenses": [],
+      "purl": "pkg:githubactions/github/codeql-action@1b549b9259bda1cb5ddde3b41741a82a2d15a841",
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 0.7,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 0.7,
+                "value": "codeql.yml"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "bom-ref": "pkg:githubactions/actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683",
+      "type": "library",
+      "group": "GitHubActions",
+      "name": "actions/checkout",
+      "version": "11bd71901bbe5b1630ceea73d27597364c9af683",
+      "licenses": [],
+      "purl": "pkg:githubactions/actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683",
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 0.7,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 0.7,
+                "value": "codeql.yml"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "bom-ref": "pkg:githubactions/actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683",
+      "type": "library",
+      "group": "GitHubActions",
+      "name": "actions/checkout",
+      "version": "11bd71901bbe5b1630ceea73d27597364c9af683",
+      "licenses": [],
+      "purl": "pkg:githubactions/actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683",
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 0.7,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 0.7,
+                "value": "legacy.yml"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "bom-ref": "pkg:githubactions/actions/download-artifact@95815c38cf2ff2164869cbab79da8d1f422bc89e",
+      "type": "library",
+      "group": "GitHubActions",
+      "name": "actions/download-artifact",
+      "version": "95815c38cf2ff2164869cbab79da8d1f422bc89e",
+      "licenses": [],
+      "purl": "pkg:githubactions/actions/download-artifact@95815c38cf2ff2164869cbab79da8d1f422bc89e",
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 0.7,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 0.7,
+                "value": "legacy.yml"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "bom-ref": "pkg:githubactions/actions/setup-node@cdca7365b2dadb8aad0a33bc7601856ffabcc48e",
+      "type": "library",
+      "group": "GitHubActions",
+      "name": "actions/setup-node",
+      "version": "cdca7365b2dadb8aad0a33bc7601856ffabcc48e",
+      "licenses": [],
+      "purl": "pkg:githubactions/actions/setup-node@cdca7365b2dadb8aad0a33bc7601856ffabcc48e",
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 0.7,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 0.7,
+                "value": "legacy.yml"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "bom-ref": "pkg:githubactions/actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02",
+      "type": "library",
+      "group": "GitHubActions",
+      "name": "actions/upload-artifact",
+      "version": "ea165f8d65b6e75b540449e92b4886f43607fa02",
+      "licenses": [],
+      "purl": "pkg:githubactions/actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02",
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 0.7,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 0.7,
+                "value": "legacy.yml"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "bom-ref": "pkg:githubactions/coverallsapp/github-action@648a8eb78e6d50909eff900e4ec85cab4524a45b",
+      "type": "library",
+      "group": "GitHubActions",
+      "name": "coverallsapp/github-action",
+      "version": "648a8eb78e6d50909eff900e4ec85cab4524a45b",
+      "licenses": [],
+      "purl": "pkg:githubactions/coverallsapp/github-action@648a8eb78e6d50909eff900e4ec85cab4524a45b",
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 0.7,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 0.7,
+                "value": "legacy.yml"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "bom-ref": "pkg:githubactions/actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683",
+      "type": "library",
+      "group": "GitHubActions",
+      "name": "actions/checkout",
+      "version": "11bd71901bbe5b1630ceea73d27597364c9af683",
+      "licenses": [],
+      "purl": "pkg:githubactions/actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683",
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 0.7,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 0.7,
+                "value": "scorecard.yml"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "bom-ref": "pkg:githubactions/actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02",
+      "type": "library",
+      "group": "GitHubActions",
+      "name": "actions/upload-artifact",
+      "version": "ea165f8d65b6e75b540449e92b4886f43607fa02",
+      "licenses": [],
+      "purl": "pkg:githubactions/actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02",
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 0.7,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 0.7,
+                "value": "scorecard.yml"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "bom-ref": "pkg:githubactions/github/codeql-action@1b549b9259bda1cb5ddde3b41741a82a2d15a841",
+      "type": "library",
+      "group": "GitHubActions",
+      "name": "github/codeql-action",
+      "version": "1b549b9259bda1cb5ddde3b41741a82a2d15a841",
+      "licenses": [],
+      "purl": "pkg:githubactions/github/codeql-action@1b549b9259bda1cb5ddde3b41741a82a2d15a841",
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 0.7,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 0.7,
+                "value": "scorecard.yml"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "bom-ref": "pkg:githubactions/ossf/scorecard-action@f49aabe0b5af0936a0987cfb85d86b75731b0186",
+      "type": "library",
+      "group": "GitHubActions",
+      "name": "ossf/scorecard-action",
+      "version": "f49aabe0b5af0936a0987cfb85d86b75731b0186",
+      "licenses": [],
+      "purl": "pkg:githubactions/ossf/scorecard-action@f49aabe0b5af0936a0987cfb85d86b75731b0186",
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 0.7,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 0.7,
+                "value": "scorecard.yml"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "bom-ref": "pkg:npm/cookie-signature@1.2.1",
+      "type": "library",
+      "group": "npm",
+      "name": "cookie-signature",
+      "version": "1.2.1",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT",
+            "name": "MIT License",
+            "url": "https://spdx.org/licenses/MIT.html"
+          }
+        }
+      ],
+      "purl": "pkg:npm/cookie-signature@1.2.1",
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 0.7,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 0.7,
+                "value": "package.json"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "bom-ref": "pkg:npm/debug@4.4.0",
+      "type": "library",
+      "group": "npm",
+      "name": "debug",
+      "version": "4.4.0",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT",
+            "name": "MIT License",
+            "url": "https://spdx.org/licenses/MIT.html"
+          }
+        }
+      ],
+      "purl": "pkg:npm/debug@4.4.0",
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 0.7,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 0.7,
+                "value": "package.json"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "bom-ref": "pkg:npm/hbs@4.2.0",
+      "type": "library",
+      "group": "npm",
+      "name": "hbs",
+      "version": "4.2.0",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT",
+            "name": "MIT License",
+            "url": "https://spdx.org/licenses/MIT.html"
+          }
+        }
+      ],
+      "purl": "pkg:npm/hbs@4.2.0",
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 0.7,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 0.7,
+                "value": "package.json"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "bom-ref": "pkg:npm/ejs@3.1.10",
+      "type": "library",
+      "group": "npm",
+      "name": "ejs",
+      "version": "3.1.10",
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0",
+            "name": "Apache License 2.0",
+            "url": "https://spdx.org/licenses/Apache-2.0.html"
+          }
+        }
+      ],
+      "purl": "pkg:npm/ejs@3.1.10",
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 0.7,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 0.7,
+                "value": "package.json"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "bom-ref": "pkg:npm/send@1.1.0",
+      "type": "library",
+      "group": "npm",
+      "name": "send",
+      "version": "1.1.0",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT",
+            "name": "MIT License",
+            "url": "https://spdx.org/licenses/MIT.html"
+          }
+        }
+      ],
+      "purl": "pkg:npm/send@1.1.0",
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 0.7,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 0.7,
+                "value": "package.json"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "bom-ref": "pkg:npm/proxy-addr@2.0.7",
+      "type": "library",
+      "group": "npm",
+      "name": "proxy-addr",
+      "version": "2.0.7",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT",
+            "name": "MIT License",
+            "url": "https://spdx.org/licenses/MIT.html"
+          }
+        }
+      ],
+      "purl": "pkg:npm/proxy-addr@2.0.7",
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 0.7,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 0.7,
+                "value": "package.json"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "bom-ref": "pkg:npm/type-is@2.0.1",
+      "type": "library",
+      "group": "npm",
+      "name": "type-is",
+      "version": "2.0.1",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT",
+            "name": "MIT License",
+            "url": "https://spdx.org/licenses/MIT.html"
+          }
+        }
+      ],
+      "purl": "pkg:npm/type-is@2.0.1",
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 0.7,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 0.7,
+                "value": "package.json"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "bom-ref": "pkg:npm/parseurl@1.3.3",
+      "type": "library",
+      "group": "npm",
+      "name": "parseurl",
+      "version": "1.3.3",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT",
+            "name": "MIT License",
+            "url": "https://spdx.org/licenses/MIT.html"
+          }
+        }
+      ],
+      "purl": "pkg:npm/parseurl@1.3.3",
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 0.7,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 0.7,
+                "value": "package.json"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "bom-ref": "pkg:npm/nyc@17.1.0",
+      "type": "library",
+      "group": "npm",
+      "name": "nyc",
+      "version": "17.1.0",
+      "licenses": [
+        {
+          "license": {
+            "id": "ISC",
+            "name": "ISC License",
+            "url": "https://spdx.org/licenses/ISC.html"
+          }
+        }
+      ],
+      "purl": "pkg:npm/nyc@17.1.0",
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 0.7,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 0.7,
+                "value": "package.json"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "bom-ref": "pkg:npm/qs@6.14.0",
+      "type": "library",
+      "group": "npm",
+      "name": "qs",
+      "version": "6.14.0",
+      "licenses": [
+        {
+          "license": {
+            "id": "BSD-3-Clause",
+            "name": "BSD 3-Clause \"New\" or \"Revised\" License",
+            "url": "https://spdx.org/licenses/BSD-3-Clause.html"
+          }
+        }
+      ],
+      "purl": "pkg:npm/qs@6.14.0",
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 0.7,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 0.7,
+                "value": "package.json"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "bom-ref": "pkg:npm/serve-static@2.2.0",
+      "type": "library",
+      "group": "npm",
+      "name": "serve-static",
+      "version": "2.2.0",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT",
+            "name": "MIT License",
+            "url": "https://spdx.org/licenses/MIT.html"
+          }
+        }
+      ],
+      "purl": "pkg:npm/serve-static@2.2.0",
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 0.7,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 0.7,
+                "value": "package.json"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "bom-ref": "pkg:npm/method-override@3.0.0",
+      "type": "library",
+      "group": "npm",
+      "name": "method-override",
+      "version": "3.0.0",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT",
+            "name": "MIT License",
+            "url": "https://spdx.org/licenses/MIT.html"
+          }
+        }
+      ],
+      "purl": "pkg:npm/method-override@3.0.0",
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 0.7,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 0.7,
+                "value": "package.json"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "bom-ref": "pkg:npm/on-finished@2.4.1",
+      "type": "library",
+      "group": "npm",
+      "name": "on-finished",
+      "version": "2.4.1",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT",
+            "name": "MIT License",
+            "url": "https://spdx.org/licenses/MIT.html"
+          }
+        }
+      ],
+      "purl": "pkg:npm/on-finished@2.4.1",
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 0.7,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 0.7,
+                "value": "package.json"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "bom-ref": "pkg:npm/pbkdf2-password@1.2.1",
+      "type": "library",
+      "group": "npm",
+      "name": "pbkdf2-password",
+      "version": "1.2.1",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT",
+            "name": "MIT License",
+            "url": "https://spdx.org/licenses/MIT.html"
+          }
+        }
+      ],
+      "purl": "pkg:npm/pbkdf2-password@1.2.1",
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 0.7,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 0.7,
+                "value": "package.json"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "bom-ref": "pkg:npm/once@1.4.0",
+      "type": "library",
+      "group": "npm",
+      "name": "once",
+      "version": "1.4.0",
+      "licenses": [
+        {
+          "license": {
+            "id": "ISC",
+            "name": "ISC License",
+            "url": "https://spdx.org/licenses/ISC.html"
+          }
+        }
+      ],
+      "purl": "pkg:npm/once@1.4.0",
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 0.7,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 0.7,
+                "value": "package.json"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "bom-ref": "pkg:npm/content-disposition@1.0.0",
+      "type": "library",
+      "group": "npm",
+      "name": "content-disposition",
+      "version": "1.0.0",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT",
+            "name": "MIT License",
+            "url": "https://spdx.org/licenses/MIT.html"
+          }
+        }
+      ],
+      "purl": "pkg:npm/content-disposition@1.0.0",
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 0.7,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 0.7,
+                "value": "package.json"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "bom-ref": "pkg:npm/content-type@1.0.5",
+      "type": "library",
+      "group": "npm",
+      "name": "content-type",
+      "version": "1.0.5",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT",
+            "name": "MIT License",
+            "url": "https://spdx.org/licenses/MIT.html"
+          }
+        }
+      ],
+      "purl": "pkg:npm/content-type@1.0.5",
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 0.7,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 0.7,
+                "value": "package.json"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "bom-ref": "pkg:npm/accepts@2.0.0",
+      "type": "library",
+      "group": "npm",
+      "name": "accepts",
+      "version": "2.0.0",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT",
+            "name": "MIT License",
+            "url": "https://spdx.org/licenses/MIT.html"
+          }
+        }
+      ],
+      "purl": "pkg:npm/accepts@2.0.0",
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 0.7,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 0.7,
+                "value": "package.json"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "bom-ref": "pkg:npm/mime-types@3.0.0",
+      "type": "library",
+      "group": "npm",
+      "name": "mime-types",
+      "version": "3.0.0",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT",
+            "name": "MIT License",
+            "url": "https://spdx.org/licenses/MIT.html"
+          }
+        }
+      ],
+      "purl": "pkg:npm/mime-types@3.0.0",
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 0.7,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 0.7,
+                "value": "package.json"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "bom-ref": "pkg:npm/range-parser@1.2.1",
+      "type": "library",
+      "group": "npm",
+      "name": "range-parser",
+      "version": "1.2.1",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT",
+            "name": "MIT License",
+            "url": "https://spdx.org/licenses/MIT.html"
+          }
+        }
+      ],
+      "purl": "pkg:npm/range-parser@1.2.1",
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 0.7,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 0.7,
+                "value": "package.json"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "bom-ref": "pkg:npm/connect-redis@8.0.1",
+      "type": "library",
+      "group": "npm",
+      "name": "connect-redis",
+      "version": "8.0.1",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT",
+            "name": "MIT License",
+            "url": "https://spdx.org/licenses/MIT.html"
+          }
+        }
+      ],
+      "purl": "pkg:npm/connect-redis@8.0.1",
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 0.7,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 0.7,
+                "value": "package.json"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "bom-ref": "pkg:npm/morgan@1.10.0",
+      "type": "library",
+      "group": "npm",
+      "name": "morgan",
+      "version": "1.10.0",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT",
+            "name": "MIT License",
+            "url": "https://spdx.org/licenses/MIT.html"
+          }
+        }
+      ],
+      "purl": "pkg:npm/morgan@1.10.0",
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 0.7,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 0.7,
+                "value": "package.json"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "bom-ref": "pkg:npm/eslint@8.47.0",
+      "type": "library",
+      "group": "npm",
+      "name": "eslint",
+      "version": "8.47.0",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT",
+            "name": "MIT License",
+            "url": "https://spdx.org/licenses/MIT.html"
+          }
+        }
+      ],
+      "purl": "pkg:npm/eslint@8.47.0",
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 0.7,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 0.7,
+                "value": "package.json"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "bom-ref": "pkg:npm/http-errors@2.0.0",
+      "type": "library",
+      "group": "npm",
+      "name": "http-errors",
+      "version": "2.0.0",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT",
+            "name": "MIT License",
+            "url": "https://spdx.org/licenses/MIT.html"
+          }
+        }
+      ],
+      "purl": "pkg:npm/http-errors@2.0.0",
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 0.7,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 0.7,
+                "value": "package.json"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "bom-ref": "pkg:npm/cookie-session@2.1.0",
+      "type": "library",
+      "group": "npm",
+      "name": "cookie-session",
+      "version": "2.1.0",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT",
+            "name": "MIT License",
+            "url": "https://spdx.org/licenses/MIT.html"
+          }
+        }
+      ],
+      "purl": "pkg:npm/cookie-session@2.1.0",
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 0.7,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 0.7,
+                "value": "package.json"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "bom-ref": "pkg:npm/body-parser@2.2.0",
+      "type": "library",
+      "group": "npm",
+      "name": "body-parser",
+      "version": "2.2.0",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT",
+            "name": "MIT License",
+            "url": "https://spdx.org/licenses/MIT.html"
+          }
+        }
+      ],
+      "purl": "pkg:npm/body-parser@2.2.0",
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 0.7,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 0.7,
+                "value": "package.json"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "bom-ref": "pkg:npm/cookie-parser@1.4.7",
+      "type": "library",
+      "group": "npm",
+      "name": "cookie-parser",
+      "version": "1.4.7",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT",
+            "name": "MIT License",
+            "url": "https://spdx.org/licenses/MIT.html"
+          }
+        }
+      ],
+      "purl": "pkg:npm/cookie-parser@1.4.7",
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 0.7,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 0.7,
+                "value": "package.json"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "bom-ref": "pkg:npm/finalhandler@2.1.0",
+      "type": "library",
+      "group": "npm",
+      "name": "finalhandler",
+      "version": "2.1.0",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT",
+            "name": "MIT License",
+            "url": "https://spdx.org/licenses/MIT.html"
+          }
+        }
+      ],
+      "purl": "pkg:npm/finalhandler@2.1.0",
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 0.7,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 0.7,
+                "value": "package.json"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "bom-ref": "pkg:npm/merge-descriptors@2.0.0",
+      "type": "library",
+      "group": "npm",
+      "name": "merge-descriptors",
+      "version": "2.0.0",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT",
+            "name": "MIT License",
+            "url": "https://spdx.org/licenses/MIT.html"
+          }
+        }
+      ],
+      "purl": "pkg:npm/merge-descriptors@2.0.0",
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 0.7,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 0.7,
+                "value": "package.json"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "bom-ref": "pkg:npm/marked@15.0.3",
+      "type": "library",
+      "group": "npm",
+      "name": "marked",
+      "version": "15.0.3",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT",
+            "name": "MIT License",
+            "url": "https://spdx.org/licenses/MIT.html"
+          }
+        }
+      ],
+      "purl": "pkg:npm/marked@15.0.3",
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 0.7,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 0.7,
+                "value": "package.json"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "bom-ref": "pkg:npm/mocha@10.7.3",
+      "type": "library",
+      "group": "npm",
+      "name": "mocha",
+      "version": "10.7.3",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT",
+            "name": "MIT License",
+            "url": "https://spdx.org/licenses/MIT.html"
+          }
+        }
+      ],
+      "purl": "pkg:npm/mocha@10.7.3",
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 0.7,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 0.7,
+                "value": "package.json"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "bom-ref": "pkg:npm/fresh@2.0.0",
+      "type": "library",
+      "group": "npm",
+      "name": "fresh",
+      "version": "2.0.0",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT",
+            "name": "MIT License",
+            "url": "https://spdx.org/licenses/MIT.html"
+          }
+        }
+      ],
+      "purl": "pkg:npm/fresh@2.0.0",
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 0.7,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 0.7,
+                "value": "package.json"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "bom-ref": "pkg:npm/escape-html@1.0.3",
+      "type": "library",
+      "group": "npm",
+      "name": "escape-html",
+      "version": "1.0.3",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT",
+            "name": "MIT License",
+            "url": "https://spdx.org/licenses/MIT.html"
+          }
+        }
+      ],
+      "purl": "pkg:npm/escape-html@1.0.3",
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 0.7,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 0.7,
+                "value": "package.json"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "bom-ref": "pkg:npm/etag@1.8.1",
+      "type": "library",
+      "group": "npm",
+      "name": "etag",
+      "version": "1.8.1",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT",
+            "name": "MIT License",
+            "url": "https://spdx.org/licenses/MIT.html"
+          }
+        }
+      ],
+      "purl": "pkg:npm/etag@1.8.1",
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 0.7,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 0.7,
+                "value": "package.json"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "bom-ref": "pkg:npm/after@0.8.2",
+      "type": "library",
+      "group": "npm",
+      "name": "after",
+      "version": "0.8.2",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT",
+            "name": "MIT License",
+            "url": "https://spdx.org/licenses/MIT.html"
+          }
+        }
+      ],
+      "purl": "pkg:npm/after@0.8.2",
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 0.7,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 0.7,
+                "value": "package.json"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "bom-ref": "pkg:npm/cookie@0.7.1",
+      "type": "library",
+      "group": "npm",
+      "name": "cookie",
+      "version": "0.7.1",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT",
+            "name": "MIT License",
+            "url": "https://spdx.org/licenses/MIT.html"
+          }
+        }
+      ],
+      "purl": "pkg:npm/cookie@0.7.1",
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 0.7,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 0.7,
+                "value": "package.json"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "bom-ref": "pkg:npm/vhost@3.0.2",
+      "type": "library",
+      "group": "npm",
+      "name": "vhost",
+      "version": "3.0.2",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT",
+            "name": "MIT License",
+            "url": "https://spdx.org/licenses/MIT.html"
+          }
+        }
+      ],
+      "purl": "pkg:npm/vhost@3.0.2",
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 0.7,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 0.7,
+                "value": "package.json"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "bom-ref": "pkg:npm/statuses@2.0.1",
+      "type": "library",
+      "group": "npm",
+      "name": "statuses",
+      "version": "2.0.1",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT",
+            "name": "MIT License",
+            "url": "https://spdx.org/licenses/MIT.html"
+          }
+        }
+      ],
+      "purl": "pkg:npm/statuses@2.0.1",
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 0.7,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 0.7,
+                "value": "package.json"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "bom-ref": "pkg:npm/encodeurl@2.0.0",
+      "type": "library",
+      "group": "npm",
+      "name": "encodeurl",
+      "version": "2.0.0",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT",
+            "name": "MIT License",
+            "url": "https://spdx.org/licenses/MIT.html"
+          }
+        }
+      ],
+      "purl": "pkg:npm/encodeurl@2.0.0",
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 0.7,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 0.7,
+                "value": "package.json"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "bom-ref": "pkg:npm/router@2.2.0",
+      "type": "library",
+      "group": "npm",
+      "name": "router",
+      "version": "2.2.0",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT",
+            "name": "MIT License",
+            "url": "https://spdx.org/licenses/MIT.html"
+          }
+        }
+      ],
+      "purl": "pkg:npm/router@2.2.0",
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 0.7,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 0.7,
+                "value": "package.json"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "bom-ref": "pkg:npm/express-session@1.18.1",
+      "type": "library",
+      "group": "npm",
+      "name": "express-session",
+      "version": "1.18.1",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT",
+            "name": "MIT License",
+            "url": "https://spdx.org/licenses/MIT.html"
+          }
+        }
+      ],
+      "purl": "pkg:npm/express-session@1.18.1",
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 0.7,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 0.7,
+                "value": "package.json"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "bom-ref": "pkg:npm/supertest@6.3.0",
+      "type": "library",
+      "group": "npm",
+      "name": "supertest",
+      "version": "6.3.0",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT",
+            "name": "MIT License",
+            "url": "https://spdx.org/licenses/MIT.html"
+          }
+        }
+      ],
+      "purl": "pkg:npm/supertest@6.3.0",
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 0.7,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 0.7,
+                "value": "package.json"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "bom-ref": "pkg:npm/vary@1.1.2",
+      "type": "library",
+      "group": "npm",
+      "name": "vary",
+      "version": "1.1.2",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT",
+            "name": "MIT License",
+            "url": "https://spdx.org/licenses/MIT.html"
+          }
+        }
+      ],
+      "purl": "pkg:npm/vary@1.1.2",
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 0.7,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 0.7,
+                "value": "package.json"
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ],
+  "dependencies": [
+    {
+      "ref": "pkg:githubactions/actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02",
+      "dependsOn": []
+    },
+    {
+      "ref": "pkg:githubactions/coverallsapp/github-action@648a8eb78e6d50909eff900e4ec85cab4524a45b",
+      "dependsOn": []
+    },
+    {
+      "ref": "pkg:githubactions/actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683",
+      "dependsOn": []
+    },
+    {
+      "ref": "pkg:githubactions/actions/download-artifact@95815c38cf2ff2164869cbab79da8d1f422bc89e",
+      "dependsOn": []
+    },
+    {
+      "ref": "pkg:githubactions/actions/setup-node@cdca7365b2dadb8aad0a33bc7601856ffabcc48e",
+      "dependsOn": []
+    },
+    {
+      "ref": "pkg:githubactions/github/codeql-action@1b549b9259bda1cb5ddde3b41741a82a2d15a841",
+      "dependsOn": []
+    },
+    {
+      "ref": "pkg:githubactions/actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683",
+      "dependsOn": []
+    },
+    {
+      "ref": "pkg:githubactions/actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683",
+      "dependsOn": []
+    },
+    {
+      "ref": "pkg:githubactions/actions/download-artifact@95815c38cf2ff2164869cbab79da8d1f422bc89e",
+      "dependsOn": []
+    },
+    {
+      "ref": "pkg:githubactions/actions/setup-node@cdca7365b2dadb8aad0a33bc7601856ffabcc48e",
+      "dependsOn": []
+    },
+    {
+      "ref": "pkg:githubactions/actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02",
+      "dependsOn": []
+    },
+    {
+      "ref": "pkg:githubactions/coverallsapp/github-action@648a8eb78e6d50909eff900e4ec85cab4524a45b",
+      "dependsOn": []
+    },
+    {
+      "ref": "pkg:githubactions/actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683",
+      "dependsOn": []
+    },
+    {
+      "ref": "pkg:githubactions/actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02",
+      "dependsOn": []
+    },
+    {
+      "ref": "pkg:githubactions/github/codeql-action@1b549b9259bda1cb5ddde3b41741a82a2d15a841",
+      "dependsOn": []
+    },
+    {
+      "ref": "pkg:githubactions/ossf/scorecard-action@f49aabe0b5af0936a0987cfb85d86b75731b0186",
+      "dependsOn": []
+    },
+    {
+      "ref": "pkg:npm/cookie-signature@1.2.1",
+      "dependsOn": []
+    },
+    {
+      "ref": "pkg:npm/debug@4.4.0",
+      "dependsOn": []
+    },
+    {
+      "ref": "pkg:npm/hbs@4.2.0",
+      "dependsOn": []
+    },
+    {
+      "ref": "pkg:npm/ejs@3.1.10",
+      "dependsOn": []
+    },
+    {
+      "ref": "pkg:npm/send@1.1.0",
+      "dependsOn": [
+        "pkg:npm/debug@4.4.0",
+        "pkg:npm/encodeurl@2.0.0",
+        "pkg:npm/escape-html@1.0.3",
+        "pkg:npm/etag@1.8.1",
+        "pkg:npm/http-errors@2.0.0",
+        "pkg:npm/on-finished@2.4.1",
+        "pkg:npm/range-parser@1.2.1",
+        "pkg:npm/statuses@2.0.1"
+      ]
+    },
+    {
+      "ref": "pkg:npm/proxy-addr@2.0.7",
+      "dependsOn": []
+    },
+    {
+      "ref": "pkg:npm/type-is@2.0.1",
+      "dependsOn": [
+        "pkg:npm/content-type@1.0.5"
+      ]
+    },
+    {
+      "ref": "pkg:npm/parseurl@1.3.3",
+      "dependsOn": []
+    },
+    {
+      "ref": "pkg:npm/nyc@17.1.0",
+      "dependsOn": []
+    },
+    {
+      "ref": "pkg:npm/qs@6.14.0",
+      "dependsOn": []
+    },
+    {
+      "ref": "pkg:npm/serve-static@2.2.0",
+      "dependsOn": [
+        "pkg:npm/encodeurl@2.0.0",
+        "pkg:npm/escape-html@1.0.3",
+        "pkg:npm/parseurl@1.3.3"
+      ]
+    },
+    {
+      "ref": "pkg:npm/method-override@3.0.0",
+      "dependsOn": [
+        "pkg:npm/parseurl@1.3.3",
+        "pkg:npm/vary@1.1.2"
+      ]
+    },
+    {
+      "ref": "pkg:npm/on-finished@2.4.1",
+      "dependsOn": []
+    },
+    {
+      "ref": "pkg:npm/pbkdf2-password@1.2.1",
+      "dependsOn": []
+    },
+    {
+      "ref": "pkg:npm/once@1.4.0",
+      "dependsOn": []
+    },
+    {
+      "ref": "pkg:npm/content-disposition@1.0.0",
+      "dependsOn": []
+    },
+    {
+      "ref": "pkg:npm/content-type@1.0.5",
+      "dependsOn": []
+    },
+    {
+      "ref": "pkg:npm/accepts@2.0.0",
+      "dependsOn": []
+    },
+    {
+      "ref": "pkg:npm/mime-types@3.0.0",
+      "dependsOn": []
+    },
+    {
+      "ref": "pkg:npm/range-parser@1.2.1",
+      "dependsOn": []
+    },
+    {
+      "ref": "pkg:npm/connect-redis@8.0.1",
+      "dependsOn": []
+    },
+    {
+      "ref": "pkg:npm/morgan@1.10.0",
+      "dependsOn": []
+    },
+    {
+      "ref": "pkg:npm/eslint@8.47.0",
+      "dependsOn": [
+        "pkg:npm/debug@4.4.0"
+      ]
+    },
+    {
+      "ref": "pkg:npm/http-errors@2.0.0",
+      "dependsOn": [
+        "pkg:npm/statuses@2.0.1"
+      ]
+    },
+    {
+      "ref": "pkg:npm/cookie-session@2.1.0",
+      "dependsOn": []
+    },
+    {
+      "ref": "pkg:npm/body-parser@2.2.0",
+      "dependsOn": [
+        "pkg:npm/content-type@1.0.5",
+        "pkg:npm/debug@4.4.0",
+        "pkg:npm/http-errors@2.0.0",
+        "pkg:npm/on-finished@2.4.1",
+        "pkg:npm/qs@6.14.0",
+        "pkg:npm/type-is@2.0.1"
+      ]
+    },
+    {
+      "ref": "pkg:npm/cookie-parser@1.4.7",
+      "dependsOn": []
+    },
+    {
+      "ref": "pkg:npm/finalhandler@2.1.0",
+      "dependsOn": [
+        "pkg:npm/debug@4.4.0",
+        "pkg:npm/encodeurl@2.0.0",
+        "pkg:npm/escape-html@1.0.3",
+        "pkg:npm/on-finished@2.4.1",
+        "pkg:npm/parseurl@1.3.3",
+        "pkg:npm/statuses@2.0.1"
+      ]
+    },
+    {
+      "ref": "pkg:npm/merge-descriptors@2.0.0",
+      "dependsOn": []
+    },
+    {
+      "ref": "pkg:npm/marked@15.0.3",
+      "dependsOn": []
+    },
+    {
+      "ref": "pkg:npm/mocha@10.7.3",
+      "dependsOn": [
+        "pkg:npm/debug@4.4.0"
+      ]
+    },
+    {
+      "ref": "pkg:npm/fresh@2.0.0",
+      "dependsOn": []
+    },
+    {
+      "ref": "pkg:npm/escape-html@1.0.3",
+      "dependsOn": []
+    },
+    {
+      "ref": "pkg:npm/etag@1.8.1",
+      "dependsOn": []
+    },
+    {
+      "ref": "pkg:npm/after@0.8.2",
+      "dependsOn": []
+    },
+    {
+      "ref": "pkg:npm/cookie@0.7.1",
+      "dependsOn": []
+    },
+    {
+      "ref": "pkg:npm/vhost@3.0.2",
+      "dependsOn": []
+    },
+    {
+      "ref": "pkg:npm/statuses@2.0.1",
+      "dependsOn": []
+    },
+    {
+      "ref": "pkg:npm/encodeurl@2.0.0",
+      "dependsOn": []
+    },
+    {
+      "ref": "pkg:npm/router@2.2.0",
+      "dependsOn": [
+        "pkg:npm/debug@4.4.0",
+        "pkg:npm/parseurl@1.3.3"
+      ]
+    },
+    {
+      "ref": "pkg:npm/express-session@1.18.1",
+      "dependsOn": [
+        "pkg:npm/parseurl@1.3.3"
+      ]
+    },
+    {
+      "ref": "pkg:npm/supertest@6.3.0",
+      "dependsOn": []
+    },
+    {
+      "ref": "pkg:npm/vary@1.1.2",
+      "dependsOn": []
+    }
+  ],
+  "vulnerabilities": [],
+  "annotations": [
+    {
+      "bom-ref": "metadata-annotations",
+      "subjects": [
+        "root-application"
+      ],
+      "annotator": {
+        "component": {
+          "bom-ref": "pkg:golang/safedep/vet@v1.10.3-a77be8f",
+          "type": "application",
+          "manufacturer": {
+            "name": "Safedep",
+            "url": [
+              "https://safedep.io"
+            ]
+          },
+          "group": "Safedep",
+          "name": "vet",
+          "version": "v1.10.3-a77be8f",
+          "purl": "pkg:golang/safedep/vet@v1.10.3-a77be8f"
+        }
+      },
+      "timestamp": "2025-05-02T07:06:17Z",
+      "text": "This Software Bill-of-Materials (SBOM) document was created on Friday, May 2, 2025 with vet. The data was captured during the build lifecycle phase. The document describes 'express'. It has total 59 components. 2 ecosystems are described in the document under components."
+    }
+  ]
+}

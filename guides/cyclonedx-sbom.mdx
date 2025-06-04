@@ -1,0 +1,242 @@
+---
+title: CycloneDX SBOM Generation
+description: "Generate comprehensive Software Bill of Materials (SBOM) with security metadata using vet"
+---
+
+# CycloneDX SBOM Generation
+
+`vet` supports [CycloneDX v1.6](https://cyclonedx.org/docs/1.6/json) SBOM generation. The generated SBOM provides a comprehensive inventory of all packages and their dependencies in your project, including security metadata like detected vulnerabilities, malware, and license information.
+
+## Quick Start
+
+Generate an SBOM with a custom application name:
+
+```bash
+vet scan --report-cdx path/to/report.cdx.json \
+         --report-cdx-app-name myproject
+```
+
+<Note>
+The `--report-cdx-app-name` parameter is optional. If omitted, vet will use a default application name.
+</Note>
+
+## What's Included in the SBOM
+
+The generated CycloneDX SBOM contains comprehensive information about your software supply chain:
+
+<CardGroup cols={2}>
+  <Card title="Package Inventory" icon="box">
+    Complete list of all direct and transitive dependencies
+  </Card>
+  <Card title="Vulnerability Data" icon="shield-exclamation">
+    Known vulnerabilities from OSV database and other sources
+  </Card>
+  <Card title="License Information" icon="scale-balanced">
+    License identifiers and compliance data for each component
+  </Card>
+  <Card title="Malware Detection" icon="virus">
+    Results from malware analysis and threat detection
+  </Card>
+</CardGroup>
+
+## Advanced Usage
+
+### Custom Application Metadata
+
+Provide detailed metadata about your application:
+
+```bash
+vet scan -D /path/to/project \
+  --report-cdx myapp-v1.2.3.cdx.json \
+  --report-cdx-app-name "MyApplication" \
+  --report-cdx-app-version "1.2.3"
+```
+
+### Combined with Other Reports
+
+Generate multiple report formats simultaneously:
+
+```bash
+vet scan -D /path/to/project \
+  --report-cdx sbom.cdx.json \
+  --report-json results.json \
+  --report-markdown report.md \
+  --report-cdx-app-name "production-app"
+```
+
+### Integration with CI/CD
+
+<Tabs>
+  <Tab title="GitHub Actions">
+    ```yaml
+    name: Generate SBOM
+    on: [push, pull_request]
+    
+    jobs:
+      sbom:
+        runs-on: ubuntu-latest
+        steps:
+          - uses: actions/checkout@v4
+          
+          - name: Generate SBOM
+            uses: safedep/vet-action@v1
+            with:
+              scan-dir: '.'
+              report-cdx: 'sbom.cdx.json'
+              app-name: ${{ github.repository }}
+              
+          - name: Upload SBOM
+            uses: actions/upload-artifact@v4
+            with:
+              name: sbom
+              path: sbom.cdx.json
+    ```
+  </Tab>
+  
+  <Tab title="GitLab CI">
+    ```yaml
+    generate-sbom:
+      image: ghcr.io/safedep/vet:latest
+      script:
+        - vet scan -D . 
+            --report-cdx sbom.cdx.json 
+            --report-cdx-app-name $CI_PROJECT_NAME
+      artifacts:
+        reports:
+          cyclonedx: sbom.cdx.json
+        paths:
+          - sbom.cdx.json
+        expire_in: 30 days
+    ```
+  </Tab>
+</Tabs>
+
+## Sample SBOMs
+
+Explore example SBOMs to understand the format and content:
+
+<CardGroup cols={2}>
+  <Card title="Chat Server SBOM" icon="download" href="/downloads/chat-server.cdx.json">
+    Example SBOM for a Node.js chat application
+  </Card>
+  <Card title="Express.js SBOM" icon="download" href="/downloads/express.cdx.json">
+    Example SBOM for an Express.js web application
+  </Card>
+</CardGroup>
+
+## SBOM Analysis and Consumption
+
+### Viewing SBOM Content
+
+Use standard CycloneDX tools to analyze your SBOM:
+
+```bash
+# Using cyclonedx-cli (install via npm)
+npm install -g @cyclonedx/cli
+
+# Validate SBOM
+cyclonedx validate --input-file sbom.cdx.json
+
+# Convert to other formats
+cyclonedx convert --input-file sbom.cdx.json --output-file sbom.xml --output-format xml
+```
+
+### Integration with Security Tools
+
+Many security tools can consume CycloneDX SBOMs:
+
+- **Dependency Track**: Import SBOMs for vulnerability monitoring
+- **FOSSA**: License compliance analysis
+- **Snyk**: Security scanning and monitoring
+- **JFrog Xray**: Artifact analysis and security scanning
+
+### Policy Enforcement
+
+Use SBOMs with policy engines for compliance:
+
+```bash
+# Example with Open Policy Agent (OPA)
+opa eval --data policy.rego --input sbom.cdx.json "data.sbom.allow"
+```
+
+## Best Practices
+
+<AccordionGroup>
+  <Accordion title="Naming Conventions">
+    Use consistent naming patterns for your SBOMs:
+    ```
+    {app-name}-{version}-{environment}.cdx.json
+    myapp-1.2.3-production.cdx.json
+    ```
+  </Accordion>
+  
+  <Accordion title="Version Control">
+    Consider storing SBOMs in version control alongside releases for traceability and historical analysis.
+  </Accordion>
+  
+  <Accordion title="Automation">
+    Generate SBOMs automatically in your CI/CD pipeline to ensure they stay current with your dependencies.
+  </Accordion>
+  
+  <Accordion title="Signed SBOMs">
+    Sign your SBOMs for integrity verification:
+    ```bash
+    # Example with cosign
+    cosign sign-blob --bundle sbom.cdx.json.bundle sbom.cdx.json
+    ```
+  </Accordion>
+</AccordionGroup>
+
+## Compliance and Standards
+
+### NTIA Minimum Elements
+
+The generated SBOMs include all [NTIA minimum elements](https://www.ntia.doc.gov/files/ntia/publications/sbom_minimum_elements_report.pdf):
+
+- **Data Fields**: Supplier name, component name, version, unique identifier, dependency relationships, author of SBOM data, timestamp
+- **Automation Support**: Machine-readable format with well-defined schema
+- **Practices and Processes**: Consistent generation methodology
+
+### Executive Order 14028
+
+SBOMs generated by vet help organizations comply with [Executive Order 14028](https://www.whitehouse.gov/briefing-room/presidential-actions/2021/05/12/executive-order-on-improving-the-nations-cybersecurity/) requirements for software supply chain security.
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="Large SBOM Files">
+    For projects with many dependencies, SBOMs can become large. Consider:
+    - Filtering out development dependencies in production SBOMs
+    - Using compressed storage formats
+    - Implementing SBOM splitting for microservices
+  </Accordion>
+  
+  <Accordion title="Missing Components">
+    If components are missing from your SBOM:
+    - Ensure all package manifest files are included in the scan
+    - Check that vet supports your package manager
+    - Verify dependencies are properly declared in manifest files
+  </Accordion>
+  
+  <Accordion title="Validation Errors">
+    If SBOM validation fails:
+    - Check the CycloneDX schema version compatibility
+    - Verify all required fields are present
+    - Use cyclonedx-cli for detailed validation errors
+  </Accordion>
+</AccordionGroup>
+
+<CardGroup cols={2}>
+  <Card title="CycloneDX Documentation" icon="book" href="https://cyclonedx.org/docs/1.6/json/">
+    Learn more about the CycloneDX v1.6 JSON specification
+  </Card>
+  <Card title="vet Repository" icon="github" href="https://github.com/safedep/vet">
+    Explore vet's complete SBOM generation capabilities
+  </Card>
+  <Card title="NTIA SBOM Guide" icon="file-text" href="https://www.ntia.doc.gov/files/ntia/publications/sbom_minimum_elements_report.pdf">
+    Understanding SBOM minimum elements and best practices
+  </Card>
+  <Card title="Dependency Inventory" icon="list" href="/guides/dependency-inventory">
+    Learn how to create accurate dependency inventories
+  </Card>
+</CardGroup>

@@ -1,0 +1,46 @@
+---
+title: Why vet?
+description: "Understanding the need for automated open source dependency vetting"
+---
+
+# Why vet?
+
+> It has been estimated that Free and Open Source Software (FOSS) constitutes 70-90% of any given piece of modern software solutions.
+> 
+> [Source](https://www.linuxfoundation.org/blog/blog/a-summary-of-census-ii-open-source-software-application-libraries-the-world-depends-on)
+
+Industry dependency on OSS will only increase. We need better tooling to help security engineering teams to safely consume OSS components.
+
+## Problem Space
+
+Product security practices secure software developed and deployed internally. They do not cover software consumed from external sources in form of libraries from the Open Source ecosystem. The growing risk of vulnerable, unmaintained and malicious dependencies establishes the need for product security teams to vet 3rd party dependencies before consumption.
+
+## Current State
+
+Vetting open source packages are largely a manual and opinionated process involving engineering teams as the requester and security teams as the service provider. A typical OSS vetting process involves auditing dependencies to ensure security, popularity, license compliance, trusted publisher etc. The manual nature of this activity increases cycle time and slows down engineering velocity, especially for evolving products.
+
+## What vet aims to solve
+
+`vet` solves the problem of OSS dependency vetting by providing a policy driven automated analysis of libraries. It can be seamlessly integrated with any CI tool or used in local environments.
+
+<CardGroup cols={2}>
+  <Card title="Automated Analysis" icon="robot">
+    Replace manual dependency reviews with automated policy-driven analysis
+  </Card>
+  <Card title="Policy as Code" icon="file-code">
+    Define and version control your security policies using CEL expressions
+  </Card>
+  <Card title="CI/CD Integration" icon="code-branch">
+    Seamlessly integrate with any CI tool or development workflow
+  </Card>
+  <Card title="Trusted Sources" icon="shield-check">
+    Leverage data from OSV, OpenSSF Scorecard, and other trusted sources
+  </Card>
+</CardGroup>
+
+## Benefits
+
+- **Reduced Cycle Time**: Eliminate manual review bottlenecks
+- **Consistent Policies**: Apply the same security standards across all projects
+- **Developer Velocity**: Enable teams to move fast while staying secure
+- **Scalable Security**: Handle thousands of dependencies automatically

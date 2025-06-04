@@ -1,0 +1,130 @@
+---
+title: GitHub Code Scanning
+description: "Integrate vet with GitHub Actions and Code Scanning for automated security alerts"
+---
+
+# GitHub Code Scanning Integration
+
+GitHub supports [uploading SARIF](https://docs.github.com/en/code-security/code-scanning/integrating-with-code-scanning/sarif-support-for-code-scanning) reports to enable repository and organization-wide visibility of security events across different tools. `vet` supports exporting policy violation reports as SARIF which can be uploaded to GitHub.
+
+## Quick Setup with GitHub Action
+
+`vet` has a dedicated GitHub Action for easy integration. This is the recommended approach for most teams.
+
+### Basic Configuration
+
+Create `.github/workflows/vet.yml` in your repository:
+
+```yaml
+name: OSS Security Scan
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+permissions:
+  contents: read
+  security-events: write
+  pull-requests: write
+
+jobs:
+  vet-scan:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Run vet
+        id: vet
+        uses: safedep/vet-action@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload SARIF
+        if: steps.vet.outputs.report != ''
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: ${{ steps.vet.outputs.report }}
+          category: vet
+```
+
+<Info>
+SARIF reports work when you enable GitHub Code Scanning in your repository. [Learn more](https://docs.github.com/en/code-security/code-scanning/enabling-code-scanning)
+</Info>
+
+### Advanced Configuration
+
+For more control over the scanning process:
+
+```yaml
+      - name: Run vet with custom policy
+        id: vet
+        uses: safedep/vet-action@v1
+        with:
+          policy: '.github/vet-policy.yml'
+          fail-on-violation: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+```
+
+## Manual SARIF Generation
+
+You can also generate SARIF reports manually using the `vet` CLI:
+
+```bash
+vet scan -D /path/to/project --report-sarif /path/to/report.sarif
+```
+
+<Warning>
+`vet` will only include policy violations in the SARIF report. A policy must be provided using `--filter` or `--filter-suite` flag during scan.
+</Warning>
+
+## Viewing Results
+
+Once the SARIF report is uploaded to GitHub, policy violations will be available in the GitHub Security tab. This provides a centralized view of policy violations across different repositories.
+
+<img src="/images/vet-github-code-scanning-alerts.png" alt="GitHub Code Scanning Alerts" />
+
+## Pull Request Integration
+
+The GitHub Action automatically adds comments to pull requests when security issues are found:
+
+<img src="/images/vet-github-action-pr.png" alt="vet GitHub Action PR comment" />
+
+## Best Practices
+
+<AccordionGroup>
+  <Accordion title="Policy Configuration">
+    Store your vet policies in version control (e.g., `.github/vet-policy.yml`) to ensure consistent security standards across your organization.
+  </Accordion>
+  
+  <Accordion title="Branch Protection">
+    Configure branch protection rules to require the vet check to pass before merging pull requests.
+  </Accordion>
+  
+  <Accordion title="Organization-wide Deployment">
+    Use GitHub organization templates to deploy vet across all repositories automatically.
+  </Accordion>
+</AccordionGroup>
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="SARIF Upload Fails">
+    Ensure the `security-events: write` permission is set in your workflow file and that Code Scanning is enabled for your repository.
+  </Accordion>
+  
+  <Accordion title="No Violations Reported">
+    Check that your policy configuration is correct and that violations actually exist. Use `--report-json` locally to debug.
+  </Accordion>
+</AccordionGroup>
+
+<CardGroup cols={2}>
+  <Card title="vet-action Repository" icon="github" href="https://github.com/safedep/vet-action">
+    View the complete documentation and examples
+  </Card>
+  <Card title="Full Example Workflow" icon="file-code" href="https://github.com/safedep/vet-action/blob/main/example/vet-ci.yml">
+    See a complete GitHub Actions workflow example
+  </Card>
+</CardGroup>

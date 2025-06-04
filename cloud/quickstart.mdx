@@ -1,0 +1,206 @@
+---
+title: Cloud Quick Start
+description: "Get started with SafeDep Cloud in under 10 minutes"
+---
+
+# SafeDep Cloud Quick Start
+
+SafeDep Cloud provides a control and data aggregation service on top of security tools like [vet](https://github.com/safedep/vet). This guide will help you connect your vet instances to SafeDep Cloud for centralized policy management and reporting.
+
+## What You'll Accomplish
+
+<CardGroup cols={2}>
+  <Card title="Query by Risks" icon="search">
+    Find critical vulnerabilities across all your projects
+  </Card>
+  <Card title="Policy Violations" icon="exclamation-triangle">
+    Monitor and track policy violations from all vet instances
+  </Card>
+  <Card title="Policy Management" icon="cogs">
+    Test and deploy policies across all vet deployments
+  </Card>
+  <Card title="Malware Analysis" icon="virus">
+    Enhanced threat detection with cloud-powered analysis
+  </Card>
+</CardGroup>
+
+## Method 1: Quick Onboarding with vet CLI
+
+The easiest way to get started is using the `vet cloud quickstart` command:
+
+<Steps>
+  <Step title="Install vet">
+    Ensure you have vet installed on your system
+    ```bash
+    brew tap safedep/tap
+    brew install safedep/tap/vet
+    ```
+  </Step>
+  
+  <Step title="Run Quickstart">
+    Execute the quickstart command and follow the prompts
+    ```bash
+    vet cloud quickstart
+    ```
+    
+    <iframe 
+      width="100%" 
+      height="315" 
+      src="https://www.youtube.com/embed/ykSiP547xuA" 
+      title="SafeDep Cloud Quickstart" 
+      frameBorder="0" 
+      allowFullScreen
+    ></iframe>
+  </Step>
+</Steps>
+
+## Method 2: Manual Web Onboarding
+
+<Steps>
+  <Step title="Create Account">
+    Navigate to [platform.safedep.io](https://platform.safedep.io/) and sign up
+  </Step>
+  
+  <Step title="Create Tenant">
+    Complete onboarding and create your tenant, noting the **Tenant Domain**
+  </Step>
+  
+  <Step title="Generate API Key">
+    Create an API key for use with vet in your tenant settings
+  </Step>
+</Steps>
+
+After completing onboarding, you should have:
+- **Tenant Domain** (e.g., `your-company.safedep.io`)
+- **API Key** for authentication
+
+## Configure vet with SafeDep Cloud
+
+<Info>
+Skip this section if you used the `vet cloud quickstart` command
+</Info>
+
+### Authentication Setup
+
+Configure vet to authenticate with your SafeDep Cloud tenant:
+
+```bash
+vet auth configure --tenant <tenant-domain>
+```
+
+You'll be prompted to enter your API key securely.
+
+### Verify Authentication
+
+Confirm that your vet instance can connect to SafeDep Cloud:
+
+```bash
+vet auth verify
+```
+
+## Sync Data to SafeDep Cloud
+
+Enable the sync reporting module to send vet findings to SafeDep Cloud:
+
+```bash
+vet scan -M /path/to/package-lock.json --report-sync \
+  --report-sync-project my-project \
+  --report-sync-project-version my-project-version
+```
+
+<Note>
+The example uses `package-lock.json`, but vet supports many package manifest formats and code analysis.
+</Note>
+
+## GitHub Actions Integration
+
+Configure [vet-action](https://github.com/safedep/vet-action) to sync with SafeDep Cloud:
+
+<Steps>
+  <Step title="Create Secrets">
+    Add these [GitHub Action Secrets](https://docs.github.com/en/actions/security-for-github-actions/security-guides/using-secrets-in-github-actions):
+    - `SAFEDEP_CLOUD_API_KEY`
+    - `SAFEDEP_CLOUD_TENANT_DOMAIN`
+  </Step>
+  
+  <Step title="Update Workflow">
+    Modify your vet-action workflow:
+    ```yaml
+    - name: Run vet
+      uses: safedep/vet-action@v1
+      with:
+        cloud: true
+        cloud-key: ${{ secrets.SAFEDEP_CLOUD_API_KEY }}
+        cloud-tenant: ${{ secrets.SAFEDEP_CLOUD_TENANT_DOMAIN }}
+    ```
+  </Step>
+</Steps>
+
+## Query Your Data
+
+SafeDep Cloud provides a SQL-like query interface for exploring aggregated data:
+
+<Tip>
+Authenticate first: `vet cloud login --tenant <your-tenant-domain>`
+</Tip>
+
+### List All Projects
+
+```bash
+vet cloud query execute --sql "select projects.name, projects.version from projects"
+```
+
+### Find Critical Vulnerabilities
+
+```bash
+vet cloud query execute --sql "
+  select projects.name, packages.name, packages.version, vulnerabilities.cve_id 
+  from projects
+  where projects.version = 'main' and vulnerabilities.risk = 'CRITICAL'
+"
+```
+
+### Identify Policy Violations
+
+```bash
+vet cloud query execute --sql "
+  select projects.name, packages.name, packages.version, policy_violations.rule_name 
+  from projects
+  where projects.version = 'main'
+"
+```
+
+### Export Results
+
+Export query results to CSV:
+
+```bash
+vet cloud query execute \
+  --csv results.csv \
+  --sql "select projects.name, projects.version from projects"
+```
+
+## Explore the Schema
+
+View the complete data schema to build custom queries:
+
+```bash
+vet cloud query schema
+```
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Authentication Guide" icon="key" href="/cloud/authentication">
+    Learn advanced authentication and access control
+  </Card>
+  <Card title="Malware Analysis" icon="virus" href="/cloud/malware-analysis">
+    Enable enhanced threat detection capabilities
+  </Card>
+  <Card title="FAQ" icon="question-circle" href="/cloud/faq">
+    Find answers to common questions
+  </Card>
+  <Card title="API Documentation" icon="code" href="/api-reference/introduction">
+    Integrate SafeDep Cloud with your systems
+  </Card>
+</CardGroup>

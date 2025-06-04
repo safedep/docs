@@ -1,0 +1,200 @@
+---
+title: GitLab Dependency Scanning
+description: "Native GitLab integration for dependency security scanning with vet"
+---
+
+# GitLab Dependency Scanning
+
+`vet` supports native GitLab Dependency Scanning. You can use `vet` to protect your project from malicious and vulnerable dependencies on every push and merge request to GitLab.
+
+<iframe 
+  width="100%" 
+  height="315" 
+  src="https://www.youtube.com/embed/3FwcVVR9-1c?si=EyqimClJRLCFftnB" 
+  title="GitLab Dependency Scanning with vet" 
+  frameBorder="0" 
+  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen" 
+  allowFullScreen
+></iframe>
+
+## Prerequisites
+
+<CardGroup cols={2}>
+  <Card title="GitLab Account" icon="gitlab">
+    Active GitLab account with access to your project
+  </Card>
+  <Card title="Ultimate Plan" icon="crown">
+    GitLab Group with Ultimate Plan for security scanning features
+  </Card>
+</CardGroup>
+
+<Info>
+Security scanning features are only available to GitLab Ultimate plans. Free users can still use the **vet CI component** to find vulnerabilities and check policy violations. See the [demo video](https://www.youtube.com/watch?v=QJfSRc4p-z4) for free usage.
+</Info>
+
+## Quick Setup
+
+### 1. Enable CI on Your Project
+
+Create a `.gitlab-ci.yml` file in the root of your project:
+
+```bash
+touch .gitlab-ci.yml
+```
+
+### 2. Add vet as a CI Component
+
+Add the following to your `.gitlab-ci.yml` file:
+
+```yaml
+include:
+  - component: gitlab.com/safedep/ci-components/vet/scan@v1.5.0
+```
+
+**That's it! 🚀** Commit and push changes to trigger your first scan.
+
+## Viewing Results
+
+Once configured, you'll see the `vet` job in your pipeline with a security tab:
+
+<img src="/images/gitlab/pipeline.png" alt="GitLab Pipeline with vet" />
+
+View vulnerabilities and malware findings in the security tab:
+
+<img src="/images/gitlab/vuls.png" alt="GitLab Security Vulnerabilities" />
+
+Access detailed reports at **Project > Secure > Vulnerability Report**:
+
+<img src="/images/gitlab/dashboard.png" alt="GitLab Vulnerability Dashboard" />
+
+## Configuration Options
+
+### Cloud Sync Integration
+
+Enable [SafeDep Cloud](/cloud/quickstart) synchronization:
+
+```yaml
+include:
+  - component: gitlab.com/safedep/ci-components/vet/scan@v1.5.0
+    inputs:
+      cloud: true
+      cloud-key: $CLOUD_KEY
+      cloud-tenant: $CLOUD_TENANT
+```
+
+<Warning>
+Store `CLOUD_KEY` and `CLOUD_TENANT` as GitLab CI/CD variables for security.
+</Warning>
+
+### Policy Configuration
+
+Use custom policies for advanced filtering:
+
+```yaml
+include:
+  - component: gitlab.com/safedep/ci-components/vet/scan@v1.5.0
+    inputs:
+      policy: '.gitlab/vet/policy.yml'
+```
+
+The CI job will fail if any policy violations are found. Check the logs to identify which policies were violated.
+
+### Version Control
+
+Specify which version of `vet` to use:
+
+```yaml
+include:
+  - component: gitlab.com/safedep/ci-components/vet/scan@v1.5.0
+    inputs:
+      version: v1.9.0
+```
+
+### Trusted Registries
+
+Configure trusted registry URLs for package verification:
+
+```yaml
+include:
+  - component: gitlab.com/safedep/ci-components/vet/scan@v1.5.0
+    inputs:
+      trusted-registries:
+        - https://registry.npmjs.org
+        - https://pypi.org
+```
+
+### Artifact Access
+
+Control who can access scan artifacts:
+
+```yaml
+include:
+  - component: gitlab.com/safedep/ci-components/vet/scan@v1.5.0
+    inputs:
+      artifact-access: 'developer'  # Options: all, developer, none
+```
+
+<Warning>
+Only use `all` if you're comfortable exposing security scan results publicly.
+</Warning>
+
+## Advanced Examples
+
+### Multi-Stage Pipeline
+
+```yaml
+stages:
+  - security
+  - build
+  - deploy
+
+include:
+  - component: gitlab.com/safedep/ci-components/vet/scan@v1.5.0
+    inputs:
+      stage: security
+      policy: '.gitlab/security-policy.yml'
+      cloud: true
+      cloud-key: $SAFEDEP_CLOUD_KEY
+      cloud-tenant: $SAFEDEP_CLOUD_TENANT
+
+build:
+  stage: build
+  script:
+    - echo "Building application..."
+  needs: ["vet"]
+```
+
+### Conditional Scanning
+
+```yaml
+include:
+  - component: gitlab.com/safedep/ci-components/vet/scan@v1.5.0
+    rules:
+      - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      - if: $CI_COMMIT_BRANCH == "main"
+```
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="Security Tab Not Visible">
+    Ensure your GitLab plan includes security scanning features. Ultimate plan is required for the security dashboard.
+  </Accordion>
+  
+  <Accordion title="CI Component Not Found">
+    Verify you're using the correct component path and version. Check the [GitLab Component Catalog](https://gitlab.com/explore/catalog/safedep/ci-components/vet) for the latest version.
+  </Accordion>
+  
+  <Accordion title="Policy Violations Failing Build">
+    This is expected behavior when violations are found. Review the job logs to understand which policies were violated and either fix the issues or adjust your policy configuration.
+  </Accordion>
+</AccordionGroup>
+
+<CardGroup cols={2}>
+  <Card title="GitLab Component" icon="gitlab" href="https://gitlab.com/explore/catalog/safedep/ci-components/vet">
+    View complete configuration options and examples
+  </Card>
+  <Card title="Report Issues" icon="bug" href="https://gitlab.com/safedep/ci-components/vet/-/issues">
+    Found a bug? Report it to help us improve
+  </Card>
+</CardGroup>

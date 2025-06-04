@@ -1,35 +1,72 @@
 {
   "$schema": "https://mintlify.com/docs.json",
   "theme": "mint",
-  "name": "Mint Starter Kit",
+  "name": "SafeDep Documentation",
   "colors": {
-    "primary": "#16A34A",
-    "light": "#07C983",
-    "dark": "#15803D"
+    "primary": "#6a0dad",
+    "light": "#8b3fd9",
+    "dark": "#4a0a7a"
   },
   "favicon": "/favicon.svg",
   "navigation": {
     "tabs": [
       {
-        "tab": "Guides",
+        "tab": "SafeDep vet",
         "groups": [
           {
             "group": "Get Started",
             "pages": [
               "introduction",
-              "quickstart",
-              "development"
+              "quickstart"
             ]
           },
           {
-            "group": "Essentials",
+            "group": "Concepts",
             "pages": [
-              "essentials/markdown",
-              "essentials/code",
-              "essentials/images",
-              "essentials/settings",
-              "essentials/navigation",
-              "essentials/reusable-snippets"
+              "concepts/why-vet",
+              "concepts/about"
+            ]
+          },
+          {
+            "group": "Integration Guides",
+            "pages": [
+              "guides/github-code-scanning",
+              "guides/gitlab-dependency-scanning",
+              "guides/defect-dojo-integration"
+            ]
+          },
+          {
+            "group": "SBOM & Analysis",
+            "pages": [
+              "guides/cyclonedx-sbom",
+              "guides/dependency-inventory",
+              "guides/code-analysis",
+              "guides/dependency-usage-identification"
+            ]
+          },
+          {
+            "group": "API & Automation",
+            "pages": [
+              "guides/insights-api-using-typescript",
+              "guides/terraform-supply-chain-audit"
+            ]
+          },
+          {
+            "group": "Advanced Usage",
+            "pages": [
+              "advanced/policy-as-code"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "SafeDep Cloud",
+        "groups": [
+          {
+            "group": "Cloud Platform",
+            "pages": [
+              "cloud/overview",
+              "cloud/quickstart"
             ]
           }
         ]
@@ -44,7 +81,7 @@
             ]
           },
           {
-            "group": "Endpoint Examples",
+            "group": "Endpoints",
             "pages": [
               "api-reference/endpoint/get",
               "api-reference/endpoint/create",
@@ -58,45 +95,45 @@
     "global": {
       "anchors": [
         {
-          "anchor": "Documentation",
-          "href": "https://mintlify.com/docs",
-          "icon": "book-open-cover"
+          "anchor": "GitHub",
+          "href": "https://github.com/safedep/vet",
+          "icon": "github"
         },
         {
-          "anchor": "Community",
-          "href": "https://mintlify.com/community",
-          "icon": "slack"
+          "anchor": "Discord",
+          "href": "https://discord.gg/kAGEj25dCn",
+          "icon": "discord"
         },
         {
-          "anchor": "Blog",
-          "href": "https://mintlify.com/blog",
-          "icon": "newspaper"
+          "anchor": "Website",
+          "href": "https://safedep.io",
+          "icon": "globe"
         }
       ]
     }
   },
   "logo": {
-    "light": "/logo/light.svg",
-    "dark": "/logo/dark.svg"
+    "light": "/images/vet-logo.png",
+    "dark": "/images/vet-logo.png"
   },
   "navbar": {
     "links": [
       {
         "label": "Support",
-        "href": "mailto:hi@mintlify.com"
+        "href": "mailto:support@safedep.io"
       }
     ],
     "primary": {
       "type": "button",
-      "label": "Dashboard",
-      "href": "https://dashboard.mintlify.com"
+      "label": "SafeDep Cloud",
+      "href": "https://platform.safedep.io"
     }
   },
   "footer": {
     "socials": {
-      "x": "https://x.com/mintlify",
-      "github": "https://github.com/mintlify",
-      "linkedin": "https://linkedin.com/company/mintlify"
+      "x": "https://x.com/safedepio",
+      "github": "https://github.com/safedep",
+      "linkedin": "https://linkedin.com/company/safedep"
     }
   }
 }

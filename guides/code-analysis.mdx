@@ -1,0 +1,193 @@
+---
+title: Code Analysis
+description: "Analyze code dependencies and usage patterns with vet's experimental code analysis features"
+---
+
+# Code Analysis
+
+<Warning>
+**EXPERIMENTAL**: This feature is experimental and may introduce breaking changes in future releases.
+</Warning>
+
+`vet` uses the [code](https://github.com/safedep/code/) analysis framework built on top of [tree-sitter](https://tree-sitter.github.io/tree-sitter/) parsers. The goal of this framework is to support multiple languages, source repositories (local and remote), and report the findings.
+
+`vet` uses these findings to create a Code analysis database, which can be used for enriching and analyzing manifests during scanning.
+
+## Build a Code Analysis Database
+
+Analyze code and build a SQLite database for further analysis. This is a prerequisite to enable code analysis features in `vet scan`.
+
+```bash
+vet code scan --app /path/to/app \
+    --db /tmp/code.db \
+    --lang python
+```
+
+### What This Command Does
+
+<CardGroup cols={2}>
+  <Card title="Code Analysis" icon="magnifying-glass">
+    Utilizes the code framework to analyze application code recursively in the specified directory
+  </Card>
+  <Card title="Language Support" icon="code">
+    Supports multiple languages - omit `--lang` to analyze all supported languages
+  </Card>
+  <Card title="Database Creation" icon="database">
+    Creates a SQLite database with reported findings for later use
+  </Card>
+  <Card title="Tree-sitter Powered" icon="tree">
+    Uses tree-sitter parsers for accurate code parsing and analysis
+  </Card>
+</CardGroup>
+
+### Supported Languages
+
+The code analysis framework supports multiple programming languages through tree-sitter parsers:
+
+- Python
+- JavaScript/TypeScript
+- Java
+- Go
+- And more...
+
+<Tip>
+Omit the `--lang` parameter to enable analysis of all supported languages automatically.
+</Tip>
+
+## Scan with Dependency Usage Analysis
+
+To enable code analysis features in `vet scan`, provide the Code analysis database path using the `--code` flag.
+
+Dependency usage analysis is a fundamental feature that's enabled by default when using a code database.
+
+```bash
+vet scan -D /path/to/code --code /tmp/code.db
+```
+
+### Enhanced Scanning Features
+
+When using code analysis, `vet scan` provides:
+
+1. **Manifest Analysis**: Analyzes package manifests in the specified directory
+2. **Usage Enrichment**: Uses the Code Analysis database to enrich packages with dependency usage data
+3. **Evidence-Based Results**: Shows scan summary with usage evidences and `used-in-code` tags proving actual library usage
+
+<img src="/images/vet/vet-scan-codedb.png" alt="vet scan with code analysis database" />
+
+## Practical Example
+
+Here's a complete workflow for analyzing a Python project:
+
+<Steps>
+  <Step title="Analyze Code">
+    Build the code analysis database for your Python project:
+    ```bash
+    vet code scan --app ./src \
+        --db ./analysis/code.db \
+        --lang python
+    ```
+  </Step>
+  
+  <Step title="Enhanced Scan">
+    Run vet scan with code analysis integration:
+    ```bash
+    vet scan -D . \
+        --code ./analysis/code.db \
+        --report-json results.json
+    ```
+  </Step>
+  
+  <Step title="Review Results">
+    Check the scan results for:
+    - Dependencies actually used in code vs. declared
+    - Unused dependencies that could be removed
+    - Usage patterns and import analysis
+  </Step>
+</Steps>
+
+## Benefits of Code Analysis
+
+### Accurate Risk Assessment
+
+By identifying which dependencies are actually used in your code, you can:
+- Prioritize security fixes for actively used packages
+- Ignore vulnerabilities in unused dependencies
+- Make informed decisions about dependency removal
+
+### Dependency Optimization
+
+Code analysis helps identify:
+- **Unused Dependencies**: Packages declared but never imported
+- **Over-declared Dependencies**: Libraries with minimal usage
+- **Missing Dependencies**: Code imports without corresponding declarations
+
+### Supply Chain Insights
+
+Enhanced visibility into:
+- How dependencies are used throughout your codebase
+- Which functions/modules are imported from each package
+- Dependency usage patterns and trends
+
+## Advanced Usage
+
+### Multi-language Projects
+
+For projects with multiple languages, run analysis without the `--lang` flag:
+
+```bash
+vet code scan --app ./src --db ./analysis/polyglot.db
+```
+
+### Custom Database Locations
+
+Organize analysis databases by project or environment:
+
+```bash
+# Development environment
+vet code scan --app ./src --db ./analysis/dev-code.db
+
+# Production analysis
+vet code scan --app ./dist --db ./analysis/prod-code.db
+```
+
+### Integration with CI/CD
+
+```yaml
+# GitHub Actions example
+- name: Build Code Analysis DB
+  run: vet code scan --app ./src --db ./code-analysis.db
+
+- name: Enhanced Security Scan
+  run: vet scan -D . --code ./code-analysis.db --report-sarif security.sarif
+```
+
+## Limitations and Considerations
+
+<AccordionGroup>
+  <Accordion title="Experimental Status">
+    This feature is experimental and may have breaking changes. Test thoroughly before using in production environments.
+  </Accordion>
+  
+  <Accordion title="Performance Impact">
+    Code analysis adds processing time to scans. Consider the trade-off between accuracy and speed for your use case.
+  </Accordion>
+  
+  <Accordion title="Storage Requirements">
+    Code analysis databases can become large for extensive codebases. Monitor disk usage and clean up old databases regularly.
+  </Accordion>
+</AccordionGroup>
+
+<CardGroup cols={2}>
+  <Card title="Code Framework" icon="github" href="https://github.com/safedep/code/">
+    Learn more about the underlying code analysis framework
+  </Card>
+  <Card title="Tree-sitter" icon="tree" href="https://tree-sitter.github.io/tree-sitter/">
+    Understand the parsing technology behind code analysis
+  </Card>
+  <Card title="Dependency Usage Guide" icon="search" href="/guides/dependency-usage-identification">
+    See how to identify dependency usage in your code
+  </Card>
+  <Card title="vet GitHub Repository" icon="book" href="https://github.com/safedep/vet">
+    Access the main vet documentation and examples
+  </Card>
+</CardGroup>
