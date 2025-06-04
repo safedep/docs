@@ -3,11 +3,14 @@
   "theme": "mint",
   "name": "SafeDep Documentation",
   "colors": {
-    "primary": "#6a0dad",
-    "light": "#8b3fd9",
-    "dark": "#4a0a7a"
+    "primary": "#2c4dda",
+    "light": "#5a7bef",
+    "dark": "#1a3bb8"
   },
   "favicon": "/favicon.svg",
+  "css": [
+    "/styles.css"
+  ],
   "navigation": {
     "tabs": [
       {
@@ -54,7 +57,12 @@
           {
             "group": "Advanced Usage",
             "pages": [
-              "advanced/policy-as-code"
+              "advanced/filtering",
+              "advanced/build-your-own-queries",
+              "advanced/policy-as-code",
+              "advanced/exceptions",
+              "advanced/path-exclusion",
+              "advanced/shell-completion"
             ]
           }
         ]
@@ -63,10 +71,37 @@
         "tab": "SafeDep Cloud",
         "groups": [
           {
-            "group": "Cloud Platform",
+            "group": "Getting Started",
             "pages": [
               "cloud/overview",
               "cloud/quickstart"
+            ]
+          },
+          {
+            "group": "Features & Integration",
+            "pages": [
+              "cloud/authentication",
+              "cloud/sync",
+              "cloud/malware-analysis"
+            ]
+          },
+          {
+            "group": "Support",
+            "pages": [
+              "cloud/faq"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "Community & Support",
+        "groups": [
+          {
+            "group": "Community",
+            "pages": [
+              "community",
+              "faq",
+              "resources"
             ]
           }
         ]
@@ -113,8 +148,8 @@
     }
   },
   "logo": {
-    "light": "/images/vet-logo.png",
-    "dark": "/images/vet-logo.png"
+    "light": "/images/logo-256x256.png",
+    "dark": "/images/logo-256x256.png"
   },
   "navbar": {
     "links": [

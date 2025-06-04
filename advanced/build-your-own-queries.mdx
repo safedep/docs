@@ -1,0 +1,265 @@
+---
+title: Build Your Own Queries
+description: "Speed up filtering and reporting by working with enriched JSON data dumps"
+---
+
+# Build Your Own Queries (BYOQ)
+
+Scanning package manifests is resource-intensive as it involves enriching package metadata by querying the Insights API. However, filtering and reporting may be done multiple times on the same manifest. To speed up this process, you can dump enriched data as JSON and load it for subsequent filtering and reporting operations.
+
+## Query Workflow
+
+The BYOQ workflow consists of two main phases:
+
+<Steps>
+  <Step title="Data Collection">
+    Scan and enrich package data, then dump to JSON files for reuse
+  </Step>
+  
+  <Step title="Analysis & Reporting">
+    Load enriched data for fast filtering, querying, and report generation
+  </Step>
+</Steps>
+
+### Phase 1: Dump Enriched JSON Manifests
+
+Collect and enrich package data, then save to a directory for reuse:
+
+```bash
+# Single manifest file
+vet scan --lockfile /path/to/package-lock.json --json-dump-dir /tmp/dump
+
+# Entire repository
+vet scan -D /path/to/repository --json-dump-dir /tmp/dump-many
+```
+
+<Info>
+The JSON dump contains all enriched metadata including vulnerabilities, scorecard data, licenses, and project information.
+</Info>
+
+### Phase 2: Load and Query Enriched Metadata
+
+Use the dumped data for fast filtering and reporting:
+
+```bash
+# Generate summary report
+vet query --from /tmp/dump --report-summary
+
+# Apply custom filters
+vet query --from /tmp/dump --filter 'scorecard.scores.Maintained == 0'
+```
+
+## Security Guardrails with Filters
+
+Implement security guardrails in CI/CD pipelines using the `--filter-fail` argument, which causes the command to fail if any package matches the given filter.
+
+### Example: Fail Build on Unmaintained Packages
+
+```bash
+vet query --from /path/to/json-dump \
+    --filter 'scorecard.scores.Maintained == 0' \
+    --filter-fail
+```
+
+When packages match the filter criteria, the command exits with a non-zero status:
+
+```bash
+echo $?
+# Output: 255
+```
+
+## Advanced Query Examples
+
+### Multi-Criteria Security Checks
+
+```bash
+# Fail on critical vulnerabilities OR unmaintained packages
+vet query --from /tmp/dump \
+    --filter 'vulns.critical.size() > 0 || scorecard.scores.Maintained == 0' \
+    --filter-fail
+```
+
+### License Compliance Checks
+
+```bash
+# Find packages with non-approved licenses
+vet query --from /tmp/dump \
+    --filter '!licenses.exists(p, p in ["MIT", "Apache-2.0", "BSD-3-Clause"])' \
+    --report-json compliance-violations.json
+```
+
+### Risk Assessment Queries
+
+```bash
+# Find high-risk packages (multiple criteria)
+vet query --from /tmp/dump \
+    --filter 'vulns.high.size() > 0 && scorecard.scores.Security < 5 && projects.exists(p, p.stars < 100)'
+```
+
+## CI/CD Integration
+
+<Tabs>
+  <Tab title="GitHub Actions">
+    ```yaml
+    name: Security Analysis
+    on: [push, pull_request]
+    
+    jobs:
+      security-analysis:
+        runs-on: ubuntu-latest
+        steps:
+          - uses: actions/checkout@v4
+          
+          - name: Scan and dump data
+            run: |
+              vet scan -D . --json-dump-dir ./security-data
+              
+          - name: Security guardrails
+            run: |
+              # Fail on critical vulnerabilities
+              vet query --from ./security-data \
+                --filter 'vulns.critical.size() > 0' \
+                --filter-fail
+              
+              # Fail on unmaintained packages
+              vet query --from ./security-data \
+                --filter 'scorecard.scores.Maintained == 0' \
+                --filter-fail
+                
+          - name: Generate reports
+            run: |
+              vet query --from ./security-data --report-summary
+              vet query --from ./security-data --report-json security-report.json
+              
+          - name: Upload security data
+            uses: actions/upload-artifact@v4
+            with:
+              name: security-analysis
+              path: |
+                ./security-data/
+                security-report.json
+    ```
+  </Tab>
+  
+  <Tab title="GitLab CI">
+    ```yaml
+    stages:
+      - scan
+      - analyze
+      - report
+    
+    scan-dependencies:
+      stage: scan
+      script:
+        - vet scan -D . --json-dump-dir security-data
+      artifacts:
+        paths:
+          - security-data/
+        expire_in: 1 hour
+    
+    security-gates:
+      stage: analyze
+      script:
+        # Critical vulnerability gate
+        - vet query --from security-data 
+            --filter 'vulns.critical.size() > 0' 
+            --filter-fail
+        # Maintenance gate  
+        - vet query --from security-data
+            --filter 'scorecard.scores.Maintained == 0'
+            --filter-fail
+      dependencies:
+        - scan-dependencies
+    
+    generate-reports:
+      stage: report
+      script:
+        - vet query --from security-data --report-json security-report.json
+        - vet query --from security-data --report-summary
+      dependencies:
+        - scan-dependencies
+      artifacts:
+        reports:
+          security: security-report.json
+    ```
+  </Tab>
+</Tabs>
+
+## Performance Benefits
+
+<CardGroup cols={2}>
+  <Card title="Faster Iterations" icon="clock">
+    Query enriched data multiple times without re-scanning
+  </Card>
+  <Card title="Reduced API Calls" icon="server">
+    Avoid repeated calls to external services during analysis
+  </Card>
+  <Card title="Parallel Processing" icon="parallel">
+    Enable parallel analysis workflows across different teams
+  </Card>
+  <Card title="Historical Analysis" icon="chart-line">
+    Archive and compare security posture over time
+  </Card>
+</CardGroup>
+
+## Best Practices
+
+<AccordionGroup>
+  <Accordion title="Data Management">
+    - Organize dumps by project and version
+    - Clean up old dump directories regularly
+    - Use descriptive directory names: `project-v1.2.3-20240101`
+  </Accordion>
+  
+  <Accordion title="CI/CD Optimization">
+    - Cache dump directories between pipeline runs
+    - Use artifacts to share data between pipeline stages
+    - Implement incremental scanning for large monorepos
+  </Accordion>
+  
+  <Accordion title="Security Considerations">
+    - Don't commit JSON dumps to version control
+    - Secure temporary directories in shared environments
+    - Rotate and refresh dumps periodically
+  </Accordion>
+</AccordionGroup>
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="Large Dump Sizes">
+    If JSON dumps become too large:
+    - Split analysis by directory or manifest type
+    - Use compression for storage
+    - Implement retention policies for old dumps
+  </Accordion>
+  
+  <Accordion title="Query Performance">
+    For slow query performance:
+    - Simplify complex filter expressions
+    - Use more specific filters to reduce result sets
+    - Consider breaking complex queries into multiple steps
+  </Accordion>
+  
+  <Accordion title="Filter Failures">
+    If filters aren't working as expected:
+    - Test filters with `--report-summary` first
+    - Use the filter input specification for reference
+    - Validate CEL expression syntax
+  </Accordion>
+</AccordionGroup>
+
+<CardGroup cols={2}>
+  <Card title="Filtering Guide" icon="filter" href="/advanced/filtering">
+    Learn more about creating effective filter expressions
+  </Card>
+  <Card title="CEL Language" icon="code" href="https://cel.dev/">
+    Common Expression Language documentation and examples
+  </Card>
+  <Card title="Filter Input Spec" icon="file-code" href="https://github.com/safedep/vet/blob/main/api/filter_input_spec.proto">
+    Detailed structure of filter input data
+  </Card>
+  <Card title="Policy as Code" icon="shield-check" href="/advanced/policy-as-code">
+    Implement comprehensive security policies
+  </Card>
+</CardGroup>

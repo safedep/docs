@@ -1,0 +1,297 @@
+---
+title: Exceptions Management
+description: "Manage false positives and acceptable risks with time-bound exceptions"
+---
+
+# Exceptions Management
+
+Any security scanning tool may produce false positives, issues that are acceptable for a period of time, or issues that need to be temporarily ignored. `vet` supports adding packages to an exceptions list, excluding them from scan results and reports.
+
+<Warning>
+Package exceptions must be handled with care. Any package added to the exceptions list will not be scanned and reported, including any future issues that may arise. To mitigate this risk, all exceptions must have an expiration date and cannot be permanent.
+</Warning>
+
+## Exception Use Cases
+
+<CardGroup cols={2}>
+  <Card title="False Positives" icon="exclamation-triangle">
+    Suppress known false positive vulnerability reports
+  </Card>
+  <Card title="Accepted Risk" icon="shield-check">
+    Temporarily accept specific risks during remediation planning
+  </Card>
+  <Card title="Legacy Dependencies" icon="clock">
+    Provide time-bound exceptions for legacy systems being migrated
+  </Card>
+  <Card title="Testing Dependencies" icon="flask">
+    Exclude test-only dependencies from production security policies
+  </Card>
+</CardGroup>
+
+## Generating Exceptions List
+
+### Manual Creation
+
+Create an `exceptions.yml` file with the following structure:
+
+```yaml
+description: Exceptions File for vet
+exceptions:
+  - ecosystem: npm
+    expires: "2025-05-10T00:00:00Z"
+    id: 01JKMC07KAGJYEDZX1XPAC3SKP
+    name: '@babel/plugin-transform-function-name'
+    version: 7.18.9
+    reason: "False positive - CVE doesn't apply to our usage"
+    
+  - ecosystem: npm
+    expires: "2025-05-10T00:00:00Z"
+    id: 01JKMC07KASSGYH1PHQY09QNZ3
+    name: '@babel/plugin-proposal-object-rest-spread'
+    version: 7.12.1
+    reason: "Legacy dependency being replaced in Q2 2025"
+```
+
+<Note>
+- The `expires` field is mandatory and must be in RFC3339 format
+- The `id` field must be unique and can be any unique string format
+- Adding a `reason` field is recommended for documentation
+</Note>
+
+### Automated Generation with vet
+
+Generate exceptions automatically based on filter criteria:
+
+<Steps>
+  <Step title="Scan and Dump Data">
+    Run a scan and dump raw data to a temporary directory:
+    ```bash
+    vet scan -D /path/to/repo --json-dump-dir /path/to/dump
+    ```
+  </Step>
+  
+  <Step title="Generate Conditional Exceptions">
+    Create exceptions for packages without critical or high severity issues:
+    ```bash
+    vet query --from /path/to/dump \
+        --exceptions-generate /path/to/exceptions.yml \
+        --exceptions-filter '!vulns.critical.exists(p, true) && !vulns.high.exists(p, true)' \
+        --exceptions-till '2025-05-01'
+    ```
+  </Step>
+  
+  <Step title="Review and Refine">
+    Review the generated exceptions file and remove unnecessary entries
+  </Step>
+</Steps>
+
+### Generate Exceptions for All Packages
+
+<Warning>
+Adding all packages to exceptions is not recommended. Only do this for specific use cases like baseline establishment.
+</Warning>
+
+```bash
+vet query --from /path/to/dump \
+    --exceptions-generate /path/to/exceptions.yml \
+    --exceptions-filter 'true' \
+    --exceptions-till '2025-12-12'
+```
+
+<Info>
+`--exceptions-till` is parsed as `YYYY-mm-dd` and generates a timestamp of `00:00:00` UTC for the specified date in RFC3339 format.
+</Info>
+
+## Using Exceptions
+
+### With vet-action (GitHub Actions)
+
+[vet-action](https://github.com/safedep/vet-action) supports custom exceptions configuration:
+
+<Steps>
+  <Step title="Create Exceptions File">
+    Create `.github/vet/exceptions.yml` in your repository with your exceptions configuration
+  </Step>
+  
+  <Step title="Update Workflow">
+    Update your GitHub Actions workflow to include the exceptions file:
+    ```yaml
+    - name: Vet Scan
+      uses: safedep/vet-action@v1
+      with:
+        exception-file: .github/vet/exceptions.yml
+    ```
+  </Step>
+</Steps>
+
+### With vet CLI
+
+Pass an exceptions file as a global flag to `vet`:
+
+```bash
+vet --exceptions /path/to/exceptions.yml scan -D /path/to/repo
+```
+
+<Caution>
+Do not pass the exceptions flag while generating exceptions lists in query workflows to avoid incorrect exception list generation.
+</Caution>
+
+## Exception Behavior
+
+### Matching Rules
+
+<AccordionGroup>
+  <Accordion title="Package Matching">
+    - All exceptions rules are applied only at the package level
+    - Comparisons are case-insensitive except for version
+    - Version field can use `*` to match any version
+  </Accordion>
+  
+  <Accordion title="Scope and Application">
+    - Exceptions are globally managed and shared across packages
+    - Exempted packages are ignored by all analyzers and reporters
+    - First match policy applies for exception matching
+  </Accordion>
+  
+  <Accordion title="Expiration Handling">
+    - Expired exceptions are automatically ignored
+    - No exceptions can be created without an expiry date
+    - System validates expiry dates during processing
+  </Accordion>
+</AccordionGroup>
+
+## Advanced Exception Patterns
+
+### Environment-Specific Exceptions
+
+Create different exception files for different environments:
+
+```yaml
+# exceptions-dev.yml
+description: Development environment exceptions
+exceptions:
+  - ecosystem: npm
+    expires: "2025-12-31T00:00:00Z"
+    id: dev-001
+    name: 'webpack-dev-server'
+    version: '*'
+    reason: "Development dependency with known issues"
+
+# exceptions-prod.yml  
+description: Production environment exceptions
+exceptions:
+  - ecosystem: npm
+    expires: "2025-03-01T00:00:00Z"
+    id: prod-001
+    name: 'legacy-auth-lib'
+    version: '1.2.3'
+    reason: "Critical dependency being replaced in Q1"
+```
+
+### Conditional Exception Generation
+
+Generate exceptions based on specific criteria:
+
+```bash
+# Only low and medium severity issues
+vet query --from /path/to/dump \
+    --exceptions-generate exceptions-low-medium.yml \
+    --exceptions-filter 'vulns.critical.size() == 0 && vulns.high.size() == 0' \
+    --exceptions-till '2025-06-01'
+
+# Packages with good maintenance scores
+vet query --from /path/to/dump \
+    --exceptions-generate exceptions-maintained.yml \
+    --exceptions-filter 'scorecard.scores.Maintained > 7' \
+    --exceptions-till '2025-08-01'
+```
+
+## CI/CD Integration
+
+### GitHub Actions Example
+
+```yaml
+name: Security Scan with Exceptions
+on: [push, pull_request]
+
+jobs:
+  security-scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Run security scan
+        uses: safedep/vet-action@v1
+        with:
+          exception-file: '.github/vet/exceptions.yml'
+          fail-on-violation: true
+          
+      - name: Check for expired exceptions
+        run: |
+          # Custom script to check for exceptions expiring soon
+          python scripts/check-exception-expiry.py .github/vet/exceptions.yml
+```
+
+### Exception Lifecycle Management
+
+```bash
+#!/bin/bash
+# Script to manage exception lifecycle
+
+# Check for exceptions expiring in 30 days
+vet query --from security-data \
+    --filter "exceptions.expires < timestamp('$(date -d '+30 days' -Iseconds)')" \
+    --report-json expiring-exceptions.json
+
+# Generate report of currently active exceptions
+vet --exceptions exceptions.yml scan -D . \
+    --report-json scan-with-exceptions.json
+```
+
+## Best Practices
+
+<AccordionGroup>
+  <Accordion title="Exception Hygiene">
+    - Set reasonable expiration dates (3-6 months maximum)
+    - Include detailed reasons for each exception
+    - Review exceptions monthly for relevance
+    - Remove exceptions when issues are resolved
+  </Accordion>
+  
+  <Accordion title="Documentation">
+    - Maintain a change log for exceptions
+    - Link exceptions to tickets or remediation plans
+    - Include contact information for exception owners
+  </Accordion>
+  
+  <Accordion title="Governance">
+    - Require approval for production exceptions
+    - Implement automated expiry notifications
+    - Regular security review of all active exceptions
+  </Accordion>
+</AccordionGroup>
+
+## Anti-Patterns to Avoid
+
+<Warning>
+The following patterns will NOT be implemented to prevent security risks:
+
+- **Manifest-level exceptions**: Would cause false negatives across entire manifests
+- **Permanent exceptions**: All exceptions must have expiry dates
+- **Blanket exceptions**: Avoid using `*` wildcards without specific justification
+</Warning>
+
+<CardGroup cols={2}>
+  <Card title="vet-action Documentation" icon="github" href="https://github.com/safedep/vet-action?tab=readme-ov-file#configuration">
+    Complete configuration guide for GitHub Actions integration
+  </Card>
+  <Card title="Filtering Guide" icon="filter" href="/advanced/filtering">
+    Learn how to create effective filter expressions for exceptions
+  </Card>
+  <Card title="Build Your Own Queries" icon="search" href="/advanced/build-your-own-queries">
+    Use query workflows for exception management
+  </Card>
+  <Card title="Policy as Code" icon="file-code" href="/advanced/policy-as-code">
+    Implement comprehensive security policies with exceptions
+  </Card>
+</CardGroup>

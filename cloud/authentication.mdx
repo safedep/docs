@@ -1,0 +1,255 @@
+---
+title: Authentication
+description: "Understand SafeDep Cloud authentication methods and API access patterns"
+---
+
+# Authentication
+
+SafeDep Cloud API operates on two distinct planes, each with different authentication requirements and access patterns.
+
+## API Architecture
+
+<CardGroup cols={2}>
+  <Card title="Control Plane" icon="cog">
+    Configuration, reporting, and management operations
+  </Card>
+  <Card title="Data Plane" icon="database">
+    Package insights, scanning data, and tool integrations
+  </Card>
+</CardGroup>
+
+<Info>
+All APIs for security tools integration are part of the Data Plane. These APIs require an API key for authentication and may enforce rate limits under a fair usage policy.
+</Info>
+
+## API Endpoints and Authentication
+
+| Plane         | API Endpoint         | Supported Authentication |
+|---------------|---------------------|-------------------------|
+| Data Plane    | `api.safedep.io`    | JWT and API Key         |
+| Control Plane | `cloud.safedep.io`  | JWT                     |
+
+## Data Plane Authentication
+
+### API Key Authentication
+
+The most common method for tool integrations and automated access:
+
+<Steps>
+  <Step title="Generate API Key">
+    Create an API key in your SafeDep Cloud tenant settings
+  </Step>
+  
+  <Step title="Configure Environment">
+    Set the API key in your environment:
+    ```bash
+    export SAFEDEP_API_KEY=your-api-key-here
+    export SAFEDEP_TENANT_ID=your-tenant-domain
+    ```
+  </Step>
+  
+  <Step title="Use with vet">
+    Configure vet to use the API key:
+    ```bash
+    vet auth configure --tenant your-tenant-domain
+    ```
+  </Step>
+</Steps>
+
+### JWT Authentication
+
+For programmatic access requiring higher privileges:
+
+```bash
+# Authenticate and get JWT token
+vet cloud login --tenant your-tenant-domain
+
+# Verify authentication
+vet cloud whoami
+```
+
+## Control Plane Authentication
+
+### OAuth2/OIDC Integration
+
+SafeDep Cloud Identity Service is hosted at `https://auth.safedep.io` and provides OAuth2/OIDC compatible authentication.
+
+**OpenID Configuration Endpoint:**
+```
+https://auth.safedep.io/.well-known/openid-configuration
+```
+
+### Device Code Flow
+
+For command-line tools, use the OAuth2 Device Code flow:
+
+```bash
+# Initiate device code flow
+vet cloud login --tenant your-tenant-domain
+```
+
+This opens a browser for authentication and stores the JWT token locally.
+
+### Programmatic Integration
+
+For custom applications, implement OAuth2 Device Code flow. Reference implementation available in the [vet OAuth2 client](https://github.com/safedep/vet/blob/main/cmd/cloud/login.go).
+
+## Authentication Examples
+
+### Basic API Key Usage
+
+```bash
+# Set credentials
+export SAFEDEP_API_KEY=sk_your_api_key
+export SAFEDEP_TENANT_ID=your-company
+
+# Use with vet
+vet scan -D . --report-sync \
+  --report-sync-project myproject \
+  --report-sync-project-version main
+```
+
+### JWT-Based Access
+
+```bash
+# Login with device code flow
+vet cloud login --tenant your-company
+
+# Query aggregated data
+vet cloud query execute --sql "SELECT * FROM projects"
+
+# Check authentication status
+vet cloud whoami
+```
+
+### GitHub Actions Integration
+
+```yaml
+- name: SafeDep Cloud Integration
+  uses: safedep/vet-action@v1
+  with:
+    cloud: true
+    cloud-key: ${{ secrets.SAFEDEP_CLOUD_API_KEY }}
+    cloud-tenant: ${{ secrets.SAFEDEP_CLOUD_TENANT }}
+  env:
+    GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+```
+
+## Authentication Headers
+
+### API Key Authentication
+
+```bash
+curl -H "Authorization: Bearer sk_your_api_key" \
+     -H "X-Tenant-ID: your-tenant" \
+     https://api.safedep.io/v2/insights/packages
+```
+
+### JWT Authentication
+
+```bash
+curl -H "Authorization: Bearer your_jwt_token" \
+     -H "X-Tenant-ID: your-tenant" \
+     https://cloud.safedep.io/api/v1/projects
+```
+
+## Rate Limiting
+
+### Data Plane Limits
+
+- **API Key Authentication**: Fair usage policy applies
+- **Rate limits**: 1000 requests per hour per API key
+- **Burst capacity**: 50 requests per minute
+
+### Control Plane Limits
+
+- **JWT Authentication**: Higher limits for authenticated users
+- **Rate limits**: 5000 requests per hour per user
+- **Burst capacity**: 100 requests per minute
+
+## Security Best Practices
+
+<AccordionGroup>
+  <Accordion title="API Key Management">
+    - Store API keys securely using environment variables or secret management systems
+    - Rotate API keys regularly (recommended: every 90 days)
+    - Use different API keys for different environments (dev, staging, prod)
+    - Never commit API keys to version control
+  </Accordion>
+  
+  <Accordion title="JWT Token Handling">
+    - JWT tokens have limited lifetime (typically 24 hours)
+    - Implement automatic token refresh in long-running applications
+    - Store tokens securely in the OS keychain when possible
+    - Clear tokens on logout or application termination
+  </Accordion>
+  
+  <Accordion title="Network Security">
+    - Always use HTTPS for API communications
+    - Implement proper certificate validation
+    - Consider IP allowlisting for production environments
+    - Monitor authentication logs for suspicious activity
+  </Accordion>
+</AccordionGroup>
+
+## Troubleshooting Authentication Issues
+
+### Common Error Messages
+
+#### "User Not Found"
+```
+ERRO[0001] Failed to execute whoami: rpc error: code = Unauthenticated desc = unauthenticated: Token auth failed: No user: record not found
+```
+
+**Solution**: The user is not registered. Follow the [quickstart guide](/cloud/quickstart) to register with SafeDep Cloud.
+
+#### "Tenant Not Found"
+```
+ERRO[0001] Failed to execute query: rpc error: code = Unknown desc = failed to resolve tenant: record not found
+```
+
+**Solution**: Configure the tenant using:
+```bash
+vet auth configure --tenant <tenant-domain>
+# or
+vet cloud login --tenant <tenant-domain>
+```
+
+If you've forgotten your tenant domain:
+```bash
+vet cloud login
+vet cloud whoami  # Shows available tenants
+```
+
+### Authentication Debugging
+
+```bash
+# Check current authentication status
+vet cloud whoami
+
+# Verify API key configuration
+vet auth verify
+
+# Clear stored authentication
+vet auth logout
+
+# Re-authenticate
+vet cloud login --tenant your-tenant
+```
+
+## API Reference
+
+<CardGroup cols={2}>
+  <Card title="Control Plane API" icon="cog" href="https://cloud.safedep.io/api/docs">
+    Management and configuration API documentation
+  </Card>
+  <Card title="Data Plane API" icon="database" href="https://api.safedep.io/docs">
+    Insights and scanning data API documentation
+  </Card>
+  <Card title="OAuth2 Implementation" icon="code" href="https://github.com/safedep/vet/blob/main/cmd/cloud/login.go">
+    Reference implementation for OAuth2 Device Code flow
+  </Card>
+  <Card title="Quick Start Guide" icon="rocket" href="/cloud/quickstart">
+    Get started with SafeDep Cloud authentication
+  </Card>
+</CardGroup>

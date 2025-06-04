@@ -1,0 +1,33 @@
+/* Remove underline from links on hover */
+a:hover {
+  text-decoration: none !important;
+}
+
+/* Ensure no underline on card links */
+.card a:hover,
+.card-link:hover {
+  text-decoration: none !important;
+}
+
+/* Remove underline from navigation links */
+nav a:hover,
+.nav-link:hover {
+  text-decoration: none !important;
+}
+
+/* Remove underline from content links while maintaining visual feedback */
+.content a:hover,
+.prose a:hover {
+  text-decoration: none !important;
+}
+
+/* Remove underline from anchor links in global navigation */
+.global-anchor:hover,
+.anchor-link:hover {
+  text-decoration: none !important;
+}
+
+/* Ensure all link types don't show underline on hover */
+a[href]:hover {
+  text-decoration: none !important;
+}
