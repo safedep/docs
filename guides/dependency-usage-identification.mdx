@@ -1,0 +1,276 @@
+---
+title: Dependency Usage Identification
+description: "Identify which dependencies are actually used in your code using static code analysis"
+---
+
+# Dependency Usage Identification
+
+`vet` can identify dependency usage in your code using static code analysis. This is particularly useful when dealing with vulnerabilities, allowing you to prioritize only those dependencies you've actually used in your code.
+
+## Why Identify Dependency Usage?
+
+<CardGroup cols={2}>
+  <Card title="Risk Prioritization" icon="sort">
+    Focus security efforts on dependencies actually used in production code
+  </Card>
+  <Card title="Cleanup Opportunities" icon="trash">
+    Identify and remove unused dependencies to reduce attack surface
+  </Card>
+  <Card title="Accurate Assessment" icon="target">
+    Get precise security posture by analyzing real dependency usage
+  </Card>
+  <Card title="Faster Remediation" icon="clock">
+    Skip vulnerabilities in unused dependencies to speed up security fixes
+  </Card>
+</CardGroup>
+
+## Demo
+
+<iframe 
+  width="100%" 
+  height="400" 
+  src="https://www.youtube.com/embed/yFUuMMAsnfI?si=hqL3SIIMjlN_kNpr" 
+  title="Dependency Usage Identification Demo" 
+  frameBorder="0" 
+  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+  allowFullScreen
+></iframe>
+
+## Quick Start
+
+### Step 1: Create Code Analysis Database
+
+Build a code analysis database with dependency usage evidence for source code:
+
+```bash
+vet code scan --app src --db /tmp/dump/vet-test.db
+```
+
+This command:
+- Analyzes all source code in the `src` directory
+- Extracts dependency usage patterns and import statements
+- Stores findings in a SQLite database for later use
+
+### Step 2: Enhanced Scanning
+
+Perform a vet scan enriched with dependency usage evidence:
+
+```bash
+vet scan --code /tmp/dump/vet-test.db
+```
+
+The scan will now include:
+- **Usage Evidence**: Which dependencies are actually imported and used
+- **Used-in-Code Tags**: Clear indicators showing actual usage of libraries
+- **Prioritized Results**: Focus on dependencies with real usage
+
+## Advanced Usage Patterns
+
+### Language-Specific Analysis
+
+Analyze specific programming languages:
+
+```bash
+# Python projects
+vet code scan --app src --db python-analysis.db --lang python
+
+# JavaScript/TypeScript projects  
+vet code scan --app src --db js-analysis.db --lang javascript
+
+# Multi-language projects
+vet code scan --app src --db full-analysis.db  # Auto-detect all languages
+```
+
+### Directory Structure Analysis
+
+Analyze different parts of your application separately:
+
+```bash
+# Core application code
+vet code scan --app src/main --db main-code.db
+
+# Test code analysis
+vet code scan --app src/test --db test-code.db
+
+# Combined analysis
+vet scan --code main-code.db,test-code.db
+```
+
+### Combined with Policy Enforcement
+
+Use dependency usage information with security policies:
+
+```bash
+vet scan --code /tmp/code.db \
+  --filter 'used_in_code && (vulns.critical.size() > 0)' \
+  --filter-fail
+```
+
+This policy only fails on critical vulnerabilities in dependencies that are actually used in the code.
+
+## Understanding the Results
+
+### Usage Evidence Types
+
+The code analysis provides several types of evidence:
+
+<Tabs>
+  <Tab title="Import Statements">
+    ```python
+    # Python example
+    import requests
+    from flask import Flask
+    ```
+    These direct imports are tracked as usage evidence.
+  </Tab>
+  
+  <Tab title="Function Calls">
+    ```javascript
+    // JavaScript example
+    const axios = require('axios');
+    axios.get('https://api.example.com');
+    ```
+    Actual usage of imported modules is recorded.
+  </Tab>
+  
+  <Tab title="Module References">
+    ```java
+    // Java example
+    import org.apache.commons.lang3.StringUtils;
+    String result = StringUtils.capitalize(input);
+    ```
+    References to specific classes and methods are tracked.
+  </Tab>
+</Tabs>
+
+### Tags and Annotations
+
+In the scan results, you'll see tags like:
+- `used-in-code`: Dependency is actually used in source code
+- `imported`: Module is imported but usage unclear
+- `declared-only`: Listed in manifest but no code usage found
+
+## CI/CD Integration
+
+### GitHub Actions
+
+```yaml
+name: Usage-Aware Security Scan
+on: [push, pull_request]
+
+jobs:
+  security-scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Build code analysis database
+        run: vet code scan --app ./src --db ./code-analysis.db
+        
+      - name: Security scan with usage analysis
+        run: |
+          vet scan -D . \
+            --code ./code-analysis.db \
+            --filter 'used_in_code && (vulns.high.size() > 0 || vulns.critical.size() > 0)' \
+            --filter-fail \
+            --report-sarif security.sarif
+            
+      - name: Upload security results
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: security.sarif
+```
+
+### GitLab CI
+
+```yaml
+code-analysis:
+  stage: analysis
+  script:
+    - vet code scan --app src --db code-analysis.db
+  artifacts:
+    paths:
+      - code-analysis.db
+    expire_in: 1 hour
+
+security-scan:
+  stage: security
+  script:
+    - vet scan -D . 
+        --code code-analysis.db
+        --report-json security-report.json
+  dependencies:
+    - code-analysis
+  artifacts:
+    reports:
+      security: security-report.json
+```
+
+## Best Practices
+
+<AccordionGroup>
+  <Accordion title="Regular Updates">
+    Rebuild code analysis databases when:
+    - Source code changes significantly
+    - New dependencies are added
+    - Major refactoring occurs
+  </Accordion>
+  
+  <Accordion title="Environment Separation">
+    Create separate analyses for different environments:
+    ```bash
+    # Production code only
+    vet code scan --app src/main --db prod-analysis.db
+    
+    # Include test code
+    vet code scan --app src --db full-analysis.db
+    ```
+  </Accordion>
+  
+  <Accordion title="Policy Design">
+    Design policies that leverage usage information:
+    - Prioritize used dependencies for security fixes
+    - Allow more lenient policies for unused dependencies
+    - Focus on critical paths and core functionality
+  </Accordion>
+</AccordionGroup>
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="No Usage Evidence Found">
+    If no usage evidence is detected:
+    - Verify the source code path is correct
+    - Check that the programming language is supported
+    - Ensure import statements follow standard conventions
+  </Accordion>
+  
+  <Accordion title="Database Size Issues">
+    For large codebases:
+    - Analyze specific directories instead of entire projects
+    - Clean up old analysis databases regularly
+    - Consider using separate databases for different components
+  </Accordion>
+  
+  <Accordion title="Performance Considerations">
+    Code analysis adds processing time:
+    - Cache analysis databases between builds
+    - Run analysis incrementally when possible
+    - Consider the trade-off between accuracy and speed
+  </Accordion>
+</AccordionGroup>
+
+<CardGroup cols={2}>
+  <Card title="Code Analysis Guide" icon="magnifying-glass" href="/guides/code-analysis">
+    Learn more about vet's code analysis capabilities
+  </Card>
+  <Card title="Policy as Code" icon="file-code" href="/advanced/policy-as-code">
+    Create policies that leverage usage information
+  </Card>
+  <Card title="vet Repository" icon="github" href="https://github.com/safedep/vet">
+    Access complete documentation and examples
+  </Card>
+  <Card title="Tree-sitter Parsers" icon="tree" href="https://tree-sitter.github.io/tree-sitter/">
+    Learn about the parsing technology behind code analysis
+  </Card>
+</CardGroup>

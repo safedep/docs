@@ -1,0 +1,383 @@
+---
+title: FAQ
+description: "Frequently asked questions about using vet and troubleshooting common issues"
+---
+
+Common questions and troubleshooting tips for using vet effectively.
+
+## General Usage
+
+### How do I disable the banner?
+
+Set the environment variable to disable the vet banner:
+
+```bash
+export VET_DISABLE_BANNER=1
+```
+
+### Something is wrong! How do I debug this?
+
+Run vet with debug logging enabled to diagnose issues:
+
+<Tabs>
+  <Tab title="Log to stdout">
+    ```bash
+    vet scan -D /path/to/repo --silent --log-level debug
+    ```
+  </Tab>
+  
+  <Tab title="Log to file">
+    ```bash
+    vet scan -D /path/to/repo --log-file /tmp/vet.log --log-level debug
+    ```
+  </Tab>
+  
+  <Tab title="Verbose output">
+    ```bash
+    vet scan -D /path/to/repo --verbose
+    ```
+  </Tab>
+</Tabs>
+
+## Installation and Setup
+
+### Which version of vet should I use?
+
+Always use the latest stable version available:
+
+```bash
+# Check current version
+vet version
+
+# Update via Homebrew (macOS/Linux)
+brew upgrade safedep/tap/vet
+
+# Or download latest from GitHub releases
+# https://github.com/safedep/vet/releases
+```
+
+### Does vet work offline?
+
+vet requires internet connectivity to:
+- Download vulnerability data from OSV database
+- Fetch OpenSSF Scorecard information
+- Access package registry metadata
+- Communicate with SafeDep Cloud (if using cloud features)
+
+For offline environments, consider using the JSON dump workflow to cache data locally.
+
+### What package managers does vet support?
+
+vet supports a wide range of package managers:
+
+<AccordionGroup>
+  <Accordion title="JavaScript/Node.js">
+    - package-lock.json (npm)
+    - yarn.lock (Yarn)
+    - pnpm-lock.yaml (pnpm)
+  </Accordion>
+  
+  <Accordion title="Python">
+    - requirements.txt
+    - Pipfile.lock (Pipenv)
+    - poetry.lock (Poetry)
+    - pyproject.toml
+  </Accordion>
+  
+  <Accordion title="Java/JVM">
+    - pom.xml (Maven)
+    - build.gradle (Gradle)
+    - gradle.lockfile
+  </Accordion>
+  
+  <Accordion title="Go">
+    - go.mod
+    - go.sum
+  </Accordion>
+  
+  <Accordion title="Other Languages">
+    - Gemfile.lock (Ruby)
+    - Cargo.lock (Rust)
+    - composer.lock (PHP)
+    - And many more...
+  </Accordion>
+</AccordionGroup>
+
+## Scanning and Analysis
+
+### Why is my scan taking so long?
+
+Several factors can affect scan performance:
+
+<AccordionGroup>
+  <Accordion title="Large dependency trees">
+    Use path exclusions to skip irrelevant directories:
+    ```bash
+    vet scan -D . --exclude 'node_modules/*' --exclude 'test/*'
+    ```
+  </Accordion>
+  
+  <Accordion title="Network latency">
+    The scan fetches metadata from external sources. Slow internet can impact performance.
+  </Accordion>
+  
+  <Accordion title="Malware analysis">
+    If using `--malware`, adjust the timeout:
+    ```bash
+    vet scan -D . --malware --malware-analysis-timeout 5m
+    ```
+  </Accordion>
+  
+  <Accordion title="First-time caching">
+    Initial scans may be slower as vet builds local caches.
+  </Accordion>
+</AccordionGroup>
+
+### No vulnerabilities found - is this correct?
+
+If vet reports no vulnerabilities:
+
+1. **Check the package versions** - Ensure you're scanning current dependency versions
+2. **Verify manifest files** - Confirm vet is finding and parsing your package manifests
+3. **Check exclusions** - Make sure you haven't excluded relevant directories
+4. **Review scan output** - Look for any warnings or errors during scanning
+
+### How do I scan only specific files?
+
+Use the `-M` flag to specify individual manifest files:
+
+```bash
+# Single file
+vet scan -M package-lock.json
+
+# Multiple files
+vet scan -M package-lock.json -M requirements.txt
+```
+
+## Policy and Filtering
+
+### How do I create effective policies?
+
+Follow these best practices for policy creation:
+
+<AccordionGroup>
+  <Accordion title="Start Simple">
+    Begin with basic vulnerability checks:
+    ```bash
+    --filter 'vulns.critical.size() > 0'
+    ```
+  </Accordion>
+  
+  <Accordion title="Test Thoroughly">
+    Test policies against known good and bad packages before deploying.
+  </Accordion>
+  
+  <Accordion title="Use Gradual Rollout">
+    Start with warning-only mode before enforcing blocking policies.
+  </Accordion>
+  
+  <Accordion title="Document Decisions">
+    Include comments in policy files explaining the rationale for each rule.
+  </Accordion>
+</AccordionGroup>
+
+### Why is my filter not working?
+
+Common filter issues and solutions:
+
+<AccordionGroup>
+  <Accordion title="Syntax Errors">
+    Verify CEL expression syntax:
+    ```bash
+    # Correct
+    vulns.critical.size() > 0
+    
+    # Incorrect
+    vulns.critical.length() > 0  # Use size(), not length()
+    ```
+  </Accordion>
+  
+  <Accordion title="Data Structure">
+    Check the filter input specification to understand available fields.
+  </Accordion>
+  
+  <Accordion title="Boolean Logic">
+    Ensure your expression evaluates to true/false:
+    ```bash
+    # Returns boolean
+    licenses.exists(p, p == "MIT")
+    
+    # Returns array (won't work as filter)
+    licenses
+    ```
+  </Accordion>
+</AccordionGroup>
+
+## Performance and Optimization
+
+### How can I speed up my scans?
+
+<AccordionGroup>
+  <Accordion title="Use Path Exclusions">
+    Skip irrelevant directories:
+    ```bash
+    vet scan -D . \
+      --exclude 'test/*' \
+      --exclude 'docs/*' \
+      --exclude 'examples/*'
+    ```
+  </Accordion>
+  
+  <Accordion title="Scan Specific Manifests">
+    Target only relevant package files:
+    ```bash
+    vet scan -M package-lock.json -M requirements.txt
+    ```
+  </Accordion>
+  
+  <Accordion title="Use JSON Dump Workflow">
+    Cache enriched data for repeated analysis:
+    ```bash
+    vet scan -D . --json-dump-dir /tmp/cache
+    vet query --from /tmp/cache --filter 'your-filter'
+    ```
+  </Accordion>
+  
+  <Accordion title="Parallel Processing">
+    For multiple projects, run scans in parallel or use CI/CD matrix builds.
+  </Accordion>
+</AccordionGroup>
+
+## CI/CD Integration
+
+### My GitHub Action is failing - what should I check?
+
+<AccordionGroup>
+  <Accordion title="Action Version">
+    Ensure you're using the latest version of vet-action:
+    ```yaml
+    uses: safedep/vet-action@v1  # Use latest stable
+    ```
+  </Accordion>
+  
+  <Accordion title="Permissions">
+    Check GitHub token permissions:
+    ```yaml
+    permissions:
+      contents: read
+      security-events: write  # For SARIF upload
+      pull-requests: write    # For PR comments
+    ```
+  </Accordion>
+  
+  <Accordion title="Secrets Configuration">
+    Verify required secrets are set if using SafeDep Cloud:
+    - `SAFEDEP_CLOUD_API_KEY`
+    - `SAFEDEP_CLOUD_TENANT_DOMAIN`
+  </Accordion>
+</AccordionGroup>
+
+### How do I handle false positives in CI?
+
+<AccordionGroup>
+  <Accordion title="Use Exceptions">
+    Create an exceptions file for known false positives:
+    ```yaml
+    - name: Run vet with exceptions
+      uses: safedep/vet-action@v1
+      with:
+        exception-file: '.github/vet-exceptions.yml'
+    ```
+  </Accordion>
+  
+  <Accordion title="Adjust Policies">
+    Refine your filter expressions to reduce noise:
+    ```bash
+    # Be more specific about severity
+    --filter 'vulns.critical.size() > 0'
+    # Instead of
+    --filter 'vulns.all.size() > 0'
+    ```
+  </Accordion>
+  
+  <Accordion title="Use Warning Mode">
+    Don't fail builds while tuning policies:
+    ```yaml
+    with:
+      fail-on-violation: false
+    ```
+  </Accordion>
+</AccordionGroup>
+
+## Data and Privacy
+
+### What data does vet collect?
+
+vet collects:
+- **Package metadata** from public registries
+- **Vulnerability data** from public databases (OSV, NVD)
+- **OpenSSF Scorecard** metrics from public repositories
+- **No source code** is ever analyzed or transmitted
+
+### Does vet send my code anywhere?
+
+No. vet only analyzes package manifest files (like package-lock.json) and does not access or transmit your source code. All analysis is based on publicly available package metadata.
+
+### Can I use vet in air-gapped environments?
+
+vet requires internet access for vulnerability data and package metadata. For air-gapped environments:
+
+1. **Pre-cache data** using the JSON dump workflow
+2. **Use proxy servers** to control external access
+3. **Consider enterprise solutions** for offline vulnerability databases
+
+## Troubleshooting
+
+### Common error messages and solutions
+
+<AccordionGroup>
+  <Accordion title="'No manifest files found'">
+    - Check that you're in the correct directory
+    - Verify manifest files exist (package-lock.json, requirements.txt, etc.)
+    - Use `-M` flag to specify files explicitly
+  </Accordion>
+  
+  <Accordion title="'Failed to download vulnerability data'">
+    - Check internet connectivity
+    - Verify firewall/proxy settings
+    - Try again later (service might be temporarily unavailable)
+  </Accordion>
+  
+  <Accordion title="'Memory limit exceeded'">
+    - Use path exclusions to reduce scope
+    - Scan smaller directory trees
+    - Increase available memory in CI/CD
+  </Accordion>
+  
+  <Accordion title="'Invalid filter expression'">
+    - Check CEL syntax
+    - Verify field names in filter input spec
+    - Test expressions incrementally
+  </Accordion>
+</AccordionGroup>
+
+## Getting More Help
+
+<CardGroup cols={2}>
+  <Card title="Community Discord" icon="discord" href="https://discord.gg/kAGEj25dCn">
+    Join our community for real-time help and discussions
+  </Card>
+  <Card title="GitHub Issues" icon="github" href="https://github.com/safedep/vet/issues">
+    Report bugs or search existing issues
+  </Card>
+  <Card title="Documentation" icon="book" href="/introduction">
+    Comprehensive guides and API reference
+  </Card>
+  <Card title="Email Support" icon="envelope" href="mailto:support@safedep.io">
+    Direct support for complex issues
+  </Card>
+</CardGroup>
+
+---
+
+Can't find your question here? Check our [community page](/community) for more ways to get help!

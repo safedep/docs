@@ -1,0 +1,364 @@
+---
+title: Terraform Supply Chain Audit
+description: "Audit Terraform provider inventory for supply chain risks using SafeDep Cloud"
+---
+
+# Audit Terraform Provider Inventory for Supply Chain Risks
+
+<Info>
+To follow this guide you need a SafeDep Cloud API Key and Tenant Identifier. See [Cloud Quickstart](/cloud/quickstart) on how to onboard to SafeDep Cloud and get an API key.
+</Info>
+
+In this guide, we'll discover [Terraform providers](https://developer.hashicorp.com/terraform/language/providers) used in a Terraform project, synchronize the inventory (BOM) with SafeDep Cloud, and execute queries to discover unofficial providers that may pose risks to developer, cloud, and CI/CD infrastructure security.
+
+## Why Audit Terraform Providers?
+
+<CardGroup cols={2}>
+  <Card title="Supply Chain Security" icon="shield-check">
+    Unofficial providers may lack security oversight and could introduce vulnerabilities
+  </Card>
+  <Card title="Compliance Requirements" icon="clipboard-check">
+    Many organizations require approved provider lists for infrastructure code
+  </Card>
+  <Card title="Risk Management" icon="chart-line">
+    Understand the security posture of your infrastructure dependencies
+  </Card>
+  <Card title="Centralized Visibility" icon="eye">
+    Get organization-wide visibility into Terraform provider usage
+  </Card>
+</CardGroup>
+
+## Prerequisites
+
+- `vet` installed (see [quickstart](/quickstart) for installation options)
+- SafeDep Cloud account with API key and tenant identifier
+- Terraform project with initialized providers (`.terraform.lock.hcl` must exist)
+
+## Scan and Discover Terraform Providers
+
+Run `vet` on your Terraform codebase to scan for Terraform providers. The Terraform project must be initialized so that `.terraform.lock.hcl` is available in the project directory.
+
+```bash
+vet scan -D /path/to/terraform-code \
+  --report-sync \
+  --report-sync-project gh/test/infra1 \
+  --report-sync-project-version main
+```
+
+### What This Command Does
+
+<Steps>
+  <Step title="Provider Discovery">
+    Scans Terraform configuration files and lock files to identify all providers
+  </Step>
+  
+  <Step title="Metadata Collection">
+    Gathers information about provider versions, sources, and tiers (official, partner, community)
+  </Step>
+  
+  <Step title="Cloud Synchronization">
+    Uploads the provider inventory to SafeDep Cloud for centralized analysis
+  </Step>
+  
+  <Step title="Project Tracking">
+    Associates findings with specific projects and versions for tracking over time
+  </Step>
+</Steps>
+
+## Query Provider Inventory
+
+Use SafeDep Cloud SQL queries to analyze your Terraform provider inventory. See [SafeDep Cloud Quickstart](/cloud/quickstart) for more details on the query interface.
+
+### Find Unofficial Terraform Providers
+
+Query for providers that are not officially maintained by HashiCorp:
+
+```sql
+SELECT 
+  projects.name, 
+  projects.version, 
+  packages.name, 
+  packages.version 
+FROM projects 
+WHERE terraform_providers.tier != 'official'
+```
+
+Execute the query using the vet CLI:
+
+```bash
+vet cloud query execute --sql "
+  SELECT projects.name, projects.version, packages.name, packages.version 
+    FROM projects 
+      WHERE terraform_providers.tier != 'official'
+"
+```
+
+### Example Response
+
+Here's an example response from our test repository:
+
+```
+┌───────────────────────────────────────────┬──────────────────┬────────────────┬──────────────────┐
+│ PACKAGES.NAME                             │ PACKAGES.VERSION │ PROJECTS.NAME  │ PROJECTS.VERSION │
+├───────────────────────────────────────────┼──────────────────┼────────────────┼──────────────────┤
+│ registry.terraform.io/hetznercloud/hcloud │ 1.48.0           │ gh/test/infra1 │ main             │
+├───────────────────────────────────────────┼──────────────────┼────────────────┼──────────────────┤
+│ registry.terraform.io/digitalocean/do    │ 2.34.1           │ gh/test/infra1 │ main             │
+└───────────────────────────────────────────┴──────────────────┴────────────────┴──────────────────┘
+```
+
+## Advanced Queries
+
+### Provider Tier Analysis
+
+Get a breakdown of providers by their tier classification:
+
+```sql
+SELECT 
+  terraform_providers.tier,
+  COUNT(*) as provider_count,
+  COUNT(DISTINCT projects.name) as project_count
+FROM projects 
+GROUP BY terraform_providers.tier
+```
+
+### Community Provider Risk Assessment
+
+Find community providers that might need additional security review:
+
+```sql
+SELECT 
+  packages.name,
+  packages.version,
+  projects.name as project,
+  terraform_providers.tier,
+  terraform_providers.source
+FROM projects 
+WHERE terraform_providers.tier = 'community'
+ORDER BY packages.name
+```
+
+### Provider Version Consistency
+
+Check for version inconsistencies across projects:
+
+```sql
+SELECT 
+  packages.name,
+  packages.version,
+  COUNT(DISTINCT projects.name) as project_count
+FROM projects 
+GROUP BY packages.name, packages.version
+HAVING COUNT(DISTINCT projects.name) > 1
+ORDER BY packages.name
+```
+
+### Recent Provider Additions
+
+Find recently added providers (useful for change tracking):
+
+```sql
+SELECT 
+  packages.name,
+  packages.version,
+  projects.name,
+  projects.created_at
+FROM projects 
+WHERE projects.created_at > DATE('now', '-7 days')
+ORDER BY projects.created_at DESC
+```
+
+## CI/CD Integration
+
+### GitHub Actions
+
+Integrate Terraform provider auditing into your CI/CD pipeline:
+
+```yaml
+name: Terraform Security Audit
+on:
+  push:
+    paths:
+      - '**/*.tf'
+      - '.terraform.lock.hcl'
+  pull_request:
+    paths:
+      - '**/*.tf'
+      - '.terraform.lock.hcl'
+
+jobs:
+  terraform-audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        
+      - name: Terraform Init
+        run: terraform init
+        
+      - name: Audit Terraform Providers
+        run: |
+          vet scan -D . \
+            --report-sync \
+            --report-sync-project ${{ github.repository }} \
+            --report-sync-project-version ${{ github.ref_name }}
+        env:
+          SAFEDEP_CLOUD_API_KEY: ${{ secrets.SAFEDEP_CLOUD_API_KEY }}
+          SAFEDEP_CLOUD_TENANT: ${{ secrets.SAFEDEP_CLOUD_TENANT }}
+          
+      - name: Check for Unofficial Providers
+        run: |
+          vet cloud query execute --sql "
+            SELECT packages.name 
+            FROM projects 
+            WHERE terraform_providers.tier != 'official' 
+              AND projects.name = '${{ github.repository }}'
+              AND projects.version = '${{ github.ref_name }}'
+          " --format json > unofficial-providers.json
+          
+          if [ $(jq length unofficial-providers.json) -gt 0 ]; then
+            echo "⚠️ Unofficial providers detected:"
+            jq -r '.[].name' unofficial-providers.json
+            echo "Please review these providers for security compliance."
+          fi
+```
+
+### GitLab CI
+
+```yaml
+stages:
+  - init
+  - audit
+
+terraform-init:
+  stage: init
+  image: hashicorp/terraform:latest
+  script:
+    - terraform init
+  artifacts:
+    paths:
+      - .terraform.lock.hcl
+    expire_in: 1 hour
+
+terraform-audit:
+  stage: audit
+  image: ghcr.io/safedep/vet:latest
+  script:
+    - vet scan -D . 
+        --report-sync 
+        --report-sync-project $CI_PROJECT_PATH 
+        --report-sync-project-version $CI_COMMIT_REF_NAME
+  dependencies:
+    - terraform-init
+  variables:
+    SAFEDEP_CLOUD_API_KEY: $SAFEDEP_CLOUD_API_KEY
+    SAFEDEP_CLOUD_TENANT: $SAFEDEP_CLOUD_TENANT
+```
+
+## Policy Enforcement
+
+### Custom Provider Policies
+
+Create policies to enforce provider compliance:
+
+```yaml
+# terraform-provider-policy.yml
+name: Terraform Provider Security Policy
+description: Enforce approved provider usage
+filters:
+  - name: unofficial-providers-blocked
+    value: |
+      terraform_providers.tier != "official" && 
+      !packages.name.startsWith("registry.terraform.io/hashicorp/")
+      
+  - name: community-providers-require-approval
+    value: |
+      terraform_providers.tier == "community" && 
+      !packages.name.contains("approved-community-providers")
+```
+
+Use the policy during scanning:
+
+```bash
+vet scan -D . \
+  --filter-suite terraform-provider-policy.yml \
+  --filter-fail \
+  --report-sync \
+  --report-sync-project myproject \
+  --report-sync-project-version main
+```
+
+## Schema Exploration
+
+List all queryable columns for Terraform providers:
+
+```bash
+vet cloud query schema
+```
+
+This will show you all available fields for building custom queries, including:
+- `terraform_providers.tier` - Provider tier (official, partner, community)
+- `terraform_providers.source` - Provider source URL
+- `terraform_providers.namespace` - Provider namespace
+- `packages.name` - Full provider name
+- `packages.version` - Provider version
+
+## Best Practices
+
+<AccordionGroup>
+  <Accordion title="Regular Audits">
+    Schedule regular provider audits:
+    - Weekly scans for critical infrastructure
+    - On every Terraform configuration change
+    - Before major deployments
+  </Accordion>
+  
+  <Accordion title="Provider Approval Process">
+    Establish a formal process for approving new providers:
+    - Security review for community providers
+    - Documentation of approved providers
+    - Regular review of existing approvals
+  </Accordion>
+  
+  <Accordion title="Version Management">
+    Track provider versions carefully:
+    - Pin provider versions in production
+    - Test new versions in staging environments
+    - Monitor for security updates
+  </Accordion>
+</AccordionGroup>
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="No Providers Found">
+    If no providers are detected:
+    - Ensure `.terraform.lock.hcl` exists (run `terraform init`)
+    - Verify Terraform configuration files are present
+    - Check that vet supports your Terraform version
+  </Accordion>
+  
+  <Accordion title="Sync Issues">
+    If synchronization to SafeDep Cloud fails:
+    - Verify API key and tenant ID are correct
+    - Check network connectivity to SafeDep Cloud
+    - Ensure project name doesn't contain special characters
+  </Accordion>
+</AccordionGroup>
+
+<CardGroup cols={2}>
+  <Card title="Terraform Provider Registry" icon="terraform" href="https://registry.terraform.io/">
+    Browse official and community Terraform providers
+  </Card>
+  <Card title="SafeDep Cloud Queries" icon="search" href="/cloud/quickstart#query-your-data">
+    Learn more about querying your infrastructure inventory
+  </Card>
+  <Card title="Supply Chain Security" icon="shield" href="https://about.gitlab.com/blog/2022/06/01/terraform-as-part-of-software-supply-chain-part1-modules-and-providers/">
+    Learn about Terraform in the software supply chain
+  </Card>
+  <Card title="vet CLI Documentation" icon="terminal" href="https://github.com/safedep/vet">
+    Complete vet CLI documentation and examples
+  </Card>
+</CardGroup>

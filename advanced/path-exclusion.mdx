@@ -1,0 +1,306 @@
+---
+title: Path Exclusion
+description: "Exclude specific directories and files from security scans using pattern matching"
+---
+
+# Path Exclusion
+
+`vet` supports path exclusions for scenarios where a directory is the scan target but certain path patterns within the directory should be excluded from the scan. This feature is available only for the `scan` command and helps optimize scan performance and focus on relevant code.
+
+## Basic Usage
+
+Exclude a single path pattern during directory scanning:
+
+```bash
+vet scan -D /path/to/target --exclude 'docs/*'
+```
+
+## Multiple Exclusions
+
+Specify multiple path patterns for exclusion:
+
+```bash
+vet scan -D /path/to/target \
+    --exclude 'docs/*' \
+    --exclude 'sub/dir/path/*' \
+    --exclude '*.test.js'
+```
+
+<Info>
+The exclusion pattern matches any path, directory, or file. Internally, it uses Go's [regexp.MatchString](https://pkg.go.dev/regexp#MatchString) function.
+</Info>
+
+## Common Exclusion Patterns
+
+### Documentation and Build Artifacts
+
+```bash
+vet scan -D . \
+    --exclude 'docs/*' \
+    --exclude 'build/*' \
+    --exclude 'dist/*' \
+    --exclude 'target/*' \
+    --exclude '*.generated.*'
+```
+
+### Test Files and Directories
+
+```bash
+vet scan -D . \
+    --exclude 'test/*' \
+    --exclude 'tests/*' \
+    --exclude '*_test.go' \
+    --exclude '*.test.js' \
+    --exclude 'spec/*'
+```
+
+### Version Control and Dependencies
+
+```bash
+vet scan -D . \
+    --exclude '.git/*' \
+    --exclude 'node_modules/*' \
+    --exclude 'vendor/*' \
+    --exclude '.venv/*' \
+    --exclude '__pycache__/*'
+```
+
+### Development Tools
+
+```bash
+vet scan -D . \
+    --exclude '.idea/*' \
+    --exclude '.vscode/*' \
+    --exclude '*.log' \
+    --exclude 'tmp/*' \
+    --exclude 'temp/*'
+```
+
+## Advanced Pattern Examples
+
+### File Extension Exclusions
+
+```bash
+# Exclude specific file types
+vet scan -D . \
+    --exclude '.*\.md$' \
+    --exclude '.*\.txt$' \
+    --exclude '.*\.png$' \
+    --exclude '.*\.jpg$'
+```
+
+### Environment-Specific Exclusions
+
+```bash
+# Development environment
+vet scan -D . \
+    --exclude 'dev-tools/*' \
+    --exclude 'local-config/*' \
+    --exclude '.*\.dev\..*'
+
+# Production build
+vet scan -D . \
+    --exclude 'test/*' \
+    --exclude 'examples/*' \
+    --exclude 'dev-dependencies/*'
+```
+
+### Complex Pattern Matching
+
+```bash
+# Exclude multiple similar patterns
+vet scan -D . \
+    --exclude '.*/test/.*' \
+    --exclude '.*/tests/.*' \
+    --exclude '.*/spec/.*' \
+    --exclude '.*/mocks/.*'
+```
+
+## Use Cases
+
+<CardGroup cols={2}>
+  <Card title="Performance Optimization" icon="zap">
+    Skip large directories that don't contain relevant package manifests
+  </Card>
+  <Card title="Test Environment Exclusion" icon="flask">
+    Focus on production dependencies by excluding test files
+  </Card>
+  <Card title="Build Artifact Filtering" icon="hammer">
+    Avoid scanning generated files and build outputs
+  </Card>
+  <Card title="Monorepo Management" icon="layers">
+    Selectively scan specific parts of large monorepos
+  </Card>
+</CardGroup>
+
+## CI/CD Integration
+
+### GitHub Actions
+
+```yaml
+name: Security Scan with Exclusions
+on: [push, pull_request]
+
+jobs:
+  security-scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Production dependencies scan
+        run: |
+          vet scan -D . \
+            --exclude 'test/*' \
+            --exclude 'tests/*' \
+            --exclude 'spec/*' \
+            --exclude 'docs/*' \
+            --exclude 'examples/*' \
+            --report-json prod-security.json
+            
+      - name: Full scan including dev dependencies
+        run: |
+          vet scan -D . \
+            --exclude 'node_modules/*' \
+            --exclude '.git/*' \
+            --report-json full-security.json
+```
+
+### Makefile Integration
+
+```makefile
+# Makefile with different scan targets
+.PHONY: scan-prod scan-dev scan-all
+
+scan-prod:
+	vet scan -D . \
+		--exclude 'test/*' \
+		--exclude 'dev-tools/*' \
+		--exclude 'docs/*' \
+		--report-json production-scan.json
+
+scan-dev:
+	vet scan -D . \
+		--exclude 'node_modules/*' \
+		--exclude '.git/*' \
+		--report-json development-scan.json
+
+scan-all:
+	vet scan -D . \
+		--exclude '.git/*' \
+		--report-json complete-scan.json
+```
+
+## Pattern Syntax Reference
+
+### Wildcards
+
+- `*` - Matches any number of characters (except path separator)
+- `?` - Matches any single character
+- `[abc]` - Matches any character in the set
+- `[a-z]` - Matches any character in the range
+
+### Anchoring
+
+- `^pattern` - Pattern must match from the beginning
+- `pattern$` - Pattern must match to the end
+- `.*pattern.*` - Pattern can match anywhere
+
+### Examples
+
+```bash
+# Exact directory match
+--exclude 'docs'           # Only matches 'docs' directory
+
+# Recursive directory match  
+--exclude 'docs/*'         # Matches everything under docs/
+
+# File extension match
+--exclude '.*\.test\.js$'  # Matches files ending in .test.js
+
+# Multiple level match
+--exclude '.*/test/.*'     # Matches any test directory at any level
+```
+
+## Best Practices
+
+<AccordionGroup>
+  <Accordion title="Performance Considerations">
+    - Exclude large directories early to improve scan speed
+    - Use specific patterns rather than broad wildcards when possible
+    - Consider the order of exclusions for optimal performance
+  </Accordion>
+  
+  <Accordion title="Maintainability">
+    - Document exclusion patterns in your project README
+    - Use consistent patterns across similar projects
+    - Group related exclusions together for clarity
+  </Accordion>
+  
+  <Accordion title="Security Impact">
+    - Ensure excluded paths don't contain critical dependencies
+    - Review exclusions regularly to prevent missing important files
+    - Consider separate scans for different environments
+  </Accordion>
+</AccordionGroup>
+
+## Configuration File Support
+
+Create a configuration file to manage complex exclusion patterns:
+
+```bash
+# .vet-exclusions
+docs/*
+test/*
+tests/*
+spec/*
+examples/*
+*.test.js
+*.spec.ts
+build/*
+dist/*
+target/*
+node_modules/*
+.git/*
+```
+
+```bash
+# Use with xargs for complex patterns
+cat .vet-exclusions | xargs -I {} vet scan -D . --exclude '{}'
+```
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="Pattern Not Matching">
+    - Test patterns with simple tools like `find` first
+    - Remember that patterns use Go's regexp syntax
+    - Use absolute paths when relative patterns don't work
+  </Accordion>
+  
+  <Accordion title="Performance Issues">
+    - Exclude the largest directories first
+    - Use more specific patterns to reduce overhead
+    - Consider scanning subdirectories individually
+  </Accordion>
+  
+  <Accordion title="Missing Important Files">
+    - Review exclusion patterns regularly
+    - Use `--report-summary` to verify expected files are scanned
+    - Test exclusions on a copy of your repository first
+  </Accordion>
+</AccordionGroup>
+
+<CardGroup cols={2}>
+  <Card title="Go Regexp Documentation" icon="code" href="https://pkg.go.dev/regexp">
+    Learn more about Go's regular expression syntax
+  </Card>
+  <Card title="Scanning Guide" icon="magnifying-glass" href="/quickstart">
+    Get started with basic vet scanning operations
+  </Card>
+  <Card title="Build Your Own Queries" icon="search" href="/advanced/build-your-own-queries">
+    Use exclusions with the query workflow for better performance
+  </Card>
+  <Card title="CI/CD Integration" icon="workflow" href="/guides/github-code-scanning">
+    Integrate path exclusions into your automated workflows
+  </Card>
+</CardGroup>

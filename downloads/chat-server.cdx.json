@@ -1,0 +1,3246 @@
+{
+  "$schema": "http://cyclonedx.org/schema/bom-1.6.schema.json",
+  "bomFormat": "CycloneDX",
+  "specVersion": "1.6",
+  "serialNumber": "urn:uuid:c701639e-2712-11f0-80c1-ce0e918120bb",
+  "version": 1,
+  "metadata": {
+    "timestamp": "2025-05-02T05:04:33Z",
+    "tools": {
+      "components": [
+        {
+          "bom-ref": "pkg:golang/safedep/vet@v1.10.3-a77be8f",
+          "type": "application",
+          "manufacturer": {
+            "name": "Safedep",
+            "url": [
+              "https://safedep.io"
+            ]
+          },
+          "group": "Safedep",
+          "name": "vet",
+          "version": "v1.10.3-a77be8f",
+          "purl": "pkg:golang/safedep/vet@v1.10.3-a77be8f"
+        }
+      ]
+    },
+    "component": {
+      "bom-ref": "root-application",
+      "type": "application",
+      "name": "chat-server",
+      "components": [
+        {
+          "bom-ref": "go.mod",
+          "type": "application",
+          "group": "Go",
+          "name": "/Users/omkar/projects/sih/Rail-Rakshak-backend/chat-server/go.mod"
+        },
+        {
+          "bom-ref": "package-lock.json",
+          "type": "application",
+          "group": "npm",
+          "name": "/Users/omkar/projects/sih/Rail-Rakshak-backend/chat-server/package-lock.json"
+        },
+        {
+          "bom-ref": "package.json",
+          "type": "application",
+          "group": "npm",
+          "name": "/Users/omkar/projects/sih/Rail-Rakshak-backend/chat-server/package.json"
+        },
+        {
+          "bom-ref": "requirements.txt",
+          "type": "application",
+          "group": "PyPI",
+          "name": "/Users/omkar/projects/sih/Rail-Rakshak-backend/chat-server/requirements.txt"
+        }
+      ]
+    }
+  },
+  "components": [
+    {
+      "bom-ref": "pkg:go/github.com/golang/protobuf@1.5.4",
+      "type": "library",
+      "group": "Go",
+      "name": "github.com/golang/protobuf",
+      "version": "1.5.4",
+      "licenses": [
+        {
+          "license": {
+            "id": "BSD-3-Clause",
+            "name": "BSD 3-Clause \"New\" or \"Revised\" License",
+            "url": "https://spdx.org/licenses/BSD-3-Clause.html"
+          }
+        }
+      ],
+      "purl": "pkg:go/github.com/golang/protobuf@1.5.4",
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 0.7,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 0.7,
+                "value": "go.mod"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "bom-ref": "pkg:go/github.com/pmezard/go-difflib@1.0.0",
+      "type": "library",
+      "group": "Go",
+      "name": "github.com/pmezard/go-difflib",
+      "version": "1.0.0",
+      "licenses": [
+        {
+          "license": {
+            "id": "BSD-3-Clause",
+            "name": "BSD 3-Clause \"New\" or \"Revised\" License",
+            "url": "https://spdx.org/licenses/BSD-3-Clause.html"
+          }
+        }
+      ],
+      "purl": "pkg:go/github.com/pmezard/go-difflib@1.0.0",
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 0.7,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 0.7,
+                "value": "go.mod"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "bom-ref": "pkg:go/gopkg.in/yaml.v3@3.0.1",
+      "type": "library",
+      "group": "Go",
+      "name": "gopkg.in/yaml.v3",
+      "version": "3.0.1",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT",
+            "name": "MIT License",
+            "url": "https://spdx.org/licenses/MIT.html"
+          }
+        },
+        {
+          "license": {
+            "id": "Apache-2.0",
+            "name": "Apache License 2.0",
+            "url": "https://spdx.org/licenses/Apache-2.0.html"
+          }
+        }
+      ],
+      "purl": "pkg:go/gopkg.in/yaml.v3@3.0.1",
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 0.7,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 0.7,
+                "value": "go.mod"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "bom-ref": "pkg:go/github.com/oklog/ulid/v2@2.1.0",
+      "type": "library",
+      "group": "Go",
+      "name": "github.com/oklog/ulid/v2",
+      "version": "2.1.0",
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0",
+            "name": "Apache License 2.0",
+            "url": "https://spdx.org/licenses/Apache-2.0.html"
+          }
+        }
+      ],
+      "purl": "pkg:go/github.com/oklog/ulid/v2@2.1.0",
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 0.7,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 0.7,
+                "value": "go.mod"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "bom-ref": "pkg:go/sigs.k8s.io/yaml@1.4.0",
+      "type": "library",
+      "group": "Go",
+      "name": "sigs.k8s.io/yaml",
+      "version": "1.4.0",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT",
+            "name": "MIT License",
+            "url": "https://spdx.org/licenses/MIT.html"
+          }
+        },
+        {
+          "license": {
+            "id": "BSD-3-Clause",
+            "name": "BSD 3-Clause \"New\" or \"Revised\" License",
+            "url": "https://spdx.org/licenses/BSD-3-Clause.html"
+          }
+        },
+        {
+          "license": {
+            "id": "Apache-2.0",
+            "name": "Apache License 2.0",
+            "url": "https://spdx.org/licenses/Apache-2.0.html"
+          }
+        }
+      ],
+      "purl": "pkg:go/sigs.k8s.io/yaml@1.4.0",
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 0.7,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 0.7,
+                "value": "go.mod"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "bom-ref": "pkg:go/github.com/safedep/dry@0.0.0-20250404120855-e76150dbf36f",
+      "type": "library",
+      "group": "Go",
+      "name": "github.com/safedep/dry",
+      "version": "0.0.0-20250404120855-e76150dbf36f",
+      "licenses": [],
+      "purl": "pkg:go/github.com/safedep/dry@0.0.0-20250404120855-e76150dbf36f",
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 0.7,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 0.7,
+                "value": "go.mod"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "bom-ref": "pkg:go/github.com/smacker/go-tree-sitter@0.0.0-20240827094217-dd81d9e9be82",
+      "type": "library",
+      "group": "Go",
+      "name": "github.com/smacker/go-tree-sitter",
+      "version": "0.0.0-20240827094217-dd81d9e9be82",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT",
+            "name": "MIT License",
+            "url": "https://spdx.org/licenses/MIT.html"
+          }
+        }
+      ],
+      "purl": "pkg:go/github.com/smacker/go-tree-sitter@0.0.0-20240827094217-dd81d9e9be82",
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 0.7,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 0.7,
+                "value": "go.mod"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "bom-ref": "pkg:go/stdlib@1.23.2",
+      "type": "library",
+      "group": "Go",
+      "name": "stdlib",
+      "version": "1.23.2",
+      "licenses": [],
+      "purl": "pkg:go/stdlib@1.23.2",
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 0.7,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 0.7,
+                "value": "go.mod"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "bom-ref": "pkg:go/google.golang.org/protobuf@1.36.5",
+      "type": "library",
+      "group": "Go",
+      "name": "google.golang.org/protobuf",
+      "version": "1.36.5",
+      "licenses": [
+        {
+          "license": {
+            "id": "BSD-3-Clause",
+            "name": "BSD 3-Clause \"New\" or \"Revised\" License",
+            "url": "https://spdx.org/licenses/BSD-3-Clause.html"
+          }
+        }
+      ],
+      "purl": "pkg:go/google.golang.org/protobuf@1.36.5",
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 0.7,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 0.7,
+                "value": "go.mod"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "bom-ref": "pkg:go/github.com/mitchellh/mapstructure@1.5.0",
+      "type": "library",
+      "group": "Go",
+      "name": "github.com/mitchellh/mapstructure",
+      "version": "1.5.0",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT",
+            "name": "MIT License",
+            "url": "https://spdx.org/licenses/MIT.html"
+          }
+        }
+      ],
+      "purl": "pkg:go/github.com/mitchellh/mapstructure@1.5.0",
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 0.7,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 0.7,
+                "value": "go.mod"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "bom-ref": "pkg:go/github.com/stretchr/testify@1.10.0",
+      "type": "library",
+      "group": "Go",
+      "name": "github.com/stretchr/testify",
+      "version": "1.10.0",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT",
+            "name": "MIT License",
+            "url": "https://spdx.org/licenses/MIT.html"
+          }
+        }
+      ],
+      "purl": "pkg:go/github.com/stretchr/testify@1.10.0",
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 0.7,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 0.7,
+                "value": "go.mod"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "bom-ref": "pkg:go/github.com/davecgh/go-spew@1.1.1",
+      "type": "library",
+      "group": "Go",
+      "name": "github.com/davecgh/go-spew",
+      "version": "1.1.1",
+      "licenses": [
+        {
+          "license": {
+            "id": "ISC",
+            "name": "ISC License",
+            "url": "https://spdx.org/licenses/ISC.html"
+          }
+        }
+      ],
+      "purl": "pkg:go/github.com/davecgh/go-spew@1.1.1",
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 0.7,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 0.7,
+                "value": "go.mod"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "bom-ref": "pkg:npm/es-object-atoms@1.1.1",
+      "type": "library",
+      "group": "npm",
+      "name": "es-object-atoms",
+      "version": "1.1.1",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT",
+            "name": "MIT License",
+            "url": "https://spdx.org/licenses/MIT.html"
+          }
+        }
+      ],
+      "purl": "pkg:npm/es-object-atoms@1.1.1",
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 0.7,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 0.7,
+                "value": "package-lock.json"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "bom-ref": "pkg:npm/fgrttry565be@0.0.1-security",
+      "type": "library",
+      "group": "npm",
+      "name": "fgrttry565be",
+      "version": "0.0.1-security",
+      "licenses": [],
+      "purl": "pkg:npm/fgrttry565be@0.0.1-security",
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 0.7,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 0.7,
+                "value": "package-lock.json"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "bom-ref": "pkg:npm/get-intrinsic@1.3.0",
+      "type": "library",
+      "group": "npm",
+      "name": "get-intrinsic",
+      "version": "1.3.0",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT",
+            "name": "MIT License",
+            "url": "https://spdx.org/licenses/MIT.html"
+          }
+        }
+      ],
+      "purl": "pkg:npm/get-intrinsic@1.3.0",
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 0.7,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 0.7,
+                "value": "package-lock.json"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "bom-ref": "pkg:npm/yup@1.6.1",
+      "type": "library",
+      "group": "npm",
+      "name": "yup",
+      "version": "1.6.1",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT",
+            "name": "MIT License",
+            "url": "https://spdx.org/licenses/MIT.html"
+          }
+        }
+      ],
+      "purl": "pkg:npm/yup@1.6.1",
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 0.7,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 0.7,
+                "value": "package-lock.json"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "bom-ref": "pkg:npm/@builder6/query-mongodb@0.15.2",
+      "type": "library",
+      "group": "npm",
+      "name": "@builder6/query-mongodb",
+      "version": "0.15.2",
+      "licenses": [
+        {
+          "license": {
+            "id": "non-standard",
+            "name": "non-standard"
+          }
+        }
+      ],
+      "purl": "pkg:npm/@builder6/query-mongodb@0.15.2",
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 0.7,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 0.7,
+                "value": "package-lock.json"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "bom-ref": "pkg:npm/asynckit@0.4.0",
+      "type": "library",
+      "group": "npm",
+      "name": "asynckit",
+      "version": "0.4.0",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT",
+            "name": "MIT License",
+            "url": "https://spdx.org/licenses/MIT.html"
+          }
+        }
+      ],
+      "purl": "pkg:npm/asynckit@0.4.0",
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 0.7,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 0.7,
+                "value": "package-lock.json"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "bom-ref": "pkg:npm/combined-stream@1.0.8",
+      "type": "library",
+      "group": "npm",
+      "name": "combined-stream",
+      "version": "1.0.8",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT",
+            "name": "MIT License",
+            "url": "https://spdx.org/licenses/MIT.html"
+          }
+        }
+      ],
+      "purl": "pkg:npm/combined-stream@1.0.8",
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 0.7,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 0.7,
+                "value": "package-lock.json"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "bom-ref": "pkg:npm/tiny-case@1.0.3",
+      "type": "library",
+      "group": "npm",
+      "name": "tiny-case",
+      "version": "1.0.3",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT",
+            "name": "MIT License",
+            "url": "https://spdx.org/licenses/MIT.html"
+          }
+        }
+      ],
+      "purl": "pkg:npm/tiny-case@1.0.3",
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 0.7,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 0.7,
+                "value": "package-lock.json"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "bom-ref": "pkg:npm/toposort@2.0.2",
+      "type": "library",
+      "group": "npm",
+      "name": "toposort",
+      "version": "2.0.2",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT",
+            "name": "MIT License",
+            "url": "https://spdx.org/licenses/MIT.html"
+          }
+        }
+      ],
+      "purl": "pkg:npm/toposort@2.0.2",
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 0.7,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 0.7,
+                "value": "package-lock.json"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "bom-ref": "pkg:npm/es-set-tostringtag@2.1.0",
+      "type": "library",
+      "group": "npm",
+      "name": "es-set-tostringtag",
+      "version": "2.1.0",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT",
+            "name": "MIT License",
+            "url": "https://spdx.org/licenses/MIT.html"
+          }
+        }
+      ],
+      "purl": "pkg:npm/es-set-tostringtag@2.1.0",
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 0.7,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 0.7,
+                "value": "package-lock.json"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "bom-ref": "pkg:npm/has-tostringtag@1.0.2",
+      "type": "library",
+      "group": "npm",
+      "name": "has-tostringtag",
+      "version": "1.0.2",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT",
+            "name": "MIT License",
+            "url": "https://spdx.org/licenses/MIT.html"
+          }
+        }
+      ],
+      "purl": "pkg:npm/has-tostringtag@1.0.2",
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 0.7,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 0.7,
+                "value": "package-lock.json"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "bom-ref": "pkg:npm/node-domexception@1.0.0",
+      "type": "library",
+      "group": "npm",
+      "name": "node-domexception",
+      "version": "1.0.0",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT",
+            "name": "MIT License",
+            "url": "https://spdx.org/licenses/MIT.html"
+          }
+        }
+      ],
+      "purl": "pkg:npm/node-domexception@1.0.0",
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 0.7,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 0.7,
+                "value": "package-lock.json"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "bom-ref": "pkg:npm/function-bind@1.1.2",
+      "type": "library",
+      "group": "npm",
+      "name": "function-bind",
+      "version": "1.1.2",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT",
+            "name": "MIT License",
+            "url": "https://spdx.org/licenses/MIT.html"
+          }
+        }
+      ],
+      "purl": "pkg:npm/function-bind@1.1.2",
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 0.7,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 0.7,
+                "value": "package-lock.json"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "bom-ref": "pkg:npm/form-data@4.0.2",
+      "type": "library",
+      "group": "npm",
+      "name": "form-data",
+      "version": "4.0.2",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT",
+            "name": "MIT License",
+            "url": "https://spdx.org/licenses/MIT.html"
+          }
+        }
+      ],
+      "purl": "pkg:npm/form-data@4.0.2",
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 0.7,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 0.7,
+                "value": "package-lock.json"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "bom-ref": "pkg:npm/dunder-proto@1.0.1",
+      "type": "library",
+      "group": "npm",
+      "name": "dunder-proto",
+      "version": "1.0.1",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT",
+            "name": "MIT License",
+            "url": "https://spdx.org/licenses/MIT.html"
+          }
+        }
+      ],
+      "purl": "pkg:npm/dunder-proto@1.0.1",
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 0.7,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 0.7,
+                "value": "package-lock.json"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "bom-ref": "pkg:npm/nyc-config@10.0.0",
+      "type": "library",
+      "group": "npm",
+      "name": "nyc-config",
+      "version": "10.0.0",
+      "licenses": [],
+      "purl": "pkg:npm/nyc-config@10.0.0",
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 0.7,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 0.7,
+                "value": "package-lock.json"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "bom-ref": "pkg:npm/math-intrinsics@1.1.0",
+      "type": "library",
+      "group": "npm",
+      "name": "math-intrinsics",
+      "version": "1.1.0",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT",
+            "name": "MIT License",
+            "url": "https://spdx.org/licenses/MIT.html"
+          }
+        }
+      ],
+      "purl": "pkg:npm/math-intrinsics@1.1.0",
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 0.7,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 0.7,
+                "value": "package-lock.json"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "bom-ref": "pkg:npm/call-bind-apply-helpers@1.0.2",
+      "type": "library",
+      "group": "npm",
+      "name": "call-bind-apply-helpers",
+      "version": "1.0.2",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT",
+            "name": "MIT License",
+            "url": "https://spdx.org/licenses/MIT.html"
+          }
+        }
+      ],
+      "purl": "pkg:npm/call-bind-apply-helpers@1.0.2",
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 0.7,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 0.7,
+                "value": "package-lock.json"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "bom-ref": "pkg:npm/property-expr@2.0.6",
+      "type": "library",
+      "group": "npm",
+      "name": "property-expr",
+      "version": "2.0.6",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT",
+            "name": "MIT License",
+            "url": "https://spdx.org/licenses/MIT.html"
+          }
+        }
+      ],
+      "purl": "pkg:npm/property-expr@2.0.6",
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 0.7,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 0.7,
+                "value": "package-lock.json"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "bom-ref": "pkg:npm/axios@1.8.3",
+      "type": "library",
+      "group": "npm",
+      "name": "axios",
+      "version": "1.8.3",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT",
+            "name": "MIT License",
+            "url": "https://spdx.org/licenses/MIT.html"
+          }
+        }
+      ],
+      "purl": "pkg:npm/axios@1.8.3",
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 0.7,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 0.7,
+                "value": "package-lock.json"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "bom-ref": "pkg:npm/es-errors@1.3.0",
+      "type": "library",
+      "group": "npm",
+      "name": "es-errors",
+      "version": "1.3.0",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT",
+            "name": "MIT License",
+            "url": "https://spdx.org/licenses/MIT.html"
+          }
+        }
+      ],
+      "purl": "pkg:npm/es-errors@1.3.0",
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 0.7,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 0.7,
+                "value": "package-lock.json"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "bom-ref": "pkg:npm/gopd@1.2.0",
+      "type": "library",
+      "group": "npm",
+      "name": "gopd",
+      "version": "1.2.0",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT",
+            "name": "MIT License",
+            "url": "https://spdx.org/licenses/MIT.html"
+          }
+        }
+      ],
+      "purl": "pkg:npm/gopd@1.2.0",
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 0.7,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 0.7,
+                "value": "package-lock.json"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "bom-ref": "pkg:npm/delayed-stream@1.0.0",
+      "type": "library",
+      "group": "npm",
+      "name": "delayed-stream",
+      "version": "1.0.0",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT",
+            "name": "MIT License",
+            "url": "https://spdx.org/licenses/MIT.html"
+          }
+        }
+      ],
+      "purl": "pkg:npm/delayed-stream@1.0.0",
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 0.7,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 0.7,
+                "value": "package-lock.json"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "bom-ref": "pkg:npm/type-fest@2.19.0",
+      "type": "library",
+      "group": "npm",
+      "name": "type-fest",
+      "version": "2.19.0",
+      "licenses": [
+        {
+          "license": {
+            "id": "CC0-1.0 OR MIT",
+            "name": "CC0-1.0 OR MIT"
+          }
+        }
+      ],
+      "purl": "pkg:npm/type-fest@2.19.0",
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 0.7,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 0.7,
+                "value": "package-lock.json"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "bom-ref": "pkg:npm/es-define-property@1.0.1",
+      "type": "library",
+      "group": "npm",
+      "name": "es-define-property",
+      "version": "1.0.1",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT",
+            "name": "MIT License",
+            "url": "https://spdx.org/licenses/MIT.html"
+          }
+        }
+      ],
+      "purl": "pkg:npm/es-define-property@1.0.1",
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 0.7,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 0.7,
+                "value": "package-lock.json"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "bom-ref": "pkg:npm/node-fetch@3.3.2",
+      "type": "library",
+      "group": "npm",
+      "name": "node-fetch",
+      "version": "3.3.2",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT",
+            "name": "MIT License",
+            "url": "https://spdx.org/licenses/MIT.html"
+          }
+        }
+      ],
+      "purl": "pkg:npm/node-fetch@3.3.2",
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 0.7,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 0.7,
+                "value": "package-lock.json"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "bom-ref": "pkg:npm/ws@8.18.1",
+      "type": "library",
+      "group": "npm",
+      "name": "ws",
+      "version": "8.18.1",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT",
+            "name": "MIT License",
+            "url": "https://spdx.org/licenses/MIT.html"
+          }
+        }
+      ],
+      "purl": "pkg:npm/ws@8.18.1",
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 0.7,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 0.7,
+                "value": "package-lock.json"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "bom-ref": "pkg:npm/follow-redirects@1.15.9",
+      "type": "library",
+      "group": "npm",
+      "name": "follow-redirects",
+      "version": "1.15.9",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT",
+            "name": "MIT License",
+            "url": "https://spdx.org/licenses/MIT.html"
+          }
+        }
+      ],
+      "purl": "pkg:npm/follow-redirects@1.15.9",
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 0.7,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 0.7,
+                "value": "package-lock.json"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "bom-ref": "pkg:npm/hasown@2.0.2",
+      "type": "library",
+      "group": "npm",
+      "name": "hasown",
+      "version": "2.0.2",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT",
+            "name": "MIT License",
+            "url": "https://spdx.org/licenses/MIT.html"
+          }
+        }
+      ],
+      "purl": "pkg:npm/hasown@2.0.2",
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 0.7,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 0.7,
+                "value": "package-lock.json"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "bom-ref": "pkg:npm/has-symbols@1.1.0",
+      "type": "library",
+      "group": "npm",
+      "name": "has-symbols",
+      "version": "1.1.0",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT",
+            "name": "MIT License",
+            "url": "https://spdx.org/licenses/MIT.html"
+          }
+        }
+      ],
+      "purl": "pkg:npm/has-symbols@1.1.0",
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 0.7,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 0.7,
+                "value": "package-lock.json"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "bom-ref": "pkg:npm/proxy-from-env@1.1.0",
+      "type": "library",
+      "group": "npm",
+      "name": "proxy-from-env",
+      "version": "1.1.0",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT",
+            "name": "MIT License",
+            "url": "https://spdx.org/licenses/MIT.html"
+          }
+        }
+      ],
+      "purl": "pkg:npm/proxy-from-env@1.1.0",
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 0.7,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 0.7,
+                "value": "package-lock.json"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "bom-ref": "pkg:npm/web-streams-polyfill@3.3.3",
+      "type": "library",
+      "group": "npm",
+      "name": "web-streams-polyfill",
+      "version": "3.3.3",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT",
+            "name": "MIT License",
+            "url": "https://spdx.org/licenses/MIT.html"
+          }
+        }
+      ],
+      "purl": "pkg:npm/web-streams-polyfill@3.3.3",
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 0.7,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 0.7,
+                "value": "package-lock.json"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "bom-ref": "pkg:npm/charts-e2e@0.0.1-security",
+      "type": "library",
+      "group": "npm",
+      "name": "charts-e2e",
+      "version": "0.0.1-security",
+      "licenses": [],
+      "purl": "pkg:npm/charts-e2e@0.0.1-security",
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 0.7,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 0.7,
+                "value": "package-lock.json"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "bom-ref": "pkg:npm/get-proto@1.0.1",
+      "type": "library",
+      "group": "npm",
+      "name": "get-proto",
+      "version": "1.0.1",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT",
+            "name": "MIT License",
+            "url": "https://spdx.org/licenses/MIT.html"
+          }
+        }
+      ],
+      "purl": "pkg:npm/get-proto@1.0.1",
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 0.7,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 0.7,
+                "value": "package-lock.json"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "bom-ref": "pkg:npm/fetch-blob@3.2.0",
+      "type": "library",
+      "group": "npm",
+      "name": "fetch-blob",
+      "version": "3.2.0",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT",
+            "name": "MIT License",
+            "url": "https://spdx.org/licenses/MIT.html"
+          }
+        }
+      ],
+      "purl": "pkg:npm/fetch-blob@3.2.0",
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 0.7,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 0.7,
+                "value": "package-lock.json"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "bom-ref": "pkg:npm/mime-db@1.52.0",
+      "type": "library",
+      "group": "npm",
+      "name": "mime-db",
+      "version": "1.52.0",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT",
+            "name": "MIT License",
+            "url": "https://spdx.org/licenses/MIT.html"
+          }
+        }
+      ],
+      "purl": "pkg:npm/mime-db@1.52.0",
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 0.7,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 0.7,
+                "value": "package-lock.json"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "bom-ref": "pkg:npm/data-uri-to-buffer@4.0.1",
+      "type": "library",
+      "group": "npm",
+      "name": "data-uri-to-buffer",
+      "version": "4.0.1",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT",
+            "name": "MIT License",
+            "url": "https://spdx.org/licenses/MIT.html"
+          }
+        }
+      ],
+      "purl": "pkg:npm/data-uri-to-buffer@4.0.1",
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 0.7,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 0.7,
+                "value": "package-lock.json"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "bom-ref": "pkg:npm/formdata-polyfill@4.0.10",
+      "type": "library",
+      "group": "npm",
+      "name": "formdata-polyfill",
+      "version": "4.0.10",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT",
+            "name": "MIT License",
+            "url": "https://spdx.org/licenses/MIT.html"
+          }
+        }
+      ],
+      "purl": "pkg:npm/formdata-polyfill@4.0.10",
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 0.7,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 0.7,
+                "value": "package-lock.json"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "bom-ref": "pkg:npm/mime-types@2.1.35",
+      "type": "library",
+      "group": "npm",
+      "name": "mime-types",
+      "version": "2.1.35",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT",
+            "name": "MIT License",
+            "url": "https://spdx.org/licenses/MIT.html"
+          }
+        }
+      ],
+      "purl": "pkg:npm/mime-types@2.1.35",
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 0.7,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 0.7,
+                "value": "package-lock.json"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "bom-ref": "pkg:npm/@builder6/query-mongodb@0.15.2",
+      "type": "library",
+      "group": "npm",
+      "name": "@builder6/query-mongodb",
+      "version": "0.15.2",
+      "licenses": [
+        {
+          "license": {
+            "id": "non-standard",
+            "name": "non-standard"
+          }
+        }
+      ],
+      "purl": "pkg:npm/@builder6/query-mongodb@0.15.2",
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 0.7,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 0.7,
+                "value": "package.json"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "bom-ref": "pkg:npm/charts-e2e@1.0.0",
+      "type": "library",
+      "group": "npm",
+      "name": "charts-e2e",
+      "version": "1.0.0",
+      "licenses": [],
+      "purl": "pkg:npm/charts-e2e@1.0.0",
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 0.7,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 0.7,
+                "value": "package.json"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "bom-ref": "pkg:npm/fgrttry565be@1.0.0",
+      "type": "library",
+      "group": "npm",
+      "name": "fgrttry565be",
+      "version": "1.0.0",
+      "licenses": [],
+      "purl": "pkg:npm/fgrttry565be@1.0.0",
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 0.7,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 0.7,
+                "value": "package.json"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "bom-ref": "pkg:npm/nyc-config@10.0.0",
+      "type": "library",
+      "group": "npm",
+      "name": "nyc-config",
+      "version": "10.0.0",
+      "licenses": [],
+      "purl": "pkg:npm/nyc-config@10.0.0",
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 0.7,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 0.7,
+                "value": "package.json"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "bom-ref": "pkg:pypi/langchain@0.0.0",
+      "type": "library",
+      "group": "PyPI",
+      "name": "langchain",
+      "version": "0.0.0",
+      "licenses": [],
+      "purl": "pkg:pypi/langchain@0.0.0",
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 0.7,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 0.7,
+                "value": "requirements.txt"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "bom-ref": "pkg:pypi/pyngrok@7.2.2",
+      "type": "library",
+      "group": "PyPI",
+      "name": "pyngrok",
+      "version": "7.2.2",
+      "licenses": [
+        {
+          "license": {
+            "id": "non-standard",
+            "name": "non-standard"
+          }
+        }
+      ],
+      "purl": "pkg:pypi/pyngrok@7.2.2",
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 0.7,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 0.7,
+                "value": "requirements.txt"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "bom-ref": "pkg:pypi/pyusb@1.3.0",
+      "type": "library",
+      "group": "PyPI",
+      "name": "pyusb",
+      "version": "1.3.0",
+      "licenses": [],
+      "purl": "pkg:pypi/pyusb@1.3.0",
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 0.7,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 0.7,
+                "value": "requirements.txt"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "bom-ref": "pkg:pypi/twilio@0.0.0",
+      "type": "library",
+      "group": "PyPI",
+      "name": "twilio",
+      "version": "0.0.0",
+      "licenses": [],
+      "purl": "pkg:pypi/twilio@0.0.0",
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 0.7,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 0.7,
+                "value": "requirements.txt"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "bom-ref": "pkg:pypi/django@0.0.0",
+      "type": "library",
+      "group": "PyPI",
+      "name": "django",
+      "version": "0.0.0",
+      "licenses": [],
+      "purl": "pkg:pypi/django@0.0.0",
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 0.7,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 0.7,
+                "value": "requirements.txt"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "bom-ref": "pkg:pypi/flask@0.12.2",
+      "type": "library",
+      "group": "PyPI",
+      "name": "flask",
+      "version": "0.12.2",
+      "licenses": [
+        {
+          "license": {
+            "id": "non-standard",
+            "name": "non-standard"
+          }
+        }
+      ],
+      "purl": "pkg:pypi/flask@0.12.2",
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 0.7,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 0.7,
+                "value": "requirements.txt"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "bom-ref": "pkg:pypi/flinx@0.2.0",
+      "type": "library",
+      "group": "PyPI",
+      "name": "flinx",
+      "version": "0.2.0",
+      "licenses": [],
+      "purl": "pkg:pypi/flinx@0.2.0",
+      "evidence": {
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 0.7,
+            "methods": [
+              {
+                "technique": "manifest-analysis",
+                "confidence": 0.7,
+                "value": "requirements.txt"
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ],
+  "dependencies": [
+    {
+      "ref": "pkg:go/github.com/golang/protobuf@1.5.4",
+      "dependsOn": []
+    },
+    {
+      "ref": "pkg:go/github.com/pmezard/go-difflib@1.0.0",
+      "dependsOn": []
+    },
+    {
+      "ref": "pkg:go/gopkg.in/yaml.v3@3.0.1",
+      "dependsOn": []
+    },
+    {
+      "ref": "pkg:go/github.com/oklog/ulid/v2@2.1.0",
+      "dependsOn": []
+    },
+    {
+      "ref": "pkg:go/sigs.k8s.io/yaml@1.4.0",
+      "dependsOn": []
+    },
+    {
+      "ref": "pkg:go/github.com/safedep/dry@0.0.0-20250404120855-e76150dbf36f",
+      "dependsOn": []
+    },
+    {
+      "ref": "pkg:go/github.com/smacker/go-tree-sitter@0.0.0-20240827094217-dd81d9e9be82",
+      "dependsOn": []
+    },
+    {
+      "ref": "pkg:go/stdlib@1.23.2",
+      "dependsOn": []
+    },
+    {
+      "ref": "pkg:go/google.golang.org/protobuf@1.36.5",
+      "dependsOn": []
+    },
+    {
+      "ref": "pkg:go/github.com/mitchellh/mapstructure@1.5.0",
+      "dependsOn": []
+    },
+    {
+      "ref": "pkg:go/github.com/stretchr/testify@1.10.0",
+      "dependsOn": [
+        "pkg:go/github.com/davecgh/go-spew@1.1.1",
+        "pkg:go/github.com/pmezard/go-difflib@1.0.0",
+        "pkg:go/gopkg.in/yaml.v3@3.0.1"
+      ]
+    },
+    {
+      "ref": "pkg:go/github.com/davecgh/go-spew@1.1.1",
+      "dependsOn": []
+    },
+    {
+      "ref": "pkg:npm/es-object-atoms@1.1.1",
+      "dependsOn": [
+        "pkg:npm/es-errors@1.3.0"
+      ]
+    },
+    {
+      "ref": "pkg:npm/fgrttry565be@0.0.1-security",
+      "dependsOn": []
+    },
+    {
+      "ref": "pkg:npm/get-intrinsic@1.3.0",
+      "dependsOn": [
+        "pkg:npm/hasown@2.0.2",
+        "pkg:npm/has-symbols@1.1.0",
+        "pkg:npm/gopd@1.2.0",
+        "pkg:npm/function-bind@1.1.2",
+        "pkg:npm/es-object-atoms@1.1.1",
+        "pkg:npm/es-errors@1.3.0",
+        "pkg:npm/es-define-property@1.0.1",
+        "pkg:npm/call-bind-apply-helpers@1.0.2",
+        "pkg:npm/math-intrinsics@1.1.0",
+        "pkg:npm/get-proto@1.0.1"
+      ]
+    },
+    {
+      "ref": "pkg:npm/yup@1.6.1",
+      "dependsOn": [
+        "pkg:npm/property-expr@2.0.6",
+        "pkg:npm/type-fest@2.19.0",
+        "pkg:npm/toposort@2.0.2",
+        "pkg:npm/tiny-case@1.0.3"
+      ]
+    },
+    {
+      "ref": "pkg:npm/@builder6/query-mongodb@0.15.2",
+      "dependsOn": [
+        "pkg:npm/yup@1.6.1"
+      ]
+    },
+    {
+      "ref": "pkg:npm/asynckit@0.4.0",
+      "dependsOn": []
+    },
+    {
+      "ref": "pkg:npm/combined-stream@1.0.8",
+      "dependsOn": [
+        "pkg:npm/delayed-stream@1.0.0"
+      ]
+    },
+    {
+      "ref": "pkg:npm/tiny-case@1.0.3",
+      "dependsOn": []
+    },
+    {
+      "ref": "pkg:npm/toposort@2.0.2",
+      "dependsOn": []
+    },
+    {
+      "ref": "pkg:npm/es-set-tostringtag@2.1.0",
+      "dependsOn": [
+        "pkg:npm/hasown@2.0.2",
+        "pkg:npm/has-tostringtag@1.0.2",
+        "pkg:npm/get-intrinsic@1.3.0",
+        "pkg:npm/es-errors@1.3.0"
+      ]
+    },
+    {
+      "ref": "pkg:npm/has-tostringtag@1.0.2",
+      "dependsOn": [
+        "pkg:npm/has-symbols@1.1.0"
+      ]
+    },
+    {
+      "ref": "pkg:npm/node-domexception@1.0.0",
+      "dependsOn": []
+    },
+    {
+      "ref": "pkg:npm/function-bind@1.1.2",
+      "dependsOn": []
+    },
+    {
+      "ref": "pkg:npm/form-data@4.0.2",
+      "dependsOn": [
+        "pkg:npm/asynckit@0.4.0",
+        "pkg:npm/mime-types@2.1.35",
+        "pkg:npm/es-set-tostringtag@2.1.0",
+        "pkg:npm/combined-stream@1.0.8"
+      ]
+    },
+    {
+      "ref": "pkg:npm/dunder-proto@1.0.1",
+      "dependsOn": [
+        "pkg:npm/gopd@1.2.0",
+        "pkg:npm/es-errors@1.3.0",
+        "pkg:npm/call-bind-apply-helpers@1.0.2"
+      ]
+    },
+    {
+      "ref": "pkg:npm/nyc-config@10.0.0",
+      "dependsOn": [
+        "pkg:npm/ws@8.18.1",
+        "pkg:npm/node-fetch@3.3.2",
+        "pkg:npm/axios@1.8.3"
+      ]
+    },
+    {
+      "ref": "pkg:npm/math-intrinsics@1.1.0",
+      "dependsOn": []
+    },
+    {
+      "ref": "pkg:npm/call-bind-apply-helpers@1.0.2",
+      "dependsOn": [
+        "pkg:npm/function-bind@1.1.2",
+        "pkg:npm/es-errors@1.3.0"
+      ]
+    },
+    {
+      "ref": "pkg:npm/property-expr@2.0.6",
+      "dependsOn": []
+    },
+    {
+      "ref": "pkg:npm/axios@1.8.3",
+      "dependsOn": [
+        "pkg:npm/proxy-from-env@1.1.0",
+        "pkg:npm/form-data@4.0.2",
+        "pkg:npm/follow-redirects@1.15.9"
+      ]
+    },
+    {
+      "ref": "pkg:npm/es-errors@1.3.0",
+      "dependsOn": []
+    },
+    {
+      "ref": "pkg:npm/gopd@1.2.0",
+      "dependsOn": []
+    },
+    {
+      "ref": "pkg:npm/delayed-stream@1.0.0",
+      "dependsOn": []
+    },
+    {
+      "ref": "pkg:npm/type-fest@2.19.0",
+      "dependsOn": []
+    },
+    {
+      "ref": "pkg:npm/es-define-property@1.0.1",
+      "dependsOn": []
+    },
+    {
+      "ref": "pkg:npm/node-fetch@3.3.2",
+      "dependsOn": [
+        "pkg:npm/formdata-polyfill@4.0.10",
+        "pkg:npm/fetch-blob@3.2.0",
+        "pkg:npm/data-uri-to-buffer@4.0.1"
+      ]
+    },
+    {
+      "ref": "pkg:npm/ws@8.18.1",
+      "dependsOn": []
+    },
+    {
+      "ref": "pkg:npm/follow-redirects@1.15.9",
+      "dependsOn": []
+    },
+    {
+      "ref": "pkg:npm/hasown@2.0.2",
+      "dependsOn": [
+        "pkg:npm/function-bind@1.1.2"
+      ]
+    },
+    {
+      "ref": "pkg:npm/has-symbols@1.1.0",
+      "dependsOn": []
+    },
+    {
+      "ref": "pkg:npm/proxy-from-env@1.1.0",
+      "dependsOn": []
+    },
+    {
+      "ref": "pkg:npm/web-streams-polyfill@3.3.3",
+      "dependsOn": []
+    },
+    {
+      "ref": "pkg:npm/charts-e2e@0.0.1-security",
+      "dependsOn": []
+    },
+    {
+      "ref": "pkg:npm/get-proto@1.0.1",
+      "dependsOn": [
+        "pkg:npm/es-object-atoms@1.1.1",
+        "pkg:npm/dunder-proto@1.0.1"
+      ]
+    },
+    {
+      "ref": "pkg:npm/fetch-blob@3.2.0",
+      "dependsOn": [
+        "pkg:npm/web-streams-polyfill@3.3.3",
+        "pkg:npm/node-domexception@1.0.0"
+      ]
+    },
+    {
+      "ref": "pkg:npm/mime-db@1.52.0",
+      "dependsOn": []
+    },
+    {
+      "ref": "pkg:npm/data-uri-to-buffer@4.0.1",
+      "dependsOn": []
+    },
+    {
+      "ref": "pkg:npm/formdata-polyfill@4.0.10",
+      "dependsOn": [
+        "pkg:npm/fetch-blob@3.2.0"
+      ]
+    },
+    {
+      "ref": "pkg:npm/mime-types@2.1.35",
+      "dependsOn": [
+        "pkg:npm/mime-db@1.52.0"
+      ]
+    },
+    {
+      "ref": "pkg:npm/@builder6/query-mongodb@0.15.2",
+      "dependsOn": []
+    },
+    {
+      "ref": "pkg:npm/charts-e2e@1.0.0",
+      "dependsOn": []
+    },
+    {
+      "ref": "pkg:npm/fgrttry565be@1.0.0",
+      "dependsOn": []
+    },
+    {
+      "ref": "pkg:npm/nyc-config@10.0.0",
+      "dependsOn": []
+    },
+    {
+      "ref": "pkg:pypi/langchain@0.0.0",
+      "dependsOn": []
+    },
+    {
+      "ref": "pkg:pypi/pyngrok@7.2.2",
+      "dependsOn": []
+    },
+    {
+      "ref": "pkg:pypi/pyusb@1.3.0",
+      "dependsOn": []
+    },
+    {
+      "ref": "pkg:pypi/twilio@0.0.0",
+      "dependsOn": []
+    },
+    {
+      "ref": "pkg:pypi/django@0.0.0",
+      "dependsOn": []
+    },
+    {
+      "ref": "pkg:pypi/flask@0.12.2",
+      "dependsOn": []
+    },
+    {
+      "ref": "pkg:pypi/flinx@0.2.0",
+      "dependsOn": []
+    }
+  ],
+  "vulnerabilities": [
+    {
+      "bom-ref": "GO-2025-3373/pkg:go/stdlib@1.23.2",
+      "id": "GO-2025-3373",
+      "ratings": [],
+      "description": "Usage of IPv6 zone IDs can bypass URI name constraints in crypto/x509",
+      "affects": [
+        {
+          "ref": "pkg:go/stdlib@1.23.2"
+        }
+      ]
+    },
+    {
+      "bom-ref": "GO-2025-3420/pkg:go/stdlib@1.23.2",
+      "id": "GO-2025-3420",
+      "ratings": [],
+      "description": "Sensitive headers incorrectly sent after cross-domain redirect in net/http",
+      "affects": [
+        {
+          "ref": "pkg:go/stdlib@1.23.2"
+        }
+      ]
+    },
+    {
+      "bom-ref": "GO-2025-3447/pkg:go/stdlib@1.23.2",
+      "id": "GO-2025-3447",
+      "ratings": [],
+      "description": "Timing sidechannel for P-256 on ppc64le in crypto/internal/nistec",
+      "affects": [
+        {
+          "ref": "pkg:go/stdlib@1.23.2"
+        }
+      ]
+    },
+    {
+      "bom-ref": "GO-2025-3563/pkg:go/stdlib@1.23.2",
+      "id": "GO-2025-3563",
+      "ratings": [],
+      "description": "Request smuggling due to acceptance of invalid chunked data in net/http",
+      "affects": [
+        {
+          "ref": "pkg:go/stdlib@1.23.2"
+        }
+      ]
+    },
+    {
+      "bom-ref": "MAL-2025-2227/pkg:npm/nyc-config@10.0.0",
+      "id": "MAL-2025-2227",
+      "ratings": [],
+      "description": "Malicious code in nyc-config (npm)",
+      "affects": [
+        {
+          "ref": "pkg:npm/nyc-config@10.0.0"
+        }
+      ]
+    },
+    {
+      "bom-ref": "SD-MAL-01JP09X6GH4ES9F2GH4Q57RKQD/pkg:npm/nyc-config@10.0.0",
+      "id": "SD-MAL-01JP09X6GH4ES9F2GH4Q57RKQD",
+      "source": {
+        "name": "vet",
+        "url": "https://github.com/safedep/vet"
+      },
+      "description": "**Note:** *This report is updated by a verification record*\n\nHardcoded C\u0026C, data exfiltration, preinstall execution, and lack of source info strongly indicate malicious intent.",
+      "credits": {
+        "organizations": [
+          {
+            "bom-ref": "Safedep",
+            "name": "Safedep",
+            "url": [
+              "https://safedep.io"
+            ]
+          }
+        ]
+      },
+      "affects": [
+        {
+          "ref": "pkg:npm/nyc-config@10.0.0"
+        }
+      ],
+      "properties": [
+        {
+          "name": "report-url",
+          "value": "https://platform.safedep.io/community/malysis/01JP09X6GH4ES9F2GH4Q57RKQD"
+        }
+      ]
+    },
+    {
+      "bom-ref": "MAL-2025-1541/pkg:npm/charts-e2e@1.0.0",
+      "id": "MAL-2025-1541",
+      "ratings": [],
+      "description": "Malicious code in charts-e2e (npm)",
+      "affects": [
+        {
+          "ref": "pkg:npm/charts-e2e@1.0.0"
+        }
+      ]
+    },
+    {
+      "bom-ref": "MAL-2025-1543/pkg:npm/fgrttry565be@1.0.0",
+      "id": "MAL-2025-1543",
+      "ratings": [],
+      "description": "Malicious code in fgrttry565be (npm)",
+      "affects": [
+        {
+          "ref": "pkg:npm/fgrttry565be@1.0.0"
+        }
+      ]
+    },
+    {
+      "bom-ref": "SD-MAL-01JN2FX65SZCP6YM4GMGGHRCRE/pkg:npm/fgrttry565be@1.0.0",
+      "id": "SD-MAL-01JN2FX65SZCP6YM4GMGGHRCRE",
+      "source": {
+        "name": "vet",
+        "url": "https://github.com/safedep/vet"
+      },
+      "description": "**Note:** *This report is updated by a verification record*\n\nThe package is marked as malware by OSV: `MAL-2025-1543` with source: `OSV`",
+      "credits": {
+        "organizations": [
+          {
+            "bom-ref": "Safedep",
+            "name": "Safedep",
+            "url": [
+              "https://safedep.io"
+            ]
+          }
+        ]
+      },
+      "affects": [
+        {
+          "ref": "pkg:npm/fgrttry565be@1.0.0"
+        }
+      ],
+      "properties": [
+        {
+          "name": "report-url",
+          "value": "https://platform.safedep.io/community/malysis/01JN2FX65SZCP6YM4GMGGHRCRE"
+        }
+      ]
+    },
+    {
+      "bom-ref": "GHSA-2qmj-7962-cjq8/pkg:pypi/langchain@0.0.0",
+      "id": "GHSA-2qmj-7962-cjq8",
+      "ratings": [
+        {
+          "score": 9.8,
+          "severity": "critical",
+          "method": "CVSSv3",
+          "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H"
+        },
+        {
+          "score": 9.3,
+          "severity": "unknown",
+          "method": "other",
+          "vector": "CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:H/VI:H/VA:H/SC:N/SI:N/SA:N"
+        }
+      ],
+      "description": "langchain arbitrary code execution vulnerability",
+      "recommendation": "Upgrade to version 0.3.24 or later",
+      "affects": [
+        {
+          "ref": "pkg:pypi/langchain@0.0.0"
+        }
+      ]
+    },
+    {
+      "bom-ref": "GHSA-3hjh-jh2h-vrg6/pkg:pypi/langchain@0.0.0",
+      "id": "GHSA-3hjh-jh2h-vrg6",
+      "ratings": [
+        {
+          "score": 4.2,
+          "severity": "medium",
+          "method": "CVSSv3",
+          "vector": "CVSS:3.0/AV:P/AC:H/PR:N/UI:N/S:U/C:N/I:N/A:H"
+        }
+      ],
+      "description": "Denial of service in langchain-community",
+      "recommendation": "Upgrade to version 0.3.24 or later",
+      "affects": [
+        {
+          "ref": "pkg:pypi/langchain@0.0.0"
+        }
+      ]
+    },
+    {
+      "bom-ref": "GHSA-45pg-36p6-83v9/pkg:pypi/langchain@0.0.0",
+      "id": "GHSA-45pg-36p6-83v9",
+      "ratings": [
+        {
+          "score": 4.9,
+          "severity": "medium",
+          "method": "CVSSv3",
+          "vector": "CVSS:3.0/AV:L/AC:H/PR:N/UI:N/S:U/C:L/I:L/A:L"
+        },
+        {
+          "score": 2.1,
+          "severity": "unknown",
+          "method": "other",
+          "vector": "CVSS:4.0/AV:L/AC:L/AT:P/PR:N/UI:N/VC:L/VI:L/VA:L/SC:N/SI:N/SA:N"
+        }
+      ],
+      "description": "Langchain SQL Injection vulnerability",
+      "recommendation": "Upgrade to version 0.3.24 or later",
+      "affects": [
+        {
+          "ref": "pkg:pypi/langchain@0.0.0"
+        }
+      ]
+    },
+    {
+      "bom-ref": "GHSA-57fc-8q82-gfp3/pkg:pypi/langchain@0.0.0",
+      "id": "GHSA-57fc-8q82-gfp3",
+      "ratings": [
+        {
+          "score": 9.8,
+          "severity": "critical",
+          "method": "CVSSv3",
+          "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H"
+        }
+      ],
+      "description": "langchain vulnerable to arbitrary code execution",
+      "recommendation": "Upgrade to version 0.3.24 or later",
+      "affects": [
+        {
+          "ref": "pkg:pypi/langchain@0.0.0"
+        }
+      ]
+    },
+    {
+      "bom-ref": "GHSA-655w-fm8m-m478/pkg:pypi/langchain@0.0.0",
+      "id": "GHSA-655w-fm8m-m478",
+      "ratings": [
+        {
+          "score": 8.8,
+          "severity": "high",
+          "method": "CVSSv3",
+          "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:U/C:H/I:H/A:H"
+        },
+        {
+          "score": 8.6,
+          "severity": "unknown",
+          "method": "other",
+          "vector": "CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:A/VC:H/VI:H/VA:H/SC:N/SI:N/SA:N"
+        }
+      ],
+      "description": "LangChain Server Side Request Forgery vulnerability",
+      "recommendation": "Upgrade to version 0.3.24 or later",
+      "affects": [
+        {
+          "ref": "pkg:pypi/langchain@0.0.0"
+        }
+      ]
+    },
+    {
+      "bom-ref": "GHSA-6643-h7h5-x9wh/pkg:pypi/langchain@0.0.0",
+      "id": "GHSA-6643-h7h5-x9wh",
+      "ratings": [
+        {
+          "score": 9.8,
+          "severity": "critical",
+          "method": "CVSSv3",
+          "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H"
+        },
+        {
+          "score": 9.3,
+          "severity": "unknown",
+          "method": "other",
+          "vector": "CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:H/VI:H/VA:H/SC:N/SI:N/SA:N"
+        }
+      ],
+      "description": "Langchain vulnerable to arbitrary code execution",
+      "recommendation": "Upgrade to version 0.3.24 or later",
+      "affects": [
+        {
+          "ref": "pkg:pypi/langchain@0.0.0"
+        }
+      ]
+    },
+    {
+      "bom-ref": "GHSA-6h8p-4hx9-w66c/pkg:pypi/langchain@0.0.0",
+      "id": "GHSA-6h8p-4hx9-w66c",
+      "ratings": [
+        {
+          "score": 7.5,
+          "severity": "high",
+          "method": "CVSSv3",
+          "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:N/A:N"
+        }
+      ],
+      "description": "Langchain Server-Side Request Forgery vulnerability",
+      "recommendation": "Upgrade to version 0.3.24 or later",
+      "affects": [
+        {
+          "ref": "pkg:pypi/langchain@0.0.0"
+        }
+      ]
+    },
+    {
+      "bom-ref": "GHSA-7gfq-f96f-g85j/pkg:pypi/langchain@0.0.0",
+      "id": "GHSA-7gfq-f96f-g85j",
+      "ratings": [
+        {
+          "score": 9.8,
+          "severity": "critical",
+          "method": "CVSSv3",
+          "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H"
+        },
+        {
+          "score": 9.3,
+          "severity": "unknown",
+          "method": "other",
+          "vector": "CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:H/VI:H/VA:H/SC:N/SI:N/SA:N"
+        }
+      ],
+      "description": "langchain vulnerable to arbitrary code execution",
+      "recommendation": "Upgrade to version 0.3.24 or later",
+      "affects": [
+        {
+          "ref": "pkg:pypi/langchain@0.0.0"
+        }
+      ]
+    },
+    {
+      "bom-ref": "GHSA-7q94-qpjr-xpgm/pkg:pypi/langchain@0.0.0",
+      "id": "GHSA-7q94-qpjr-xpgm",
+      "ratings": [
+        {
+          "score": 7.5,
+          "severity": "high",
+          "method": "CVSSv3",
+          "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:N/A:N"
+        },
+        {
+          "score": 8.7,
+          "severity": "unknown",
+          "method": "other",
+          "vector": "CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:H/VI:N/VA:N/SC:N/SI:N/SA:N"
+        }
+      ],
+      "description": "langchain SQL Injection vulnerability",
+      "recommendation": "Upgrade to version 0.3.24 or later",
+      "affects": [
+        {
+          "ref": "pkg:pypi/langchain@0.0.0"
+        }
+      ]
+    },
+    {
+      "bom-ref": "GHSA-8h5w-f6q9-wg35/pkg:pypi/langchain@0.0.0",
+      "id": "GHSA-8h5w-f6q9-wg35",
+      "ratings": [
+        {
+          "score": 9.8,
+          "severity": "critical",
+          "method": "CVSSv3",
+          "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H"
+        }
+      ],
+      "description": "Langchain SQL Injection vulnerability",
+      "recommendation": "Upgrade to version 0.3.24 or later",
+      "affects": [
+        {
+          "ref": "pkg:pypi/langchain@0.0.0"
+        }
+      ]
+    },
+    {
+      "bom-ref": "GHSA-92j5-3459-qgp4/pkg:pypi/langchain@0.0.0",
+      "id": "GHSA-92j5-3459-qgp4",
+      "ratings": [
+        {
+          "score": 9.8,
+          "severity": "critical",
+          "method": "CVSSv3",
+          "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H"
+        },
+        {
+          "score": 9.3,
+          "severity": "unknown",
+          "method": "other",
+          "vector": "CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:H/VI:H/VA:H/SC:N/SI:N/SA:N"
+        }
+      ],
+      "description": "LangChain vulnerable to arbitrary code execution",
+      "recommendation": "Upgrade to version 0.3.24 or later",
+      "affects": [
+        {
+          "ref": "pkg:pypi/langchain@0.0.0"
+        }
+      ]
+    },
+    {
+      "bom-ref": "GHSA-f73w-4m7g-ch9x/pkg:pypi/langchain@0.0.0",
+      "id": "GHSA-f73w-4m7g-ch9x",
+      "ratings": [
+        {
+          "score": 9.8,
+          "severity": "critical",
+          "method": "CVSSv3",
+          "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H"
+        }
+      ],
+      "description": "Langchain vulnerable to arbitrary code execution via the evaluate function in the numexpr library",
+      "recommendation": "Upgrade to version 0.3.24 or later",
+      "affects": [
+        {
+          "ref": "pkg:pypi/langchain@0.0.0"
+        }
+      ]
+    },
+    {
+      "bom-ref": "GHSA-fj32-q626-pjjc/pkg:pypi/langchain@0.0.0",
+      "id": "GHSA-fj32-q626-pjjc",
+      "ratings": [
+        {
+          "score": 9.8,
+          "severity": "critical",
+          "method": "CVSSv3",
+          "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H"
+        },
+        {
+          "score": 9.3,
+          "severity": "unknown",
+          "method": "other",
+          "vector": "CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:H/VI:H/VA:H/SC:N/SI:N/SA:N"
+        }
+      ],
+      "description": "LangChain vulnerable to arbitrary code execution",
+      "recommendation": "Upgrade to version 0.3.24 or later",
+      "affects": [
+        {
+          "ref": "pkg:pypi/langchain@0.0.0"
+        }
+      ]
+    },
+    {
+      "bom-ref": "GHSA-fprp-p869-w6q2/pkg:pypi/langchain@0.0.0",
+      "id": "GHSA-fprp-p869-w6q2",
+      "ratings": [
+        {
+          "score": 9.8,
+          "severity": "critical",
+          "method": "CVSSv3",
+          "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H"
+        },
+        {
+          "score": 9.3,
+          "severity": "unknown",
+          "method": "other",
+          "vector": "CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:H/VI:H/VA:H/SC:N/SI:N/SA:N"
+        }
+      ],
+      "description": "LangChain vulnerable to code injection",
+      "recommendation": "Upgrade to version 0.3.24 or later",
+      "affects": [
+        {
+          "ref": "pkg:pypi/langchain@0.0.0"
+        }
+      ]
+    },
+    {
+      "bom-ref": "GHSA-gwqq-6vq7-5j86/pkg:pypi/langchain@0.0.0",
+      "id": "GHSA-gwqq-6vq7-5j86",
+      "ratings": [
+        {
+          "score": 9.8,
+          "severity": "critical",
+          "method": "CVSSv3",
+          "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H"
+        },
+        {
+          "score": 9.3,
+          "severity": "unknown",
+          "method": "other",
+          "vector": "CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:H/VI:H/VA:H/SC:N/SI:N/SA:N"
+        }
+      ],
+      "description": "langchain Code Injection vulnerability",
+      "recommendation": "Upgrade to version 0.3.24 or later",
+      "affects": [
+        {
+          "ref": "pkg:pypi/langchain@0.0.0"
+        }
+      ]
+    },
+    {
+      "bom-ref": "GHSA-h59x-p739-982c/pkg:pypi/langchain@0.0.0",
+      "id": "GHSA-h59x-p739-982c",
+      "ratings": [],
+      "description": "LangChain directory traversal vulnerability",
+      "recommendation": "Upgrade to version 0.3.24 or later",
+      "affects": [
+        {
+          "ref": "pkg:pypi/langchain@0.0.0"
+        }
+      ]
+    },
+    {
+      "bom-ref": "GHSA-h9j7-5xvc-qhg5/pkg:pypi/langchain@0.0.0",
+      "id": "GHSA-h9j7-5xvc-qhg5",
+      "ratings": [
+        {
+          "score": 3.7,
+          "severity": "low",
+          "method": "CVSSv3",
+          "vector": "CVSS:3.0/AV:L/AC:H/PR:H/UI:R/S:C/C:L/I:L/A:N"
+        }
+      ],
+      "description": "langchain Server-Side Request Forgery vulnerability",
+      "recommendation": "Upgrade to version 0.3.24 or later",
+      "affects": [
+        {
+          "ref": "pkg:pypi/langchain@0.0.0"
+        }
+      ]
+    },
+    {
+      "bom-ref": "GHSA-prgp-w7vf-ch62/pkg:pypi/langchain@0.0.0",
+      "id": "GHSA-prgp-w7vf-ch62",
+      "ratings": [
+        {
+          "score": 9.8,
+          "severity": "critical",
+          "method": "CVSSv3",
+          "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H"
+        },
+        {
+          "score": 9.3,
+          "severity": "unknown",
+          "method": "other",
+          "vector": "CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:H/VI:H/VA:H/SC:N/SI:N/SA:N"
+        }
+      ],
+      "description": "LangChain vulnerable to arbitrary code execution",
+      "recommendation": "Upgrade to version 0.3.24 or later",
+      "affects": [
+        {
+          "ref": "pkg:pypi/langchain@0.0.0"
+        }
+      ]
+    },
+    {
+      "bom-ref": "GHSA-rgp8-pm28-3759/pkg:pypi/langchain@0.0.0",
+      "id": "GHSA-rgp8-pm28-3759",
+      "ratings": [
+        {
+          "score": 6.5,
+          "severity": "medium",
+          "method": "CVSSv3",
+          "vector": "CVSS:3.0/AV:N/AC:L/PR:L/UI:N/S:U/C:H/I:N/A:N"
+        }
+      ],
+      "description": "langchain vulnerable to path traversal",
+      "recommendation": "Upgrade to version 0.3.24 or later",
+      "affects": [
+        {
+          "ref": "pkg:pypi/langchain@0.0.0"
+        }
+      ]
+    },
+    {
+      "bom-ref": "GHSA-x32c-59v5-h7fg/pkg:pypi/langchain@0.0.0",
+      "id": "GHSA-x32c-59v5-h7fg",
+      "ratings": [
+        {
+          "score": 9.8,
+          "severity": "critical",
+          "method": "CVSSv3",
+          "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H"
+        },
+        {
+          "score": 9.3,
+          "severity": "unknown",
+          "method": "other",
+          "vector": "CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:H/VI:H/VA:H/SC:N/SI:N/SA:N"
+        }
+      ],
+      "description": "Langchain OS Command Injection vulnerability",
+      "recommendation": "Upgrade to version 0.3.24 or later",
+      "affects": [
+        {
+          "ref": "pkg:pypi/langchain@0.0.0"
+        }
+      ]
+    },
+    {
+      "bom-ref": "PYSEC-2023-109/pkg:pypi/langchain@0.0.0",
+      "id": "PYSEC-2023-109",
+      "ratings": [],
+      "recommendation": "Upgrade to version 0.3.24 or later",
+      "affects": [
+        {
+          "ref": "pkg:pypi/langchain@0.0.0"
+        }
+      ]
+    },
+    {
+      "bom-ref": "PYSEC-2023-110/pkg:pypi/langchain@0.0.0",
+      "id": "PYSEC-2023-110",
+      "ratings": [],
+      "recommendation": "Upgrade to version 0.3.24 or later",
+      "affects": [
+        {
+          "ref": "pkg:pypi/langchain@0.0.0"
+        }
+      ]
+    },
+    {
+      "bom-ref": "PYSEC-2023-138/pkg:pypi/langchain@0.0.0",
+      "id": "PYSEC-2023-138",
+      "ratings": [
+        {
+          "score": 9.8,
+          "severity": "critical",
+          "method": "CVSSv3",
+          "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H"
+        }
+      ],
+      "recommendation": "Upgrade to version 0.3.24 or later",
+      "affects": [
+        {
+          "ref": "pkg:pypi/langchain@0.0.0"
+        }
+      ]
+    },
+    {
+      "bom-ref": "PYSEC-2023-145/pkg:pypi/langchain@0.0.0",
+      "id": "PYSEC-2023-145",
+      "ratings": [
+        {
+          "score": 9.8,
+          "severity": "critical",
+          "method": "CVSSv3",
+          "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H"
+        }
+      ],
+      "recommendation": "Upgrade to version 0.3.24 or later",
+      "affects": [
+        {
+          "ref": "pkg:pypi/langchain@0.0.0"
+        }
+      ]
+    },
+    {
+      "bom-ref": "PYSEC-2023-146/pkg:pypi/langchain@0.0.0",
+      "id": "PYSEC-2023-146",
+      "ratings": [
+        {
+          "score": 9.8,
+          "severity": "critical",
+          "method": "CVSSv3",
+          "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H"
+        }
+      ],
+      "recommendation": "Upgrade to version 0.3.24 or later",
+      "affects": [
+        {
+          "ref": "pkg:pypi/langchain@0.0.0"
+        }
+      ]
+    },
+    {
+      "bom-ref": "PYSEC-2023-147/pkg:pypi/langchain@0.0.0",
+      "id": "PYSEC-2023-147",
+      "ratings": [
+        {
+          "score": 9.8,
+          "severity": "critical",
+          "method": "CVSSv3",
+          "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H"
+        }
+      ],
+      "recommendation": "Upgrade to version 0.3.24 or later",
+      "affects": [
+        {
+          "ref": "pkg:pypi/langchain@0.0.0"
+        }
+      ]
+    },
+    {
+      "bom-ref": "PYSEC-2023-151/pkg:pypi/langchain@0.0.0",
+      "id": "PYSEC-2023-151",
+      "ratings": [
+        {
+          "score": 9.8,
+          "severity": "critical",
+          "method": "CVSSv3",
+          "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H"
+        }
+      ],
+      "recommendation": "Upgrade to version 0.3.24 or later",
+      "affects": [
+        {
+          "ref": "pkg:pypi/langchain@0.0.0"
+        }
+      ]
+    },
+    {
+      "bom-ref": "PYSEC-2023-162/pkg:pypi/langchain@0.0.0",
+      "id": "PYSEC-2023-162",
+      "ratings": [
+        {
+          "score": 9.8,
+          "severity": "critical",
+          "method": "CVSSv3",
+          "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H"
+        }
+      ],
+      "recommendation": "Upgrade to version 0.3.24 or later",
+      "affects": [
+        {
+          "ref": "pkg:pypi/langchain@0.0.0"
+        }
+      ]
+    },
+    {
+      "bom-ref": "PYSEC-2023-18/pkg:pypi/langchain@0.0.0",
+      "id": "PYSEC-2023-18",
+      "ratings": [],
+      "recommendation": "Upgrade to version 0.3.24 or later",
+      "affects": [
+        {
+          "ref": "pkg:pypi/langchain@0.0.0"
+        }
+      ]
+    },
+    {
+      "bom-ref": "PYSEC-2023-205/pkg:pypi/langchain@0.0.0",
+      "id": "PYSEC-2023-205",
+      "ratings": [],
+      "recommendation": "Upgrade to version 0.3.24 or later",
+      "affects": [
+        {
+          "ref": "pkg:pypi/langchain@0.0.0"
+        }
+      ]
+    },
+    {
+      "bom-ref": "PYSEC-2023-91/pkg:pypi/langchain@0.0.0",
+      "id": "PYSEC-2023-91",
+      "ratings": [],
+      "recommendation": "Upgrade to version 0.3.24 or later",
+      "affects": [
+        {
+          "ref": "pkg:pypi/langchain@0.0.0"
+        }
+      ]
+    },
+    {
+      "bom-ref": "PYSEC-2023-92/pkg:pypi/langchain@0.0.0",
+      "id": "PYSEC-2023-92",
+      "ratings": [],
+      "recommendation": "Upgrade to version 0.3.24 or later",
+      "affects": [
+        {
+          "ref": "pkg:pypi/langchain@0.0.0"
+        }
+      ]
+    },
+    {
+      "bom-ref": "PYSEC-2023-98/pkg:pypi/langchain@0.0.0",
+      "id": "PYSEC-2023-98",
+      "ratings": [],
+      "recommendation": "Upgrade to version 0.3.24 or later",
+      "affects": [
+        {
+          "ref": "pkg:pypi/langchain@0.0.0"
+        }
+      ]
+    },
+    {
+      "bom-ref": "PYSEC-2024-114/pkg:pypi/langchain@0.0.0",
+      "id": "PYSEC-2024-114",
+      "ratings": [
+        {
+          "score": 9.8,
+          "severity": "critical",
+          "method": "CVSSv3",
+          "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H"
+        }
+      ],
+      "recommendation": "Upgrade to version 0.3.24 or later",
+      "affects": [
+        {
+          "ref": "pkg:pypi/langchain@0.0.0"
+        }
+      ]
+    },
+    {
+      "bom-ref": "PYSEC-2024-115/pkg:pypi/langchain@0.0.0",
+      "id": "PYSEC-2024-115",
+      "ratings": [
+        {
+          "score": 9.8,
+          "severity": "critical",
+          "method": "CVSSv3",
+          "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H"
+        }
+      ],
+      "recommendation": "Upgrade to version 0.3.24 or later",
+      "affects": [
+        {
+          "ref": "pkg:pypi/langchain@0.0.0"
+        }
+      ]
+    },
+    {
+      "bom-ref": "PYSEC-2024-118/pkg:pypi/langchain@0.0.0",
+      "id": "PYSEC-2024-118",
+      "ratings": [
+        {
+          "score": 4.7,
+          "severity": "medium",
+          "method": "CVSSv3",
+          "vector": "CVSS:3.1/AV:L/AC:H/PR:L/UI:N/S:U/C:N/I:N/A:H"
+        }
+      ],
+      "recommendation": "Upgrade to version 0.3.24 or later",
+      "affects": [
+        {
+          "ref": "pkg:pypi/langchain@0.0.0"
+        }
+      ]
+    },
+    {
+      "bom-ref": "PYSEC-2024-43/pkg:pypi/langchain@0.0.0",
+      "id": "PYSEC-2024-43",
+      "ratings": [],
+      "recommendation": "Upgrade to version 0.3.24 or later",
+      "affects": [
+        {
+          "ref": "pkg:pypi/langchain@0.0.0"
+        }
+      ]
+    },
+    {
+      "bom-ref": "GHSA-562c-5r94-xh97/pkg:pypi/flask@0.12.2",
+      "id": "GHSA-562c-5r94-xh97",
+      "ratings": [
+        {
+          "score": 7.5,
+          "severity": "high",
+          "method": "CVSSv3",
+          "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H"
+        },
+        {
+          "score": 8.7,
+          "severity": "unknown",
+          "method": "other",
+          "vector": "CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:N/VI:N/VA:H/SC:N/SI:N/SA:N"
+        }
+      ],
+      "description": "Flask is vulnerable to Denial of Service via incorrect encoding of JSON data",
+      "recommendation": "Upgrade to version 3.1.0 or later",
+      "affects": [
+        {
+          "ref": "pkg:pypi/flask@0.12.2"
+        }
+      ]
+    },
+    {
+      "bom-ref": "GHSA-5wv5-4vpf-pj6m/pkg:pypi/flask@0.12.2",
+      "id": "GHSA-5wv5-4vpf-pj6m",
+      "ratings": [
+        {
+          "score": 7.5,
+          "severity": "high",
+          "method": "CVSSv3",
+          "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H"
+        },
+        {
+          "score": 8.7,
+          "severity": "unknown",
+          "method": "other",
+          "vector": "CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:N/VI:N/VA:H/SC:N/SI:N/SA:N"
+        }
+      ],
+      "description": "Pallets Project Flask is vulnerable to Denial of Service via Unexpected memory usage",
+      "recommendation": "Upgrade to version 3.1.0 or later",
+      "affects": [
+        {
+          "ref": "pkg:pypi/flask@0.12.2"
+        }
+      ]
+    },
+    {
+      "bom-ref": "GHSA-m2qf-hxjv-5gpq/pkg:pypi/flask@0.12.2",
+      "id": "GHSA-m2qf-hxjv-5gpq",
+      "ratings": [
+        {
+          "score": 7.5,
+          "severity": "high",
+          "method": "CVSSv3",
+          "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:N/A:N"
+        },
+        {
+          "score": 8.7,
+          "severity": "unknown",
+          "method": "other",
+          "vector": "CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:H/VI:N/VA:N/SC:N/SI:N/SA:N"
+        }
+      ],
+      "description": "Flask vulnerable to possible disclosure of permanent session cookie due to missing Vary: Cookie header",
+      "recommendation": "Upgrade to version 3.1.0 or later",
+      "affects": [
+        {
+          "ref": "pkg:pypi/flask@0.12.2"
+        }
+      ]
+    },
+    {
+      "bom-ref": "PYSEC-2018-66/pkg:pypi/flask@0.12.2",
+      "id": "PYSEC-2018-66",
+      "ratings": [],
+      "recommendation": "Upgrade to version 3.1.0 or later",
+      "affects": [
+        {
+          "ref": "pkg:pypi/flask@0.12.2"
+        }
+      ]
+    },
+    {
+      "bom-ref": "PYSEC-2019-179/pkg:pypi/flask@0.12.2",
+      "id": "PYSEC-2019-179",
+      "ratings": [],
+      "recommendation": "Upgrade to version 3.1.0 or later",
+      "affects": [
+        {
+          "ref": "pkg:pypi/flask@0.12.2"
+        }
+      ]
+    },
+    {
+      "bom-ref": "PYSEC-2023-62/pkg:pypi/flask@0.12.2",
+      "id": "PYSEC-2023-62",
+      "ratings": [],
+      "recommendation": "Upgrade to version 3.1.0 or later",
+      "affects": [
+        {
+          "ref": "pkg:pypi/flask@0.12.2"
+        }
+      ]
+    }
+  ],
+  "annotations": [
+    {
+      "bom-ref": "metadata-annotations",
+      "subjects": [
+        "root-application"
+      ],
+      "annotator": {
+        "component": {
+          "bom-ref": "pkg:golang/safedep/vet@v1.10.3-a77be8f",
+          "type": "application",
+          "manufacturer": {
+            "name": "Safedep",
+            "url": [
+              "https://safedep.io"
+            ]
+          },
+          "group": "Safedep",
+          "name": "vet",
+          "version": "v1.10.3-a77be8f",
+          "purl": "pkg:golang/safedep/vet@v1.10.3-a77be8f"
+        }
+      },
+      "timestamp": "2025-05-02T05:04:33Z",
+      "text": "This Software Bill-of-Materials (SBOM) document was created on Friday, May 2, 2025 with vet. The data was captured during the build lifecycle phase. The document describes 'chat-server'. It has total 62 components. 3 ecosystems are described in the document under components."
+    }
+  ]
+}

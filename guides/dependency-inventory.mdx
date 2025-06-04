@@ -1,0 +1,341 @@
+---
+title: Dependency Inventory
+description: "Generate accurate dependency inventories using package managers and SBOM tools"
+---
+
+# Dependency Inventory
+
+Package managers such as Maven, Gradle, npm, and others have the most accurate view of library dependencies. They can be used to resolve dependencies, generate an SBOM, and scan using `vet` for better accuracy. In this guide, we'll use the [CycloneDX Gradle plugin](https://github.com/CycloneDX/cyclonedx-gradle-plugin) to generate a Software Bill of Materials (SBOM) and scan it using `vet`.
+
+## Why Use Package Manager Integration?
+
+<CardGroup cols={2}>
+  <Card title="Accurate Resolution" icon="target">
+    Package managers resolve exact versions and transitive dependencies
+  </Card>
+  <Card title="Complete Inventory" icon="list">
+    Capture all dependencies including build-time and runtime components
+  </Card>
+  <Card title="Standardized Format" icon="file-check">
+    Generate industry-standard SBOM formats (CycloneDX, SPDX)
+  </Card>
+  <Card title="Better Analysis" icon="magnifying-glass">
+    More accurate security analysis with complete dependency information
+  </Card>
+</CardGroup>
+
+## Gradle Integration
+
+The CycloneDX Gradle plugin generates comprehensive SBOMs that can be analyzed by vet for security issues.
+
+### Plugin Configuration
+
+Add the CycloneDX plugin to your `build.gradle` file:
+
+```groovy
+plugins {
+    id 'org.cyclonedx.bom' version '1.10.0'
+}
+
+cyclonedxBom {
+    includeConfigs = ["runtimeClasspath"]
+    skipConfigs = ["compileClasspath", "testCompileClasspath"]
+    skipProjects = [rootProject.name, "yourTestSubProject"]
+    projectType = "application"
+    schemaVersion = "1.6"
+    destination = file("build/reports")
+    outputName = "bom"
+    outputFormat = "json"
+    includeBomSerialNumber = false
+    includeLicenseText = false
+    includeMetadataResolution = true
+    componentVersion = "2.0.0"
+    componentName = "my-component"
+}
+```
+
+### Configuration Options
+
+<AccordionGroup>
+  <Accordion title="Dependency Scopes">
+    **includeConfigs**: Which dependency configurations to include
+    ```groovy
+    includeConfigs = [
+        "runtimeClasspath",      // Runtime dependencies
+        "implementationClasspath", // Implementation dependencies
+        "compileClasspath"       // Compile-time dependencies
+    ]
+    ```
+  </Accordion>
+  
+  <Accordion title="Project Filtering">
+    **skipConfigs** and **skipProjects**: Exclude unnecessary components
+    ```groovy
+    skipConfigs = ["testCompileClasspath", "testRuntimeClasspath"]
+    skipProjects = ["test-utils", "benchmarks"]
+    ```
+  </Accordion>
+  
+  <Accordion title="Output Customization">
+    **destination** and **outputName**: Control where SBOMs are generated
+    ```groovy
+    destination = file("security/sboms")
+    outputName = "${project.name}-${project.version}-sbom"
+    outputFormat = "json" // or "xml"
+    ```
+  </Accordion>
+</AccordionGroup>
+
+### SBOM Generation
+
+Generate SBOM artifacts with a clean build:
+
+```bash
+gradle clean build cyclonedxBom
+```
+
+<img src="/images/sample-gradle-build.png" alt="Sample Gradle build output" />
+
+After a successful build, SBOM artifacts will be stored in the `build/reports` directory.
+
+## Multi-Project Configuration
+
+For multi-module projects, configure the plugin in each module or use a shared configuration:
+
+```groovy
+// In root build.gradle
+subprojects {
+    apply plugin: 'org.cyclonedx.bom'
+    
+    cyclonedxBom {
+        includeConfigs = ["runtimeClasspath"]
+        projectType = "library"
+        destination = file("${rootProject.buildDir}/reports/sboms")
+        outputName = "${project.name}-bom"
+    }
+}
+```
+
+## Maven Integration
+
+For Maven projects, use the CycloneDX Maven plugin:
+
+```xml
+<plugin>
+    <groupId>org.cyclonedx</groupId>
+    <artifactId>cyclonedx-maven-plugin</artifactId>
+    <version>2.8.0</version>
+    <configuration>
+        <projectType>application</projectType>
+        <schemaVersion>1.6</schemaVersion>
+        <includeBomSerialNumber>false</includeBomSerialNumber>
+        <includeMetadataResolution>true</includeMetadataResolution>
+        <outputName>bom</outputName>
+        <outputFormat>json</outputFormat>
+    </configuration>
+    <executions>
+        <execution>
+            <phase>package</phase>
+            <goals>
+                <goal>makeAggregateBom</goal>
+            </goals>
+        </execution>
+    </executions>
+</plugin>
+```
+
+Generate the SBOM:
+
+```bash
+mvn clean package cyclonedx:makeAggregateBom
+```
+
+## Scanning SBOMs with vet
+
+Once you have generated SBOM files, use vet to scan them for security issues:
+
+### CycloneDX Format
+
+```bash
+vet scan --lockfiles build/reports/bom.json \
+         --lockfile-as bom-cyclonedx \
+         --report-markdown=report.md
+```
+
+### SPDX Format
+
+```bash
+vet scan --lockfiles build/reports/bom.json \
+         --lockfile-as bom-spdx \
+         --report-markdown=report.md
+```
+
+<img src="/images/vet-cyclonedx-scan-demo.png" alt="vet CycloneDX scan demonstration" />
+
+## npm/Node.js Integration
+
+For Node.js projects, use the CycloneDX npm plugin:
+
+```bash
+# Install globally
+npm install -g @cyclonedx/cyclonedx-npm
+
+# Generate SBOM
+cyclonedx-npm --output-file sbom.json
+
+# Scan with vet
+vet scan --lockfiles sbom.json --lockfile-as bom-cyclonedx
+```
+
+## Python Integration
+
+For Python projects, use cyclonedx-python:
+
+```bash
+# Install
+pip install cyclonedx-bom
+
+# Generate SBOM
+cyclonedx-py -o sbom.json
+
+# Scan with vet
+vet scan --lockfiles sbom.json --lockfile-as bom-cyclonedx
+```
+
+## CI/CD Integration
+
+<Tabs>
+  <Tab title="GitHub Actions">
+    ```yaml
+    name: Dependency Inventory Scan
+    on: [push, pull_request]
+    
+    jobs:
+      inventory-scan:
+        runs-on: ubuntu-latest
+        steps:
+          - uses: actions/checkout@v4
+          
+          - name: Set up JDK
+            uses: actions/setup-java@v4
+            with:
+              java-version: '17'
+              distribution: 'temurin'
+              
+          - name: Generate SBOM
+            run: ./gradlew cyclonedxBom
+            
+          - name: Scan SBOM with vet
+            uses: safedep/vet-action@v1
+            with:
+              scan-dir: 'build/reports'
+              lockfile-as: 'bom-cyclonedx'
+              
+          - name: Upload SBOM
+            uses: actions/upload-artifact@v4
+            with:
+              name: sbom
+              path: build/reports/bom.json
+    ```
+  </Tab>
+  
+  <Tab title="GitLab CI">
+    ```yaml
+    stages:
+      - build
+      - security
+    
+    generate-sbom:
+      stage: build
+      script:
+        - ./gradlew clean build cyclonedxBom
+      artifacts:
+        paths:
+          - build/reports/bom.json
+        expire_in: 1 hour
+    
+    security-scan:
+      stage: security
+      image: ghcr.io/safedep/vet:latest
+      script:
+        - vet scan --lockfiles build/reports/bom.json 
+                   --lockfile-as bom-cyclonedx
+                   --report-json security-report.json
+      dependencies:
+        - generate-sbom
+      artifacts:
+        reports:
+          security: security-report.json
+    ```
+  </Tab>
+</Tabs>
+
+## Best Practices
+
+<AccordionGroup>
+  <Accordion title="Environment-Specific SBOMs">
+    Generate different SBOMs for different environments:
+    ```bash
+    # Production SBOM (runtime only)
+    gradle cyclonedxBom -PincludeConfigs=runtimeClasspath
+    
+    # Development SBOM (including test dependencies)
+    gradle cyclonedxBom -PincludeConfigs=runtimeClasspath,testRuntimeClasspath
+    ```
+  </Accordion>
+  
+  <Accordion title="Regular Updates">
+    Generate SBOMs regularly to track dependency changes:
+    - On every build in CI/CD
+    - Before releases
+    - After dependency updates
+  </Accordion>
+  
+  <Accordion title="Storage and Versioning">
+    Store SBOMs alongside releases for compliance and audit purposes:
+    ```bash
+    # Tag SBOMs with version information
+    cp build/reports/bom.json "release-artifacts/sbom-v${VERSION}.json"
+    ```
+  </Accordion>
+</AccordionGroup>
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="Missing Dependencies">
+    If dependencies are missing from the SBOM:
+    - Check that all relevant configurations are included
+    - Verify dependency resolution succeeded
+    - Review skipConfigs and skipProjects settings
+  </Accordion>
+  
+  <Accordion title="Plugin Version Issues">
+    For plugin compatibility issues:
+    - Use the latest stable version of CycloneDX plugins
+    - Check compatibility with your build tool version
+    - Review plugin documentation for breaking changes
+  </Accordion>
+  
+  <Accordion title="Large SBOM Files">
+    For projects with many dependencies:
+    - Filter out unnecessary configurations
+    - Consider splitting large projects into modules
+    - Use compression for storage and transmission
+  </Accordion>
+</AccordionGroup>
+
+<CardGroup cols={2}>
+  <Card title="CycloneDX Gradle Plugin" icon="gradle" href="https://github.com/CycloneDX/cyclonedx-gradle-plugin">
+    Complete documentation for the Gradle plugin
+  </Card>
+  <Card title="CycloneDX Maven Plugin" icon="maven" href="https://github.com/CycloneDX/cyclonedx-maven-plugin">
+    Maven plugin documentation and examples
+  </Card>
+  <Card title="SBOM Generation Guide" icon="file-export" href="/guides/cyclonedx-sbom">
+    Learn more about generating SBOMs with vet
+  </Card>
+  <Card title="Package Manager Support" icon="package" href="https://github.com/safedep/vet#supported-package-managers">
+    See all supported package managers in vet
+  </Card>
+</CardGroup>

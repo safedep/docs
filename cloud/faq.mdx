@@ -1,0 +1,324 @@
+---
+title: Cloud FAQ
+description: "Frequently asked questions about SafeDep Cloud authentication and usage"
+---
+
+# Frequently Asked Questions
+
+Common issues and solutions for SafeDep Cloud authentication and usage.
+
+## Authentication Errors
+
+### User Not Found
+
+**Error Message:**
+```
+ERRO[0001] Failed to execute whoami: rpc error: code = Unauthenticated desc = unauthenticated: Token auth failed: No user: record not found
+```
+
+**Cause:** The user account is not registered with SafeDep Cloud.
+
+**Solution:** 
+<Steps>
+  <Step title="Register Account">
+    Follow the [quickstart guide](/cloud/quickstart) to register with SafeDep Cloud
+  </Step>
+  
+  <Step title="Verify Registration">
+    Ensure you've completed the full onboarding process including tenant creation
+  </Step>
+  
+  <Step title="Check Email Verification">
+    Verify your email address if required during registration
+  </Step>
+</Steps>
+
+### Tenant Not Found
+
+**Error Message:**
+```
+ERRO[0001] Failed to execute query: rpc error: code = Unknown desc = failed to resolve tenant: record not found
+```
+
+**Cause:** The tenant is not properly configured in vet, or the tenant domain is incorrect.
+
+**Solution:**
+
+<Tabs>
+  <Tab title="Configure Tenant">
+    ```bash
+    vet auth configure --tenant <tenant-domain>
+    ```
+  </Tab>
+  
+  <Tab title="Alternative Method">
+    ```bash
+    vet cloud login --tenant <tenant-domain>
+    ```
+  </Tab>
+  
+  <Tab title="Find Your Tenant">
+    If you've forgotten your tenant domain:
+    ```bash
+    vet cloud login
+    vet cloud whoami  # Shows available tenants
+    ```
+  </Tab>
+</Tabs>
+
+## API and Connectivity Issues
+
+### Rate Limiting
+
+**Error Message:**
+```
+ERRO[0001] Request failed: rpc error: code = ResourceExhausted desc = rate limit exceeded
+```
+
+**Solution:**
+- Wait for the rate limit window to reset (typically 1 hour)
+- Reduce the frequency of API calls
+- Contact support for increased rate limits if needed
+- Use batch operations where possible
+
+### Network Connectivity
+
+**Error Message:**
+```
+ERRO[0001] Failed to connect: dial tcp: lookup api.safedep.io: no such host
+```
+
+**Solution:**
+- Check internet connectivity
+- Verify DNS resolution for `api.safedep.io`
+- Check firewall settings and proxy configuration
+- Ensure HTTPS traffic on port 443 is allowed
+
+### SSL/TLS Issues
+
+**Error Message:**
+```
+ERRO[0001] Failed to connect: x509: certificate verify failed
+```
+
+**Solution:**
+- Update your system's CA certificates
+- Check system clock accuracy
+- Verify no proxy is interfering with SSL
+- Try updating vet to the latest version
+
+## Configuration Issues
+
+### Invalid API Key
+
+**Error Message:**
+```
+ERRO[0001] Authentication failed: invalid API key
+```
+
+**Solution:**
+<Steps>
+  <Step title="Generate New Key">
+    Create a new API key in your SafeDep Cloud tenant settings
+  </Step>
+  
+  <Step title="Update Configuration">
+    ```bash
+    export SAFEDEP_API_KEY=your-new-api-key
+    vet auth configure --tenant your-tenant
+    ```
+  </Step>
+  
+  <Step title="Verify Permissions">
+    Ensure the API key has the necessary permissions for your operations
+  </Step>
+</Steps>
+
+### Expired Tokens
+
+**Error Message:**
+```
+ERRO[0001] Token expired: please re-authenticate
+```
+
+**Solution:**
+```bash
+# Re-authenticate with device flow
+vet cloud login --tenant your-tenant
+
+# Verify authentication
+vet cloud whoami
+```
+
+### Configuration File Issues
+
+**Error Message:**
+```
+ERRO[0001] Failed to load config: permission denied
+```
+
+**Solution:**
+- Check file permissions on vet configuration directory
+- Ensure user has write access to `~/.config/vet/`
+- Try running with appropriate permissions
+- Clear and recreate configuration if corrupted
+
+## Data Sync Issues
+
+### Sync Failures
+
+**Error Message:**
+```
+WARN[0001] Failed to sync data to cloud: project not found
+```
+
+**Solution:**
+- Verify project name and version are correctly specified
+- Check that tenant has permissions for data sync
+- Ensure API key includes sync permissions
+- Retry with proper project identification
+
+### Missing Data
+
+**Issue:** Scanned data doesn't appear in SafeDep Cloud
+
+**Solution:**
+<Steps>
+  <Step title="Check Sync Flags">
+    Ensure `--report-sync` is included in your scan command
+  </Step>
+  
+  <Step title="Verify Project Info">
+    ```bash
+    vet scan -D . --report-sync \
+      --report-sync-project "your-project" \
+      --report-sync-project-version "main"
+    ```
+  </Step>
+  
+  <Step title="Check Authentication">
+    ```bash
+    vet auth verify
+    ```
+  </Step>
+</Steps>
+
+### Query Failures
+
+**Error Message:**
+```
+ERRO[0001] Query execution failed: syntax error
+```
+
+**Solution:**
+- Verify SQL syntax is correct
+- Check table and column names in schema
+- Use `vet cloud query schema` to view available tables
+- Ensure proper quoting for identifiers with special characters
+
+## GitHub Actions Issues
+
+### Secret Configuration
+
+**Issue:** GitHub Action fails with authentication errors
+
+**Solution:**
+<Steps>
+  <Step title="Check Secrets">
+    Verify these secrets are set in your repository:
+    - `SAFEDEP_CLOUD_API_KEY`
+    - `SAFEDEP_CLOUD_TENANT_DOMAIN`
+  </Step>
+  
+  <Step title="Update Workflow">
+    ```yaml
+    - name: Run vet
+      uses: safedep/vet-action@v1
+      with:
+        cloud: true
+        cloud-key: ${{ secrets.SAFEDEP_CLOUD_API_KEY }}
+        cloud-tenant: ${{ secrets.SAFEDEP_CLOUD_TENANT_DOMAIN }}
+    ```
+  </Step>
+</Steps>
+
+### Action Version Issues
+
+**Issue:** Action fails with "unknown parameter" errors
+
+**Solution:**
+- Update to the latest version of vet-action
+- Check the action documentation for parameter changes
+- Verify you're using supported parameters for your action version
+
+## Performance Issues
+
+### Slow Scans
+
+**Issue:** Scans take too long to complete
+
+**Solution:**
+- Use path exclusions to skip irrelevant directories
+- Scan specific manifest files instead of entire directories
+- Adjust timeout settings for malware analysis
+- Use JSON dump workflow for repeated analysis
+
+### Memory Issues
+
+**Issue:** vet runs out of memory during scans
+
+**Solution:**
+- Scan smaller directory trees
+- Use exclusions to skip large dependency directories
+- Increase available memory in CI/CD environments
+- Process large monorepos in batches
+
+## Getting Additional Help
+
+<CardGroup cols={2}>
+  <Card title="GitHub Issues" icon="github" href="https://github.com/safedep/vet/issues">
+    Report bugs and request features
+  </Card>
+  <Card title="Documentation" icon="book" href="/cloud/quickstart">
+    Review comprehensive setup guides
+  </Card>
+  <Card title="Community Support" icon="discord" href="https://discord.gg/kAGEj25dCn">
+    Join our Discord community for help
+  </Card>
+  <Card title="Contact Support" icon="envelope" href="mailto:support@safedep.io">
+    Reach out for direct assistance
+  </Card>
+</CardGroup>
+
+## Common Debugging Commands
+
+### Check Authentication Status
+```bash
+vet cloud whoami
+```
+
+### Verify API Configuration
+```bash
+vet auth verify
+```
+
+### Test Cloud Connectivity
+```bash
+vet cloud query execute --sql "SELECT 1"
+```
+
+### Clear Configuration
+```bash
+vet auth logout
+rm -rf ~/.config/vet/
+```
+
+### Re-authenticate
+```bash
+vet cloud login --tenant your-tenant
+```
+
+### View Detailed Logs
+```bash
+vet --log-level debug scan -D . --report-sync
+```

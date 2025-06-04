@@ -1,0 +1,296 @@
+---
+title: DefectDojo Integration
+description: "Integrate vet with DefectDojo for centralized vulnerability tracking and management"
+---
+
+`vet` supports integration with [DefectDojo](https://github.com/DefectDojo/django-DefectDojo) to track and manage vulnerabilities. You can export vulnerabilities, policy violations, and other findings to DefectDojo. Each scan is reported as a new engagement in DefectDojo.
+
+## Prerequisites
+
+<CardGroup cols={2}>
+  <Card title="Docker & Docker Compose" icon="docker">
+    Required for running DefectDojo locally
+  </Card>
+  <Card title="DefectDojo Instance" icon="server">
+    Either local or cloud-hosted DefectDojo installation
+  </Card>
+  <Card title="vet CLI" icon="terminal">
+    Install vet following the quickstart guide
+  </Card>
+  <Card title="API Access" icon="key">
+    DefectDojo API key for authentication
+  </Card>
+</CardGroup>
+
+If you don't have vet installed yet, follow the [quickstart guide](/quickstart) to get started.
+
+## Quick Setup with Docker
+
+For this example, we'll set up a DefectDojo instance using Docker Compose and scan the [demo-client-python](https://github.com/safedep/demo-client-python) repository.
+
+### Setup DefectDojo
+
+<Steps>
+  <Step title="Clone DefectDojo">
+    Download the DefectDojo repository:
+    ```bash
+    git clone https://github.com/DefectDojo/django-DefectDojo.git --depth 1
+    cd django-DefectDojo
+    ```
+  </Step>
+  
+  <Step title="Start Services">
+    Launch DefectDojo with Docker Compose:
+    ```bash
+    docker compose up -d
+    ```
+    <Info>
+    This will take a while as it builds images and downloads dependencies.
+    </Info>
+  </Step>
+  
+  <Step title="Get Admin Password">
+    Retrieve the admin password from the logs:
+    ```bash
+    docker compose logs initializer | grep "Admin password:"
+    ```
+    <Note>
+    The initializer container runs migrations and creates initial data, which may take several minutes.
+    </Note>
+  </Step>
+  
+  <Step title="Access DefectDojo">
+    Navigate to `http://localhost:8080` and login with:
+    - **Username**: `admin`
+    - **Password**: (from previous step)
+    
+    <img src="/images/defect-dojo-integration/dd-1-login.png" alt="DefectDojo Login" />
+  </Step>
+</Steps>
+
+### Configure Your Project
+
+<Steps>
+  <Step title="Create Product">
+    Create a new product called `demo-client-python` and note the product ID:
+    
+    <img src="/images/defect-dojo-integration/dd-2-add-product.png" alt="DefectDojo Add Product" />
+    
+    <img src="/images/defect-dojo-integration/dd-3-observe-product-id.png" alt="DefectDojo Product ID" />
+  </Step>
+  
+  <Step title="Generate API Key">
+    Navigate to `http://localhost:8080/api/key-v2` to generate an API key for vet integration.
+  </Step>
+  
+  <Step title="Set Environment Variable">
+    Configure the API key for vet usage:
+    ```bash
+    export DEFECT_DOJO_APIV2_KEY=<your-api-key>
+    ```
+  </Step>
+</Steps>
+
+## Scanning with vet
+
+Now you can scan a project and send results to DefectDojo:
+
+```bash
+vet scan --github https://github.com/safedep/demo-client-python \
+  --filter-suite /path/to/your/policy-suite.yml \
+  --report-defect-dojo \
+  --defect-dojo-host-url http://localhost:8080/ \
+  --defect-dojo-product-id <your-product-id>
+```
+
+### What Happens During Integration
+
+<CardGroup cols={2}>
+  <Card title="Engagement Creation" icon="plus">
+    vet creates a new engagement in DefectDojo for each scan
+  </Card>
+  <Card title="Policy Violations" icon="exclamation-triangle">
+    Policy violations are reported as findings in DefectDojo
+  </Card>
+  <Card title="Centralized Tracking" icon="chart-line">
+    All security findings are tracked in DefectDojo's dashboard
+  </Card>
+  <Card title="Workflow Integration" icon="workflow">
+    Leverage DefectDojo's workflow for vulnerability management
+  </Card>
+</CardGroup>
+
+<Warning>
+Currently, vet reports only policy violations to DefectDojo. Support for reporting vulnerabilities and malicious package information is planned in [GitHub issue #430](https://github.com/safedep/vet/issues/430).
+</Warning>
+
+## Advanced Configuration
+
+### Custom Policy Suites
+
+Create comprehensive policy suites for DefectDojo integration:
+
+```yaml
+# defectdojo-policy.yml
+name: DefectDojo Security Policy
+description: Comprehensive policy for DefectDojo integration
+filters:
+  - name: critical-vulnerabilities
+    value: |
+      vulns.critical.size() > 0
+      
+  - name: high-risk-packages
+    value: |
+      vulns.high.size() > 3
+      
+  - name: license-violations
+    value: |
+      !licenses.exists(p, p in ["MIT", "Apache-2.0", "BSD-3-Clause"])
+      
+  - name: unmaintained-packages
+    value: |
+      scorecard.scores.Maintained < 5
+```
+
+### CI/CD Integration
+
+<Tabs>
+  <Tab title="GitHub Actions">
+    ```yaml
+    name: Security Scan to DefectDojo
+    on: [push, pull_request]
+    
+    jobs:
+      security-scan:
+        runs-on: ubuntu-latest
+        steps:
+          - uses: actions/checkout@v4
+          
+          - name: Run vet security scan
+            run: |
+              vet scan -D . \
+                --filter-suite .github/security-policy.yml \
+                --report-defect-dojo \
+                --defect-dojo-host-url ${{ secrets.DEFECT_DOJO_URL }} \
+                --defect-dojo-product-id ${{ secrets.DEFECT_DOJO_PRODUCT_ID }}
+            env:
+              DEFECT_DOJO_APIV2_KEY: ${{ secrets.DEFECT_DOJO_API_KEY }}
+    ```
+  </Tab>
+  
+  <Tab title="GitLab CI">
+    ```yaml
+    security-scan:
+      image: ghcr.io/safedep/vet:latest
+      script:
+        - vet scan -D . 
+            --filter-suite security-policy.yml
+            --report-defect-dojo
+            --defect-dojo-host-url $DEFECT_DOJO_URL
+            --defect-dojo-product-id $DEFECT_DOJO_PRODUCT_ID
+      variables:
+        DEFECT_DOJO_APIV2_KEY: $DEFECT_DOJO_API_KEY
+    ```
+  </Tab>
+</Tabs>
+
+### Multiple Projects
+
+For organizations with multiple projects, create separate products in DefectDojo:
+
+```bash
+# Project A
+vet scan -D ./project-a \
+  --report-defect-dojo \
+  --defect-dojo-product-id 1
+
+# Project B  
+vet scan -D ./project-b \
+  --report-defect-dojo \
+  --defect-dojo-product-id 2
+```
+
+## DefectDojo Workflow Benefits
+
+### Centralized Dashboard
+
+- **Unified View**: See security findings across all projects
+- **Trend Analysis**: Track security improvements over time
+- **Risk Prioritization**: Focus on critical issues first
+
+### Team Collaboration
+
+- **Assignment**: Assign findings to team members
+- **Status Tracking**: Track remediation progress
+- **Comments**: Add context and discussion to findings
+
+### Reporting
+
+- **Executive Reports**: Generate high-level security reports
+- **Compliance**: Track compliance with security policies
+- **Metrics**: Monitor key security metrics and KPIs
+
+## Best Practices
+
+<AccordionGroup>
+  <Accordion title="Product Organization">
+    Create separate DefectDojo products for:
+    - Different applications or microservices
+    - Different environments (dev, staging, prod)
+    - Different teams or business units
+  </Accordion>
+  
+  <Accordion title="Policy Configuration">
+    Design policies that provide actionable findings:
+    - Focus on fixable issues
+    - Set appropriate severity levels
+    - Include context in policy descriptions
+  </Accordion>
+  
+  <Accordion title="Automation">
+    Integrate vet scans into your development workflow:
+    - Run scans on every commit
+    - Include security gates in deployment pipelines
+    - Automate policy updates across projects
+  </Accordion>
+</AccordionGroup>
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="API Key Issues">
+    If authentication fails:
+    - Verify the API key is correctly set in the environment
+    - Check that the API key has sufficient permissions
+    - Ensure the DefectDojo URL is accessible from your environment
+  </Accordion>
+  
+  <Accordion title="Product ID Errors">
+    If the product ID is invalid:
+    - Verify the product exists in DefectDojo
+    - Check that you have access to the specified product
+    - Ensure the product ID is numeric, not the product name
+  </Accordion>
+  
+  <Accordion title="No Findings Reported">
+    If no findings appear in DefectDojo:
+    - Confirm that policy violations exist in your scan
+    - Check the vet scan output for errors
+    - Verify the DefectDojo integration is properly configured
+  </Accordion>
+</AccordionGroup>
+
+<CardGroup cols={2}>
+  <Card title="DefectDojo Documentation" icon="book" href="https://documentation.defectdojo.com/">
+    Learn more about DefectDojo features and configuration
+  </Card>
+  <Card title="Policy as Code Guide" icon="file-code" href="/advanced/policy-as-code">
+    Create effective security policies for DefectDojo integration
+  </Card>
+  <Card title="vet GitHub Issues" icon="bug" href="https://github.com/safedep/vet/issues/430">
+    Track progress on enhanced DefectDojo integration features
+  </Card>
+  <Card title="Demo Repository" icon="github" href="https://github.com/safedep/demo-client-python">
+    Use the demo repository to test your DefectDojo integration
+  </Card>
+</CardGroup>
