@@ -1,33 +1,20 @@
 ---
 title: 'Introduction'
-description: 'Example section for showcasing API endpoints'
+description: 'Getting started with SafeDep API'
 ---
-
-<Note>
-  If you're not looking to build API reference documentation, you can delete
-  this section by removing the api-reference folder.
-</Note>
 
 ## Welcome
 
-There are two ways to build API documentation: [OpenAPI](https://mintlify.com/docs/api-playground/openapi/setup) and [MDX components](https://mintlify.com/docs/api-playground/mdx/configuration). For the starter kit, we are using the following OpenAPI specification.
+SafeDep supports a [gRPC](https://grpc.io/) API with
+a [ConnectRPC](https://connectrpc.com/) facade allowing clients to use both
+gRPC over HTTP/2 and JSON over HTTP/1.1 based clients.
 
-<Card
-  title="Plant Store Endpoints"
-  icon="leaf"
-  href="https://github.com/mintlify/starter/blob/main/api-reference/openapi.json"
->
-  View the OpenAPI specification file
-</Card>
+The APIs are authenticated using [OAuth 2.0](https://oauth.net/2/) and API key
+based authentication. The general rule for authentication is:
 
-## Authentication
+* Control plane APIs (e.g. creating policy) require OAuth 2.0 authentication
+* Data plane APIs (e.g. getting policy data) can be accessed using API keys
 
-All API endpoints are authenticated using Bearer tokens and picked up from the specification file.
+Control Plane APIs are meant for use by management tools while the Data Plane
+APIs are meant for use by security tools using or integrating with SafeDep.
 
-```json
-"security": [
-  {
-    "bearerAuth": []
-  }
-]
-```

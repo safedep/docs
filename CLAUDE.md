@@ -4,23 +4,19 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Codebase Architecture
 
-This repository contains documentation for SafeDep, built using two different documentation frameworks:
+This repository contains documentation for SafeDep, built using Mintlify documentation platform:
 
-1. **Current Mintlify Documentation** (root directory)
-   - Modern documentation platform using Mintlify
-   - Configuration: `docs.json` 
-   - Content structure: `introduction.mdx`, `quickstart.mdx`, `development.mdx`, `essentials/`, `api-reference/`
-   - Static assets: `images/`, `logo/`, `snippets/`
-
-2. **Legacy Docusaurus Documentation** (`docs-legacy/`)
-   - Previous documentation built with Docusaurus v3
-   - Contains comprehensive SafeDep product documentation
-   - Configuration: `docusaurus.config.js`, `sidebars.js`
-   - Content: `docs/` directory with guides, concepts, cloud features, etc.
+**Mintlify Documentation** (root directory)
+- Modern documentation platform using Mintlify
+- Configuration: `docs.json` 
+- Content structure includes:
+  - Core pages: `introduction.mdx`, `quickstart.mdx`, `development.mdx`
+  - Organized sections: `essentials/`, `api-reference/`, `guides/`, `concepts/`, `cloud/`, `advanced/`
+  - Static assets: `images/`, `logo/`, `snippets/`
+  - Community and resources: `community.mdx`, `resources.mdx`, `faq.mdx`
 
 ## Common Development Commands
 
-### Mintlify Documentation (Current)
 ```bash
 # Install Mintlify CLI globally
 npm i -g mintlify
@@ -32,45 +28,29 @@ mintlify dev
 mintlify install
 ```
 
-### Legacy Docusaurus Documentation
-```bash
-# Navigate to legacy docs
-cd docs-legacy
-
-# Install dependencies
-npm install
-
-# Start development server
-npm run start
-
-# Build documentation
-npm run build
-
-# Serve built documentation
-npm run serve
-
-# Clear cache
-npm run clear
-```
-
 ## Key Configuration Files
 
 - `docs.json`: Mintlify configuration with navigation, theming, and site metadata
-- `docs-legacy/docusaurus.config.js`: Docusaurus configuration for legacy docs
-- `docs-legacy/package.json`: Dependencies and scripts for legacy documentation
 
 ## Content Structure
 
-The current Mintlify docs are structured as a starter template and need to be populated with actual SafeDep content from the legacy documentation. The legacy docs contain the real SafeDep documentation including:
+The documentation is organized into the following main sections:
 
-- Product concepts and "why vet" explanations
-- Cloud features and authentication guides  
-- Advanced usage patterns and integrations
-- Community resources and FAQs
+- **Concepts**: Core SafeDep concepts and explanations (`concepts/`)
+- **Guides**: Step-by-step tutorials and integrations (`guides/`)
+- **Cloud**: Cloud platform features and authentication (`cloud/`)
+- **Advanced**: Advanced usage patterns and configurations (`advanced/`)
+- **API Reference**: API endpoints and OpenAPI specification (`api-reference/`)
+- **Essentials**: Documentation writing guidelines (`essentials/`)
+
+## Documentation Writing Guidelines
+
+When creating or editing documentation, follow the [Diátaxis framework](https://diataxis.fr/) to ensure content is appropriately structured and user-focused. More information can be found in [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## Development Notes
 
 - Run Mintlify commands from the repository root where `docs.json` is located
-- Legacy Docusaurus documentation is fully functional with SafeDep-specific content
-- The current Mintlify setup appears to be a template that needs migration from legacy docs
-- Both documentation systems use MDX for content authoring
+- All content uses MDX format for enhanced markdown capabilities
+- Images and assets are stored in the `images/` directory
+- Reusable content snippets are stored in `snippets/`
+- Follow Diátaxis principles when creating or restructuring content

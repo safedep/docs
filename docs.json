@@ -16,7 +16,7 @@
       {
         "tab": "SafeDep vet",
         "groups": [
-          {
+          { 
             "group": "Get Started",
             "pages": [
               "introduction",
@@ -114,15 +114,6 @@
             "pages": [
               "api-reference/introduction"
             ]
-          },
-          {
-            "group": "Endpoints",
-            "pages": [
-              "api-reference/endpoint/get",
-              "api-reference/endpoint/create",
-              "api-reference/endpoint/delete",
-              "api-reference/endpoint/webhook"
-            ]
           }
         ]
       }
@@ -156,6 +147,10 @@
       {
         "label": "Support",
         "href": "mailto:support@safedep.io"
+      },
+      {
+        "label": "GitHub",
+        "href": "https://github.com/safedep/vet"
       }
     ],
     "primary": {
