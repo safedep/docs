@@ -7,7 +7,7 @@ description: 'Get started with vet in under 5 minutes'
 For SafeDep Cloud, refer to [Cloud Quickstart](/cloud/quickstart)
 </Info>
 
-Get started with [vet](https://github.com/safedep/vet) for identifying risky open source components used in your application. Establish policy-driven guardrails to prevent introducing risky open source components in your application.
+Learn how to use [SafeDep vet](https://github.com/safedep/vet) to detect security risks and implement policy-based controls that help you avoid incorporating vulnerable or malicious open source dependencies into your projects.
 
 ## Installation
 
@@ -34,13 +34,43 @@ For additional installation options, refer to [vet's README](https://github.com/
 
 ## Running Your First Scan
 
-Scan a directory, auto-discovering well-known manifest files:
+Scan a source code repository, auto-discovering well-known manifest files:
 
 ```bash
 vet scan -D /path/to/dir
 ```
 
 <img src="/images/vet/vet-scan-directory.png" alt="vet scanning a directory" />
+
+### Other scanning options
+
+<AccordionGroup>
+  <Accordion icon="file" title="Scan a single file">
+    ```bash
+    vet scan -M package-lock.json
+    ```
+  </Accordion>
+  
+  <Accordion icon="link" title="Scan a PURL">
+    ```bash
+    vet scan --purl pkg:npm/express@4.18.2
+    ```
+  </Accordion>
+  
+  <Accordion icon="java" title="Scan a Java JAR file">
+    ```bash
+    vet scan -M /path/to/my-app.jar
+    ```
+  </Accordion>
+  
+  <Accordion icon="docker" title="Scan an OCI image">
+    ```bash
+    vet scan --image ghcr.io/safedep/vet:latest
+    ```
+  </Accordion>
+</AccordionGroup>
+
+For more information on scanning options, refer to [vet's README](https://github.com/safedep/vet).
 
 ## Policy as Code
 

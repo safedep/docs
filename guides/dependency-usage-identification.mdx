@@ -79,33 +79,6 @@ vet code scan --app src --db js-analysis.db --lang javascript
 vet code scan --app src --db full-analysis.db  # Auto-detect all languages
 ```
 
-### Directory Structure Analysis
-
-Analyze different parts of your application separately:
-
-```bash
-# Core application code
-vet code scan --app src/main --db main-code.db
-
-# Test code analysis
-vet code scan --app src/test --db test-code.db
-
-# Combined analysis
-vet scan --code main-code.db,test-code.db
-```
-
-### Combined with Policy Enforcement
-
-Use dependency usage information with security policies:
-
-```bash
-vet scan --code /tmp/code.db \
-  --filter 'used_in_code && (vulns.critical.size() > 0)' \
-  --filter-fail
-```
-
-This policy only fails on critical vulnerabilities in dependencies that are actually used in the code.
-
 ## Understanding the Results
 
 ### Usage Evidence Types
@@ -147,62 +120,6 @@ In the scan results, you'll see tags like:
 - `used-in-code`: Dependency is actually used in source code
 - `imported`: Module is imported but usage unclear
 - `declared-only`: Listed in manifest but no code usage found
-
-## CI/CD Integration
-
-### GitHub Actions
-
-```yaml
-name: Usage-Aware Security Scan
-on: [push, pull_request]
-
-jobs:
-  security-scan:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      
-      - name: Build code analysis database
-        run: vet code scan --app ./src --db ./code-analysis.db
-        
-      - name: Security scan with usage analysis
-        run: |
-          vet scan -D . \
-            --code ./code-analysis.db \
-            --filter 'used_in_code && (vulns.high.size() > 0 || vulns.critical.size() > 0)' \
-            --filter-fail \
-            --report-sarif security.sarif
-            
-      - name: Upload security results
-        uses: github/codeql-action/upload-sarif@v3
-        with:
-          sarif_file: security.sarif
-```
-
-### GitLab CI
-
-```yaml
-code-analysis:
-  stage: analysis
-  script:
-    - vet code scan --app src --db code-analysis.db
-  artifacts:
-    paths:
-      - code-analysis.db
-    expire_in: 1 hour
-
-security-scan:
-  stage: security
-  script:
-    - vet scan -D . 
-        --code code-analysis.db
-        --report-json security-report.json
-  dependencies:
-    - code-analysis
-  artifacts:
-    reports:
-      security: security-report.json
-```
 
 ## Best Practices
 

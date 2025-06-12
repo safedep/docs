@@ -56,7 +56,7 @@ Find dependencies with critical vulnerabilities:
 
 ```bash
 vet scan --lockfiles /path/to/pom.xml --report-summary=false \
-    --filter='vulns.critical.exists_one(x, true)'
+    --filter='vulns.critical.exists(x, true)'
 ```
 
 ## Filter Input Structure
@@ -103,14 +103,8 @@ Refer to the [filter input specification](https://github.com/safedep/vet/blob/ma
     # Unmaintained packages (OpenSSF Scorecard)
     scorecard.scores.Maintained == 0
     
-    # Poor security practices
-    scorecard.scores.Security < 5
-    
-    # No security policy
-    scorecard.scores.SecurityPolicy == 0
-    
-    # Combination check
-    scorecard.scores.Maintained < 5 && scorecard.scores.Security < 5
+    # Overall OpenSSF Scorecard score
+    scorecard.Score < 5
     ```
   </Tab>
   
@@ -158,7 +152,7 @@ projects.exists(x, x.stars < 50)
 # Compliance violations
 !licenses.exists(p, p in ["MIT", "Apache-2.0", "BSD-3-Clause"]) ||
 vulns.high.size() > 0 ||
-scorecard.scores.Security < 3
+scorecard.Score < 3
 
 # Production-ready packages
 vulns.critical.size() == 0 &&

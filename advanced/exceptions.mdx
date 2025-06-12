@@ -230,22 +230,6 @@ jobs:
           python scripts/check-exception-expiry.py .github/vet/exceptions.yml
 ```
 
-### Exception Lifecycle Management
-
-```bash
-#!/bin/bash
-# Script to manage exception lifecycle
-
-# Check for exceptions expiring in 30 days
-vet query --from security-data \
-    --filter "exceptions.expires < timestamp('$(date -d '+30 days' -Iseconds)')" \
-    --report-json expiring-exceptions.json
-
-# Generate report of currently active exceptions
-vet --exceptions exceptions.yml scan -D . \
-    --report-json scan-with-exceptions.json
-```
-
 ## Best Practices
 
 <AccordionGroup>

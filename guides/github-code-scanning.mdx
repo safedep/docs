@@ -56,14 +56,13 @@ SARIF reports work when you enable GitHub Code Scanning in your repository. [Lea
 For more control over the scanning process:
 
 ```yaml
-      - name: Run vet with custom policy
-        id: vet
-        uses: safedep/vet-action@v1
-        with:
-          policy: '.github/vet-policy.yml'
-          fail-on-violation: true
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+- name: Run vet with custom policy
+  id: vet
+  uses: safedep/vet-action@v1
+  with:
+    policy: '.github/vet/policy.yml'
+  env:
+    GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 ```
 
 ## Manual SARIF Generation
@@ -94,7 +93,7 @@ The GitHub Action automatically adds comments to pull requests when security iss
 
 <AccordionGroup>
   <Accordion title="Policy Configuration">
-    Store your vet policies in version control (e.g., `.github/vet-policy.yml`) to ensure consistent security standards across your organization.
+    Store your vet policies in version control (e.g., `.github/vet/policy.yml`) to ensure consistent security standards across your organization.
   </Accordion>
   
   <Accordion title="Branch Protection">

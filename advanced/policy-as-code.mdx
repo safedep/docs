@@ -77,15 +77,8 @@ filters:
     
   - name: security-score
     value: |
-      scorecard.scores.Security < 3
-    
-  - name: dependency-pinning
-    value: |
-      scorecard.scores.PinnedDependencies < 5
-    
-  - name: package-age
-    value: |
-      package.published_at > timestamp("2024-01-01T00:00:00Z")
+      scorecard.Score < 3
+  
 ```
 
 ## Using Filter Suites
