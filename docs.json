@@ -16,7 +16,7 @@
       {
         "tab": "SafeDep vet",
         "groups": [
-          { 
+          {
             "group": "Get Started",
             "pages": [
               "introduction",
@@ -163,6 +163,11 @@
       "x": "https://x.com/safedepio",
       "github": "https://github.com/safedep",
       "linkedin": "https://linkedin.com/company/safedep"
+    }
+  },
+  "integrations": {
+    "ga4": {
+      "measurementId": "G-16XDMW280T"
     }
   }
 }
