@@ -41,7 +41,7 @@ exceptions:
     name: '@babel/plugin-transform-function-name'
     version: 7.18.9
     reason: "False positive - CVE doesn't apply to our usage"
-    
+
   - ecosystem: npm
     expires: "2025-05-10T00:00:00Z"
     id: 01JKMC07KASSGYH1PHQY09QNZ3
@@ -67,7 +67,7 @@ Generate exceptions automatically based on filter criteria:
     vet scan -D /path/to/repo --json-dump-dir /path/to/dump
     ```
   </Step>
-  
+
   <Step title="Generate Conditional Exceptions">
     Create exceptions for packages without critical or high severity issues:
     ```bash
@@ -77,7 +77,7 @@ Generate exceptions automatically based on filter criteria:
         --exceptions-till '2025-05-01'
     ```
   </Step>
-  
+
   <Step title="Review and Refine">
     Review the generated exceptions file and remove unnecessary entries
   </Step>
@@ -110,7 +110,7 @@ vet query --from /path/to/dump \
   <Step title="Create Exceptions File">
     Create `.github/vet/exceptions.yml` in your repository with your exceptions configuration
   </Step>
-  
+
   <Step title="Update Workflow">
     Update your GitHub Actions workflow to include the exceptions file:
     ```yaml
@@ -144,13 +144,13 @@ Do not pass the exceptions flag while generating exceptions lists in query workf
     - Comparisons are case-insensitive except for version
     - Version field can use `*` to match any version
   </Accordion>
-  
+
   <Accordion title="Scope and Application">
     - Exceptions are globally managed and shared across packages
     - Exempted packages are ignored by all analyzers and reporters
     - First match policy applies for exception matching
   </Accordion>
-  
+
   <Accordion title="Expiration Handling">
     - Expired exceptions are automatically ignored
     - No exceptions can be created without an expiry date
@@ -175,7 +175,7 @@ exceptions:
     version: '*'
     reason: "Development dependency with known issues"
 
-# exceptions-prod.yml  
+# exceptions-prod.yml
 description: Production environment exceptions
 exceptions:
   - ecosystem: npm
@@ -217,13 +217,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      
+
       - name: Run security scan
         uses: safedep/vet-action@v1
         with:
           exception-file: '.github/vet/exceptions.yml'
-          fail-on-violation: true
-          
+
       - name: Check for expired exceptions
         run: |
           # Custom script to check for exceptions expiring soon
@@ -239,13 +238,13 @@ jobs:
     - Review exceptions monthly for relevance
     - Remove exceptions when issues are resolved
   </Accordion>
-  
+
   <Accordion title="Documentation">
     - Maintain a change log for exceptions
     - Link exceptions to tickets or remediation plans
     - Include contact information for exception owners
   </Accordion>
-  
+
   <Accordion title="Governance">
     - Require approval for production exceptions
     - Implement automated expiry notifications
