@@ -3,8 +3,6 @@ title: About PMG
 description: "Technical architecture and deep dive into Package Manager Guard functionality"
 ---
 
-# About PMG
-
 [SafeDep PMG](https://github.com/safedep/pmg) is a free and open source Package Manager Guard that protects developers from malicious packages by wrapping your favorite package managers and blocking dangerous packages at install time.
 
 ## Architecture Overview
@@ -125,8 +123,8 @@ PMG creates intelligent aliases for supported package managers:
 
 ```bash
 # After pmg setup, these commands are automatically protected:
-npm install express        # ✅ Clean package - installs normally
-npm install malicious-pkg  # 🚫 Blocked - malicious package detected
+npm install express        #  Clean package - installs normally
+npm install malicious-pkg  #  Blocked - malicious package detected
 ```
 
 **Technical Implementation:**
@@ -145,13 +143,13 @@ For direct package installations (`npm install express`, `pip install requests`)
 ```
 Your Package Request: express@^4.18.0
 ├── PMG Resolves Transitive Dependencies
-│   ├── accepts@~1.3.8 (✅ Clean)
-│   ├── array-flatten@1.1.1 (✅ Clean)
-│   ├── body-parser@1.20.1 (✅ Clean)
-│   │   ├── bytes@3.1.2 (✅ Clean)
-│   │   ├── content-type@~1.0.4 (✅ Clean)
-│   │   └── debug@2.6.9 (🚫 Malicious - BLOCKED!)
-│   └── cookie-signature@1.0.6 (✅ Clean)
+│   ├── accepts@~1.3.8 (Clean)
+│   ├── array-flatten@1.1.1 (Clean)
+│   ├── body-parser@1.20.1 (Clean)
+│   │   ├── bytes@3.1.2 (Clean)
+│   │   ├── content-type@~1.0.4 (Clean)
+│   │   └── debug@2.6.9 (Malicious - BLOCKED!)
+│   └── cookie-signature@1.0.6 (Clean)
 └── All packages analyzed before installation
 ```
 
@@ -290,7 +288,7 @@ PMG supports different operational modes for various scenarios:
 # Silent mode - minimal output
 pmg --silent npm install express
 
-# Verbose mode - detailed analysis information  
+# Verbose mode - detailed analysis information
 pmg --verbose npm install express
 
 # Dry run - analyze without installing
@@ -319,4 +317,4 @@ PMG operates on a **default-deny** security model for known threats:
 - **Suspicious packages**: Prompt for user confirmation with a detailed report link for review
 - **Verified clean packages**: Allowed without interference
 
-This approach prioritizes **security over convenience** while maintaining usability for legitimate development workflows. 
+This approach prioritizes **security over convenience** while maintaining usability for legitimate development workflows.

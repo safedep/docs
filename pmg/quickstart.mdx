@@ -7,7 +7,6 @@ description: "Get started with SafeDep PMG - Package Manager Guard that protects
   View the PMG source code and contribute on GitHub
 </Card>
 
-# SafeDep PMG Quickstart
 
 **Package Manager Guard (PMG)** protects developers from getting compromised by malicious packages by wrapping your favorite package manager and blocking malicious packages at install time.
 
@@ -19,11 +18,11 @@ description: "Get started with SafeDep PMG - Package Manager Guard that protects
 
 PMG is a security wrapper for package managers that:
 
-- 🚫 **Blocks malicious packages** at install time using SafeDep Cloud
-- 🌲 **Performs deep dependency analysis** and transitive dependency resolution
-- ⚡ **Works seamlessly** with existing package managers
-- 🔧 **Requires zero configuration** - just install and use
-- 🛡️ **Protects in real-time** without slowing down your workflow
+-  **Blocks malicious packages** at install time using SafeDep Cloud
+-  **Performs deep dependency analysis** and transitive dependency resolution
+-  **Works seamlessly** with existing package managers
+-  **Requires zero configuration** - just install and use
+-  **Protects in real-time** without slowing down your workflow
 
 ## Installation
 
@@ -81,68 +80,18 @@ PMG currently supports the following package managers:
 
 | Package Manager | Status | Command Example |
 |-----------------|--------|----------------|
-| **npm** | ✅ Active | `npm install <package>` |
-| **pnpm** | ✅ Active | `pnpm add <package>` |
-| **pip** | ✅ Active | `pip install <package>` |
-| **yarn** | 🚧 Planned | Coming soon |
-| **poetry** | 🚧 Planned | Coming soon |
-| **uv** | 🚧 Planned | Coming soon |
-
-## Command Options
-
-### Silent Mode
-Run pmg quietly without verbose output:
-```bash
-pmg --silent npm install <package-name>
-```
-
-### Dry Run
-Check packages without actually installing them:
-```bash
-pmg --dry-run npm install <package-name>
-```
-
-### Verbose Mode
-Get detailed information about what pmg is doing:
-```bash
-pmg --verbose npm install <package-name>
-```
-
-### Debug Mode
-Enable debug logging for troubleshooting:
-```bash
-pmg --debug npm install <package-name>
-
-# Save debug logs to a file
-pmg --debug --log /tmp/debug.json npm install <package-name>
-```
-
-## Removing PMG
-
-To remove pmg aliases and restore original package manager behavior:
-
-```bash
-pmg setup remove
-```
-
-This will:
-- Remove the source line from your shell configuration files
-- Delete the `~/.pmg.rc` file
-
-## How PMG Works
-
-PMG acts as an intelligent proxy between you and your package manager:
-
-1. **Intercepts** package installation commands
-2. **Analyzes** the package and its dependencies for malicious content
-3. **Blocks** installation if threats are detected
-4. **Allows** safe packages to install normally
+| **npm** |  Active | `npm install <package>` |
+| **pnpm** |  Active | `pnpm add <package>` |
+| **pip** |  Active | `pip install <package>` |
+| **yarn** |  Planned | Coming soon |
+| **poetry** |  Planned | Coming soon |
+| **uv** | Planned | Coming soon |
 
 ## Troubleshooting
 
 ### If pmg isn't working after setup:
 1. Restart your terminal
-2. Check that aliases were created: `which npm` should show pmg
+2. Check that aliases were created: `which npm` should point to pmg
 3. Verify pmg installation: `pmg version`
 
 ### If packages are incorrectly blocked:
@@ -152,9 +101,9 @@ PMG acts as an intelligent proxy between you and your package manager:
 
 ## Next Steps
 
+- See the [pmg repository](https://github.com/safedep/pmg) for complete documentation and examples
 - Learn [why PMG is needed](/pmg/concepts/why-pmg) for modern development
 - Understand [how PMG works](/pmg/concepts/about) in detail
-- Explore the [GitHub repository](https://github.com/safedep/pmg)
 - Join our [Discord community](https://discord.gg/kAGEj25dCn) for support
 - Check out other SafeDep tools like [vet](/introduction) and [SafeDep Cloud](/cloud/overview)
 
