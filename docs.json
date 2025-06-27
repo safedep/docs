@@ -8,9 +8,7 @@
     "dark": "#1a3bb8"
   },
   "favicon": "/favicon.ico",
-  "css": [
-    "/styles.css"
-  ],
+  "css": ["/styles.css"],
   "navigation": {
     "tabs": [
       {
@@ -18,17 +16,11 @@
         "groups": [
           {
             "group": "Get Started",
-            "pages": [
-              "introduction",
-              "quickstart"
-            ]
+            "pages": ["introduction", "quickstart"]
           },
           {
             "group": "Concepts",
-            "pages": [
-              "concepts/why-vet",
-              "concepts/about"
-            ]
+            "pages": ["concepts/why-vet", "concepts/about"]
           },
           {
             "group": "Integration Guides",
@@ -71,10 +63,7 @@
         "groups": [
           {
             "group": "Getting Started",
-            "pages": [
-              "cloud/overview",
-              "cloud/quickstart"
-            ]
+            "pages": ["cloud/overview", "cloud/quickstart"]
           },
           {
             "group": "Features & Integration",
@@ -86,9 +75,20 @@
           },
           {
             "group": "Support",
-            "pages": [
-              "cloud/faq"
-            ]
+            "pages": ["cloud/faq"]
+          }
+        ]
+      },
+      {
+        "tab": "SafeDep pmg",
+        "groups": [
+          {
+            "group": "Get Started",
+            "pages": ["pmg/quickstart"]
+          },
+          {
+            "group": "Concepts",
+            "pages": ["pmg/concepts/why-pmg", "pmg/concepts/about"]
           }
         ]
       },
@@ -97,11 +97,7 @@
         "groups": [
           {
             "group": "Community",
-            "pages": [
-              "community",
-              "faq",
-              "resources"
-            ]
+            "pages": ["community", "faq", "resources"]
           }
         ]
       },
@@ -110,9 +106,7 @@
         "groups": [
           {
             "group": "API Documentation",
-            "pages": [
-              "api-reference/introduction"
-            ]
+            "pages": ["api-reference/introduction"]
           }
         ]
       }

@@ -1,0 +1,69 @@
+---
+title: Why PMG?
+description: "Understanding the need for protection against malicious packages"
+---
+
+> Modern software development relies heavily on open source packages, but malicious actors increasingly target package repositories to distribute compromised code.
+
+As the software supply chain becomes more complex, developers face growing risks from malicious packages that can compromise their development environments and applications. We need better tooling to protect developers from these threats at the point of installation.
+
+## The Problem: Growing Supply Chain Threats
+
+The open source ecosystem faces increasing threats from bad actors who publish malicious packages to popular repositories like npm, PyPI, and others. These threats include:
+
+### Common Attack Vectors
+
+- **Typosquatting attacks** where malicious packages mimic popular library names
+- **Dependency confusion** attacks targeting private package names
+- **Supply chain compromises** where legitimate packages are hijacked
+- **Malicious packages** designed to steal credentials or inject backdoors
+
+### Current Detection Gaps
+
+Traditional security approaches only detect these threats after packages are already installed, often too late to prevent damage.
+
+Most development teams rely on:
+- Manual package review processes that don't scale
+- Post-installation vulnerability scanning that misses many threats
+- Static analysis tools that run after packages are already in the codebase
+- Security policies that developers may forget to follow
+
+This reactive approach leaves a dangerous window of vulnerability between package installation and threat detection.
+
+## The PMG Solution: Real-Time Protection
+
+PMG (Package Manager Guard) solves the problem of malicious package installation by providing **real-time protection** at the package manager level. It intercepts package installation commands and blocks malicious packages before they can be installed.
+
+<CardGroup cols={2}>
+  <Card title="Real-Time Protection" icon="shield-check">
+    Block malicious packages before they're installed in your environment
+  </Card>
+  <Card title="Zero Configuration" icon="gear-complex">
+    Works immediately without any setup or configuration changes
+  </Card>
+  <Card title="Seamless Integration" icon="plug">
+    Transparent wrapper that works with your existing package managers
+  </Card>
+  <Card title="Threat Intelligence" icon="brain">
+    Powered by SafeDep Cloud's continuously updated threat database
+  </Card>
+</CardGroup>
+
+## Key Benefits
+
+- **Proactive Security**: Stop threats before they enter your environment
+- **Zero Friction**: No changes to your development workflow
+- **Real-Time Intelligence**: Protection updates automatically as new threats are discovered
+- **Deep Analysis**: Scans transitive dependencies to catch hidden threats
+- **Developer Focused**: Minimal interruption for legitimate development work
+
+## Why Now?
+
+The threat landscape for software supply chains has evolved dramatically:
+
+- **Scale of attacks**: Thousands of malicious packages published monthly
+- **Sophistication**: Advanced techniques like dependency confusion
+- **Impact**: Major breaches affecting enterprise and government systems
+- **Speed**: Attacks spread faster than traditional detection methods
+
+PMG provides the proactive defense needed to match the pace and scale of modern supply chain threats.
