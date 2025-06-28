@@ -40,6 +40,12 @@
             ]
           },
           {
+            "group": "xBom - AI Enriched BOMs",
+            "pages": [
+              "xbom/xbom"
+            ]
+          },
+          {
             "group": "API & Automation",
             "pages": [
               "guides/insights-api-using-typescript",
