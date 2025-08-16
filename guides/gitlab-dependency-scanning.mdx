@@ -46,7 +46,7 @@ Add the following to your `.gitlab-ci.yml` file:
 
 ```yaml
 include:
-  - component: gitlab.com/safedep/ci-components/vet/scan@v1.5.0
+  - component: gitlab.com/safedep/ci-components/vet/scan@v1.5.1
 ```
 
 **That's it! 🚀** Commit and push changes to trigger your first scan.
@@ -73,7 +73,7 @@ Enable [SafeDep Cloud](/cloud/quickstart) synchronization:
 
 ```yaml
 include:
-  - component: gitlab.com/safedep/ci-components/vet/scan@v1.5.0
+  - component: gitlab.com/safedep/ci-components/vet/scan@v1.5.1
     inputs:
       cloud: true
       cloud-key: $CLOUD_KEY
@@ -90,7 +90,7 @@ Use custom policies for advanced filtering:
 
 ```yaml
 include:
-  - component: gitlab.com/safedep/ci-components/vet/scan@v1.5.0
+  - component: gitlab.com/safedep/ci-components/vet/scan@v1.5.1
     inputs:
       policy: '.gitlab/vet/policy.yml'
 ```
@@ -103,7 +103,7 @@ Specify which version of `vet` to use:
 
 ```yaml
 include:
-  - component: gitlab.com/safedep/ci-components/vet/scan@v1.5.0
+  - component: gitlab.com/safedep/ci-components/vet/scan@v1.5.1
     inputs:
       version: v1.9.0
 ```
@@ -114,7 +114,7 @@ Configure trusted registry URLs for package verification:
 
 ```yaml
 include:
-  - component: gitlab.com/safedep/ci-components/vet/scan@v1.5.0
+  - component: gitlab.com/safedep/ci-components/vet/scan@v1.5.1
     inputs:
       trusted-registries:
         - https://registry.npmjs.org
@@ -127,7 +127,7 @@ Control who can access scan artifacts:
 
 ```yaml
 include:
-  - component: gitlab.com/safedep/ci-components/vet/scan@v1.5.0
+  - component: gitlab.com/safedep/ci-components/vet/scan@v1.5.1
     inputs:
       artifact-access: 'developer'  # Options: all, developer, none
 ```
@@ -147,7 +147,7 @@ stages:
   - deploy
 
 include:
-  - component: gitlab.com/safedep/ci-components/vet/scan@v1.5.0
+  - component: gitlab.com/safedep/ci-components/vet/scan@v1.5.1
     inputs:
       stage: security
       policy: '.gitlab/security-policy.yml'
@@ -166,7 +166,7 @@ build:
 
 ```yaml
 include:
-  - component: gitlab.com/safedep/ci-components/vet/scan@v1.5.0
+  - component: gitlab.com/safedep/ci-components/vet/scan@v1.5.1
     rules:
       - if: $CI_PIPELINE_SOURCE == "merge_request_event"
       - if: $CI_COMMIT_BRANCH == "main"
