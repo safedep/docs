@@ -3,9 +3,9 @@
   "theme": "mint",
   "name": "SafeDep Documentation",
   "colors": {
-    "primary": "#2c4dda",
-    "light": "#5a7bef",
-    "dark": "#1a3bb8"
+    "primary": "#0D9488",
+    "light": "#0D9488",
+    "dark": "#0D9488"
   },
   "favicon": "/favicon.ico",
   "css": ["/styles.css"],
