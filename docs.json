@@ -40,12 +40,6 @@
             ]
           },
           {
-            "group": "xBom - AI Enriched BOMs",
-            "pages": [
-              "xbom/xbom"
-            ]
-          },
-          {
             "group": "API & Automation",
             "pages": [
               "guides/insights-api-using-typescript",
@@ -95,6 +89,23 @@
           {
             "group": "Concepts",
             "pages": ["pmg/concepts/why-pmg", "pmg/concepts/about"]
+          }
+        ]
+      },
+      {
+        "tab": "SafeDep xBom",
+        "groups": [
+          {
+            "group": "Get Started",
+            "pages": ["xbom/quickstart"]
+          },
+          {
+            "group": "Concepts",
+            "pages": [
+              "xbom/concepts/features",
+              "xbom/concepts/why-xbom",
+              "xbom/concepts/signatures"
+            ]
           }
         ]
       },

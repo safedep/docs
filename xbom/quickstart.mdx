@@ -1,0 +1,122 @@
+---
+title: "Quickstart Guide"
+description: "Get started with SafeDep xBom - Open Source Bill of Materials (BOM) generator enriched with AI, SaaS, Crypto."
+---
+
+<Card
+  title="xBom Repository"
+  icon="github"
+  href="https://github.com/safedep/xbom"
+>
+  View the xBom source code and contribute on GitHub
+</Card>
+
+**xBom** is a tool designed to generate Bill of Materials (BOMs) that are enriched with information about AI components, SaaS integrations, and more. It achieves this by utilizing static code analysis to identify these elements within your codebase.
+
+<Tip>
+  This allows for a more comprehensive understanding of all the software and
+  services your application relies on, going beyond _traditional dependency
+  tracking_.
+</Tip>
+
+### Installation
+
+You can install xBom using one of the following methods:
+
+**macOS & Linux (Homebrew):**
+
+```bash
+# Installation on macOS & Linux
+brew install safedep/tap/xbom
+```
+
+**Pre-built binary:**
+Alternatively, you can download a **[pre-built binary](https://github.com/safedep/xbom/releases)** suitable for your operating system from the GitHub releases page.
+
+### Generating Your First BOM
+
+To generate a BOM for your source code, use the `generate` command:
+
+```bash
+# Generate BOM for your source code
+xbom generate --dir /path/to/your/code --bom /path/to/output/bom.cdx.json
+```
+
+Replace `/path/to/your/code` with the actual path to your project's source code directory and `/path/to/output/bom.cdx.json` with the desired path and filename for the generated BOM.
+
+This command will produce a Software Bill of Materials (SBOM) in the **[CycloneDX v1.6 JSON format](https://cyclonedx.org/docs/1.6/json/)**. The BOM will include any AI components and other supported elements detected within the codebase.
+
+## Supported Languages
+
+Currently, `xbom` supports the following programming languages:
+
+| Language   | Status                                                  |
+| ---------- | ------------------------------------------------------- |
+| Python     | <Icon icon="circle-check" size={16} iconType="solid" /> |
+| Java       | <Icon icon="circle-check" size={16} iconType="solid" /> |
+| JavaScript | <Icon icon="timer" size={16} />                         |
+
+We are continuously working to expand language support.
+
+## Supported BOM Types
+
+xBom specializes in identifying a variety of components beyond traditional libraries.
+
+### AI Components
+
+xBom can detect the usage of various AI SDKs and services, including:
+
+- LangChain
+- Anthropic
+- CrewAI
+- OpenAI
+
+### Cloud Services
+
+It can also identify integrations with major cloud platforms:
+
+- Google Cloud Platform (GCP)
+- Microsoft Azure
+
+<Info>
+  To request support for a new AI framework or cloud service, please{" "}
+  <a href="https://github.com/safedep/xbom/issues/new">create an issue</a> on
+  our GitHub repository
+</Info>
+
+## Visual Convenience
+
+While the primary output of xBom is a CycloneDX JSON file, which is machine-readable and standardized, we understand the need for a quick, human-readable overview. xBom provides a link in its console output to an interactive HTML representation of the BOM. This allows for easy browsing and understanding of the detected components.
+
+<div align="center">
+  <img
+    src="https://raw.githubusercontent.com/safedep/xbom/main/docs/assets/xbom-demo.gif"
+    alt="xbom-demo"
+    width="100%"
+  />
+</div>
+
+### <Icon icon="flag" size={20} /> Limitations
+
+**Current focus (AI BOM generation):**
+It's important to note that `xbom` is currently focused on AI BOM generation. Its primary strength lies in using static code analysis to identify AI products, SaaS APIs, and similar non-library components used in your codebase.
+
+**Recommendation for comprehensive SBOMs (vet tool):**
+For generating a more comprehensive SBOM that includes a detailed list of all your open-source library dependencies (often derived from manifest files), we recommend using a complementary tool like [vet](https://github.com/safedep/vet). `vet` is another tool from SafeDep that specializes in dependency analysis and vulnerability management. Using xBom and vet together can provide a more holistic view of your software supply chain.
+
+### <Icon icon="telescope" size={20} /> Telemetry
+
+**Purpose:**
+`xbom` collects anonymous telemetry to help us understand how the tool is used. This data provides valuable insights into common use cases, popular integrations, and potential areas for improvement, ultimately helping us make xBom a better product for everyone. We do not collect any personally identifiable information or sensitive data.
+
+**How to disable:**
+
+If you prefer to disable telemetry
+collection, you can do so by setting the `XBOM_DISABLE_TELEMETRY` environment variable
+to `true`:
+
+```bash
+export XBOM_DISABLE_TELEMETRY=true
+```
+
+This will prevent xBom from sending any usage data.
