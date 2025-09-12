@@ -78,11 +78,11 @@ To help troubleshoot issues, gather debug information:
 # Get version information
 vet version
 
-# Enable debug logging
-vet scan -D /path/to/repo --log-level debug
+# Enable debug logging and verbose output
+vet scan -D /path/to/repo -l- -d
 
 # Log to file for sharing
-vet scan -D /path/to/repo --log-file /tmp/vet.log --log-level debug
+vet scan -D /path/to/repo -l /tmp/vet.log -d
 ```
 
 ## Contributing
@@ -190,7 +190,6 @@ For specific inquiries:
 - **General support**: [support@safedep.io](mailto:support@safedep.io)
 - **Security issues**: Follow our [security policy](https://github.com/safedep/vet/security/policy)
 - **Business inquiries**: [hello@safedep.io](mailto:hello@safedep.io)
-- **Partnership opportunities**: [partnerships@safedep.io](mailto:partnerships@safedep.io)
 
 ---
 

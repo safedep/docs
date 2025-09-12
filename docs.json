@@ -59,27 +59,6 @@
         ]
       },
       {
-        "tab": "SafeDep Cloud",
-        "groups": [
-          {
-            "group": "Getting Started",
-            "pages": ["cloud/overview", "cloud/quickstart"]
-          },
-          {
-            "group": "Features & Integration",
-            "pages": [
-              "cloud/authentication",
-              "cloud/sync",
-              "cloud/malware-analysis"
-            ]
-          },
-          {
-            "group": "Support",
-            "pages": ["cloud/faq"]
-          }
-        ]
-      },
-      {
         "tab": "SafeDep pmg",
         "groups": [
           {
@@ -110,11 +89,44 @@
         ]
       },
       {
+        "tab": "SafeDep Apps",
+        "groups": [
+          {
+            "group": "Getting Started",
+            "pages": [
+              "apps/overview",
+              "apps/github/overview"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "SafeDep Cloud",
+        "groups": [
+          {
+            "group": "Getting Started",
+            "pages": ["cloud/overview", "cloud/quickstart"]
+          },
+          {
+            "group": "Features & Integration",
+            "pages": [
+              "cloud/authentication",
+              "cloud/sync",
+              "cloud/malware-analysis"
+            ]
+          },
+          {
+            "group": "Support",
+            "pages": ["cloud/faq"]
+          }
+        ]
+      },
+      {
         "tab": "Community & Support",
         "groups": [
           {
             "group": "Community",
-            "pages": ["community", "faq", "resources"]
+            "pages": ["community", "faq"]
           }
         ]
       },
