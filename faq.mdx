@@ -22,19 +22,19 @@ Run vet with debug logging enabled to diagnose issues:
 <Tabs>
   <Tab title="Log to stdout">
     ```bash
-    vet scan -D /path/to/repo --silent --log-level debug
+    vet scan -D /path/to/repo -l- -d
     ```
   </Tab>
   
   <Tab title="Log to file">
     ```bash
-    vet scan -D /path/to/repo --log-file /tmp/vet.log --log-level debug
+    vet scan -D /path/to/repo -l /tmp/vet.log -d
     ```
   </Tab>
   
   <Tab title="Verbose output">
     ```bash
-    vet scan -D /path/to/repo --verbose
+    vet scan -D /path/to/repo -l- -v
     ```
   </Tab>
 </Tabs>
