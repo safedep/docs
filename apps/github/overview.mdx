@@ -4,7 +4,7 @@ description: "SafeDep GitHub App"
 ---
 
 [SafeDep GitHub App](https://github.com/apps/safedep) integrates with your GitHub repositories to help you
-manage your open source software supply chain. The advantage of using the app over SafeDep 
+manage your open source software supply chain. The advantage of using the app over SafeDep
 [GitHub Action](https://github.com/safedep/vet-action) are:
 
 - Zero configuration installation and immediate visibility of security findings in your repositories
@@ -15,7 +15,7 @@ manage your open source software supply chain. The advantage of using the app ov
 ## How to Install
 
 1. Navigate to [SafeDep GitHub App](https://github.com/apps/safedep)
-2. Click *Install*
+2. Click _Install_
 3. Follow the instructions to install the app in your GitHub organization or repository
 
 ## How to Use
@@ -23,3 +23,72 @@ manage your open source software supply chain. The advantage of using the app ov
 SafeDep GitHub App automatically scans pull requests for open source dependency changes. Newly introduced
 or updated dependencies are scanned for vulnerabilities and malware.
 
+### Reports
+
+![GitHub App Report Demo](../../images/github-app-report-demo.png)
+
+On every **Pull Request**, SafeDep GitHub App scans the updated packages and creates a detailed list with analysis on:
+
+- [Malicious / Suspicious](/cloud/malware-analysis)
+- [Vulnerabilities](#appendix)
+- [Risky Licenses](#appendix)
+
+### Active Protection
+
+![GitHub App Gating Demo](../../images/github-app-gating-demo.png)
+
+Upon any failure to these reports the GitHub App **Check** will fail, protecting the branch from any harmful package.
+
+The **GitHub Check** will fail if there is any _Verified Malicious Package_, any _Vulnerability_ or any _Risky License_.
+
+## Appendix
+
+### **Vulnerabilities**
+
+- The current version of _SafeDep GitHub App_ check for any `CRITICAL` AND `HIGH` risk vulnerability.
+- [OSV](https://osv.dev) is used as the vulnerability database
+
+### **Risky Licenses**
+
+- The current version of _SafeDep GitHub App_ classify following licenses as **Risky**:
+
+  - `GPL-2.0`
+  - `GPL-2.0-only`
+  - `GPL-2.0-or-later`
+  - `GPL-3.0`
+  - `GPL-3.0-only`
+  - `GPL-3.0-or-later`
+  - `LGPL-2.1`
+  - `LGPL-2.1-only`
+  - `LGPL-2.1-or-later`
+  - `LGPL-3.0`
+  - `LGPL-3.0-only`
+  - `LGPL-3.0-or-later`
+  - `AGPL-3.0`
+  - `AGPL-3.0-only`
+  - `AGPL-3.0-or-later`
+  - `EPL-2.0`
+
+### **Supported Lockfiles**
+
+- The current version of _SafeDep GitHub App_ supports these lockfiles and ecosystems:
+  1. **NPM**
+  - `package-lock.json`
+  - `pnpm-lock.yaml`
+  - `yarn.lock`
+  2. **GoLang**
+  - `go.mod`
+  3. **PyPI**
+  - `requirements.txt`
+  - `uv.lock`
+  - `poetry.lock`
+  - `Pipfile.lock`
+  4. **RubyGems**
+  - `Gemfile.lock`
+  5. **Cargo (Rust)**
+  - `Cargo.lock`
+  6. **Packagist (PHP)**
+  - `composer.lock`
+  7. **Maven (Java)**
+  - `pom.xml`
+  - `grade.lockfile`
