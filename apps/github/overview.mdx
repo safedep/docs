@@ -41,28 +41,52 @@ Upon any failure to these reports the GitHub App **Check** will fail, protecting
 
 ## Appendix
 
-- **Vulnerabilities**
+### **Vulnerabilities**
 
-  - The current version of _SafeDep GitHub App_ check for any `CRITICAL` AND `HIGH` risk vulnerability.
-  - [OSV](https://osv.dev) is used as the vulnerability database
+- The current version of _SafeDep GitHub App_ check for any `CRITICAL` AND `HIGH` risk vulnerability.
+- [OSV](https://osv.dev) is used as the vulnerability database
 
-- **Risky Licenses**
+### **Risky Licenses**
 
-  - The current version of _SafeDep GitHub App_ classify following licenses as **Risky**:
+- The current version of _SafeDep GitHub App_ classify following licenses as **Risky**:
 
-    - `GPL-2.0`
-    - `GPL-2.0-only`
-    - `GPL-2.0-or-later`
-    - `GPL-3.0`
-    - `GPL-3.0-only`
-    - `GPL-3.0-or-later`
-    - `LGPL-2.1`
-    - `LGPL-2.1-only`
-    - `LGPL-2.1-or-later`
-    - `LGPL-3.0`
-    - `LGPL-3.0-only`
-    - `LGPL-3.0-or-later`
-    - `AGPL-3.0`
-    - `AGPL-3.0-only`
-    - `AGPL-3.0-or-later`
-    - `EPL-2.0`
+  - `GPL-2.0`
+  - `GPL-2.0-only`
+  - `GPL-2.0-or-later`
+  - `GPL-3.0`
+  - `GPL-3.0-only`
+  - `GPL-3.0-or-later`
+  - `LGPL-2.1`
+  - `LGPL-2.1-only`
+  - `LGPL-2.1-or-later`
+  - `LGPL-3.0`
+  - `LGPL-3.0-only`
+  - `LGPL-3.0-or-later`
+  - `AGPL-3.0`
+  - `AGPL-3.0-only`
+  - `AGPL-3.0-or-later`
+  - `EPL-2.0`
+
+### **Supported Lockfiles**
+
+- The current version of _SafeDep GitHub App_ supports these lockfiles and ecosystems:
+  1. **NPM**
+  - `package-lock.json`
+  - `pnpm-lock.yaml`
+  - `yarn.lock`
+  2. **GoLang**
+  - `go.mod`
+  3. **PyPI**
+  - `requirements.txt`
+  - `uv.lock`
+  - `poetry.lock`
+  - `Pipfile.lock`
+  4. **RubyGems**
+  - `Gemfile.lock`
+  5. **Cargo (Rust)**
+  - `Cargo.lock`
+  6. **Packagist (PHP)**
+  - `composer.lock`
+  7. **Maven (Java)**
+  - `pom.xml`
+  - `grade.lockfile`
