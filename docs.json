@@ -177,8 +177,8 @@
     ],
     "primary": {
       "type": "button",
-      "label": "SafeDep Cloud",
-      "href": "https://platform.safedep.io"
+      "label": "Install",
+      "href": "https://github.com/apps/safedep"
     }
   },
   "footer": {

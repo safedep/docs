@@ -4,36 +4,60 @@ description: "Secure your open source software supply chain with SafeDep"
 ---
 
 This is the official documentation website for [safedep.io](https://safedep.io). 
-Here you will find everything you need to know about using **SafeDep vet** and **SafeDep Cloud** to safeguard your application against open source software supply chain risks.
+Here you will find everything you need to know about using **SafeDep vet**, **SafeDep Cloud** and 
+other SafeDep tools to safeguard your application against open source software supply chain risks.
 
-## What is SafeDep vet?
+## Why SafeDep?
 
-SafeDep vet is a free, open-source next-generation software composition analysis (SCA) tool.
-It can be used in development, CI/CD, and production environments to protect against risky open source components.
-It is built in public at [safedep/vet](https://github.com/safedep/vet).
+SafeDep [continuously scans open source packages for malicious code](https://safedep.io/dynamic-analysis-oss-package-at-scale/)
+using a combination of static and dynamic analysis. Suspicious packages are verified by security experts to confirm malicious behavior.
+Tools like [vet](https://github.com/safedep/vet) and [PMG](https://github.com/safedep/pmg) leverages SafeDep's
+malicious package detection capabilities to protect applications against open source software supply chain risks.
 
-## What is SafeDep Cloud?
+## How SafeDep Works?
 
-SafeDep Cloud is a cloud operated service that provides a control plane for managing **SafeDep vet** along
-with additional services such as SBOM management, near real-time malicious package detection and more.
+The diagram below shows how SafeDep works to protect your open source software supply chain
+against malicious packages.
+
+
+```mermaid
+graph TD
+    NPM[npm Registry] --> MONITORING[SafeDep Monitoring]
+    PYPI[PyPI Registry] --> MONITORING
+    RUBYGEMS[RubyGems Registry] --> MONITORING
+    OTHER[Other Package Registries] --> MONITORING
+    
+    MONITORING --> STATIC[Static Code Analysis]
+    STATIC --> DYNAMIC[Dynamic Analysis]
+    DYNAMIC --> DATABASE[Real-time Malicious Package Database]
+    
+    DATABASE --> VET[SafeDep vet<br/>CI/CD Protection]
+    DATABASE --> PMG[SafeDep PMG<br/>Developer Environment Protection]
+    
+    VET --> CICD_BLOCK[Block Malicious Packages in CI/CD]
+    PMG --> DEV_BLOCK[Block Malicious Packages at Install Time]
+    
+    classDef benefit fill:#4ade80,stroke:#16a34a,stroke-width:2px,color:#000000
+    class CICD_BLOCK,DEV_BLOCK benefit
+```
 
 
 ## What's Next?
 
 <CardGroup cols={2}>
   <Card
+    title="Install SafeDep GitHub App"
+    icon="github"
+    href="/apps/github/overview"
+  >
+    Protect your GitHub repositories against malicious open source packages
+  </Card>
+  <Card
     title="Quick Start with vet"
     icon="rocket"
     href="/quickstart"
   >
     Start identifying OSS risks using our free, open-source tool
-  </Card>
-  <Card
-    title="SafeDep Cloud"
-    icon="cloud"
-    href="/cloud/quickstart"
-  >
-    Scale risk governance across your entire organization
   </Card>
   <Card
     title="Integration Guides"
