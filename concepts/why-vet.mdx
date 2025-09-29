@@ -9,7 +9,7 @@ description: "Understanding the need for automated open source dependency vettin
 
 Industry dependency on OSS will only increase. We need better tooling to help security engineering teams to safely consume OSS components.
 
-## Problem Space
+## Problem
 
 Product security practices secure software developed and deployed internally. They do not cover software consumed from external sources in form of libraries from the Open Source ecosystem. The growing risk of vulnerable, unmaintained and malicious dependencies establishes the need for product security teams to vet 3rd party dependencies before consumption.
 
@@ -17,9 +17,15 @@ Product security practices secure software developed and deployed internally. Th
 
 Vetting open source packages are largely a manual and opinionated process involving engineering teams as the requester and security teams as the service provider. A typical OSS vetting process involves auditing dependencies to ensure security, popularity, license compliance, trusted publisher etc. The manual nature of this activity increases cycle time and slows down engineering velocity, especially for evolving products.
 
+## What is vet?
+
+SafeDep vet is a free, open-source next-generation software composition analysis (SCA) tool.
+It can be used in development, CI/CD, and production environments to protect against risky open source components 
+including vulnerabilities and malware. It is built in public at [safedep/vet](https://github.com/safedep/vet).
+
 ## What vet aims to solve
 
-`vet` solves the problem of OSS dependency vetting by providing a policy driven automated analysis of libraries. It can be seamlessly integrated with any CI tool or used in local environments.
+[vet](https://github.com/safedep/vet) solves the problem of OSS dependency vetting by providing a policy driven automated analysis of libraries. It can be seamlessly integrated with any CI tool or used in local environments.
 
 <CardGroup cols={2}>
   <Card title="Automated Analysis" icon="robot">
