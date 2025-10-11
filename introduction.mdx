@@ -1,24 +1,32 @@
 ---
 title: Welcome to SafeDep
 description: "Secure your open source software supply chain with SafeDep"
+mode: "center"
 ---
 
 This is the official documentation website for [safedep.io](https://safedep.io). 
 Here you will find everything you need to know about using **SafeDep vet**, **SafeDep Cloud** and 
 other SafeDep tools to safeguard your application against open source software supply chain risks.
 
+---
+
 ## Why SafeDep?
+
 
 SafeDep [continuously scans open source packages for malicious code](https://safedep.io/dynamic-analysis-oss-package-at-scale/)
 using a combination of static and dynamic analysis. Suspicious packages are verified by security experts to confirm malicious behavior.
+
 Tools like [vet](https://github.com/safedep/vet) and [PMG](https://github.com/safedep/pmg) leverage SafeDep's
 malicious package detection capabilities to protect applications against open source software supply chain risks.
 
+---
+
 ## How SafeDep Works
 
+<Info>
 The diagram below shows how SafeDep works to protect your open source software supply chain
 against malicious packages.
-
+</Info>
 
 ```mermaid
 graph TD
@@ -41,42 +49,51 @@ graph TD
     class CICD_BLOCK,DEV_BLOCK benefit
 ```
 
+---
 
 ## What's Next?
 
 <CardGroup cols={2}>
   <Card
     title="Install SafeDep GitHub App"
-    icon="github"
+    img="/images/github-app.png"
     href="/apps/github/overview"
   >
     Protect your GitHub repositories against malicious open source packages
   </Card>
   <Card
     title="Quick Start with vet"
-    icon="rocket"
-    href="/quickstart"
+    img="/images/github-app.png"
+    href="vet/quickstart"
   >
     Start identifying OSS risks using our free, open-source tool
   </Card>
   <Card
     title="Integration Guides"
-    icon="puzzle-piece"
-    href="/guides/github-code-scanning"
+    img="/images/github-app.png"
+    href="vet/guides/github-code-scanning"
   >
     Integrate with GitHub, GitLab, and other CI/CD platforms
   </Card>
   <Card
     title="Join Community"
-    icon="users"
+    img="/images/github-app.png"
     href="https://discord.gg/kAGEj25dCn"
   >
     Connect with other security engineers and get support
   </Card>
 </CardGroup>
 
+---
+
 ## Why Open Source Security Matters
 
-> It has been estimated that Free and Open Source Software (FOSS) constitutes 70-90% of any given piece of modern software solutions.
+<Info>
+**Did you know?** It has been estimated that Free and Open Source Software (FOSS) constitutes **70-90%** of any given piece of modern software solutions.
+</Info>
 
 With this level of dependency on open source, security teams need automated tools to safely consume OSS components without slowing down development velocity.
+
+<Quote>
+Ready to secure your software supply chain? Choose a path above to get started with SafeDep today!
+</Quote>
