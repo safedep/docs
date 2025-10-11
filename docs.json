@@ -8,52 +8,70 @@
     "dark": "#0D9488"
   },
   "favicon": "/favicon.svg",
-  "css": ["/styles.css"],
+  "css": [
+    "/styles.css"
+  ],
   "navigation": {
     "tabs": [
+      {
+        "tab": "Welcome",
+        "groups": [
+          {
+            "group": "Get Started",
+            "pages": [
+              "introduction"
+            ]
+          }
+        ]
+      },
       {
         "tab": "SafeDep vet",
         "groups": [
           {
             "group": "Get Started",
-            "pages": ["introduction", "quickstart"]
+            "pages": [
+              "vet/quickstart"
+            ]
           },
           {
             "group": "Concepts",
-            "pages": ["concepts/why-vet", "concepts/about"]
+            "pages": [
+              "vet/concepts/why-vet",
+              "vet/concepts/about"
+            ]
           },
           {
             "group": "Integration Guides",
             "pages": [
-              "guides/github-code-scanning",
-              "guides/gitlab-dependency-scanning",
-              "guides/defect-dojo-integration"
+              "vet/guides/github-code-scanning",
+              "vet/guides/gitlab-dependency-scanning",
+              "vet/guides/defect-dojo-integration"
             ]
           },
           {
             "group": "SBOM & Analysis",
             "pages": [
-              "guides/cyclonedx-sbom",
-              "guides/dependency-inventory",
-              "guides/code-analysis",
-              "guides/dependency-usage-identification"
+              "vet/guides/cyclonedx-sbom",
+              "vet/guides/dependency-inventory",
+              "vet/guides/code-analysis",
+              "vet/guides/dependency-usage-identification"
             ]
           },
           {
             "group": "API & Automation",
             "pages": [
-              "guides/insights-api-using-typescript",
-              "guides/terraform-supply-chain-audit"
+              "vet/guides/insights-api-using-typescript",
+              "vet/guides/terraform-supply-chain-audit"
             ]
           },
           {
             "group": "Advanced Usage",
             "pages": [
-              "advanced/filtering",
+              "vet/advanced/filtering",
               "advanced/build-your-own-queries",
-              "advanced/policy-as-code",
-              "advanced/exceptions",
-              "advanced/path-exclusion"
+              "vet/advanced/policy-as-code",
+              "vet/advanced/exceptions",
+              "vet/advanced/path-exclusion"
             ]
           }
         ]
@@ -63,11 +81,16 @@
         "groups": [
           {
             "group": "Get Started",
-            "pages": ["pmg/quickstart"]
+            "pages": [
+              "pmg/quickstart"
+            ]
           },
           {
             "group": "Concepts",
-            "pages": ["pmg/concepts/why-pmg", "pmg/concepts/about"]
+            "pages": [
+              "pmg/concepts/why-pmg",
+              "pmg/concepts/about"
+            ]
           }
         ]
       },
@@ -76,7 +99,9 @@
         "groups": [
           {
             "group": "Get Started",
-            "pages": ["xbom/quickstart"]
+            "pages": [
+              "xbom/quickstart"
+            ]
           },
           {
             "group": "Concepts",
@@ -105,7 +130,10 @@
         "groups": [
           {
             "group": "Getting Started",
-            "pages": ["cloud/overview", "cloud/quickstart"]
+            "pages": [
+              "cloud/overview",
+              "cloud/quickstart"
+            ]
           },
           {
             "group": "Features & Integration",
@@ -117,7 +145,9 @@
           },
           {
             "group": "Support",
-            "pages": ["cloud/faq"]
+            "pages": [
+              "cloud/faq"
+            ]
           }
         ]
       },
@@ -126,7 +156,10 @@
         "groups": [
           {
             "group": "Community",
-            "pages": ["community", "faq"]
+            "pages": [
+              "community",
+              "faq"
+            ]
           }
         ]
       },
@@ -135,7 +168,9 @@
         "groups": [
           {
             "group": "API Documentation",
-            "pages": ["api-reference/introduction"]
+            "pages": [
+              "api-reference/introduction"
+            ]
           }
         ]
       }
