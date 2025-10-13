@@ -227,5 +227,17 @@
     "ga4": {
       "measurementId": "G-16XDMW280T"
     }
+  },
+  "seo": {
+    "metatags": {
+      "robots": "index, follow",
+      "og:image": "/images/community.jpg",
+      "og:title": "SafeDep Documentation",
+      "charset": "UTF-8",
+      "viewport": "width=device-width, initial-scale=1.0",
+      "description": "Secure your open source software supply chain with SafeDep",
+      "keywords": "open source, security, software supply chain, vet, github, gitlab, cloud, pmg, xbom, SBOM",
+      "author": "SafeDep"
+    }
   }
 }
