@@ -68,7 +68,7 @@
             "group": "Advanced Usage",
             "pages": [
               "vet/advanced/filtering",
-              "advanced/build-your-own-queries",
+              "vet/advanced/build-your-own-queries",
               "vet/advanced/policy-as-code",
               "vet/advanced/exceptions",
               "vet/advanced/path-exclusion"
@@ -231,7 +231,7 @@
   "seo": {
     "metatags": {
       "robots": "index, follow",
-      "og:image": "/images/community.jpg",
+      "og:image": "https://docs.safedep.io/images/community.jpg",
       "og:title": "SafeDep Documentation",
       "charset": "UTF-8",
       "viewport": "width=device-width, initial-scale=1.0",
