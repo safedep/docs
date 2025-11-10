@@ -25,19 +25,22 @@
         ]
       },
       {
-        "tab": "SafeDep vet",
+        "tab": "Open Source",
         "groups": [
-          {
-            "group": "Get Started",
-            "pages": [
-              "vet/quickstart"
-            ]
-          },
           {
             "group": "Concepts",
             "pages": [
               "vet/concepts/why-vet",
-              "vet/concepts/about"
+              "pmg/concepts/why-pmg",
+              "xbom/concepts/why-xbom"
+            ]
+          },
+          {
+            "group": "Quickstart",
+            "pages": [
+              "vet/quickstart",
+              "pmg/quickstart",
+              "xbom/quickstart"
             ]
           },
           {
@@ -77,55 +80,6 @@
         ]
       },
       {
-        "tab": "SafeDep pmg",
-        "groups": [
-          {
-            "group": "Get Started",
-            "pages": [
-              "pmg/quickstart"
-            ]
-          },
-          {
-            "group": "Concepts",
-            "pages": [
-              "pmg/concepts/why-pmg",
-              "pmg/concepts/about"
-            ]
-          }
-        ]
-      },
-      {
-        "tab": "SafeDep xBom",
-        "groups": [
-          {
-            "group": "Get Started",
-            "pages": [
-              "xbom/quickstart"
-            ]
-          },
-          {
-            "group": "Concepts",
-            "pages": [
-              "xbom/concepts/features",
-              "xbom/concepts/why-xbom",
-              "xbom/concepts/signatures"
-            ]
-          }
-        ]
-      },
-      {
-        "tab": "SafeDep Apps",
-        "groups": [
-          {
-            "group": "Getting Started",
-            "pages": [
-              "apps/overview",
-              "apps/github/overview"
-            ]
-          }
-        ]
-      },
-      {
         "tab": "SafeDep Cloud",
         "groups": [
           {
@@ -136,11 +90,24 @@
             ]
           },
           {
-            "group": "Features & Integration",
+            "group": "Apps & Integrations",
+            "pages": [
+              "apps/overview",
+              "apps/github/overview"
+            ]
+          },
+          {
+            "group": "Features",
             "pages": [
               "cloud/authentication",
               "cloud/sync",
               "cloud/malware-analysis"
+            ]
+          },
+          {
+            "group": "API Reference",
+            "pages": [
+              "api-reference/introduction"
             ]
           },
           {
@@ -159,17 +126,6 @@
             "pages": [
               "community",
               "faq"
-            ]
-          }
-        ]
-      },
-      {
-        "tab": "API Reference",
-        "groups": [
-          {
-            "group": "API Documentation",
-            "pages": [
-              "api-reference/introduction"
             ]
           }
         ]
