@@ -11,3 +11,33 @@ Modern applications are complex and extend far beyond just open-source libraries
 - <Icon icon="lock" size={14} /> Cryptographic algorithms
 
 Traditional BOM tools often focus solely on listed dependencies in manifest files (like `requirements.txt` or `pom.xml`). xBom addresses the need for a deeper insight into the actual components and services your code interacts with, providing a more accurate inventory for compliance, security, and operational awareness.
+
+---
+
+## Features
+
+### Key Features
+
+- **Beyond Manifests**: xBom doesn't just look at your declared dependencies. It analyzes your code to find actual evidence of AI SDKs, cloud service APIs, and other critical components, providing a true inventory of what your application uses.
+- **Extensible Signatures**: xBom uses a system of signatures to detect various components. You can add your own custom signatures to identify proprietary or less common tools, tailoring xBom to your specific needs. These signatures are maintained in a community-driven repository.
+- **Robust Compliance**: In an era of increasing focus on software supply chain security and transparency (e.g., Executive Orders, industry standards), xBom helps you meet these requirements by providing a detailed and accurate BOM. It's a single tool to assist with various compliance needs.
+- **Multi-ecosystem Support**: xBom is designed to work with multiple programming languages and ecosystems. Currently, it actively supports Java and Python, with more languages like JavaScript in progress.
+
+---
+
+## Signatures
+
+**How they work:**
+Signatures are the patterns and rules that xBom uses to detect the presence of specific SDKs, APIs, and libraries within your codebase. These signatures look for characteristic import statements, function calls, or other code constructs that indicate the use of a particular component.
+
+**Community-driven repository:**
+xBom maintains a repository of these signatures, which is community-driven. This allows for a broad and up-to-date set of detections. These are stored in the `signatures/` directory of the xBom project.
+
+**Naming convention:**
+Signatures follow a clear naming convention to ensure organization and clarity:
+`signatures/$vendor/$product/$service.yml`
+
+For example, a signature for an OpenAI service might be located at `signatures/openai/api/gpt.yml`.
+
+**Link to contributing signatures guide:**
+To add new signatures for components not yet covered, or to improve existing ones, please refer to the [contributing signatures guide](https://github.com/safedep/xbom/blob/main/CONTRIBUTING.md#contributing-signatures).

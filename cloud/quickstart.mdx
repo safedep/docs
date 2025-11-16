@@ -28,25 +28,26 @@ The easiest way to get started is using the `vet cloud quickstart` command:
 
 <Steps>
   <Step title="Install vet">
-    Ensure you have vet installed on your system
+    Ensure you have vet installed on your system 
+
     ```bash
     brew tap safedep/tap
     brew install safedep/tap/vet
     ```
   </Step>
-  
+
   <Step title="Run Quickstart">
     Execute the quickstart command and follow the prompts
+
     ```bash
     vet cloud quickstart
     ```
-    
-    <iframe 
-      width="100%" 
-      height="315" 
-      src="https://www.youtube.com/embed/ykSiP547xuA" 
-      title="SafeDep Cloud Quickstart" 
-      frameBorder="0" 
+    <iframe
+      width="100%"
+      height="315"
+      src="https://www.youtube.com/embed/ykSiP547xuA"
+      title="SafeDep Cloud Quickstart"
+      frameBorder="0"
       allowFullScreen
     ></iframe>
   </Step>
@@ -56,27 +57,26 @@ The easiest way to get started is using the `vet cloud quickstart` command:
 
 <Steps>
   <Step title="Create Account">
-    Navigate to [platform.safedep.io](https://platform.safedep.io/) and sign up
+    Navigate to [app.safedep.io](https://app.safedep.io/) and sign up
   </Step>
-  
+
   <Step title="Create Tenant">
     Complete onboarding and create your tenant, noting the **Tenant Domain**
   </Step>
-  
+
   <Step title="Generate API Key">
     Create an API key for use with vet in your tenant settings
   </Step>
 </Steps>
 
 After completing onboarding, you should have:
+
 - **Tenant Domain** (e.g., `your-company.safedep.io`)
 - **API Key** for authentication
 
 ## Configure vet with SafeDep Cloud
 
-<Info>
-Skip this section if you used the `vet cloud quickstart` command
-</Info>
+<Info>Skip this section if you used the `vet cloud quickstart` command</Info>
 
 ### Authentication Setup
 
@@ -107,7 +107,8 @@ vet scan -M /path/to/package-lock.json --report-sync \
 ```
 
 <Note>
-The example uses `package-lock.json`, but vet supports many package manifest formats and code analysis.
+  The example uses `package-lock.json`, but vet supports many package manifest
+  formats and code analysis.
 </Note>
 
 ## GitHub Actions Integration
@@ -152,7 +153,7 @@ vet cloud query execute --sql "select projects.name, projects.version from proje
 
 ```bash
 vet cloud query execute --sql "
-  select projects.name, packages.name, packages.version, vulnerabilities.cve_id 
+  select projects.name, packages.name, packages.version, vulnerabilities.cve_id
   from projects
   where projects.version = 'main' and vulnerabilities.risk = 'CRITICAL'
 "
@@ -162,7 +163,7 @@ vet cloud query execute --sql "
 
 ```bash
 vet cloud query execute --sql "
-  select projects.name, packages.name, packages.version, policy_violations.rule_name 
+  select projects.name, packages.name, packages.version, policy_violations.rule_name
   from projects
   where projects.version = 'main'
 "
@@ -198,7 +199,12 @@ vet cloud query schema
   <Card title="FAQ" icon="question-circle" href="/cloud/faq">
     Find answers to common questions
   </Card>
-  <Card title="API Documentation" icon="code" href="/api-reference/introduction">
+  <Card
+    title="API Documentation"
+    icon="code"
+    href="/api-reference/introduction"
+  >
     Integrate SafeDep Cloud with your systems
   </Card>
 </CardGroup>
+
