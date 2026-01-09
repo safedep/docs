@@ -8,9 +8,7 @@
     "dark": "#0D9488"
   },
   "favicon": "/favicon.png",
-  "css": [
-    "/styles.css"
-  ],
+  "css": ["/styles.css"],
   "navigation": {
     "tabs": [
       {
@@ -18,9 +16,7 @@
         "groups": [
           {
             "group": "Get Started",
-            "pages": [
-              "introduction"
-            ]
+            "pages": ["introduction"]
           }
         ]
       },
@@ -37,11 +33,7 @@
           },
           {
             "group": "Quickstart",
-            "pages": [
-              "vet/quickstart",
-              "pmg/quickstart",
-              "xbom/quickstart"
-            ]
+            "pages": ["vet/quickstart", "pmg/quickstart", "xbom/quickstart"]
           },
           {
             "group": "Integration Guides",
@@ -76,6 +68,10 @@
               "vet/advanced/exceptions",
               "vet/advanced/path-exclusion"
             ]
+          },
+          {
+            "group": "Changelogs",
+            "pages": ["pmg/updates"]
           }
         ]
       },
@@ -84,17 +80,11 @@
         "groups": [
           {
             "group": "Getting Started",
-            "pages": [
-              "cloud/overview",
-              "cloud/quickstart"
-            ]
+            "pages": ["cloud/overview", "cloud/quickstart"]
           },
           {
             "group": "Apps & Integrations",
-            "pages": [
-              "apps/overview",
-              "apps/github/overview"
-            ]
+            "pages": ["apps/overview", "apps/github/overview"]
           },
           {
             "group": "Features",
@@ -106,15 +96,11 @@
           },
           {
             "group": "API Reference",
-            "pages": [
-              "api-reference/introduction"
-            ]
+            "pages": ["api-reference/introduction"]
           },
           {
             "group": "Support",
-            "pages": [
-              "cloud/faq"
-            ]
+            "pages": ["cloud/faq"]
           }
         ]
       },
@@ -123,10 +109,7 @@
         "groups": [
           {
             "group": "Community",
-            "pages": [
-              "community",
-              "faq"
-            ]
+            "pages": ["community", "faq"]
           }
         ]
       }
