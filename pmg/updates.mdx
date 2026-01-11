@@ -3,7 +3,63 @@ title: "PMG Updates"
 description: "New updates related to Package Manager Guard (PMG)"
 ---
 
-<Update label="9 Jan 2026" description="v0.3.1">
+<Update label="v0.3.2" description="11 Jan 2026">
+  ## Package Executor Support & Enhanced Proxy Mode
+
+  <Frame>
+    <img src="/images/pmg-update-0.3.2.png" alt="PMG v0.3.2 updates banner" />
+  </Frame>
+    
+  # New Package Executor Support
+  
+  PMG now supports package executors `npx` and `pnpx`, expanding protection beyond traditional package managers to include package execution scenarios.
+  
+  ## Usage Examples
+  
+  ```bash
+  # Protection for npx commands
+  pmg npx create-react-app my-app
+  
+  # Protection for pnpx commands  
+  pmg pnpx create-next-app my-next-app
+  ```
+  
+  # Enhanced Experimental Proxy Mode
+  
+  The experimental proxy mode has been expanded to support additional package managers: `bun`, `yarn`, `pnpm`, `npx`, and `pnpx`.
+  
+  ## Usage
+  
+  ```bash
+  # Now supported with proxy mode
+  pmg --experimental-proxy-mode bun install lodash
+  pmg --experimental-proxy-mode yarn add lodash
+  pmg --experimental-proxy-mode pnpm install lodash
+  
+  pmg --experimental-proxy-mode npx create-react-app my-app
+  pmg --experimental-proxy-mode pnpx create-next-app my-app
+  ```
+  
+  ## Supported Package Managers For Proxy
+  
+  | Package Manager | Status       |
+  | --------------- | ------------ |
+  | `npm`           | ✅ Active    |
+  | `npx`           | ✅ Active    |
+  | `pnpx`          | ✅ Active    |
+  | `pnpm`          | ✅ Active    |
+  | `yarn`          | ✅ Active    |
+  | `bun`           | ✅ Active    |
+  | `pip`           | 🕒 Planned   |
+  | `uv`            | 🕒 Planned   |
+  | `poetry`        | 🕒 Planned   |
+  
+  For more details see: [PMG Docs](/pmg)
+  
+  GitHub Repository: [https://github.com/safedep/pmg](https://github.com/safedep/pmg)
+</Update>
+
+<Update label="v0.3.1" description="9 Jan 2026">
   ## Trusted Packages & Experimental Proxy Mode
 
   <Frame>
