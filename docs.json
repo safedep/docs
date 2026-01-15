@@ -40,6 +40,7 @@
             "pages": [
               "vet/guides/github-code-scanning",
               "vet/guides/gitlab-dependency-scanning",
+              "vet/guides/bitbucket-dependency-scanning",
               "vet/guides/defect-dojo-integration"
             ]
           },
