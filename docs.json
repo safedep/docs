@@ -40,7 +40,6 @@
             "pages": [
               "vet/guides/github-code-scanning",
               "vet/guides/gitlab-dependency-scanning",
-              "vet/guides/bitbucket-dependency-scanning",
               "vet/guides/defect-dojo-integration"
             ]
           },
@@ -85,7 +84,11 @@
           },
           {
             "group": "Apps & Integrations",
-            "pages": ["apps/overview", "apps/github/overview"]
+            "pages": [
+              "apps/overview",
+              "apps/github/overview",
+              "apps/bitbucket/bitbucket-pipes"
+            ]
           },
           {
             "group": "Features",
