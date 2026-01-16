@@ -84,7 +84,11 @@
           },
           {
             "group": "Apps & Integrations",
-            "pages": ["apps/overview", "apps/github/overview"]
+            "pages": [
+              "apps/overview",
+              "apps/github/overview",
+              "apps/bitbucket/bitbucket-pipes"
+            ]
           },
           {
             "group": "Features",
