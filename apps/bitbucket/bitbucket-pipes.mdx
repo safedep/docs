@@ -50,7 +50,7 @@ For policy customization and [SafeDep Cloud](/cloud/sync) integration, see the [
 To enable changed packages scanning for **PRs** while still supporting **Push** and **Merge** events, you must configure both the `pull-requests` and `default` (or branches) triggers. The most efficient way to implement this without code redundancy is as follows:
 
 ```yml
-image: alpine:latest
+image: atlassian/default-image:3
 
 definitions:
   steps:
