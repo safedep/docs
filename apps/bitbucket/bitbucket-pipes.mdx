@@ -30,12 +30,43 @@ touch bitbucket-pipelines.yml
 ### 2. Add SafeDep in your pipeline
 
 ```yaml
-script:
-  - pipe: safedep/vet-pipe:v1.0.0
+image: atlassian/default-image:3
+
+pipelines:
+  default:
+    - step:
+        name: Run vet pipe
+        script:
+          - pipe: safedep/vet-pipe:v1.1.2
 ```
 
 That's it. The default values will be used for dependency scanning. 
 For policy customization and [SafeDep Cloud](/cloud/sync) integration, see the [Inputs](#inputs), [Policy](#policy) and [Cloud Sync](#cloud-sync) sections.
+
+### On Pull Request
+
+`vet-pipe` includes a feature to scan only the packages changed within a **Pull Request**. However, this functionality relies on environment variables — such as `BITBUCKET_PR_DESTINATION_BRANCH` — which are only populated when using Bitbucket's `pull-requests` pipeline trigger.
+
+To enable changed packages scanning for **PRs** while still supporting **Push** and **Merge** events, you must configure both the `pull-requests` and `default` (or branches) triggers. The most efficient way to implement this without code redundancy is as follows:
+
+```yml
+image: atlassian/default-image:3
+
+definitions:
+  steps:
+    - step: &safedep-vet-pipe
+        name: "Execute Vet Scan Pipe"
+        script:
+          - pipe: safedep/vet-pipe:v1.1.2
+          
+pipelines:
+  branches:
+    main:
+      - step: *safedep-vet-pipe
+  pull-requests:
+    '**':
+      - step: *safedep-vet-pipe
+```
 
 ## Inputs
 
@@ -52,12 +83,18 @@ Cloud Sync requires a subscription to [SafeDep Cloud](/cloud/overview).
 Set the following variables to enable cloud sync:
 
 ```yml
-script:
-  - pipe: safedep/vet-pipe:v1.0.0
-    variables:
-      CLOUD: true
-      CLOUD_KEY: '--YOUR-SAFEDEP-API-KEY--'
-      CLOUD_TENANT: '--YOUR-SAFEDEP-TENANT-ID--'
+image: atlassian/default-image:3
+
+pipelines:
+  default:
+    - step:
+        name: Run vet pipe
+        script:
+          - pipe: safedep/vet-pipe:v1.1.2
+            variables:
+              CLOUD: "true"
+              CLOUD_KEY: $CLOUD_KEY
+              CLOUD_TENANT: $CLOUD_TENANT
 ```
 
 You can generate your `CLOUD_KEY` and `CLOUD_TENANT` values from [https://app.safedep.io](https://app.safedep.io)
@@ -89,7 +126,7 @@ pipelines:
     - step:
         name: "Run Vet Scan"
         script:
-          - pipe: safedep/vet-pipe:v1.0.0
+          - pipe: safedep/vet-pipe:v1.1.2
             variables:
               POLICY: "./safedep/policy.yml"
 ```
@@ -113,7 +150,7 @@ This generated file can be downloaded by setting the `artifact` property in `bit
 - step:
     name: "Run Vet Scan"
     script:
-      - pipe: safedep/vet-pipe:v1.0.0
+      - pipe: safedep/vet-pipe:v1.1.2
     artifacts:
       - vet-report.json
 ```
