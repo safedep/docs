@@ -37,7 +37,7 @@ pipelines:
     - step:
         name: Run vet pipe
         script:
-          - pipe: safedep/vet-pipe:v1.1.2
+          - pipe: safedep/vet-pipe:v1.2.0
 ```
 
 That's it. The default values will be used for dependency scanning. 
@@ -57,7 +57,7 @@ definitions:
     - step: &safedep-vet-pipe
         name: "Execute Vet Scan Pipe"
         script:
-          - pipe: safedep/vet-pipe:v1.1.2
+          - pipe: safedep/vet-pipe:v1.2.0
           
 pipelines:
   branches:
@@ -67,6 +67,13 @@ pipelines:
     '**':
       - step: *safedep-vet-pipe
 ```
+
+## Reports
+
+`vet-pipe` supports [Bitbucket Native Code Insights Reports](https://support.atlassian.com/bitbucket-cloud/docs/code-insights/), each **Pull Request** or **Push** has reports associated with them, 
+the **findings** are attached to their respective files which are then visible in the Bitbucket UI.
+
+![Bitbucket UI Demo Annotations](/images/bitbucket-ui-demo-annotations.png)
 
 ## Inputs
 
@@ -90,7 +97,7 @@ pipelines:
     - step:
         name: Run vet pipe
         script:
-          - pipe: safedep/vet-pipe:v1.1.2
+          - pipe: safedep/vet-pipe:v1.2.0
             variables:
               CLOUD: "true"
               CLOUD_KEY: $CLOUD_KEY
@@ -126,7 +133,7 @@ pipelines:
     - step:
         name: "Run Vet Scan"
         script:
-          - pipe: safedep/vet-pipe:v1.1.2
+          - pipe: safedep/vet-pipe:v1.2.0
             variables:
               POLICY: "./safedep/policy.yml"
 ```
@@ -150,7 +157,7 @@ This generated file can be downloaded by setting the `artifact` property in `bit
 - step:
     name: "Run Vet Scan"
     script:
-      - pipe: safedep/vet-pipe:v1.1.2
+      - pipe: safedep/vet-pipe:v1.2.0
     artifacts:
       - vet-report.json
 ```
