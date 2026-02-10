@@ -1,9 +1,12 @@
 ---
-title: Cloud Quick Start
+title: Quick Start
 description: "Get started with SafeDep Cloud in under 10 minutes"
 ---
 
-SafeDep Cloud provides a control and data aggregation service on top of security tools like [vet](https://github.com/safedep/vet). This guide will help you connect your vet instances to SafeDep Cloud for centralized policy management and reporting.
+<Note>[GitHub App Integration](https://github.com/apps/safedep) is available for free. See [other integrations](/apps/overview) for more details</Note>
+
+SafeDep Cloud provides a control and data aggregation service on top of security tools like [vet](https://github.com/safedep/vet). 
+This guide will help you connect your vet instances to SafeDep Cloud for centralized policy management and reporting.
 
 ## What You'll Accomplish
 
@@ -22,7 +25,30 @@ SafeDep Cloud provides a control and data aggregation service on top of security
   </Card>
 </CardGroup>
 
-## Method 1: Quick Onboarding with vet CLI
+## Web Onboarding
+
+<Steps>
+  <Step title="Create Account">
+    Navigate to [app.safedep.io](https://app.safedep.io/) and sign up
+  </Step>
+
+  <Step title="Create Tenant">
+    Complete onboarding and create your tenant, noting the **Tenant Domain**
+  </Step>
+
+  <Step title="Generate API Key">
+    Create an API key for use with vet in your tenant settings
+  </Step>
+</Steps>
+
+After completing onboarding, you should have:
+
+- **Tenant Domain** (e.g., `your-company.safedep.io`)
+- **API Key** for authentication
+
+See [supported integrations](/apps/overview) for more details on how to integrate with your SDLC.
+
+## Quick Onboarding with vet CLI
 
 The easiest way to get started is using the `vet cloud quickstart` command:
 
@@ -52,27 +78,6 @@ The easiest way to get started is using the `vet cloud quickstart` command:
     ></iframe>
   </Step>
 </Steps>
-
-## Method 2: Manual Web Onboarding
-
-<Steps>
-  <Step title="Create Account">
-    Navigate to [app.safedep.io](https://app.safedep.io/) and sign up
-  </Step>
-
-  <Step title="Create Tenant">
-    Complete onboarding and create your tenant, noting the **Tenant Domain**
-  </Step>
-
-  <Step title="Generate API Key">
-    Create an API key for use with vet in your tenant settings
-  </Step>
-</Steps>
-
-After completing onboarding, you should have:
-
-- **Tenant Domain** (e.g., `your-company.safedep.io`)
-- **API Key** for authentication
 
 ## Configure vet with SafeDep Cloud
 
