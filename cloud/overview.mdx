@@ -1,36 +1,20 @@
 ---
 title: SafeDep Cloud Overview
-description: "Control and management plane for open source software supply chain security"
+description: "Unified platform for open source software supply chain security"
 ---
-
-<Info>
-SafeDep Cloud is currently in early preview. Contact [support@safedep.io](mailto:support@safedep.io) for enquiries about self-hosting options.
-</Info>
 
 ## What is SafeDep Cloud?
 
-SafeDep Cloud provides a **control and management plane** for managing open source software supply chain risks. It offers hosted services that augment [vet](https://github.com/safedep/vet) with additional capabilities and enterprise-grade integrations.
-
-## How it Complements vet?
-
-While [vet](https://github.com/safedep/vet) is a powerful free and open source tool that can be used independently or integrated with CI/CD, large-scale deployments require additional capabilities:
-
-<CardGroup cols={2}>
-  <Card title="Centralized Policy Management" icon="shield-check">
-    Manage, test, and deploy policies across all vet instances from a single location
-  </Card>
-  <Card title="Consolidated Reporting" icon="chart-bar">
-    Aggregate findings from multiple repositories and teams for organization-wide visibility
-  </Card>
-  <Card title="SBOM Query Engine" icon="search">
-    Query consolidated SBOMs across your entire software portfolio using SQL-like syntax
-  </Card>
-  <Card title="Malware Analysis" icon="virus">
-    Enhanced threat detection capabilities beyond standard vulnerability scanning
-  </Card>
-</CardGroup>
+SafeDep Cloud provides a **control and management plane** for managing open source software supply chain risks. 
+It offers hosted services that augment SafeDep's open source tools with additional capabilities and enterprise-grade integrations.
 
 ## Key Features
+
+### Malicious Package Protection
+- Real-time protection against malicious open source packages
+- Support for AI Agents and AI IDEs
+- Threat intelligence feed for enterprise detection and response
+
 
 ### Enterprise Scale
 - Support for 1000+ repositories
@@ -45,44 +29,7 @@ While [vet](https://github.com/safedep/vet) is a powerful free and open source t
 ### API-First Design
 - gRPC APIs with multiple SDKs for integration
 - CLI tools for automation
-
-## Architecture
-
-```mermaid
-graph TB
-    subgraph "Development Environment"
-        A[vet CLI]
-        B[GitHub Actions]
-        C[GitLab CI]
-    end
-    
-    subgraph "SafeDep Cloud"
-        D[API Gateway]
-        E[Policy Engine]
-        F[SBOM Storage]
-        G[Query Engine]
-        H[Analytics]
-    end
-    
-    subgraph "Data Sources"
-        I[OSV Database]
-        J[OpenSSF Scorecard]
-        K[Package Registries]
-    end
-    
-    A --> D
-    B --> D
-    C --> D
-    D --> E
-    D --> F
-    F --> G
-    G --> H
-    E --> I
-    E --> J
-    E --> K
-```
-
-SafeDep Cloud acts as the central hub for all your vet deployments, providing unified policy management, data aggregation, and advanced querying capabilities.
+- Built for AI Agents for autonomous security decisions
 
 ## Getting Started
 

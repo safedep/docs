@@ -8,7 +8,9 @@
     "dark": "#0D9488"
   },
   "favicon": "/favicon.png",
-  "css": ["/styles.css"],
+  "css": [
+    "/styles.css"
+  ],
   "navigation": {
     "tabs": [
       {
@@ -16,7 +18,9 @@
         "groups": [
           {
             "group": "Get Started",
-            "pages": ["introduction"]
+            "pages": [
+              "introduction"
+            ]
           }
         ]
       },
@@ -33,13 +37,16 @@
           },
           {
             "group": "Quickstart",
-            "pages": ["vet/quickstart", "pmg/quickstart", "xbom/quickstart"]
+            "pages": [
+              "vet/quickstart",
+              "pmg/quickstart",
+              "xbom/quickstart"
+            ]
           },
           {
             "group": "Integration Guides",
             "pages": [
               "vet/guides/github-code-scanning",
-              "vet/guides/gitlab-dependency-scanning",
               "vet/guides/defect-dojo-integration"
             ]
           },
@@ -71,7 +78,9 @@
           },
           {
             "group": "Changelogs",
-            "pages": ["pmg/updates"]
+            "pages": [
+              "pmg/updates"
+            ]
           }
         ]
       },
@@ -80,31 +89,39 @@
         "groups": [
           {
             "group": "Getting Started",
-            "pages": ["cloud/overview", "cloud/quickstart"]
+            "pages": [
+              "cloud/overview",
+              "cloud/quickstart"
+            ]
           },
           {
             "group": "Apps & Integrations",
             "pages": [
               "apps/overview",
               "apps/github/overview",
+              "apps/gitlab/overview",
               "apps/bitbucket/bitbucket-pipes"
             ]
           },
           {
             "group": "Features",
             "pages": [
-              "cloud/authentication",
               "cloud/sync",
               "cloud/malware-analysis"
             ]
           },
           {
-            "group": "API Reference",
-            "pages": ["api-reference/introduction"]
+            "group": "Reference",
+            "pages": [
+              "api-reference/introduction",
+              "cloud/authentication"
+            ]
           },
           {
             "group": "Support",
-            "pages": ["cloud/faq"]
+            "pages": [
+              "cloud/faq"
+            ]
           }
         ]
       },
@@ -113,7 +130,10 @@
         "groups": [
           {
             "group": "Community",
-            "pages": ["community", "faq"]
+            "pages": [
+              "community",
+              "faq"
+            ]
           }
         ]
       }
