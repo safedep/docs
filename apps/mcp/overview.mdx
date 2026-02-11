@@ -119,6 +119,47 @@ Add the SafeDep MCP server to your Gemini CLI configuration. Edit `~/.gemini/set
 
 See the [Gemini CLI MCP documentation](https://geminicli.com/docs/tools/mcp-server/) for more details.
 
+### Windsurf
+
+Add the SafeDep MCP server to your Windsurf configuration. Create or edit `~/.codeium/windsurf/mcp_config.json` in your home directory:
+
+```json
+{
+  "mcpServers": {
+    "safedep": {
+      "url": "https://mcp.safedep.io/model-context-protocol/threats/v1/mcp",
+      "headers": {
+        "Authorization": "<API Key>",
+        "X-Tenant-ID": "<Tenant Domain>"
+      }
+    }
+  }
+}
+```
+
+See the [Windsurf Cascade MCP documentation](https://docs.windsurf.com/windsurf/cascade/mcp) for more details.
+
+### Zed
+
+Add the SafeDep MCP server to your Zed configuration. Create or edit `~/.config/zed/settings.json` in your home directory.
+
+```json
+{
+  "context_servers": {
+    "safedep": {
+      "enabled": true,
+      "url": "https://mcp.safedep.io/model-context-protocol/threats/v1/mcp",
+      "headers": {
+        "Authorization": "<API Key>",
+        "X-Tenant-ID": "<Tenant Domain>"
+      }
+    }
+  }
+}
+```
+
+See the [Zed MCP documentation](https://zed.dev/docs/ai/mcp) for more details.
+
 ## Testing
 
 After setting up the MCP server, you can verify the integration is working by asking your coding agent to install one of the following test packages:
