@@ -100,7 +100,8 @@
               "apps/overview",
               "apps/github/overview",
               "apps/gitlab/overview",
-              "apps/bitbucket/bitbucket-pipes"
+              "apps/bitbucket/bitbucket-pipes",
+              "apps/mcp/overview"
             ]
           },
           {

@@ -1,0 +1,140 @@
+---
+title: "Model Context Protocol Server"
+description: "SafeDep cloud hosted MCP server"
+---
+
+SafeDep offers a cloud hosted Model Context Protocol (MCP) server for integrating malicious package feeds into AI Agents and IDEs.
+This integration enables AI Agents to continue working autonomously while protected against malicious open source packages.
+
+## Endpoints 
+
+| Endpoint                                                       | Description                 |
+| -------------------------------------------------------------- | --------------------------- |
+| `https://mcp.safedep.io/model-context-protocol/threats/v1/mcp` | SafeDep MCP endpoint (HTTP) |
+| `https://mcp.safedep.io/model-context-protocol/threats/v1/sse` | Legacy SSE endpoint         |
+
+### Authentication
+
+The MCP server requires SafeDep API key based authentication. Following HTTP headers are required:
+
+| Header          | Description                                                     |
+| --------------- | --------------------------------------------------------------- |
+| `Authorization` | `<API Key>`                                                     |
+| `X-Tenant-ID`   | `your-tenant-domain (e.g. default-team.your-domain.safedep.io)` |
+
+## Quick Start
+
+<Steps>
+  <Step title="Sign-up for SafeDep">
+    Navigate to [app.safedep.io](https://app.safedep.io/) and sign up
+  </Step>
+
+  <Step title="Create API Key">
+    Create an API key for use with the MCP server from your SafeDep Cloud [tenant settings](https://app.safedep.io/settings/api-keys)
+  </Step>
+
+  <Step title="Configure MCP Server">
+    Configure the MCP server with your API key and tenant domain in your favorite IDE or AI Agent (see [Setup](#setup) for more details).
+  </Step>
+
+  <Step title="Test the Integration">
+    Verify the setup by asking your coding agent to install a [test package](#testing). The agent should block it as malicious.
+  </Step>
+</Steps>
+
+## Setup
+
+### Claude Code
+
+Use `claude` CLI to add the MCP server to your user settings. This configuration will be available across all Claude Code projects.
+
+```bash
+claude mcp add -s user --transport http safedep \
+  https://mcp.safedep.io/model-context-protocol/threats/v1/mcp \
+  --header "Authorization: <API Key>" \
+  --header "X-Tenant-ID: <Tenant Domain>"
+```
+
+### Cursor
+
+Add the SafeDep MCP server to your Cursor configuration. Create or edit `~/.cursor/mcp.json` in your home directory:
+
+```json
+{
+  "mcpServers": {
+    "safedep": {
+      "url": "https://mcp.safedep.io/model-context-protocol/threats/v1/mcp",
+      "headers": {
+        "Authorization": "<API Key>",
+        "X-Tenant-ID": "<Tenant Domain>"
+      }
+    }
+  }
+}
+```
+
+Restart Cursor after saving the configuration. You can verify the server connection in **Cursor Settings > MCP Servers**.
+
+See the [Cursor MCP documentation](https://cursor.com/docs/context/mcp) for more details.
+
+### OpenAI Codex
+
+Add the SafeDep MCP server to your Codex configuration. Edit `~/.codex/config.toml` (or `.codex/config.toml` in your project root for project-scoped access):
+
+```toml
+[mcp_servers.safedep]
+url = "https://mcp.safedep.io/model-context-protocol/threats/v1/mcp"
+
+[mcp_servers.safedep.env_http_headers]
+"Authorization" = "SAFEDEP_API_KEY"
+"X-Tenant-ID" = "SAFEDEP_TENANT_ID"
+```
+
+Set the environment variables with your credentials:
+
+```bash
+export SAFEDEP_API_KEY="<API Key>"
+export SAFEDEP_TENANT_ID="<Tenant Domain>"
+```
+
+See the [Codex MCP documentation](https://developers.openai.com/codex/mcp) for more details.
+
+### Gemini CLI
+
+Add the SafeDep MCP server to your Gemini CLI configuration. Edit `~/.gemini/settings.json` in your home directory:
+
+```json
+{
+  "mcpServers": {
+    "safedep": {
+      "httpUrl": "https://mcp.safedep.io/model-context-protocol/threats/v1/mcp",
+      "headers": {
+        "Authorization": "<API Key>",
+        "X-Tenant-ID": "<Tenant Domain>"
+      }
+    }
+  }
+}
+```
+
+See the [Gemini CLI MCP documentation](https://geminicli.com/docs/tools/mcp-server/) for more details.
+
+## Testing
+
+After setting up the MCP server, you can verify the integration is working by asking your coding agent to install one of the following test packages:
+
+| Package              | Ecosystem |
+| -------------------- | --------- |
+| `safedep-test-pkg`   | npm       |
+| `safedep-test-pkg`   | PyPI      |
+
+These are harmless packages that are marked as malicious in the SafeDep database, specifically meant for testing. Your coding agent should block the installation and warn you about the package being flagged as malicious.
+
+For example, try prompting your agent with:
+
+```
+Install the npm package safedep-test-pkg
+```
+
+If the MCP server is configured correctly, the agent will check the package against SafeDep's threat intelligence and refuse to install it.
+
