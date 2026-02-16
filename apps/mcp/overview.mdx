@@ -44,121 +44,118 @@ The MCP server requires SafeDep API key based authentication. Following HTTP hea
 
 ## Setup
 
-### Claude Code
+<AccordionGroup>
+  <Accordion title="Claude Code" icon="https://img.logo.dev/claude.ai?token=pk_JMA7_TgCSx--JsncHKu2cA">
+    Use `claude` CLI to add the MCP server to your user settings. This configuration will be available across all Claude Code projects.
 
-Use `claude` CLI to add the MCP server to your user settings. This configuration will be available across all Claude Code projects.
+    ```bash
+    claude mcp add -s user --transport http safedep \
+      https://mcp.safedep.io/model-context-protocol/threats/v1/mcp \
+      --header "Authorization: <API Key>" \
+      --header "X-Tenant-ID: <Tenant Domain>"
+    ```
+  </Accordion>
+  <Accordion title="Cursor" icon="https://img.logo.dev/cursor.com?token=pk_JMA7_TgCSx--JsncHKu2cA">
+    Add the SafeDep MCP server to your Cursor configuration. Create or edit `~/.cursor/mcp.json` in your home directory:
 
-```bash
-claude mcp add -s user --transport http safedep \
-  https://mcp.safedep.io/model-context-protocol/threats/v1/mcp \
-  --header "Authorization: <API Key>" \
-  --header "X-Tenant-ID: <Tenant Domain>"
-```
-
-### Cursor
-
-Add the SafeDep MCP server to your Cursor configuration. Create or edit `~/.cursor/mcp.json` in your home directory:
-
-```json
-{
-  "mcpServers": {
-    "safedep": {
-      "url": "https://mcp.safedep.io/model-context-protocol/threats/v1/mcp",
-      "headers": {
-        "Authorization": "<API Key>",
-        "X-Tenant-ID": "<Tenant Domain>"
+    ```json
+    {
+      "mcpServers": {
+        "safedep": {
+          "url": "https://mcp.safedep.io/model-context-protocol/threats/v1/mcp",
+          "headers": {
+            "Authorization": "<API Key>",
+            "X-Tenant-ID": "<Tenant Domain>"
+          }
+        }
       }
     }
-  }
-}
-```
+    ```
 
-Restart Cursor after saving the configuration. You can verify the server connection in **Cursor Settings > MCP Servers**.
+    Restart Cursor after saving the configuration. You can verify the server connection in **Cursor Settings > MCP Servers**.
 
-See the [Cursor MCP documentation](https://cursor.com/docs/context/mcp) for more details.
+    See the [Cursor MCP documentation](https://cursor.com/docs/context/mcp) for more details.
+  </Accordion>
+  <Accordion title="OpenAI Codex" icon="https://img.logo.dev/openai.com?token=pk_JMA7_TgCSx--JsncHKu2cA">
+    Add the SafeDep MCP server to your Codex configuration. Edit `~/.codex/config.toml` (or `.codex/config.toml` in your project root for project-scoped access):
 
-### OpenAI Codex
+    ```toml
+    [mcp_servers.safedep]
+    url = "https://mcp.safedep.io/model-context-protocol/threats/v1/mcp"
 
-Add the SafeDep MCP server to your Codex configuration. Edit `~/.codex/config.toml` (or `.codex/config.toml` in your project root for project-scoped access):
+    [mcp_servers.safedep.env_http_headers]
+    "Authorization" = "SAFEDEP_API_KEY"
+    "X-Tenant-ID" = "SAFEDEP_TENANT_ID"
+    ```
 
-```toml
-[mcp_servers.safedep]
-url = "https://mcp.safedep.io/model-context-protocol/threats/v1/mcp"
+    Set the environment variables with your credentials:
 
-[mcp_servers.safedep.env_http_headers]
-"Authorization" = "SAFEDEP_API_KEY"
-"X-Tenant-ID" = "SAFEDEP_TENANT_ID"
-```
+    ```bash
+    export SAFEDEP_API_KEY="<API Key>"
+    export SAFEDEP_TENANT_ID="<Tenant Domain>"
+    ```
 
-Set the environment variables with your credentials:
+    See the [Codex MCP documentation](https://developers.openai.com/codex/mcp) for more details.
+  </Accordion>
+  <Accordion title="Gemini CLI" icon="https://img.logo.dev/gemini.google.com?token=pk_JMA7_TgCSx--JsncHKu2cA">
+    Add the SafeDep MCP server to your Gemini CLI configuration. Edit `~/.gemini/settings.json` in your home directory:
 
-```bash
-export SAFEDEP_API_KEY="<API Key>"
-export SAFEDEP_TENANT_ID="<Tenant Domain>"
-```
-
-See the [Codex MCP documentation](https://developers.openai.com/codex/mcp) for more details.
-
-### Gemini CLI
-
-Add the SafeDep MCP server to your Gemini CLI configuration. Edit `~/.gemini/settings.json` in your home directory:
-
-```json
-{
-  "mcpServers": {
-    "safedep": {
-      "httpUrl": "https://mcp.safedep.io/model-context-protocol/threats/v1/mcp",
-      "headers": {
-        "Authorization": "<API Key>",
-        "X-Tenant-ID": "<Tenant Domain>"
+    ```json
+    {
+      "mcpServers": {
+        "safedep": {
+          "httpUrl": "https://mcp.safedep.io/model-context-protocol/threats/v1/mcp",
+          "headers": {
+            "Authorization": "<API Key>",
+            "X-Tenant-ID": "<Tenant Domain>"
+          }
+        }
       }
     }
-  }
-}
-```
+    ```
 
-See the [Gemini CLI MCP documentation](https://geminicli.com/docs/tools/mcp-server/) for more details.
+    See the [Gemini CLI MCP documentation](https://geminicli.com/docs/tools/mcp-server/) for more details.
+  </Accordion>
+  <Accordion title="Windsurf" icon="https://img.logo.dev/codeium.com?token=pk_JMA7_TgCSx--JsncHKu2cA">
+    Add the SafeDep MCP server to your Windsurf configuration. Create or edit `~/.codeium/windsurf/mcp_config.json` in your home directory:
 
-### Windsurf
-
-Add the SafeDep MCP server to your Windsurf configuration. Create or edit `~/.codeium/windsurf/mcp_config.json` in your home directory:
-
-```json
-{
-  "mcpServers": {
-    "safedep": {
-      "url": "https://mcp.safedep.io/model-context-protocol/threats/v1/mcp",
-      "headers": {
-        "Authorization": "<API Key>",
-        "X-Tenant-ID": "<Tenant Domain>"
+    ```json
+    {
+      "mcpServers": {
+        "safedep": {
+          "url": "https://mcp.safedep.io/model-context-protocol/threats/v1/mcp",
+          "headers": {
+            "Authorization": "<API Key>",
+            "X-Tenant-ID": "<Tenant Domain>"
+          }
+        }
       }
     }
-  }
-}
-```
+    ```
 
-See the [Windsurf Cascade MCP documentation](https://docs.windsurf.com/windsurf/cascade/mcp) for more details.
+    See the [Windsurf Cascade MCP documentation](https://docs.windsurf.com/windsurf/cascade/mcp) for more details.
+  </Accordion>
+  <Accordion title="Zed" icon="https://img.logo.dev/zed.dev?token=pk_JMA7_TgCSx--JsncHKu2cA">
+    Add the SafeDep MCP server to your Zed configuration. Create or edit `~/.config/zed/settings.json` in your home directory.
 
-### Zed
-
-Add the SafeDep MCP server to your Zed configuration. Create or edit `~/.config/zed/settings.json` in your home directory.
-
-```json
-{
-  "context_servers": {
-    "safedep": {
-      "enabled": true,
-      "url": "https://mcp.safedep.io/model-context-protocol/threats/v1/mcp",
-      "headers": {
-        "Authorization": "<API Key>",
-        "X-Tenant-ID": "<Tenant Domain>"
+    ```json
+    {
+      "context_servers": {
+        "safedep": {
+          "enabled": true,
+          "url": "https://mcp.safedep.io/model-context-protocol/threats/v1/mcp",
+          "headers": {
+            "Authorization": "<API Key>",
+            "X-Tenant-ID": "<Tenant Domain>"
+          }
+        }
       }
     }
-  }
-}
-```
+    ```
 
-See the [Zed MCP documentation](https://zed.dev/docs/ai/mcp) for more details.
+    See the [Zed MCP documentation](https://zed.dev/docs/ai/mcp) for more details.
+  </Accordion>
+</AccordionGroup>
 
 ## Testing
 
