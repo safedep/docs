@@ -1,0 +1,23 @@
+---
+title: AI Governance
+description: "Gain visibility into AI usage across your codebase and developer environments"
+---
+
+AI adoption is accelerating across engineering teams. Developers integrate AI SDKs into application code and adopt AI-powered development tools, often without centralized oversight. This creates blind spots for security and compliance teams.
+
+`vet` provides two complementary capabilities to address this:
+
+1. **Shadow AI in Code** detects AI and LLM SDK usage in your source code through static analysis and produces a CycloneDX SBOM with AI component evidence. It answers: *what AI services does your application call?*
+
+2. **AI Tools Discovery** scans developer machines and project repositories to inventory AI coding agents, MCP servers, CLI tools, and IDE extensions. It answers: *what AI tools are developers using to write code?*
+
+Together, these give security teams a complete picture of AI usage across both the software supply chain and the development environment.
+
+<CardGroup cols={2}>
+  <Card title="Shadow AI in Code" icon="code" href="/vet/guides/shadow-ai-detection">
+    Detect AI SDK usage in source code and generate AI-enriched SBOMs
+  </Card>
+  <Card title="AI Tools Discovery" icon="magnifying-glass" href="/vet/guides/ai-tools-discovery">
+    Discover AI coding agents, MCP servers, and IDE extensions on developer machines
+  </Card>
+</CardGroup>

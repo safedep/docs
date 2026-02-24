@@ -1,0 +1,142 @@
+---
+title: Shadow AI in Code
+description: "Detect AI and LLM SDK usage in your codebase using static code analysis and generate an SBOM with AI component evidence"
+---
+
+Shadow AI is the unauthorized use of AI services and SDKs within a codebase. It is a growing security and compliance risk. Developers may integrate OpenAI, Anthropic, LangChain, or other AI services without security review, creating blind spots in your software supply chain.
+
+This guide walks you through detecting Shadow AI using `vet`'s static code analysis, querying the results, and generating a CycloneDX SBOM enriched with AI component evidence.
+
+## Prerequisites
+
+- `vet` [installed](/vet/quickstart)
+- Access to the source code you want to analyze
+
+## Workflow
+
+<Steps>
+  <Step title="Scan source code">
+    Analyze your source code and build a code analysis database. Use `--app` to specify your application directories and `--import-dir` for vendored or third-party dependencies.
+
+    ```bash
+    vet code scan --db code.db \
+      --app ./src \
+      --import-dir ./vendor
+    ```
+
+    This parses source files, builds call graphs, and matches function calls against embedded signature patterns. Results are stored in a SQLite database.
+
+    <Tip>
+    Use `--exclude` to skip test files or generated code:
+    ```bash
+    vet code scan --db code.db \
+      --app ./src \
+      --exclude ".*test.*" --exclude ".*__pycache__.*"
+    ```
+    </Tip>
+  </Step>
+
+  <Step title="Query for AI components">
+    Inspect what AI and LLM SDKs were detected using the `--tag ai` filter:
+
+    ```bash
+    vet code query --db code.db --tag ai
+    ```
+
+    This lists all signature matches tagged as AI, showing the file path, line number, and matched call pattern. You can also combine tags for a broader view:
+
+    ```bash
+    vet code query --db code.db --tag ai --tag ml
+    ```
+
+    To see more results or filter by language:
+
+    ```bash
+    vet code query --db code.db --tag ai --language python --limit 200
+    ```
+  </Step>
+
+  <Step title="Generate SBOM with AI evidence">
+    Run `vet scan` with the code analysis database to produce a CycloneDX SBOM enriched with AI component evidence:
+
+    ```bash
+    vet scan -D ./src --code code.db --report-cdx sbom.json
+    ```
+
+    The generated SBOM includes AI components as evidence-backed entries, making Shadow AI usage visible to downstream security and compliance tooling.
+  </Step>
+</Steps>
+
+## Understanding the Output
+
+### Package-level AI usage
+
+When an AI SDK is both declared as a dependency and used in code, it appears with `source-code-analysis` evidence:
+
+```json
+{
+  "bom-ref": "pkg:pypi/openai@1.0.0",
+  "evidence": {
+    "identity": [
+      { "methods": [{ "technique": "source-code-analysis", "confidence": 1.0 }] }
+    ],
+    "occurrences": [
+      { "location": "src/ai.py", "line": 42, "additionalContext": "openai.OpenAI" }
+    ]
+  },
+  "properties": [
+    { "name": "ai", "value": "true" }
+  ]
+}
+```
+
+### Application-level AI usage
+
+AI capabilities detected in first-party code (e.g., direct standard library HTTP calls to AI endpoints) appear as standalone xBOM components:
+
+```json
+{
+  "bom-ref": "xbom:anthropic.ai.claude",
+  "type": "library",
+  "name": "Anthropic Claude",
+  "publisher": "Anthropic",
+  "evidence": {
+    "occurrences": [
+      { "location": "src/chatbot.py", "line": 15, "additionalContext": "anthropic.Anthropic" }
+    ]
+  }
+}
+```
+
+The `ai` property tag makes it straightforward to filter AI components from the SBOM programmatically.
+
+## What Gets Detected
+
+`vet` detects AI and LLM usage across **Go**, **Python**, and **JavaScript/TypeScript**:
+
+| Service | Examples |
+|---------|----------|
+| **OpenAI** | OpenAI client SDK |
+| **Anthropic** | Claude, Bedrock, VertexAI |
+| **LangChain** | LangChain framework |
+| **CrewAI** | CrewAI agents |
+| **Azure AI** | Azure AI services |
+
+<Info>
+Detection signatures are community-maintained and embedded into `vet` at build time. Run `vet code validate` to verify all signatures are well-formed.
+</Info>
+
+<CardGroup cols={2}>
+  <Card title="xBOM Concepts" icon="cube" href="/xbom/concepts/why-xbom">
+    Learn about extended Bill of Materials and signature-based detection
+  </Card>
+  <Card title="Code Analysis" icon="magnifying-glass" href="/vet/guides/code-analysis">
+    Deeper dive into vet's static code analysis capabilities
+  </Card>
+  <Card title="CycloneDX SBOM" icon="file-code" href="/vet/guides/cyclonedx-sbom">
+    Generate and work with CycloneDX SBOMs
+  </Card>
+  <Card title="Policy as Code" icon="shield" href="/vet/advanced/policy-as-code">
+    Enforce policies against detected components in CI/CD
+  </Card>
+</CardGroup>
