@@ -60,6 +60,14 @@
             ]
           },
           {
+            "group": "AI Governance",
+            "pages": [
+              "vet/guides/ai-governance",
+              "vet/guides/shadow-ai-detection",
+              "vet/guides/ai-tools-discovery"
+            ]
+          },
+          {
             "group": "API & Automation",
             "pages": [
               "vet/guides/insights-api-using-typescript",

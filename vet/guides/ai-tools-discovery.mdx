@@ -1,0 +1,90 @@
+---
+title: AI Tools Discovery
+description: "Discover AI coding agents, MCP servers, CLI tools, and IDE extensions across developer machines and project repositories"
+---
+
+`vet ai discover` scans the local system and project directory to build an inventory of AI tool usage signals. It detects coding agents, MCP servers, CLI tools, IDE extensions, and project configuration files, giving security teams visibility into what AI tooling is active across a development environment.
+
+## Prerequisites
+
+- `vet` [installed](/vet/quickstart)
+
+## Usage
+
+Discover all AI tool usage signals on the current system and project:
+
+```bash
+vet ai discover
+```
+
+### Scope Filtering
+
+Limit discovery to system-level or project-level signals:
+
+```bash
+# Only system-level signals (global configs, CLI binaries, IDE extensions)
+vet ai discover --scope system
+
+# Only project-level signals for a specific repository
+vet ai discover --scope project -D /path/to/repo
+```
+
+### JSON Output
+
+Write a structured JSON inventory for downstream processing:
+
+```bash
+vet ai discover --report-json inventory.json
+
+# JSON only, suppress table output
+vet ai discover --report-json inventory.json --silent
+```
+
+## What Gets Discovered
+
+`vet ai discover` reports **usage signals**, not unique tools. The same tool may appear multiple times because it can be configured at different scopes. Each row represents a distinct configuration entry.
+
+For example, Claude Code might produce:
+
+| Type | Name | Scope | Why |
+|------|------|-------|-----|
+| `coding_agent` | Claude Code | system | `~/.claude/settings.json` exists |
+| `project_config` | Claude Code | project | Project has a `CLAUDE.md` |
+| `mcp_server` | my-server | system | Configured in `~/.claude/settings.json` |
+| `mcp_server` | my-server | project | Also configured in `.mcp.json` |
+
+### Signal Types
+
+| Type | Description |
+|------|-------------|
+| **coding_agent** | AI coding assistant installed on the system, detected via system-level config directories |
+| **mcp_server** | Model Context Protocol server configured for an application |
+| **cli_tool** | Standalone AI CLI binary found on `$PATH`, verified by executing with a version flag |
+| **ai_extension** | AI-related IDE extension detected from installed extension manifests |
+| **project_config** | AI tool configuration or instruction file found in a project repository |
+
+### Scope
+
+- **system** refers to user-global config (e.g. `~/.claude/settings.json`, `~/.cursor/mcp.json`)
+- **project** refers to repo-scoped config (e.g. `.mcp.json`, `.cursorrules`, `CLAUDE.md`)
+
+## What Gets Scanned
+
+**App configuration** is read from well-known system and project-level config paths for each supported application. System-level configs indicate the tool is installed. Project-level configs indicate the project is set up for a tool.
+
+**CLI binaries** are discovered by searching `$PATH` for known binary names. Each candidate is executed with a version flag and the output is verified against known patterns.
+
+**IDE extensions** are discovered by reading extension manifests from supported IDE distributions and matching against a curated list of known AI extension identifiers.
+
+## Security
+
+The discovery process never captures environment variable or header values. Only key names are recorded. CLI arguments matching secret patterns (`--token=`, `--api-key=`, `--password=`, etc.) are redacted. No network calls are made. All discovery is based on local filesystem and `$PATH` inspection.
+
+<CardGroup cols={2}>
+  <Card title="Shadow AI in Code" icon="brain" href="/vet/guides/shadow-ai-detection">
+    Detect AI SDK usage in source code and generate AI-enriched SBOMs
+  </Card>
+  <Card title="xBOM Concepts" icon="cube" href="/xbom/concepts/why-xbom">
+    Learn about extended Bill of Materials and signature-based detection
+  </Card>
+</CardGroup>
