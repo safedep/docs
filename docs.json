@@ -120,6 +120,12 @@
             ]
           },
           {
+            "group": "Management",
+            "pages": [
+              "cloud/package-exclusions"
+            ]
+          },
+          {
             "group": "Reference",
             "pages": [
               "api-reference/introduction",
