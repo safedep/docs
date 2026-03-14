@@ -51,16 +51,7 @@ Do not use exclusions as a workaround for packages that SafeDep has already veri
 
 ## What An Exclusion Applies To
 
-Each exclusion is scoped to:
-
-- package ecosystem
-- package name
-- package version
-
-You can also:
-
-- add a reason so your team understands why the exclusion exists
-- set an expiry date for temporary exceptions
+Each exclusion is scoped to a package ecosystem, name, and version. You can also add a reason and an optional expiry date for temporary exceptions.
 
 Malicious Package Exclusions apply only to malicious package analysis. They do not change vulnerability findings or other SafeDep checks.
 
@@ -217,8 +208,7 @@ In practice, this means exclusions are meant for packages your team wants to sup
 After an exclusion is added:
 
 - future malicious package analysis for that package should stop surfacing the excluded result across SafeDep tools and integrations that respect tenant exclusions
-- the exclusion remains listed on the Malicious Package Exclusions settings page so your team can review it later, and authorized users can update or delete it if needed
-- your team can update the reason or expiry date later if needed
+- the exclusion remains listed on the Malicious Package Exclusions settings page so authorized users can review, update, or delete it later
 - depending on the view you are using, you may need to refresh the page or rerun the relevant scan to confirm the updated behavior
 
 If you later delete the exclusion or let it expire, the package can appear again in later analysis results.
@@ -254,8 +244,8 @@ Use version `0` when you want to exclude all versions of a package instead of ju
 ## Next Steps
 
 <CardGroup cols={2}>
-  <Card title="SafeDep Cloud Overview" icon="cloud" href="/cloud/overview">
-    Explore SafeDep Cloud capabilities and navigation
+  <Card title="GitHub App" icon="github" href="/apps/github/overview">
+    See how SafeDep respects exclusions in GitHub pull request checks
   </Card>
   <Card title="Malware Analysis" icon="virus" href="/cloud/malware-analysis">
     Learn how SafeDep Cloud analyzes packages for malicious behavior
