@@ -1,0 +1,259 @@
+---
+title: Malicious Package Exclusions
+description: "Manage package exclusions for malicious package analysis in SafeDep Cloud"
+---
+
+<Info>
+Malicious Package Exclusions are available in SafeDep Cloud **Pro and above**.
+See [pricing](https://safedep.io/pricing/).
+
+Only tenant owners can create, edit, or delete exclusions. If you can view package analysis results but cannot manage an exclusion, contact your tenant owner.
+
+</Info>
+
+Malicious Package Exclusions let your tenant exclude specific package findings from malicious package analysis after review.
+
+This feature exists to reduce recurring review noise. If your team has already reviewed a package and decided it is expected in your environment, you can add an exclusion so SafeDep does not keep surfacing the same malicious package finding.
+
+Exclusions are tenant-specific. A package trusted in one SafeDep Cloud tenant is not automatically trusted in another tenant.
+
+An exclusion does not mark a package as globally safe. It only tells SafeDep to stop surfacing that package as a malicious package finding for the package identity you excluded in your tenant: ecosystem, package name, and version.
+
+## Who This Is For
+
+Malicious Package Exclusions are most useful for:
+
+- **Developers**, who experience recurring suspicious package findings and need a clear way to reduce noise
+- **Tenant owners or security engineers**, who decide whether a package should be trusted for their tenant
+
+In smaller teams, the same person is often both.
+
+## Where Exclusions Are Respected
+
+Exclusions are designed to work as a tenant-level source of truth for malicious package analysis across SafeDep tools and integrations connected to SafeDep Cloud.
+
+This currently includes:
+
+- SafeDep Cloud package analysis views in `app.safedep.io`
+- GitHub App
+- `vet` in cloud mode
+- `vet-action` in cloud mode
+
+## When To Use An Exclusion
+
+Use an exclusion when:
+
+- a package repeatedly shows up as suspicious or malicious, but your team has already reviewed it
+- you want to reduce recurring noise without disabling malicious package protection entirely
+- you want to trust a package for a limited time by setting an expiry date
+
+Do not use exclusions as a workaround for packages that SafeDep has already verified as malicious.
+
+## What An Exclusion Applies To
+
+Each exclusion is scoped to a package ecosystem, name, and version. You can also add a reason and an optional expiry date for temporary exceptions.
+
+Malicious Package Exclusions apply only to malicious package analysis. They do not change vulnerability findings or other SafeDep checks.
+
+## Create An Exclusion From Settings
+
+The main place to manage exclusions is the SafeDep Cloud settings page:
+
+<Steps>
+  <Step title="Navigate to Settings">
+    Go to [app.safedep.io/settings/package-exclusions](https://app.safedep.io/settings/package-exclusions)
+  </Step>
+  <Step title="Create Exclusion">
+    Click **Create Exclusion**
+  </Step>
+  <Step title="Fill Details">
+    Fill in the package details
+  </Step>
+  <Step title="Save">
+    Save the exclusion
+  </Step>
+</Steps>
+
+The page shows your existing exclusions in a table and a **Create Exclusion** button in the top-right corner.
+
+<img
+  src="/images/exclusions/exclusions-page.png"
+  alt="Malicious Package Exclusions settings page showing the exclusions table and Create Exclusion button"
+/>
+
+### Fields
+
+When creating an exclusion, SafeDep Cloud asks for:
+
+- **Ecosystem**: The package ecosystem, such as npm or PyPI
+- **Package Name**: The package to exclude
+- **Version**: The specific version to exclude
+- **Reason**: Why your team is excluding this package
+- **Expires At**: Optional expiry date for temporary exceptions
+
+Use `0` in the **Version** field to exclude all versions of a package.
+
+<img
+  src="/images/exclusions/exclusions-page-create-exclusion.png"
+  alt="Create Exclusion drawer in SafeDep Cloud showing ecosystem, package name, version, reason, and expiry fields"
+/>
+
+## Create Or Manage An Exclusion From Package Analysis
+
+You can also start from a package analysis result:
+
+<Steps>
+  <Step title="Open Package Result">
+    Open a malicious package result in SafeDep Cloud
+  </Step>
+  <Step title="Create or Manage">
+    Use the header action to create or manage an exclusion
+  </Step>
+</Steps>
+
+Depending on the current state, SafeDep Cloud shows one of these actions:
+
+- **Create Exclusion** if no exclusion exists yet
+- **Manage Exclusion** if an exclusion already exists for that package and version
+
+This is a convenient path when you are already investigating a package and want to create or review an exclusion without navigating back to Settings.
+
+<img
+  src="/images/exclusions/package-analysis-create-exclusion-button.png"
+  alt="Package analysis page showing the Create Exclusion action"
+/>
+
+<img
+  src="/images/exclusions/package-analysis-manage-exclusion-button.png"
+  alt="Package analysis page showing the Manage Exclusion action"
+/>
+
+## Manage Existing Exclusions
+
+The exclusions table helps you review and maintain the exclusions already configured in your tenant.
+
+Each row shows the ecosystem, package name, version, reason, current status, expiry date, and available actions for that exclusion.
+
+You can filter exclusions by:
+
+- ecosystem
+- package name
+- version
+- expiry status
+- expiry date
+
+From the table, you can also:
+
+- edit an exclusion
+- delete an exclusion
+- review the reason and expiry date attached to each exclusion
+- quickly see whether an exclusion is active or close to expiring from the status badge
+
+<img
+  src="/images/exclusions/exclusions-page-row-actions.png"
+  alt="Exclusions table row actions menu showing Edit Exclusion and Delete Exclusion"
+/>
+
+### Edit An Exclusion
+
+Use **Edit Exclusion** when you need to change:
+
+- the version
+- the reason
+- the expiry date
+- the package identity
+
+This is useful when an exclusion started as a short-term exception and later needs to be extended, narrowed, or documented more clearly.
+
+### Delete An Exclusion
+
+Delete an exclusion when you want malicious package analysis to apply normally again.
+
+After you delete an exclusion, later scans or package analysis results may surface that package again if it is still detected as suspicious or malicious.
+
+## How Exclusions Work
+
+SafeDep Cloud applies exclusions using the package identity you provide.
+
+### Exact Version Vs All Versions
+
+Version is matched exactly.
+
+- Enter `4.17.21` to exclude only that version
+- Enter `0` to exclude all versions of a package
+
+In this feature, `0` is a special value that means "all versions," not the literal package version `0`.
+
+- If you exclude `lodash@4.17.21`, only that version is excluded
+- If you exclude `lodash@0`, all versions of `lodash` are excluded
+
+When both an exact-version exclusion and an all-version exclusion could match, the exact version is treated as the more specific match.
+
+### Expiry
+
+An exclusion with an expiry date stops applying automatically after the expiry time passes.
+
+This makes exclusions useful for temporary investigation windows, migrations, and short-lived exceptions.
+
+### Verified Malicious Packages
+
+SafeDep Cloud does not allow exclusions for packages that are already verified as malicious.
+
+If you try to create or update an exclusion for a verified malicious package, SafeDep Cloud returns an error instead of saving the exclusion.
+
+In practice, this means exclusions are meant for packages your team wants to suppress from normal review workflows, not for packages SafeDep has already confirmed as malicious.
+
+## What To Expect After Adding An Exclusion
+
+After an exclusion is added:
+
+- future malicious package analysis for that package should stop surfacing the excluded result across SafeDep tools and integrations that respect tenant exclusions
+- the exclusion remains listed on the Malicious Package Exclusions settings page so authorized users can review, update, or delete it later
+- depending on the view you are using, you may need to refresh the page or rerun the relevant scan to confirm the updated behavior
+
+If you later delete the exclusion or let it expire, the package can appear again in later analysis results.
+
+## Troubleshooting
+
+### I can see the page, but I cannot create an exclusion
+
+Exclusion management is currently limited to tenant owners.
+
+If the button is disabled, ask your tenant owner to create or manage the exclusion for you.
+
+### I see a paywall instead of the exclusions table
+
+Malicious Package Exclusions are available in SafeDep Cloud Pro and above.
+
+Upgrade your plan or contact your SafeDep representative if you need access.
+
+### Why did my exclusion stop working?
+
+The most common reasons are:
+
+- the exclusion expired
+- the package ecosystem, name, or version does not match the current finding
+- you may need to refresh the page or rerun the relevant scan to confirm the latest result state
+
+If SafeDep blocks you while creating or updating an exclusion, check whether the package has already been verified as malicious.
+
+### When should I use version `0`?
+
+Use version `0` when you want to exclude all versions of a package instead of just one specific version.
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="GitHub App" icon="github" href="/apps/github/overview">
+    See how SafeDep respects exclusions in GitHub pull request checks
+  </Card>
+  <Card title="Malware Analysis" icon="virus" href="/cloud/malware-analysis">
+    Learn how SafeDep Cloud analyzes packages for malicious behavior
+  </Card>
+  <Card title="Authentication" icon="key" href="/cloud/authentication">
+    Configure access to your SafeDep Cloud tenant
+  </Card>
+  <Card title="FAQ" icon="question-circle" href="/cloud/faq">
+    Find answers to common SafeDep Cloud questions
+  </Card>
+</CardGroup>
