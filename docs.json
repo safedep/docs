@@ -47,7 +47,8 @@
             "group": "Integration Guides",
             "pages": [
               "vet/guides/github-code-scanning",
-              "vet/guides/defect-dojo-integration"
+              "vet/guides/defect-dojo-integration",
+              "pmg/guides/cloud-sync"
             ]
           },
           {

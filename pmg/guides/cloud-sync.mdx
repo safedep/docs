@@ -1,0 +1,61 @@
+---
+title: Cloud Sync
+description: "Sync PMG activity to SafeDep Cloud for centralized monitoring and reporting"
+---
+
+This guide walks through enabling SafeDep Cloud sync in PMG so your package activity is visible in one place.
+
+## Prerequisites
+
+- Install PMG using the [quickstart guide](/pmg/quickstart)
+- Have a SafeDep Cloud tenant ID and tenant domain (see [Cloud quickstart](/cloud/quickstart))
+
+## Configure cloud sync
+
+<Steps>
+  <Step title="Run the PMG setup installer">
+    ```console
+    $ pmg setup install
+
+    █▀█ █▀▄▀█ █▀▀  From SafeDep (github.com/safedep/pmg)
+    █▀▀ █░▀░█ █▄█  version: v0.9.0 commit: c3a351
+
+    ✓ PMG aliases installed successfully
+      Installed to:  /home/kunalsingh/.pmg.rc
+      Config at:     /home/kunalsingh/.config/safedep/pmg
+      Restart your terminal or source your shell to use the new aliases
+    ```
+  </Step>
+
+  <Step title="Enable cloud sync in the PMG config">
+    Open the PMG config file in `~/.config/safedep/pmg` and set cloud sync to true:
+    ```yaml
+    cloud: true
+    ```
+  </Step>
+
+  <Step title="Login to SafeDep Cloud">
+    Authenticate with your tenant details:
+    ```bash
+    pmg cloud login
+    ```
+    Enter your **tenant ID** and **tenant domain** when prompted.
+  </Step>
+
+  <Step title="Sync to SafeDep Cloud">
+    ```bash
+    pmg cloud sync
+    ```
+  </Step>
+</Steps>
+
+## Next steps
+
+<CardGroup cols={2}>
+  <Card title="PMG Quickstart" icon="rocket" href="/pmg/quickstart">
+    Install PMG and learn the basics
+  </Card>
+  <Card title="SafeDep Cloud Overview" icon="cloud" href="/cloud/overview">
+    Explore SafeDep Cloud features and dashboards
+  </Card>
+</CardGroup>
