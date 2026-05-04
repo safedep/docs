@@ -28,10 +28,11 @@ This guide walks through enabling SafeDep Cloud sync in PMG so your package acti
   </Step>
 
   <Step title="Enable cloud sync in the PMG config">
-    Open the PMG config file created during setup in `~/.config/safedep/pmg` and set cloud sync to true while keeping any existing settings:
+    Open the PMG config file at `~/.config/safedep/pmg/config.yml` (use `pmg setup info` if you need to confirm the path) and enable cloud sync while keeping any existing settings:
     ```yaml
-    # ~/.config/safedep/pmg/<config-file>
-    cloud: true
+    # ~/.config/safedep/pmg/config.yml
+    cloud:
+      enabled: true
     # other existing settings...
     ```
   </Step>
@@ -48,7 +49,7 @@ This guide walks through enabling SafeDep Cloud sync in PMG so your package acti
     ```bash
     pmg cloud sync
     ```
-    Run this after login and any time you want to push new local activity to SafeDep Cloud. You can re-run it periodically or after significant package installs.
+    Run this after login and whenever you want to push new local activity to SafeDep Cloud. Common options are after major dependency updates, after CI runs, or on a nightly schedule.
   </Step>
 </Steps>
 
