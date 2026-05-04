@@ -3,7 +3,7 @@ title: PMG Cloud Sync
 description: "Sync PMG activity to SafeDep Cloud for centralized monitoring and reporting"
 ---
 
-Use this guide to enable SafeDep Cloud sync for an existing PMG installation so that your package installation and usage activity is centralized in SafeDep Cloud.
+Use this guide to enable cloud sync for an existing PMG installation so that your package installation and usage activity is centralized in SafeDep Cloud.
 
 ## Prerequisites
 
@@ -28,7 +28,7 @@ Use this guide to enable SafeDep Cloud sync for an existing PMG installation so 
   </Step>
 
   <Step title="Enable cloud sync in the PMG config">
-    Open the PMG config file at `~/.config/safedep/pmg/config.yml` (use `pmg setup info` if you need to confirm the path) and enable cloud sync while keeping any existing settings:
+    Open the PMG config file at `~/.config/safedep/pmg/config.yml` (use `pmg setup info` if you need to confirm the path) and add the cloud sync configuration below, preserving any existing settings:
     ```yaml
     # ~/.config/safedep/pmg/config.yml
     cloud:
@@ -49,7 +49,7 @@ Use this guide to enable SafeDep Cloud sync for an existing PMG installation so 
     ```bash
     pmg cloud sync
     ```
-    Run this after login and whenever you want to push new local activity to SafeDep Cloud. Common times to run this are after major dependency updates, after CI runs where PMG is used, or on a nightly schedule.
+    Run this after login and whenever you want to push new local activity to SafeDep Cloud. Common sync patterns include after major dependency updates, in CI/CD pipelines after PMG runs, or via a cron job (for example, `0 0 * * * pmg cloud sync` for nightly syncs).
   </Step>
 </Steps>
 
