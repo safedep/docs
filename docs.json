@@ -117,7 +117,7 @@
             "pages": [
               "cloud/sync",
               "cloud/malware-analysis",
-              "pmg/guides/cloud-sync"
+              "cloud/pmg-sync"
             ]
           },
           {
