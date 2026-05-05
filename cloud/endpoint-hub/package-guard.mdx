@@ -3,7 +3,7 @@ title: Package Guard
 description: "Monitor and control package installations across your endpoints using SafeDep Cloud"
 ---
 
-Package Guard is a SafeDep Cloud feature that gives you visibility into package installation and usage activity across all your endpoints. It is implemented using [pmg](/pmg/quickstart) — the open-source Package Manager Guard CLI — which intercepts package manager commands and optionally syncs activity to SafeDep Cloud.
+Package Guard gives you visibility into package installation and usage activity across all your endpoints. It's powered by [pmg](/pmg/quickstart) — the open-source Package Manager Guard CLI — which intercepts package manager commands and syncs activity to SafeDep Cloud.
 
 ## Prerequisites
 
@@ -49,9 +49,15 @@ Package Guard is a SafeDep Cloud feature that gives you visibility into package 
     ```bash
     pmg cloud sync
     ```
-    Run this after login and whenever you want to push new local activity to SafeDep Cloud. Common sync patterns include after major dependency updates, in CI/CD pipelines after PMG runs, or via a cron job (for example, `0 0 * * * pmg cloud sync` for nightly syncs).
+    Run this after login and whenever you want to push new local activity to SafeDep Cloud.
   </Step>
 </Steps>
+
+## Common sync patterns
+
+- **After dependency updates** — run `pmg cloud sync` after major package installs or upgrades.
+- **In CI/CD pipelines** — add `pmg cloud sync` as a post-step after PMG runs in your pipeline.
+- **Scheduled** — use a cron job for automatic nightly syncs, for example: `0 0 * * * pmg cloud sync`.
 
 ## View package events in SafeDep Cloud
 
