@@ -120,6 +120,12 @@
             ]
           },
           {
+            "group": "Endpoint Hub",
+            "pages": [
+              "cloud/endpoint-hub/package-guard"
+            ]
+          },
+          {
             "group": "Management",
             "pages": [
               "cloud/package-exclusions"
