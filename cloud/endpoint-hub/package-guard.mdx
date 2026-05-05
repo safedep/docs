@@ -3,7 +3,7 @@ title: Package Guard
 description: "Monitor and control package installations across your endpoints using SafeDep Cloud"
 ---
 
-Package Guard gives you visibility into package installation and usage activity across all your endpoints. It's powered by [pmg](/pmg/quickstart) — the open-source Package Manager Guard CLI — which intercepts package manager commands and syncs activity to SafeDep Cloud.
+Package Guard shows package installs and usage across your endpoints. It runs on [pmg](/pmg/quickstart), the open-source Package Manager Guard CLI that intercepts package manager commands and syncs the activity to SafeDep Cloud.
 
 ## Prerequisites
 
@@ -28,7 +28,7 @@ Package Guard gives you visibility into package installation and usage activity 
   </Step>
 
   <Step title="Enable cloud sync in the PMG config">
-    Open the PMG config file at `~/.config/safedep/pmg/config.yml` (use `pmg setup info` if you need to confirm the path) and add the cloud sync configuration below, preserving any existing settings:
+    Open the PMG config at `~/.config/safedep/pmg/config.yml` (run `pmg setup info` to confirm the path) and add the cloud sync block, keeping any existing settings:
     ```yaml
     # ~/.config/safedep/pmg/config.yml
     cloud:
@@ -55,13 +55,13 @@ Package Guard gives you visibility into package installation and usage activity 
 
 ## Common sync patterns
 
-- **After dependency updates** — run `pmg cloud sync` after major package installs or upgrades.
-- **In CI/CD pipelines** — add `pmg cloud sync` as a post-step after PMG runs in your pipeline.
-- **Scheduled** — use a cron job for automatic nightly syncs, for example: `0 0 * * * pmg cloud sync`.
+- **After dependency updates:** run `pmg cloud sync` once installs or upgrades complete.
+- **In CI/CD pipelines:** add `pmg cloud sync` as a post-step after pmg runs.
+- **Scheduled:** use cron for nightly syncs, e.g. `0 0 * * * pmg cloud sync`.
 
 ## View package events in SafeDep Cloud
 
-After a successful sync, open [app.safedep.io](https://app.safedep.io), select **Endpoints** in the sidebar, and choose your endpoint to review the **Package Events** timeline.
+After syncing, open [app.safedep.io](https://app.safedep.io), select **Endpoints** in the sidebar, and pick your endpoint to see the **Package Events** timeline.
 
 <img src="/images/pmg-endpoints.png" alt="SafeDep Cloud Endpoints page showing package events" />
 
