@@ -116,8 +116,13 @@
             "group": "Features",
             "pages": [
               "cloud/sync",
-              "cloud/malware-analysis",
-              "cloud/pmg-sync"
+              "cloud/malware-analysis"
+            ]
+          },
+          {
+            "group": "Endpoint Hub",
+            "pages": [
+              "cloud/endpoint-hub/package-guard"
             ]
           },
           {
