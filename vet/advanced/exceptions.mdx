@@ -40,21 +40,46 @@ exceptions:
     id: 01JKMC07KAGJYEDZX1XPAC3SKP
     name: '@babel/plugin-transform-function-name'
     version: 7.18.9
-    reason: "False positive - CVE doesn't apply to our usage"
 
-  - ecosystem: npm
+  - ecosystem: pypi
     expires: "2025-05-10T00:00:00Z"
     id: 01JKMC07KASSGYH1PHQY09QNZ3
-    name: '@babel/plugin-proposal-object-rest-spread'
-    version: 7.12.1
-    reason: "Legacy dependency being replaced in Q2 2025"
+    name: 'pillow'
+    version: '12.1.0'
 ```
 
 <Note>
 - The `expires` field is mandatory and must be in RFC3339 format
 - The `id` field must be unique and can be any unique string format
-- Adding a `reason` field is recommended for documentation
 </Note>
+
+### Allowed Ecosystems
+
+We currnetly allow these ecosystems: The comparison **is case-insensitive**, so `PyPi`, `pypi`, `PyPI` are all valid.
+
+> For update list, please check [vet source code](https://github.com/safedep/vet/blob/8acfada0d87b17500670af323e519313c1a6cd97/pkg/models/models.go#L20)
+
+```go
+EcosystemMaven             = "Maven"
+EcosystemRubyGems          = "RubyGems"
+EcosystemGo                = "Go"
+EcosystemNpm               = "npm"
+EcosystemPyPI              = "PyPI"
+EcosystemCargo             = "Cargo"
+EcosystemNuGet             = "NuGet"
+EcosystemPackagist         = "Packagist"
+EcosystemHex               = "Hex"
+EcosystemPub               = "Pub"
+EcosystemCyDxSBOM          = "CycloneDxSbom" // These are not real ecosystems. They are containers
+EcosystemSpdxSBOM          = "SpdxSbom"      // These are not real ecosystems. They are containers
+EcosystemGitHubActions     = "GitHubActions"
+EcosystemTerraform         = "Terraform"
+EcosystemTerraformModule   = "TerraformModule"
+EcosystemTerraformProvider = "TerraformProvider"
+EcosystemVSCodeExtensions  = "VSCodeExtensions"
+EcosystemOpenVSXExtensions = "OpenVSXExtensions"
+EcosystemHomebrew          = "Homebrew"
+```
 
 ### Automated Generation with vet
 
@@ -173,7 +198,6 @@ exceptions:
     id: dev-001
     name: 'webpack-dev-server'
     version: '*'
-    reason: "Development dependency with known issues"
 
 # exceptions-prod.yml
 description: Production environment exceptions
@@ -183,7 +207,6 @@ exceptions:
     id: prod-001
     name: 'legacy-auth-lib'
     version: '1.2.3'
-    reason: "Critical dependency being replaced in Q1"
 ```
 
 ### Conditional Exception Generation
