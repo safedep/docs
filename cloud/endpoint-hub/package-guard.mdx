@@ -14,9 +14,11 @@ Package Guard shows package installs and usage across your endpoints. It runs on
 
 <Steps>
   <Step title="Run the PMG setup installer">
-    ```console
-    $ pmg setup install
+    ```bash
+    pmg setup install
+    ```
 
+    ```text Example output
     █▀█ █▀▄▀█ █▀▀  From SafeDep (github.com/safedep/pmg)
     █▀▀ █░▀░█ █▄█  version: v0.9.0 commit: c3a351
 
@@ -28,17 +30,14 @@ Package Guard shows package installs and usage across your endpoints. It runs on
   </Step>
 
   <Step title="Enable cloud sync in the PMG config">
-    Open the PMG config at `~/.config/safedep/pmg/config.yml` (run `pmg setup info` to confirm the path) and add the cloud sync block, keeping any existing settings:
+    Open the config file from the path shown above (run `pmg setup info` to verify) and enable cloud sync:
     ```yaml
-    # ~/.config/safedep/pmg/config.yml
     cloud:
       enabled: true
-    # other existing settings...
     ```
   </Step>
 
   <Step title="Login to SafeDep Cloud">
-    Authenticate with your tenant details:
     ```bash
     pmg cloud login
     ```
@@ -46,32 +45,29 @@ Package Guard shows package installs and usage across your endpoints. It runs on
   </Step>
 
   <Step title="Sync to SafeDep Cloud">
+    Push local package activity to SafeDep Cloud:
     ```bash
     pmg cloud sync
     ```
-    Run this after login and whenever you want to push new local activity to SafeDep Cloud.
   </Step>
 </Steps>
 
 ## Common sync patterns
 
-- **After dependency updates:** run `pmg cloud sync` once installs or upgrades complete.
-- **In CI/CD pipelines:** add `pmg cloud sync` as a post-step after pmg runs.
-- **Scheduled:** use cron for nightly syncs, e.g. `0 0 * * * pmg cloud sync`.
+- **After dependency updates:** Run `pmg cloud sync` once installs or upgrades complete.
+- **In CI/CD pipelines:** Add `pmg cloud sync` as a post-step after pmg runs.
+- **Scheduled:** Use cron for nightly syncs, e.g. `0 0 * * * pmg cloud sync`.
 
 ## View package events in SafeDep Cloud
 
 After syncing, open [app.safedep.io](https://app.safedep.io), select **Endpoints** in the sidebar, and pick your endpoint to see the **Package Events** timeline.
 
-<img src="/images/pmg-endpoints.png" alt="SafeDep Cloud Endpoints page showing package events" />
+<img src="/images/pmg-cloud-sync.png" alt="SafeDep Cloud Endpoints page showing package events" />
 
 ## Next steps
 
 <CardGroup cols={2}>
   <Card title="PMG Quickstart" icon="rocket" href="/pmg/quickstart">
     Install PMG and learn the basics
-  </Card>
-  <Card title="SafeDep Cloud Sync" icon="cloud" href="/cloud/sync">
-    Learn how cloud sync works across SafeDep tools
   </Card>
 </CardGroup>
