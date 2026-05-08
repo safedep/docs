@@ -122,7 +122,8 @@
           {
             "group": "Endpoint Hub",
             "pages": [
-              "cloud/endpoint-hub/package-guard"
+              "cloud/endpoint-hub/package-guard",
+              "cloud/endpoint-hub/inventory-sync"
             ]
           },
           {

@@ -1,0 +1,90 @@
+---
+title: Inventory Sync
+description: "Sync AI tools, MCP servers, and coding agents discovered on your endpoints to SafeDep Cloud"
+---
+
+Inventory Sync shows what AI tooling is active across your endpoints (developer machines, CI runners, agent sandboxes). It is powered by `vet endpoint scan`, which runs locally to discover AI tools, MCP servers, coding agents, and IDE extensions, then delivers them to SafeDep Cloud when credentials are configured.
+
+## Prerequisites
+
+- `vet` [installed](/vet/quickstart)
+- A SafeDep Cloud account with an API key and tenant domain (see [Cloud quickstart](/cloud/quickstart))
+
+## Enable inventory sync
+
+<Steps>
+  <Step title="Configure SafeDep credentials">
+    Run the interactive auth setup:
+
+    ```bash
+    vet auth configure
+    ```
+
+    Enter your **API key** and **tenant domain** when prompted. The tenant domain looks like `your-team.your-org.safedep.io` and is shown on your SafeDep Cloud settings page.
+
+    Alternatively, set environment variables:
+
+    ```bash
+    export SAFEDEP_API_KEY=<your-api-key>
+    export SAFEDEP_TENANT_ID=<your-tenant-domain>   # e.g. your-team.your-org.safedep.io
+    ```
+
+    Verify credentials are working:
+
+    ```bash
+    vet auth verify
+    ```
+
+    A successful response confirms that vet can reach SafeDep Cloud with your credentials. If verification fails, check that your API key and tenant domain are correct.
+  </Step>
+
+  <Step title="Run an endpoint scan">
+    ```bash
+    vet endpoint scan
+    ```
+
+    ```text Example output
+    Discovered 4 item(s) across 2 app(s)
+
+    ┌────────────────┬─────────────┬─────────────┬─────────┬──────────────────────────────────────┐
+    │ TYPE           │ NAME        │ APP         │ SCOPE   │ DETAIL                               │
+    ├────────────────┼─────────────┼─────────────┼─────────┼──────────────────────────────────────┤
+    │ Coding Agent   │ Claude Code │ Claude Code │ System  │ /home/user/.claude/settings.json     │
+    │ MCP Server     │ my-server   │ Claude Code │ System  │ stdio: npx my-server                 │
+    │ Coding Agent   │ Cursor      │ Cursor      │ System  │ /home/user/.cursor                   │
+    │ CLI Tool       │ Claude Code │ Claude Code │ System  │ /usr/local/bin/claude v2.1.0         │
+    └────────────────┴─────────────┴─────────────┴─────────┴──────────────────────────────────────┘
+    ```
+
+    Discovered items are delivered to SafeDep Cloud in the background. The command waits up to 30 seconds for delivery before exiting.
+
+    <Tip>
+      Without credentials, `vet endpoint scan` still runs and prints the local table. No data leaves the machine.
+    </Tip>
+  </Step>
+
+  <Step title="View inventory in SafeDep Cloud">
+    Open [app.safedep.io](https://app.safedep.io), select **Endpoints** in the sidebar, and pick your endpoint. Your endpoint appears in the list by your machine's hostname. Open the **Inventory** tab to see discovered items.
+
+    If your endpoint is not listed, confirm credentials with `vet auth verify` and re-run the scan.
+  </Step>
+</Steps>
+
+## Common sync patterns
+
+- **Project scope only:** `vet endpoint scan --scope project -D /path/to/repo` — limits discovery to project-level configs (e.g. `.mcp.json`, `CLAUDE.md`).
+- **System scope only:** `vet endpoint scan --scope system` — skips project configs; faster on large repositories.
+- **JSON report:** `vet endpoint scan --report-json inventory.json` — writes a local file in addition to syncing.
+- **CI/CD:** Set `SAFEDEP_API_KEY` and `SAFEDEP_TENANT_ID` as pipeline secrets. Ephemeral runners (e.g. GitHub-hosted) register as a new endpoint per run; self-hosted runners on a persistent host update the same endpoint.
+- **Suppress table output:** `vet endpoint scan --silent` — runs and syncs without printing the local table.
+
+## Next steps
+
+<CardGroup cols={2}>
+  <Card title="AI Tools Discovery" icon="magnifying-glass" href="/vet/guides/ai-tools-discovery">
+    Learn what gets discovered and how scopes work
+  </Card>
+  <Card title="Package Guard" icon="shield" href="/cloud/endpoint-hub/package-guard">
+    Track package installs across your endpoints
+  </Card>
+</CardGroup>

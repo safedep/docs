@@ -80,7 +80,14 @@ For example, Claude Code might produce:
 
 The discovery process never captures environment variable or header values. Only key names are recorded. CLI arguments matching secret patterns (`--token=`, `--api-key=`, `--password=`, etc.) are redacted. No network calls are made. All discovery is based on local filesystem and `$PATH` inspection.
 
+<Info>
+  `vet ai discover` is an alias for `vet endpoint scan --kind ai-tool`. When SafeDep credentials are configured, discovered items are automatically synced to SafeDep Cloud's Endpoint Hub — including on upgrade if credentials were already set. See [Inventory Sync](/cloud/endpoint-hub/inventory-sync).
+</Info>
+
 <CardGroup cols={2}>
+  <Card title="Inventory Sync" icon="cloud" href="/cloud/endpoint-hub/inventory-sync">
+    Sync discovered AI tools to SafeDep Cloud's Endpoint Hub
+  </Card>
   <Card title="Shadow AI in Code" icon="brain" href="/vet/guides/shadow-ai-detection">
     Detect AI SDK usage in source code and generate AI-enriched SBOMs
   </Card>
