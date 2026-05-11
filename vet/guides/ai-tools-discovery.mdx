@@ -1,9 +1,9 @@
 ---
 title: AI Tools Discovery
-description: "Discover AI coding agents, MCP servers, CLI tools, and IDE extensions across developer machines and project repositories"
+description: "Discover AI coding agents, MCP servers, CLI tools, IDE extensions, and agent skills across developer machines and project repositories"
 ---
 
-`vet ai discover` scans the local system and project directory to build an inventory of AI tool usage signals. It detects coding agents, MCP servers, CLI tools, IDE extensions, and project configuration files, giving security teams visibility into what AI tooling is active across a development environment.
+`vet ai discover` is an alias for `vet endpoint scan --kind ai-tool --kind agent-skill`. It scans the local system and project directory to build an inventory of AI tool usage signals: coding agents, MCP servers, CLI tools, IDE extensions, project configuration files, and agent skills. When SafeDep credentials are configured, discovered items are synced to SafeDep Cloud's Endpoint Hub automatically. See [Inventory](/cloud/endpoint-hub/inventory).
 
 ## Prerequisites
 
@@ -55,13 +55,16 @@ For example, Claude Code might produce:
 
 ### Signal Types
 
-| Type | Description |
-|------|-------------|
-| **coding_agent** | AI coding assistant installed on the system, detected via system-level config directories |
-| **mcp_server** | Model Context Protocol server configured for an application |
-| **cli_tool** | Standalone AI CLI binary found on `$PATH`, verified by executing with a version flag |
-| **ai_extension** | AI-related IDE extension detected from installed extension manifests |
-| **project_config** | AI tool configuration or instruction file found in a project repository |
+The `--kind` flag on `vet endpoint scan` controls which signal types are collected. `vet ai discover` always collects all of them.
+
+| Type | Kind | Description |
+|------|------|-------------|
+| **coding_agent** | `ai-tool` | AI coding assistant installed on the system, detected via system-level config directories |
+| **mcp_server** | `ai-tool` | Model Context Protocol server configured for an application |
+| **cli_tool** | `ai-tool` | Standalone AI CLI binary found on `$PATH`, verified by executing with a version flag |
+| **ai_extension** | `ai-tool` | AI-related IDE extension detected from installed extension manifests |
+| **project_config** | `ai-tool` | AI tool configuration or instruction file found in a project repository |
+| **agent_skill** | `agent-skill` | Agent skill directory discovered in a supported agent's skill path (e.g. `.claude/skills/`, `.agents/skills/`) |
 
 ### Scope
 
@@ -76,17 +79,15 @@ For example, Claude Code might produce:
 
 **IDE extensions** are discovered by reading extension manifests from supported IDE distributions and matching against a curated list of known AI extension identifiers.
 
+**Agent skill directories** are discovered by scanning known per-agent skill paths at both system and project scope.
+
 ## Security
 
-The discovery process never captures environment variable or header values. Only key names are recorded. CLI arguments matching secret patterns (`--token=`, `--api-key=`, `--password=`, etc.) are redacted. No network calls are made. All discovery is based on local filesystem and `$PATH` inspection.
-
-<Info>
-  `vet ai discover` is an alias for `vet endpoint scan --kind ai-tool`. When SafeDep credentials are configured, discovered items are automatically synced to SafeDep Cloud's Endpoint Hub — including on upgrade if credentials were already set. See [Inventory Sync](/cloud/endpoint-hub/inventory).
-</Info>
+During discovery, no network calls are made. All scanning is based on local filesystem and `$PATH` inspection. The discovery process never captures environment variable or header values; only key names are recorded. CLI arguments matching secret patterns (`--token=`, `--api-key=`, `--password=`, etc.) are redacted. Sync to SafeDep Cloud is a separate step that only runs when credentials are configured.
 
 <CardGroup cols={2}>
-  <Card title="Inventory Sync" icon="cloud" href="/cloud/endpoint-hub/inventory">
-    Sync discovered AI tools to SafeDep Cloud's Endpoint Hub
+  <Card title="Inventory" icon="cloud" href="/cloud/endpoint-hub/inventory">
+    Sync discovered AI tools and skills to SafeDep Cloud's Endpoint Hub
   </Card>
   <Card title="Shadow AI in Code" icon="brain" href="/vet/guides/shadow-ai-detection">
     Detect AI SDK usage in source code and generate AI-enriched SBOMs

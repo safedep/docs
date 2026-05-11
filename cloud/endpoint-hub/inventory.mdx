@@ -35,7 +35,7 @@ Endpoint inventory shows what AI tooling is active across your endpoints (develo
     vet auth verify
     ```
 
-    A successful response confirms that vet can reach SafeDep Cloud with your credentials. If verification fails, check that your API key and tenant domain are correct.
+    A successful response means vet can reach SafeDep Cloud. If verification fails, check that your API key and tenant domain are correct.
   </Step>
 
   <Step title="Run an endpoint scan">
@@ -44,19 +44,21 @@ Endpoint inventory shows what AI tooling is active across your endpoints (develo
     ```
 
     ```text Example output
-    Discovered 4 item(s) across 2 app(s)
+    Discovered 6 item(s) across 3 app(s)
 
-    ┌────────────────┬─────────────┬─────────────┬─────────┬──────────────────────────────────────┐
-    │ TYPE           │ NAME        │ APP         │ SCOPE   │ DETAIL                               │
-    ├────────────────┼─────────────┼─────────────┼─────────┼──────────────────────────────────────┤
-    │ Coding Agent   │ Claude Code │ Claude Code │ System  │ /home/user/.claude/settings.json     │
-    │ MCP Server     │ my-server   │ Claude Code │ System  │ stdio: npx my-server                 │
-    │ Coding Agent   │ Cursor      │ Cursor      │ System  │ /home/user/.cursor                   │
-    │ CLI Tool       │ Claude Code │ Claude Code │ System  │ /usr/local/bin/claude v2.1.0         │
-    └────────────────┴─────────────┴─────────────┴─────────┴──────────────────────────────────────┘
+    ┌────────────────┬──────────────────┬───────────────┬─────────┬──────────────────────────────────────────────────┐
+    │ TYPE           │ NAME             │ APP           │ SCOPE   │ DETAIL                                           │
+    ├────────────────┼──────────────────┼───────────────┼─────────┼──────────────────────────────────────────────────┤
+    │ Coding Agent   │ Claude Code      │ Claude Code   │ System  │ /home/user/.claude/settings.json                 │
+    │ MCP Server     │ my-server        │ Claude Code   │ System  │ stdio: npx my-server                             │
+    │ CLI Tool       │ Claude Code      │ Claude Code   │ System  │ /usr/local/bin/claude v2.1.0                     │
+    │ Coding Agent   │ Cursor           │ Cursor        │ System  │ /home/user/.cursor                               │
+    │ Agent Skill    │ golang-pro       │ claude-code   │ Project │ /home/user/project/.claude/skills/golang-pro     │
+    │ Agent Skill    │ security-review  │ Global Skills │ System  │ /home/user/.agents/skills/security-review        │
+    └────────────────┴──────────────────┴───────────────┴─────────┴──────────────────────────────────────────────────┘
     ```
 
-    Discovered items are delivered to SafeDep Cloud in the background. The command waits up to 30 seconds for delivery before exiting.
+    `vet endpoint scan` delivers discovered items to SafeDep Cloud in the background. The command waits up to 30 seconds for delivery; if the timeout is reached, any undelivered items are retried automatically on the next run.
 
     <Tip>
       Without credentials, `vet endpoint scan` still runs and prints the local table. No data leaves the machine.
@@ -68,17 +70,21 @@ Endpoint inventory shows what AI tooling is active across your endpoints (develo
 
     <img src="/images/endpoint-hub/endpoint-hub-inventory.png" alt="SafeDep Cloud Endpoint Hub Inventory tab" />
 
-    If your endpoint is not listed, confirm credentials with `vet auth verify` and re-run the scan.
+    <Tip>
+      If your endpoint is not listed, confirm credentials with `vet auth verify` and re-run the scan.
+    </Tip>
   </Step>
 </Steps>
 
-## Common sync patterns
+## Common scan options
 
-- **Project scope only:** `vet endpoint scan --scope project -D /path/to/repo` — limits discovery to project-level configs (e.g. `.mcp.json`, `CLAUDE.md`).
-- **System scope only:** `vet endpoint scan --scope system` — skips project configs; faster on large repositories.
-- **JSON report:** `vet endpoint scan --report-json inventory.json` — writes a local file in addition to syncing.
+- **Project scope only:** `vet endpoint scan --scope project -D /path/to/repo`: limits discovery to project-level configs (e.g. `.mcp.json`, `CLAUDE.md`).
+- **System scope only:** `vet endpoint scan --scope system`: skips project configs; faster on large repositories.
+- **AI tools only:** `vet endpoint scan --kind ai-tool`: discovers coding agents, MCP servers, CLI tools, IDE extensions, and project config files; skips skill directories.
+- **Agent skills only:** `vet endpoint scan --kind agent-skill`: discovers agent skill directories only.
+- **JSON report:** `vet endpoint scan --report-json inventory.json`: writes a local file in addition to syncing.
 - **CI/CD:** Set `SAFEDEP_API_KEY` and `SAFEDEP_TENANT_ID` as pipeline secrets. Ephemeral runners (e.g. GitHub-hosted) register as a new endpoint per run; self-hosted runners on a persistent host update the same endpoint.
-- **Suppress table output:** `vet endpoint scan --silent` — runs and syncs without printing the local table.
+- **Suppress table output:** `vet endpoint scan --silent`: runs and syncs without printing the local table.
 
 ## Next steps
 
