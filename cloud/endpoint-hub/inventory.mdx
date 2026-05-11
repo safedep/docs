@@ -1,9 +1,9 @@
 ---
-title: Inventory Sync
-description: "Sync AI tools, MCP servers, and coding agents discovered on your endpoints to SafeDep Cloud"
+title: Inventory
+description: "View AI tools, MCP servers, and coding agents discovered on your endpoints in SafeDep Cloud"
 ---
 
-Inventory Sync shows what AI tooling is active across your endpoints (developer machines, CI runners, agent sandboxes). It is powered by `vet endpoint scan`, which runs locally to discover AI tools, MCP servers, coding agents, and IDE extensions, then delivers them to SafeDep Cloud when credentials are configured.
+Endpoint inventory shows what AI tooling is active across your endpoints (developer machines, CI runners, agent sandboxes). It is powered by `vet endpoint scan`, which runs locally to discover AI tools, MCP servers, coding agents, and IDE extensions, then delivers them to SafeDep Cloud when credentials are configured.
 
 ## Prerequisites
 
@@ -14,13 +14,13 @@ Inventory Sync shows what AI tooling is active across your endpoints (developer 
 
 <Steps>
   <Step title="Configure SafeDep credentials">
-    Run the interactive auth setup:
+    Run the interactive auth setup, passing your tenant domain as a flag:
 
     ```bash
-    vet auth configure
+    vet auth configure --tenant <your-tenant-domain>
     ```
 
-    Enter your **API key** and **tenant domain** when prompted. The tenant domain looks like `your-team.your-org.safedep.io` and is shown on your SafeDep Cloud settings page.
+    The tenant domain looks like `your-team.your-org.safedep.io` and is shown on your SafeDep Cloud settings page. You will be prompted to enter your **API key** interactively.
 
     Alternatively, set environment variables:
 
