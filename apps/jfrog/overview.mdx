@@ -3,6 +3,10 @@ title: "JFrog Xray Integration"
 description: "Stream SafeDep malware intelligence to JFrog Xray as Custom Issues to automatically block malicious packages across your organization."
 ---
 
+<Warning>
+  The JFrog Xray Feed Integration is available on **SafeDep Pro+** plans only. [Upgrade your plan](https://safedep.io/pricing) to access this feature.
+</Warning>
+
 The JFrog Xray integration runs as a long-lived daemon that continuously polls SafeDep for
 verified malicious packages and pushes them to JFrog Xray as Custom Issues. When Xray has a
 blocking policy configured, packages flagged by SafeDep are automatically blocked for every
@@ -12,7 +16,7 @@ developer using that JFrog instance.
 
 - SafeDep CLI installed ([quickstart](/vet/quickstart))
 - SafeDep Cloud account — authenticated via `safedep auth login`
-- SafeDep **Pro+** subscription (required for the feed command)
+- SafeDep **Pro+** subscription
 - JFrog Xray access token with **Manage Xray Metadata** permission
 - JFrog Xray **Malware** security policy with a block action configured
 
