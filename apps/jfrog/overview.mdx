@@ -1,0 +1,112 @@
+---
+title: "JFrog Xray Integration"
+description: "Stream SafeDep malware intelligence to JFrog Xray as Custom Issues to automatically block malicious packages across your organization."
+---
+
+The JFrog Xray integration runs as a long-lived daemon that continuously polls SafeDep for
+verified malicious packages and pushes them to JFrog Xray as Custom Issues. When Xray has a
+blocking policy configured, packages flagged by SafeDep are automatically blocked for every
+developer using that JFrog instance.
+
+## Prerequisites
+
+- SafeDep CLI installed ([quickstart](/vet/quickstart))
+- SafeDep Cloud account — authenticated via `safedep auth login`
+- SafeDep **Pro+** subscription (required for the feed command)
+- JFrog Xray access token with **Manage Xray Metadata** permission
+- JFrog Xray **Malware** security policy with a block action configured
+
+## How It Works
+
+<Steps>
+  <Step title="Authenticate with SafeDep">
+    ```bash
+    safedep auth login
+    ```
+  </Step>
+  <Step title="Start the integration daemon">
+    ```bash
+    safedep integration jfrog run \
+      --instance-url https://yourcompany.jfrog.io \
+      --instance-access-token YOUR_JFROG_TOKEN
+    ```
+
+    The daemon polls SafeDep continuously (default: every 60 seconds) and pushes any newly
+    verified malicious packages to Xray.
+  </Step>
+  <Step title="Verify in JFrog Xray">
+    Navigate to **Xray → Watches & Policies** and confirm that the Custom Issues are
+    being created under your configured policy.
+  </Step>
+</Steps>
+
+## Configuration
+
+### CLI Flags
+
+| Flag | Required | Default | Description |
+|---|---|---|---|
+| `--instance-url` | Yes* | — | JFrog instance base URL. Must use `https://`. |
+| `--instance-access-token` | Yes* | — | JFrog access token scoped to Xray. |
+| `--poll-interval` | No | `60s` | Duration between poll cycles (`30s`, `5m`, `1h`). |
+| `--profile` | No | `"default"` | SafeDep credential profile. |
+
+*Required unless the corresponding environment variable is set.
+
+### Environment Variables
+
+For server deployments or CI pipelines where passing secrets as CLI arguments is undesirable,
+use environment variables instead. Flags take precedence when both are set.
+
+| Variable | Corresponding Flag |
+|---|---|
+| `SAFEDEP_INTEGRATION_JFROG_ARTIFACTORY_URL` | `--instance-url` |
+| `SAFEDEP_INTEGRATION_JFROG_ARTIFACTORY_ACCESS_TOKEN` | `--instance-access-token` |
+
+**Example — environment variable setup:**
+
+```bash
+export SAFEDEP_INTEGRATION_JFROG_ARTIFACTORY_URL=https://yourcompany.jfrog.io
+export SAFEDEP_INTEGRATION_JFROG_ARTIFACTORY_ACCESS_TOKEN=***
+safedep integration jfrog run
+```
+
+## JFrog Xray Setup
+
+To have Xray automatically block packages flagged by SafeDep:
+
+1. Create a **Security Policy** in Xray with the rule type set to **Malware**.
+2. Set the action to **Block Download**.
+3. Create a **Watch** and attach it to the repositories you want protected.
+4. Assign the policy to the watch.
+
+<Info>
+  Without a blocking policy, SafeDep findings are recorded in Xray as Custom Issues but packages
+  are not automatically blocked.
+</Info>
+
+## Multi-Tenant Usage
+
+Use `--profile` to switch between multiple SafeDep tenants:
+
+```bash
+safedep --profile customer-a integration jfrog run \
+  --instance-url https://customer.jfrog.io \
+  --instance-access-token $TOKEN
+```
+
+## Authentication Resolution
+
+SafeDep credentials are resolved in this order:
+
+1. `SAFEDEP_API_KEY` + `SAFEDEP_TENANT_ID` environment variables
+2. Keychain credentials stored by `safedep auth login`
+
+<CardGroup cols={2}>
+  <Card title="SafeDep Cloud" icon="cloud" href="/cloud/overview">
+    Learn about SafeDep Cloud and how to get started
+  </Card>
+  <Card title="SafeDep CLI Quickstart" icon="terminal" href="/vet/quickstart">
+    Install and configure the SafeDep CLI
+  </Card>
+</CardGroup>
