@@ -122,6 +122,7 @@
           {
             "group": "Endpoint Hub",
             "pages": [
+              "cloud/endpoint-hub/inventory",
               "cloud/endpoint-hub/package-guard"
             ]
           },
