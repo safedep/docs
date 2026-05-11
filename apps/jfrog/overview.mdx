@@ -73,8 +73,31 @@ those packages for every developer on that instance.
     ```
 
     `jf npm install` triggers Xray to index `@sheason/d-pi@0.4.3`. If SafeDep has flagged that package as malicious, Xray raises a policy violation and blocks the download.
+
+    ```text Install Output
+      npm ERR! 403 on a server you do not have access to.
+      {
+        "error": {
+          "code": "E403",
+          "summary": "403 Forbidden - GET https://yourcompany.jfrog.io/artifactory/api/npm/npm-virtual/@sheason/d-pi/-/d-pi-0.4.3.tgz",
+          "detail": "In most cases, you or one of your dependencies are requesting\na package version that is forbidden by your security policy, or\non a server you do not have access to."
+        }
+      }
+    ```
   </Step>
 </Steps>
+
+## <Icon icon="triangle-exclamation" color="#f59e0b" /> Limitations
+
+#### Malicious Packages Blocking
+
+`npm` and other package managers cache packages locally on developer machines. If a developer installs a package before SafeDep flags it, the cached copy remains accessible even after the integration pushes it to Xray.
+
+Running `npm cache clean --force` removes the cached copy, but it clears the entire local cache and forces a full re-download of all packages.
+
+```bash
+npm cache clean --force
+```
 
 ## Configuration
 
@@ -105,17 +128,3 @@ export SAFEDEP_INTEGRATION_JFROG_ARTIFACTORY_URL=https://yourcompany.jfrog.io
 export SAFEDEP_INTEGRATION_JFROG_ARTIFACTORY_ACCESS_TOKEN=***
 safedep integration jfrog run
 ```
-
-## JFrog Xray Setup
-
-To block SafeDep-flagged packages in Xray:
-
-1. Create a **Security Policy** in Xray with the rule type set to **Malware**.
-2. Set the action to **Block Download**.
-3. Create a **Watch** and attach it to the repositories you want protected.
-4. Assign the policy to the watch.
-
-<Info>
-  Without a blocking policy, the daemon records SafeDep findings as Custom Issues but Xray does
-  not block any packages.
-</Info>
