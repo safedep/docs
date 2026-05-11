@@ -109,7 +109,8 @@
               "apps/github/overview",
               "apps/gitlab/overview",
               "apps/bitbucket/bitbucket-pipes",
-              "apps/mcp/overview"
+              "apps/mcp/overview",
+              "apps/jfrog/overview"
             ]
           },
           {
