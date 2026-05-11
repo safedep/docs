@@ -57,7 +57,9 @@ those packages for every developer on that instance.
     ✓ Pushed: @sheason/d-pi@0.4.3 (npm)
     i   JFrog: SD-01KR3XSCZ0WNAEYY6CNMD4CQH3 [201]
     i Poll cycle complete, next in 1m0s
-    i Poll cycle complete, next in 1m0s
+    ...
+    ..
+    .
     ```
   </Step>
   <Step title="Verify Blocking">
@@ -67,10 +69,10 @@ those packages for every developer on that instance.
     </Info>
 
     ```bash
-    jf npm install pkg@x.y.z
+    jf npm install @sheason/d-pi@0.4.3
     ```
 
-    `jf npm install` triggers Xray to index `pkg@x.y.z`. If SafeDep has flagged that package as malicious, Xray raises a policy violation and blocks the download.
+    `jf npm install` triggers Xray to index `@sheason/d-pi@0.4.3`. If SafeDep has flagged that package as malicious, Xray raises a policy violation and blocks the download.
   </Step>
 </Steps>
 
@@ -117,29 +119,3 @@ To block SafeDep-flagged packages in Xray:
   Without a blocking policy, the daemon records SafeDep findings as Custom Issues but Xray does
   not block any packages.
 </Info>
-
-## Multi-Tenant Usage
-
-Use `--profile` to switch between multiple SafeDep tenants:
-
-```bash
-safedep --profile customer-a integration jfrog run \
-  --instance-url https://customer.jfrog.io \
-  --instance-access-token $TOKEN
-```
-
-## Authentication Resolution
-
-SafeDep resolves credentials in this order:
-
-1. `SAFEDEP_API_KEY` + `SAFEDEP_TENANT_ID` environment variables
-2. Keychain credentials stored by `safedep auth login`
-
-<CardGroup cols={2}>
-  <Card title="SafeDep Cloud" icon="cloud" href="/cloud/overview">
-    Learn about SafeDep Cloud and how to get started
-  </Card>
-  <Card title="SafeDep CLI Quickstart" icon="terminal" href="/vet/quickstart">
-    Install and configure the SafeDep CLI
-  </Card>
-</CardGroup>
