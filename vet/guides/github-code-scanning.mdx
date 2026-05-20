@@ -103,6 +103,20 @@ The GitHub Action automatically adds comments to pull requests when security iss
   <Accordion title="Organization-wide Deployment">
     Use GitHub organization templates to deploy vet across all repositories automatically.
   </Accordion>
+
+  <Accordion title="Pin third-party actions to commit SHAs">
+    For production workflows, pin third-party GitHub Actions to a full commit SHA rather than a mutable tag. This protects against tag-moving attacks where a compromised upstream action could inject malicious code.
+
+    ```yaml
+    # Instead of:
+    uses: actions/checkout@v4
+
+    # Pin to a specific commit SHA:
+    uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
+    ```
+
+    The [actions/checkout](https://github.com/actions/checkout/releases) and [github/codeql-action](https://github.com/github/codeql-action/releases) release pages list the commit SHA for each release. `safedep/vet-action` uses [semantic versioning tags](https://github.com/safedep/vet-action/releases) that we control directly.
+  </Accordion>
 </AccordionGroup>
 
 ## Troubleshooting
