@@ -1,0 +1,31 @@
+---
+title: Overview
+description: "Visibility into AI tooling and package activity across your developer machines, CI runners, and agent sandboxes"
+---
+
+Endpoint Hub gives you visibility into what is running across your **endpoints** — developer machines, CI runners, and agent sandboxes. It brings together two views in SafeDep Cloud, each powered by a SafeDep open source tool that runs locally and syncs activity to the cloud.
+
+## What Endpoint Hub covers
+
+### Inventory
+
+Inventory shows the AI tooling active on each endpoint: coding agents, MCP servers, Agent Skills, CLI tools, and IDE extensions. It is powered by `vet endpoint scan`, which discovers these locally and delivers them to SafeDep Cloud when credentials are configured.
+
+### Package Guard
+
+Package Guard shows package installs and usage across your endpoints as a timeline of events. It runs on [pmg](/pmg/quickstart), the open-source Package Manager Guard CLI that intercepts package manager commands and syncs the activity to SafeDep Cloud.
+
+## How it works
+
+Both views follow the same model: an open source CLI runs on the endpoint and, once SafeDep Cloud credentials are configured, syncs its findings to your tenant. You then browse each endpoint by hostname under **Endpoint Hub** in the [app.safedep.io](https://app.safedep.io) sidebar. Without credentials, both tools still run locally and no data leaves the machine.
+
+## Get started
+
+<CardGroup cols={2}>
+  <Card title="Inventory" icon="boxes-stacked" href="/cloud/endpoint-hub/inventory">
+    Discover AI tools, Agent Skills, MCP servers, and coding agents on your endpoints
+  </Card>
+  <Card title="Package Guard" icon="shield" href="/cloud/endpoint-hub/package-guard">
+    Track package installs and usage across your endpoints
+  </Card>
+</CardGroup>

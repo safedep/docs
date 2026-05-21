@@ -114,7 +114,7 @@
             ]
           },
           {
-            "group": "Features",
+            "group": "SCA",
             "pages": [
               "cloud/sync",
               "cloud/malware-analysis"
@@ -123,6 +123,7 @@
           {
             "group": "Endpoint Hub",
             "pages": [
+              "cloud/endpoint-hub/overview",
               "cloud/endpoint-hub/inventory",
               "cloud/endpoint-hub/package-guard"
             ]
