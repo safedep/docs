@@ -36,7 +36,7 @@ The easiest way to get started is the SafeDep CLI — one command signs you in, 
   <Step title="Test the Integration">
     Verify the setup by asking your coding agent to install a [test package](#testing). The agent should block it as malicious.
 
-    {/* TODO: Add screenshot of agent blocking the test package */}
+    ![Claude using SafeDep MCP](/images/claude-using-safedep-mcp.png)
 
   </Step>
 </Steps>
@@ -71,6 +71,7 @@ If you'd rather configure things yourself, or your agent isn't auto-detected by 
       --header "Authorization: <API Key>" \
       --header "X-Tenant-ID: <Tenant Domain>"
     ```
+
   </Accordion>
   <Accordion title="Cursor" icon="https://img.logo.dev/cursor.com?token=pk_JMA7_TgCSx--JsncHKu2cA">
     Add the SafeDep MCP server to your Cursor configuration. Create or edit `~/.cursor/mcp.json` in your home directory:
@@ -92,6 +93,7 @@ If you'd rather configure things yourself, or your agent isn't auto-detected by 
     Restart Cursor after saving the configuration. You can verify the server connection in **Cursor Settings > MCP Servers**.
 
     See the [Cursor MCP documentation](https://cursor.com/docs/context/mcp) for more details.
+
   </Accordion>
   <Accordion title="VS Code" icon="https://img.logo.dev/code.visualstudio.com?token=pk_JMA7_TgCSx--JsncHKu2cA">
     Add the SafeDep MCP server to your VS Code configuration. Create or edit the user-level `mcp.json` file for your platform:
@@ -118,6 +120,7 @@ If you'd rather configure things yourself, or your agent isn't auto-detected by 
     ```
 
     Reload VS Code after saving the configuration.
+
   </Accordion>
   <Accordion title="Gemini CLI" icon="https://img.logo.dev/gemini.google.com?token=pk_JMA7_TgCSx--JsncHKu2cA">
     Add the SafeDep MCP server to your Gemini CLI configuration. Edit `~/.gemini/settings.json` in your home directory:
@@ -137,6 +140,7 @@ If you'd rather configure things yourself, or your agent isn't auto-detected by 
     ```
 
     See the [Gemini CLI MCP documentation](https://geminicli.com/docs/tools/mcp-server/) for more details.
+
   </Accordion>
   <Accordion title="OpenCode" icon="https://img.logo.dev/opencode.ai?token=pk_JMA7_TgCSx--JsncHKu2cA">
     Add the SafeDep MCP server to your OpenCode configuration. Create or edit `~/.config/opencode/opencode.json` in your home directory:
@@ -156,6 +160,7 @@ If you'd rather configure things yourself, or your agent isn't auto-detected by 
       }
     }
     ```
+
   </Accordion>
   <Accordion title="Antigravity" icon="https://img.logo.dev/google.com?token=pk_JMA7_TgCSx--JsncHKu2cA">
     Add the SafeDep MCP server to your Antigravity configuration. Create or edit `~/.gemini/antigravity/mcp_config.json` in your home directory:
@@ -173,6 +178,7 @@ If you'd rather configure things yourself, or your agent isn't auto-detected by 
       }
     }
     ```
+
   </Accordion>
   <Accordion title="OpenAI Codex" icon="https://img.logo.dev/openai.com?token=pk_JMA7_TgCSx--JsncHKu2cA">
     Add the SafeDep MCP server to your Codex configuration. Edit `~/.codex/config.toml` (or `.codex/config.toml` in your project root for project-scoped access):
@@ -194,6 +200,7 @@ If you'd rather configure things yourself, or your agent isn't auto-detected by 
     ```
 
     See the [Codex MCP documentation](https://developers.openai.com/codex/mcp) for more details.
+
   </Accordion>
   <Accordion title="Windsurf" icon="https://img.logo.dev/codeium.com?token=pk_JMA7_TgCSx--JsncHKu2cA">
     Add the SafeDep MCP server to your Windsurf configuration. Create or edit `~/.codeium/windsurf/mcp_config.json` in your home directory:
@@ -213,6 +220,7 @@ If you'd rather configure things yourself, or your agent isn't auto-detected by 
     ```
 
     See the [Windsurf Cascade MCP documentation](https://docs.windsurf.com/windsurf/cascade/mcp) for more details.
+
   </Accordion>
   <Accordion title="Zed" icon="https://img.logo.dev/zed.dev?token=pk_JMA7_TgCSx--JsncHKu2cA">
     Add the SafeDep MCP server to your Zed configuration. Create or edit `~/.config/zed/settings.json` in your home directory.
@@ -233,6 +241,7 @@ If you'd rather configure things yourself, or your agent isn't auto-detected by 
     ```
 
     See the [Zed MCP documentation](https://zed.dev/docs/ai/mcp) for more details.
+
   </Accordion>
 </AccordionGroup>
 
@@ -240,10 +249,10 @@ If you'd rather configure things yourself, or your agent isn't auto-detected by 
 
 After setting up the MCP server, you can verify the integration is working by asking your coding agent to install one of the following test packages:
 
-| Package              | Ecosystem |
-| -------------------- | --------- |
-| `safedep-test-pkg`   | npm       |
-| `safedep-test-pkg`   | PyPI      |
+| Package            | Ecosystem |
+| ------------------ | --------- |
+| `safedep-test-pkg` | npm       |
+| `safedep-test-pkg` | PyPI      |
 
 These are harmless packages that are marked as malicious in the SafeDep database, specifically meant for testing. Your coding agent should block the installation and warn you about the package being flagged as malicious.
 
