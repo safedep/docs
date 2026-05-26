@@ -5,6 +5,10 @@ description: "Protect your AI coding agents against malicious packages using Saf
 
 The easiest way to get started is the SafeDep CLI — one command signs you in, sets up your API key, and configures SafeDep protection in every AI coding agent it finds on your machine. If you prefer to set things up manually, instructions for each agent are available [below](#manual-setup).
 
+SafeDep monitors npm, PyPI, and other package registries in real time. It's invisible when packages are safe — you only see it when it blocks something dangerous.
+
+<Info>SafeDep MCP has a free tier. See [pricing](https://safedep.io/pricing) for details.</Info>
+
 ## Quick Start
 
 <Steps>
@@ -56,6 +60,8 @@ The MCP server requires SafeDep API key based authentication. Following HTTP hea
 | --------------- | --------------------------------------------------------------- |
 | `Authorization` | `<API Key>`                                                     |
 | `X-Tenant-ID`   | `your-tenant-domain (e.g. default-team.your-domain.safedep.io)` |
+
+<Tip>Your tenant domain is shown in [SafeDep Cloud settings](https://app.safedep.io/settings/api-keys) after you sign in.</Tip>
 
 ## Manual Setup
 
