@@ -64,7 +64,8 @@
             "pages": [
               "vet/guides/ai-governance",
               "vet/guides/shadow-ai-detection",
-              "vet/guides/ai-tools-discovery"
+              "vet/guides/ai-tools-discovery",
+              "vet/guides/endpoint-scan"
             ]
           },
           {
