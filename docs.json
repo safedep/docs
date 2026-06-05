@@ -14,49 +14,66 @@
   "navigation": {
     "tabs": [
       {
-        "tab": "Welcome",
+        "tab": "Get Started",
         "groups": [
           {
-            "group": "Get Started",
+            "group": "Introduction",
             "pages": [
               "introduction"
+            ]
+          },
+          {
+            "group": "Quickstarts",
+            "pages": [
+              "vet/quickstart",
+              "cloud/quickstart"
             ]
           }
         ]
       },
       {
-        "tab": "Open Source",
+        "tab": "Protect Developers",
         "groups": [
           {
-            "group": "Concepts",
+            "group": "Package Manager Guard (pmg)",
+            "pages": [
+              "pmg/concepts/why-pmg",
+              "pmg/quickstart",
+              "pmg/updates"
+            ]
+          },
+          {
+            "group": "AI Coding Protection & Audit",
+            "pages": [
+              "apps/mcp/overview"
+            ]
+          },
+          {
+            "group": "Endpoint Sync",
+            "pages": [
+              "cloud/endpoint-hub/package-guard"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "Scan & Analyze",
+        "groups": [
+          {
+            "group": "Repository Scanning (vet)",
             "pages": [
               "vet/concepts/why-vet",
-              "pmg/concepts/why-pmg",
-              "xbom/concepts/why-xbom"
-            ]
-          },
-          {
-            "group": "Quickstart",
-            "pages": [
-              "vet/quickstart",
-              "pmg/quickstart",
-              "xbom/quickstart"
-            ]
-          },
-          {
-            "group": "Integration Guides",
-            "pages": [
-              "vet/guides/github-code-scanning",
-              "vet/guides/defect-dojo-integration"
-            ]
-          },
-          {
-            "group": "SBOM & Analysis",
-            "pages": [
-              "vet/guides/cyclonedx-sbom",
-              "vet/guides/dependency-inventory",
               "vet/guides/code-analysis",
+              "vet/guides/dependency-inventory",
               "vet/guides/dependency-usage-identification"
+            ]
+          },
+          {
+            "group": "Bill of Materials (xBom)",
+            "pages": [
+              "xbom/concepts/why-xbom",
+              "xbom/quickstart",
+              "vet/guides/cyclonedx-sbom"
             ]
           },
           {
@@ -68,14 +85,58 @@
             ]
           },
           {
-            "group": "API & Automation",
+            "group": "CI/CD & Platform Integrations",
             "pages": [
-              "vet/guides/insights-api-using-typescript",
+              "apps/overview",
+              "apps/github/overview",
+              "vet/guides/github-code-scanning",
+              "apps/gitlab/overview",
+              "apps/bitbucket/bitbucket-pipes",
+              "apps/jfrog/overview",
+              "vet/guides/defect-dojo-integration",
               "vet/guides/terraform-supply-chain-audit"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "Govern & Manage",
+        "groups": [
+          {
+            "group": "SafeDep Cloud",
+            "pages": [
+              "cloud/overview",
+              "cloud/sync"
             ]
           },
           {
-            "group": "Advanced Usage",
+            "group": "Endpoint Hub",
+            "pages": [
+              "cloud/endpoint-hub/overview",
+              "cloud/endpoint-hub/inventory",
+              "cloud/endpoint-hub/inventory-catalog"
+            ]
+          },
+          {
+            "group": "Policy & Risk",
+            "pages": [
+              "cloud/malware-analysis",
+              "cloud/package-exclusions"
+            ]
+          },
+          {
+            "group": "Access & Identity",
+            "pages": [
+              "cloud/authentication"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "Reference",
+        "groups": [
+          {
+            "group": "vet Query & Policy",
             "pages": [
               "vet/advanced/filtering",
               "vet/advanced/build-your-own-queries",
@@ -85,67 +146,10 @@
             ]
           },
           {
-            "group": "Changelogs",
-            "pages": [
-              "pmg/updates"
-            ]
-          }
-        ]
-      },
-      {
-        "tab": "SafeDep Cloud",
-        "groups": [
-          {
-            "group": "Getting Started",
-            "pages": [
-              "cloud/overview",
-              "cloud/quickstart"
-            ]
-          },
-          {
-            "group": "Apps & Integrations",
-            "pages": [
-              "apps/overview",
-              "apps/github/overview",
-              "apps/gitlab/overview",
-              "apps/bitbucket/bitbucket-pipes",
-              "apps/mcp/overview",
-              "apps/jfrog/overview"
-            ]
-          },
-          {
-            "group": "SCA",
-            "pages": [
-              "cloud/sync",
-              "cloud/malware-analysis"
-            ]
-          },
-          {
-            "group": "Endpoint Hub",
-            "pages": [
-              "cloud/endpoint-hub/overview",
-              "cloud/endpoint-hub/inventory",
-              "cloud/endpoint-hub/package-guard",
-              "cloud/endpoint-hub/inventory-catalog"
-            ]
-          },
-          {
-            "group": "Management",
-            "pages": [
-              "cloud/package-exclusions"
-            ]
-          },
-          {
-            "group": "Reference",
+            "group": "API & Automation",
             "pages": [
               "api-reference/introduction",
-              "cloud/authentication"
-            ]
-          },
-          {
-            "group": "Support",
-            "pages": [
-              "cloud/faq"
+              "vet/guides/insights-api-using-typescript"
             ]
           }
         ]
@@ -156,8 +160,14 @@
           {
             "group": "Community",
             "pages": [
-              "community",
-              "faq"
+              "community"
+            ]
+          },
+          {
+            "group": "Support",
+            "pages": [
+              "faq",
+              "cloud/faq"
             ]
           }
         ]
