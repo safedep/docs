@@ -146,6 +146,12 @@
             ]
           },
           {
+            "group": "SQL Query",
+            "pages": [
+              "reference/sql-query"
+            ]
+          },
+          {
             "group": "API & Automation",
             "pages": [
               "api-reference/introduction",
