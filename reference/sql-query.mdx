@@ -1,17 +1,12 @@
 ---
 title: Querying SafeDep Cloud with SQL
-description: "Run SQL against your SafeDep Cloud data with the safedep CLI."
+description: "Run SQL-like queries against your SafeDep Cloud data with the safedep CLI."
 ---
 
-The `safedep query` command runs SQL against SafeDep Cloud's analytics surface:
+The `safedep query` command runs SQL-like queries against SafeDep Cloud's analytics surface:
 the packages, projects, endpoints, events, and security findings collected across
 your tenant, enriched with global threat intelligence (vulnerabilities, EPSS,
 CISA KEV, OpenSSF Scorecard, and more).
-
-If you know SQL, you already know how to use this. It is real SQL: `SELECT`,
-`WHERE`, `JOIN`, `GROUP BY`, `HAVING`, `ORDER BY`, and aggregate functions all
-work. There are a few rules that keep queries fast and tenant-safe, covered
-below.
 
 ## Prerequisites
 
@@ -25,86 +20,32 @@ safedep auth status   # confirm tenant and OAuth token
 SafeDep scopes every query to your tenant. You never write a tenant filter
 yourself.
 
-## Letting an AI agent write the queries
-
-You can load the schema into an AI agent. The agent calls `schema get` once,
-writes a query against it, and self-corrects from the verbatim server errors. No
-human hands it the table layout. Prefer to write queries yourself? Skip to
-[Your first query](#your-first-query).
-
-### Agent prompt
-
-Copy this into your agent's system prompt or task instructions. It assumes the
-`safedep` CLI is installed and authenticated.
-
-````text
-Query SafeDep Cloud data with the `safedep` CLI, a constrained SQL dialect.
-Workflow:
-
-1. DISCOVER THE SCHEMA FIRST — treat it as ground truth for tables, columns, enum
-   values, capability flags, join edges, and rules:
-
-     safedep query schema get -o json          # everything
-     safedep query schema show <table> -o json # one table
-
-2. WRITE THE QUERY, obeying these rules:
-   - Reference at least one tenant table (projects, project_versions, boms,
-     packages, endpoints, component_* findings, inventory_events,
-     package_guard_events). Enrichment tables (vulnerabilities, epss, kev,
-     licenses, malware_analysis, open_source_*, scorecards, scorecard_checks,
-     terraform_providers) are reachable ONLY by joining out from a tenant table.
-   - Filter on an indexed column or a bounded time range. An OR across all enum
-     values does NOT satisfy this — anchor on a real indexed column or timestamp.
-   - Qualify every column as table.column. No aliases, no bare columns.
-   - Joins need an ON clause but its contents are ignored (the catalog applies a
-     predefined join). Only join tables connected by an edge.
-   - Aggregates: count, sum, avg, min, max. Use count(column), never count(*);
-     sum/avg/min/max need the "aggregatable" flag. Every non-aggregated column in
-     SELECT/ORDER BY/HAVING must be in GROUP BY (and be "groupable"). Use
-     COUNT(DISTINCT ...) to avoid double counting from join fan-out.
-   - LIKE is prefix-only ('name%'). Filter enums by name (severity_rating =
-     'CRITICAL'). No subqueries, CTEs, UNION, window functions, casts, arbitrary
-     functions, or multiple statements.
-
-3. EXECUTE in JSON to parse results and stats:
-
-     safedep query exec -o json --sql "<statement>" --limit 100
-
-4. SELF-CORRECT from the verbatim server error (unknown table/column, missing
-   index filter, not groupable/aggregatable), then retry. Re-check the schema
-   instead of guessing names.
-
-5. PAGINATE when more rows exist: re-run the same query with
-   --page-token <next_page_token>.
-
-For worked query examples, see https://docs.safedep.io/reference/sql-query.
-````
-
-### Why this works well for agents
-
-- **One schema call, no trial and error.** `schema get` returns columns, enums,
-  flags, join edges, and rules in a single response.
-- **Errors are machine-readable.** Validation failures come back verbatim, so the
-  agent reads "must filter on an indexed column" or "column X is not groupable"
-  and fixes the query without human help.
-- **JSON output is typed.** `columns` carry types and `stats` carry the planner
-  cost and elapsed time, so the agent can reason about result shape and expense.
-
 ## Your first query
 
-It is mostly SQL. Select some columns, filter with `WHERE`, sort with
-`ORDER BY`:
+Start by seeing what you can query. List the tables, then inspect one to view its
+columns, capability flags, and join edges:
+
+```bash
+safedep query schema list             # all tables + one-line descriptions
+safedep query schema show projects    # one table: columns, flags, joins
+```
+
+See [Discovering the schema](#discovering-the-schema) for the full set of schema
+commands.
+
+Now run a query. It is mostly SQL. Select some columns, filter with `WHERE`, sort
+with `ORDER BY`:
 
 ```bash
 safedep query exec --sql "
-  SELECT projects.name, projects.url
+  SELECT projects.name
   FROM projects
   WHERE projects.origin_source = 'SOURCE_GITHUB'
   ORDER BY projects.name"
 ```
 
 ```
-projects.name              projects.url
+projects.name
 safedep/vet
 safedep/pmg
 safedep/control-tower
@@ -113,7 +54,9 @@ safedep/control-tower
 
 Two things make this different from a generic database:
 
-1. **Columns are written as `table.column`.** No aliases, no bare column names.
+1. **Write every column as `table.column`** using the real table name. No table
+   aliases, no bare column names. Result aliases via `AS` work
+   (`COUNT(...) AS n`, then `ORDER BY n`).
 2. **Every query must filter on an indexed column or a bounded time range.** Here
    `projects.origin_source` is indexed, so the query is accepted. This rule keeps
    queries cheap; the schema marks which columns are indexed.
@@ -139,7 +82,7 @@ Tables come in two kinds:
   `scorecard_checks`, `terraform_providers`.
 
 The most important rule: **every query must reference at least one tenant table.**
-Enrichment tables can only be reached by joining out from a tenant table.
+You reach an enrichment table only by joining out from a tenant table.
 
 A typical query walks from a first-party project, through its bill of materials,
 to a package, to a finding, and out to global enrichment:
@@ -165,110 +108,6 @@ projects -> project_versions -> boms -> packages -> component_vulnerabilities ->
 Not supported: subqueries, CTEs (`WITH`), `UNION` and set operations, window
 functions, casts, arbitrary functions, and multiple statements.
 
-### The rules, in full
-
-1. Reference at least one tenant table.
-2. Filter on an indexed column or a bounded time range. An `OR` across *all*
-   values of an enum does not count; anchor on a real indexed column instead.
-3. Qualify every column as `table.column`.
-4. `count(*)` is not supported; use `count(column)`. When you aggregate, every
-   non-aggregated column in `SELECT`, `ORDER BY`, and `HAVING` must appear in
-   `GROUP BY`.
-5. Joins apply the catalog's predefined relationship regardless of the `ON`
-   contents.
-6. `LIKE` is prefix-only.
-7. Filter enums by name (`severity_rating = 'CRITICAL'`).
-8. Results are paginated: set `--limit` (1-100) and pass the returned
-   `next_page_token` back.
-
-## Aggregations and grouping
-
-Aggregates roll up findings across your entire fleet in a single statement.
-
-### COUNT is the workhorse
-
-`COUNT(column)` works on any selectable column, and `COUNT(DISTINCT column)` is
-the right tool whenever a join fans out (one package appears in many BOMs, so
-plain counts double-count):
-
-```bash
-safedep query exec --sql "
-  SELECT projects.name, COUNT(DISTINCT vulnerabilities.vuln_id) AS critical_vulns
-  FROM projects
-  JOIN project_versions ON project_versions.id = projects.id
-  JOIN boms ON boms.id = project_versions.id
-  JOIN packages ON packages.id = boms.id
-  JOIN component_vulnerabilities ON component_vulnerabilities.vulnerability_id = packages.id
-  JOIN vulnerabilities ON vulnerabilities.vuln_id = component_vulnerabilities.vulnerability_id
-  WHERE vulnerabilities.severity_rating = 'CRITICAL'
-  GROUP BY projects.name
-  ORDER BY critical_vulns DESC"
-```
-
-```
-projects.name              critical_vulns
-safedep/vet                11
-demo-client-java           8
-damn-vulnerable-sca        7
-```
-
-### Multiple aggregates, GROUP BY, and HAVING
-
-Combine aggregates, group by a `groupable` column, and use `HAVING` to filter the
-grouped result. This counts critical vulnerabilities per ecosystem and keeps only
-ecosystems with more than one:
-
-```bash
-safedep query exec --sql "
-  SELECT packages.ecosystem,
-         COUNT(DISTINCT vulnerabilities.vuln_id) AS vulns,
-         COUNT(packages.id) AS pkg_rows
-  FROM packages
-  JOIN component_vulnerabilities ON component_vulnerabilities.vulnerability_id = packages.id
-  JOIN vulnerabilities ON vulnerabilities.vuln_id = component_vulnerabilities.vulnerability_id
-  WHERE vulnerabilities.severity_rating = 'CRITICAL'
-  GROUP BY packages.ecosystem
-  HAVING COUNT(DISTINCT vulnerabilities.vuln_id) > 1
-  ORDER BY vulns DESC"
-```
-
-```
-packages.ecosystem   vulns   pkg_rows
-1                    14      20        (Maven)
-3                    11      480       (PyPI)
-2                    7       24        (npm)
-7                    3       221       (Go)
-4                    2       2         (RubyGems)
-```
-
-### SUM, AVG, MIN, MAX
-
-`sum`, `avg`, `min`, and `max` operate on columns flagged `aggregatable`. Today
-those are the Package Guard counters (`allowed_count`, `blocked_count`,
-`total_analyzed`). This totals packages analyzed and blocked across all Package
-Guard sessions:
-
-```bash
-safedep query exec --sql "
-  SELECT package_guard_events.event_type,
-         SUM(package_guard_events.total_analyzed) AS analyzed,
-         SUM(package_guard_events.blocked_count) AS blocked
-  FROM package_guard_events
-  WHERE package_guard_events.event_type = 'PMG_EVENT_TYPE_SESSION_SUMMARY'
-  GROUP BY package_guard_events.event_type"
-```
-
-```
-event_type   analyzed   blocked
-1            12619      52
-```
-
-<Note>
-`count(column)` works on any selectable column, but `sum`/`avg`/`min`/`max`
-require the `aggregatable` flag. Check the flag with `safedep query schema show <table>`
-before reaching for them.
-</Note>
-
 ## Discovering the schema
 
 You do not need to memorize tables or columns. The schema is self-describing, and
@@ -281,7 +120,7 @@ safedep query schema get              # everything: all tables, edges, rules
 safedep query schema get -o json      # same, machine-readable
 ```
 
-Each column carries capability flags that tell you exactly what it can do:
+Each column carries capability flags that tell you what it can do:
 
 | Flag | Meaning |
 |---|---|
@@ -295,9 +134,28 @@ Each column carries capability flags that tell you exactly what it can do:
 cardinality) and the usage rules with example queries, so one call gives you
 everything needed to write a valid query.
 
+## Letting an AI agent write the queries
+
+Point your AI coding agent at the `safedep` CLI. The schema is self-describing
+and server errors come back verbatim, so the agent can discover tables, write a
+query, and self-correct on its own.
+
+Prompt:
+
+````text
+You can query SafeDep Cloud data with the `safedep` CLI (a constrained SQL
+dialect). Run `safedep query schema get -o json` to discover the tables,
+columns, rules, and join edges. Write a query, run it with
+`safedep query exec -o json --sql "<statement>"`, and self-correct from the
+verbatim server errors. Rules and worked examples:
+https://docs.safedep.io/reference/sql-query
+````
+
 ## Examples
 
-### Severity breakdown for one ecosystem
+<AccordionGroup>
+
+<Accordion title="Severity breakdown for one ecosystem">
 
 Anchor on the indexed `ecosystem` column (an `OR` across all severities would not
 satisfy the index rule):
@@ -314,7 +172,9 @@ safedep query exec --sql "
   ORDER BY num_vulns DESC"
 ```
 
-### Top remediation targets by critical CVE count
+</Accordion>
+
+<Accordion title="Top remediation targets by critical CVE count">
 
 ```bash
 safedep query exec --sql "
@@ -327,7 +187,9 @@ safedep query exec --sql "
   ORDER BY critical_vulns DESC" --limit 15
 ```
 
-### Enrich critical CVEs with EPSS exploit prediction
+</Accordion>
+
+<Accordion title="Enrich critical CVEs with EPSS exploit prediction">
 
 EPSS is join-only enrichment, so anchor in the tenant `packages` table and join
 out. Sorting by EPSS surfaces the CVEs most likely to be exploited:
@@ -350,7 +212,9 @@ org.apache.logging.log4j:log4j-core   CVE-2021-44228    0.944    0.99964
 next                                  CVE-2025-29927    0.921    0.99724
 ```
 
-### Cross-reference inventory against CISA KEV
+</Accordion>
+
+<Accordion title="Cross-reference inventory against CISA KEV">
 
 `kev` is the CISA Known Exploited Vulnerabilities catalog. Use a bounded range on
 the indexed `kev.date_added` to anchor the query:
@@ -366,7 +230,9 @@ safedep query exec --sql "
   ORDER BY packages.name"
 ```
 
-### Malware findings across your inventory
+</Accordion>
+
+<Accordion title="Malware findings across your inventory">
 
 `is_malware` is not indexed, so anchor on the indexed `detected_at` timestamp:
 
@@ -381,7 +247,9 @@ safedep query exec --sql "
   ORDER BY packages.name"
 ```
 
-### List declared licenses for your packages
+</Accordion>
+
+<Accordion title="List declared licenses for your packages">
 
 Walk from packages through `component_licenses` to the global `licenses` catalog
 for SPDX metadata. Anchor on the indexed `packages.ecosystem`:
@@ -396,7 +264,9 @@ safedep query exec --sql "
   ORDER BY packages.name"
 ```
 
-### Your endpoint fleet, by most recent sync
+</Accordion>
+
+<Accordion title="Your endpoint fleet, by most recent sync">
 
 `endpoints` are the machines and CI runners reporting to your tenant. The
 timestamp columns are indexed, so a bounded range anchors the query:
@@ -420,7 +290,9 @@ The `endpoint_type` and `trust_level` enums are not groupable, so use `WHERE`
 filters and listings rather than `GROUP BY` for endpoints. Filter them by name
 (`endpoint_type = 'CI_RUNNER'`).
 
-### Which endpoints have blocked any package
+</Accordion>
+
+<Accordion title="Which endpoints have blocked any package">
 
 For "which endpoints..." questions you want a de-duplicated list, not one row per
 event. `endpoints.identifier` is not groupable, so use `SELECT DISTINCT`:
@@ -441,7 +313,9 @@ Sahils-MacBook-Pro.local
 Vignesh
 ```
 
-### What each endpoint blocked
+</Accordion>
+
+<Accordion title="What each endpoint blocked">
 
 Join Package Guard events to the endpoint that produced them, newest first, for a
 full audit trail:
@@ -471,7 +345,9 @@ Sahils-MacBook-Pro.local    fast-check                       2                  
 The `package_ecosystem` enum renders as its stored number in table output
 (`2` = `ECOSYSTEM_NPM`, `3` = `ECOSYSTEM_PYPI`); use `-o json` for the enum name.
 
-### Shadow AI inventory: MCP servers observed across endpoints
+</Accordion>
+
+<Accordion title="Shadow AI inventory: MCP servers observed across endpoints">
 
 `inventory_events` captures items discovered by `vet` on each endpoint. Filter on
 the indexed `item_kind` to find AI-related items:
@@ -484,6 +360,10 @@ safedep query exec --sql "
   WHERE inventory_events.item_kind = 'INVENTORY_ITEM_KIND_MCP_SERVER'
   ORDER BY inventory_events.item_identity" --limit 50
 ```
+
+</Accordion>
+
+</AccordionGroup>
 
 ## Output modes
 
