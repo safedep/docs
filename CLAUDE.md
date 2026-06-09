@@ -14,9 +14,9 @@ This repository contains documentation for SafeDep, built using Mintlify documen
 The documentation is organized into **6 tabs** — three solution tabs at the core, plus supporting tabs:
 
 1. **Get Started** — "What is SafeDep?" primer, quickstarts, core concepts
-2. **Package Security** — block malicious packages at install time (pmg, Endpoint Sync)
+2. **Package Security** — block malicious packages at install time and in CI/CD (pmg)
 3. **AI Agent Security** — discover, audit, and control what AI agents access and run (MCP, Gryph, vet AI discovery)
-4. **Visibility & Governance** — scan repos/SBOMs/CI/CD for risk; manage policy and cloud visibility (vet, xBom, SafeDep Cloud, Endpoint Hub)
+4. **Visibility & Governance** — scan repos/SBOMs/CI/CD for risk; manage policy and cloud visibility (vet, xBom, SafeDep Cloud, Endpoint Hub, Endpoint Sync)
 5. **Reference** — exact syntax/APIs (vet query & policy, API & automation)
 6. **Community & Support** — community resources and FAQ
 
@@ -42,7 +42,7 @@ Every placement decision derives from these rules. Full rationale and page map: 
 |---|---|---|
 | Defines a concept/term used across docs | Get Started | Core Concepts |
 | Onboards a new user / routes entry points | Get Started | Introduction / Quickstarts |
-| Covers install-time package threat blocking | Package Security | pmg / Endpoint Sync |
+| Covers malicious package blocking (install-time or CI/CD) | Package Security | pmg / CI/CD Package Blocking |
 | Covers AI agent discovery, audit, or control | AI Agent Security | AI Agent Observability / AI Coding Protection |
 | Covers scanning repos, SBOMs, CI/CD for risk | Visibility & Governance | Repository Scanning / Bill of Materials / CI/CD |
 | Covers cloud policy, endpoint inventory, access | Visibility & Governance | SafeDep Cloud / Endpoint Hub / Policy & Risk |
@@ -82,7 +82,7 @@ All documentation follows the **Diátaxis framework** with four content types:
 ├── get-started/           # ★ New: primer, entry points, quickstart aggregators
 ├── package-security/      # ★ New: Package Security tab content
 ├── ai-security/           # ★ New: AI Agent Security tab content
-├── visibility/            # ★ New: Visibility & Governance tab content
+├── governance/            # ★ New: Visibility & Governance tab content
 ├── reference/             # ★ New: Reference tab content
 │
 ├── vet/                   # Legacy tool path (grandfathered — don't move files)
@@ -102,7 +102,7 @@ All documentation follows the **Diátaxis framework** with four content types:
 └── snippets/              # Reusable MDX content blocks
 ```
 
-**Path convention:** New pages use solution-aligned paths (`package-security/`, `ai-security/`, `visibility/`, `concepts/`). Legacy paths (`vet/`, `pmg/`, `cloud/`, `apps/`, `scan/`) are grandfathered — moving them requires a `redirects` entry in `docs.json`.
+**Path convention:** New pages use solution-aligned paths (`package-security/`, `ai-security/`, `governance/`, `concepts/`). Legacy paths (`vet/`, `pmg/`, `cloud/`, `apps/`, `scan/`) are grandfathered — moving them requires a `redirects` entry in `docs.json`.
 
 ## Common Development Commands
 
@@ -210,7 +210,7 @@ After every `docs.json` change, run: `node_modules/.bin/mintlify broken-links`
 
 **Adding a new How-to Guide:**
 1. Use the placement table ("Where does a new page go?") to pick the correct tab and group
-2. Create the file at a **solution-aligned path** (e.g., `visibility/new-platform-integration.mdx`, not `vet/guides/new-integration.mdx`)
+2. Create the file at a **solution-aligned path** (e.g., `governance/new-platform-integration.mdx`, not `vet/guides/new-integration.mdx`)
 3. Add frontmatter with title and description
 4. Structure with clear step-by-step instructions (Diátaxis: How-to)
 5. Include practical code examples
