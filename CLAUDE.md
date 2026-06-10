@@ -33,6 +33,8 @@ Every placement decision derives from these rules. Full rationale and page map: 
 - **R5 — Progressive disclosure.** Tab depth is unlimited; groups handle it. A tab splits only when it covers fundamentally different security outcomes. The Reference tab is the only place for exhaustive lookup content.
 - **R6 — docs.safedep.io is the guide layer.** Product-level technical reference (CLI flags, type definitions) lives in individual product repos. This site covers concepts, how-tos, and integration guides.
 - **R7 — AI-agent consumability is first-class.** One concept per atomic page, predictable headings, stable URLs.
+- **R8 — Every product has a landing page.** Each product (pmg, Endpoint Hub, Gryph) gets an overview page that summarizes what it does and links to its setup docs in order. A routing page, not a tutorial.
+- **R9 — Personas inform voice and priority, not structure.** Navigate by need / use-case / Diátaxis mode — never by who the reader is. No persona journeys, gates, or "choose your role" router pages (marketing pattern, not docs). Personas only shape (1) page voice — who a page assumes as its reader — and (2) backlog priority — which use-cases ship first. Entry routing, where wanted, uses concrete use-case cards (Stripe-style), not roles. Buyer personas don't read docs.
 
 **Test for any new page:** *What security outcome does this serve?* If the answer is "it documents tool X" rather than "it helps someone achieve Y," it is in the wrong place.
 

@@ -43,6 +43,8 @@ Every structural decision derives from these rules. Full rationale in `docs-ia-p
 
 - **R8 — Every product has a landing page.** Each product (pmg, Endpoint Hub, Gryph, etc.) gets an overview page that (1) summarizes what the product does and (2) links to its setup docs in sequential order. The landing page is a routing page, not a tutorial — it lets a reader understand the product at a glance and follow a clear path from zero to operational.
 
+- **R9 — Personas inform voice and priority, not structure.** Navigation is organized by user *need / use-case / Diátaxis mode* — never by who the reader is. There are no persona journeys, persona gates, or "choose your role" router pages (that is a marketing-site pattern, not a docs pattern). Personas legitimately influence two things only: (1) **page voice** — a page is pitched at an assumed reader (a tutorial assumes a beginner; reference assumes a working practitioner), and (2) **backlog priority** — persona research decides *which* use-cases we build first (e.g. today, the individual-dev local-install flow). Neither shows up in the tree. Entry routing, where we want it, uses concrete use-case cards ("Stop a malicious `npm install`," "Block bad packages in CI"), Stripe-style — not roles. Buyer personas don't read docs, so they don't even shape page voice; they live on the marketing site. *(Grounding: Diátaxis organizes by need, not audience; Stripe routes entry by developer goal, not persona.)*
+
 **Test for any new page:** *What security outcome does this serve?* If the answer is "it documents tool X" rather than "it helps someone achieve Y," it is in the wrong place.
 
 ---
