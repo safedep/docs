@@ -32,8 +32,8 @@
 
 ## gryph
 
-- **One-liner (from README):** Security layer for AI coding agents. AI coding agents have no security boundaries — Gryph is building one.
-- **What it is:** A runtime sandbox / proxy that intercepts what an AI coding agent (Cursor, Claude Code, etc.) actually does — file access, shell commands, network — and lets you observe and gate it.
+- **One-liner (from repo description):** Security layer for AI coding agents. Works with Claude Code, Cursor, Windsurf, Gemini CLI, OpenCode, Pi Agent and more.
+- **What it is:** A security/observability layer around AI coding agents — records and audits what agents actually do ("Everyone runs YOLO mode. Nobody checks what happened. Gryph does."). Verify current capabilities against the README before documenting; don't overstate enforcement vs observability.
 - **Public repo:** `github.com/safedep/gryph`
 - **Docs home:** **AI Agent Security**. R8 landing page (`ai-security/gryph-overview`) is in the backlog.
 - **Key concepts surfaced:** AI agent observability, AI coding protection, runtime policy. Different from MCP (Gryph wraps the agent at runtime; MCP exposes SafeDep tools *to* the agent).
@@ -53,12 +53,12 @@
 
 ## xBom
 
-- **One-liner:** SBOM (Software Bill of Materials) generation, including CycloneDX output.
-- **What it is:** A sub-tool inside `vet` — not a standalone repo. Generates CycloneDX SBOMs from scanned dependency graphs.
-- **Source location:** `pkg/xbom/` inside the vet repo. (The `xbom/` directory in this docs repo is a grandfathered legacy path.)
-- **Docs home:** **Visibility & Governance › Bill of Materials**.
-- **Key concepts surfaced:** SBOM, CycloneDX, dependency inventory.
-- **Where to read up-to-date facts:** `pkg/xbom/` and `cmd/` in the vet repo (look for sbom/xbom subcommands).
+- **One-liner (from repo description):** Generate xBOMs enriched with AI, SaaS, Crypto and more using static code analysis.
+- **What it is:** A standalone CLI tool that generates Bill of Materials (including CycloneDX) from static code analysis — covering not just packages but AI/SaaS/crypto usage. Separate from vet's own SBOM output (`vet/guides/cyclonedx-sbom`); don't conflate the two.
+- **Public repo:** `github.com/safedep/xbom`
+- **Docs home:** **Visibility & Governance › Bill of Materials**. (The `xbom/` directory in this docs repo is a grandfathered legacy path.)
+- **Key concepts surfaced:** SBOM / xBOM, CycloneDX, dependency inventory.
+- **Where to read up-to-date facts:** `README.md` in the xbom repo.
 
 ---
 

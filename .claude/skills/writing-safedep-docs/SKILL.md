@@ -62,7 +62,7 @@ You may not work around these without updating `docs-ia.md` first.
 | **Reference** | Comprehensive, dry, minimal explanation | Reference tab only |
 | **Explanation** | Conceptual "what / why / how it works" | Get Started › Core Concepts |
 
-**Never mix modes on one page.** The most common violation: a Reference page that grows How-to recipes, or a How-to that grows a long Explanation preamble. Split it. The pilot in `concepts/cel.mdx` + `scan/filtering-recipes.mdx` + `vet/advanced/filtering.mdx` is the template.
+**Never mix modes on one page.** The most common violation: a Reference page that grows How-to recipes, or a How-to that grows a long Explanation preamble. Split it using the three-way pattern: trim the dominant mode in place (URL unchanged), extract the Explanation to a `concepts/` page, extract the How-to recipes to a goal-tab page. **Do not assume any specific page exists — verify against `docs.json` and the filesystem**; `docs-ia.md` §7 records intent, which can run ahead of what's actually on disk.
 
 ## File path convention
 
@@ -96,7 +96,7 @@ See `products.md` in this skill for: per-product one-liner, source repo path, do
 - **vet** — repository scanning + filtering / queries → Visibility & Governance
 - **pmg** — install-time malicious package blocking → Package Security
 - **gryph** — AI coding agent runtime sandbox → AI Agent Security
-- **xBom** — SBOM generation (lives inside vet) → Visibility & Governance › Bill of Materials
+- **xBom** — standalone xBOM/SBOM generator via static code analysis → Visibility & Governance › Bill of Materials
 - **MCP** — SafeDep MCP server for AI coding tools → AI Agent Security › AI Coding Protection
 - **vet-action** — GitHub Action; split by use-case (blocking → Package Security; scanning → Visibility & Governance)
 - **SafeDep Cloud / Endpoint Hub** — hosted control plane (closed-source) → Visibility & Governance. Public API surface: [`buf.build/safedep/api`](https://buf.build/safedep/api) — canonical schemas + generated SDKs; link to it, don't restate it (R6)
@@ -116,10 +116,14 @@ See `products.md` in this skill for: per-product one-liner, source repo path, do
 
 ## Workflow: reviewing / refactoring an existing page
 
-1. **Classify it.** Which Diátaxis modes are present in the body? Use the rubric in `docs-ia-content-audit.md`.
-2. **Decide: keep / trim-in-place / split / merge / move-tab.** The audit doc has the prioritized worklist.
-3. **If splitting:** the pilot pattern is `vet/advanced/filtering.mdx` → kept Reference at original URL + new `scan/filtering-recipes.mdx` (how-to) + new `concepts/cel.mdx` (explanation). Preserve the original URL of the dominant mode to avoid redirects.
+1. **Classify it.** Which of the four Diátaxis modes are present in the body? (Step-by-step happy path = Tutorial; goal-phrased recipes = How-to; tables/field specs/syntax = Reference; "what is / why" prose = Explanation.)
+2. **Decide: keep / trim-in-place / split / merge / move-tab.**
+3. **If splitting:** keep the dominant mode at the original URL (no redirect needed), extract the Explanation to `concepts/`, extract the How-to to the goal tab.
 4. **No content loss check.** Map every H2/H3 of the original page to one of: kept / moved-to-X / intentionally-deleted. Write that map into the commit message.
+5. **Sweep for cross-page rot** — these recur and structural checks miss them:
+   - **Orphan pages:** every `.mdx` in the repo should appear in `docs.json` nav (or be intentionally unlisted — confirm). Orphans rot silently.
+   - **Duplication:** the same content (a concept definition, a CI/CD setup, troubleshooting steps) living on 2+ pages. One canonical home; others link (R4).
+   - **IA drift:** `docs.json` vs `docs-ia.md` §7 — they must describe the same tree. Flag every mismatch; don't assume either side is right.
 
 ## Workflow: adding docs for a new product / feature area
 

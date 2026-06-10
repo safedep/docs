@@ -109,7 +109,7 @@ No H1 — Mintlify renders the title from frontmatter.
 | **Reference** | Comprehensive, minimal explanation | Reference tab |
 | **Explanation** | Conceptual, connects ideas | Get Started › Core Concepts |
 
-Don't mix Diátaxis types within a single page. The content audit tracking broader conformance is in `docs-ia-content-audit.md`.
+Don't mix Diátaxis types within a single page.
 
 ---
 
@@ -152,13 +152,13 @@ Don't mix Diátaxis types within a single page. The content audit tracking broad
 
 **Reference**
 - vet Query & Policy: `vet/advanced/filtering`, `vet/advanced/build-your-own-queries`, `vet/advanced/policy-as-code`, `vet/advanced/exceptions`, `vet/advanced/path-exclusion`
-- API & Automation: `api-reference/introduction`, `vet/guides/insights-api-using-typescript`
+- API & Automation: `api-reference/introduction`, `vet/guides/insights-api-using-typescript`, `reference/sql-query`
 
 **Community & Support**
 - Community: `community`
 - Support: `faq`, `cloud/faq`
 
-Total: **46 pages**
+Total: **47 pages**
 
 ---
 
