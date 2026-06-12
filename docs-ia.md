@@ -33,7 +33,7 @@ Every structural decision derives from these rules. Full rationale in `docs-ia-p
 
 - **R3 — Organize by solution, not by tool.** Tabs name the security outcome SafeDep delivers. Tools appear one level deeper, inside groups. Grammar test: "SafeDep solves ___" must complete naturally with the tab name. Imperative verbs ("Scan & Analyze") fail; solution nouns ("Package Security") pass.
 
-- **R4 — Concepts are first-class, atomic, linkable.** Each concept (Policy, Endpoint, Tenant, Malysis/Malbase, SBOM, CEL) gets one dedicated page under Get Started › Core Concepts. Malysis is the intelligence layer — it is never a product tab or sidebar group.
+- **R4 — Concepts are first-class, atomic, linkable.** Each concept (Policy, Endpoint, Tenant, Malysis/Malbase, SBOM, CEL) gets one dedicated page under Get Started › Core Concepts. The Malysis *pipeline* is internal infrastructure — it is never a product tab or sidebar group. If SafeDep's threat-intelligence offering productizes, the user-facing *product* gets a docs home under the planned Threat Intelligence tab (§8); the pipeline stays invisible. The distinction this rule protects is pipeline vs product — not "intelligence never gets a tab."
 
 - **R5 — Progressive disclosure.** Tab depth is unlimited; groups handle it. A tab splits only when it covers fundamentally different security outcomes. The Reference tab is the technical lookup layer — CLI flags, filter syntax, API specs — and is the only place exhaustive lookup content belongs.
 
@@ -177,3 +177,14 @@ Total: **47 pages**
 | Section landing pages | One per solution tab |
 | `governance/tenants-access-control` | Visibility & Governance › Access & Identity |
 | `reference/cli` | Reference |
+
+### Planned structural change — Threat Intelligence (fourth solution tab)
+
+Threat Intelligence is expected to productize. When the product ships, it becomes the **fourth solution tab** — not before (no empty tabs). Scope and rules:
+
+- **The tab is the solution, not the product.** It is scoped to SOC intel-consumption use-cases — alert triage, enrichment, threat hunting, SIEM/SOAR feeds. Product pages sit one level deep inside groups, same as every other tab. Scope test: a second intel-adjacent product must fit this tab without renaming it; if it can't, the tab has become a brand tab and violates R3.
+- **Label note (R3):** "Threat Intelligence" is grammatically product-shaped ("SafeDep *provides* TI," not "solves" it), but it is the stable industry category the SOC audience navigates by — the same trade we accepted for "Bill of Materials." Findability wins; the tab's *scope* stays solution-shaped per the test above.
+- **R4 interaction:** the Malysis pipeline still never gets a tab; the user-facing TI product does (see amended R4 in §2).
+- **R9 guard:** the tab is named for the solution, never "For SOC Teams." A distinct consuming team is *evidence* the outcome is distinct, not the organizing principle.
+- **Not a dual-home product:** TI does not get nav entries under Package Security or AI Agent Security. Cross-surface from those tabs via in-body `<Card>`s only.
+- **Standard kit on launch (R8/R6):** landing page, concept page(s) under Core Concepts, quickstart, integration how-tos, API reference linking to `buf.build/safedep/api` rather than restating schemas.

@@ -81,10 +81,11 @@
 
 - **One-liner:** SafeDep's threat intelligence layer — the malware detection / signal pipeline that powers vet, pmg, MCP, etc.
 - **Status:** internal infrastructure; not directly user-facing.
-- **Docs home: NONE as a tab or group.** R4 is explicit: Malysis is the intelligence *underneath* the products; it is never a product tab. It appears as:
+- **Docs home: NONE as a tab or group.** R4 is explicit: the Malysis *pipeline* is the intelligence *underneath* the products; it is never a product tab. It appears as:
   - A **concept page** under Get Started › Core Concepts (planned).
   - The signal source mentioned in product overviews (e.g. "pmg uses Malysis to decide block/allow").
-- **Why this matters:** treating Malysis as a product tab is the textbook R3/R4 violation. If you find yourself writing "Malysis › setup" or "Malysis › API," stop — that content belongs under the specific product that uses it.
+- **Why this matters:** treating the Malysis pipeline as a product tab is the textbook R3/R4 violation. If you find yourself writing "Malysis › setup" or "Malysis › API," stop — that content belongs under the specific product that uses it.
+- **Planned exception — Threat Intelligence productization:** a user-facing TI *product* is expected to ship and gets its own fourth solution tab (scope and rules: `docs-ia.md` §8). The R4 distinction holds — the pipeline never gets a tab; the productized offering does. Until that product ships, nothing changes.
 
 ---
 
