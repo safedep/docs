@@ -142,59 +142,40 @@ Configure [vet-action](https://github.com/safedep/vet-action) to sync with SafeD
 
 ## Query Your Data
 
-SafeDep Cloud provides a SQL-like query interface for exploring aggregated data:
+Once your data is syncing, query your tenant's aggregated inventory and findings —
+projects, packages, endpoints, and security findings enriched with global threat
+intelligence (vulnerabilities, EPSS, CISA KEV, OpenSSF Scorecard).
 
-<Tip>
-Authenticate first: `vet cloud login --tenant <your-tenant-domain>`
-</Tip>
-
-### List All Projects
-
-```bash
-vet cloud query execute --sql "select projects.name, projects.version from projects"
-```
-
-### Find Critical Vulnerabilities
+Queries run through the [`safedep` CLI](https://github.com/safedep/cli#safedep-cli).
+For example, to find your top remediation targets by critical CVE count:
 
 ```bash
-vet cloud query execute --sql "
-  select projects.name, packages.name, packages.version, vulnerabilities.cve_id
-  from projects
-  where projects.version = 'main' and vulnerabilities.risk = 'CRITICAL'
-"
+safedep auth login
+safedep query exec --sql "
+  SELECT packages.name, COUNT(DISTINCT vulnerabilities.vuln_id) AS critical_vulns
+  FROM packages
+  JOIN component_vulnerabilities ON component_vulnerabilities.vulnerability_id = packages.id
+  JOIN vulnerabilities ON vulnerabilities.vuln_id = component_vulnerabilities.vulnerability_id
+  WHERE vulnerabilities.severity_rating = 'CRITICAL'
+  GROUP BY packages.name
+  ORDER BY critical_vulns DESC" --limit 15
 ```
 
-### Identify Policy Violations
+<Note>
+Prefer a UI? You can also run queries from the web console at
+[app.safedep.io](https://app.safedep.io).
+</Note>
 
-```bash
-vet cloud query execute --sql "
-  select projects.name, packages.name, packages.version, policy_violations.rule_name
-  from projects
-  where projects.version = 'main'
-"
-```
-
-### Export Results
-
-Export query results to CSV:
-
-```bash
-vet cloud query execute \
-  --csv results.csv \
-  --sql "select projects.name, projects.version from projects"
-```
-
-## Explore the Schema
-
-View the complete data schema to build custom queries:
-
-```bash
-vet cloud query schema
-```
+See the **[SQL query guide](/reference/sql-query)** for the full schema, query
+rules, and worked examples — severity breakdowns, EPSS enrichment, malware
+findings, endpoint audit trails, and more.
 
 ## Next Steps
 
 <CardGroup cols={2}>
+  <Card title="Query with SQL" icon="magnifying-glass" href="/reference/sql-query">
+    Explore your tenant data with the `safedep` CLI
+  </Card>
   <Card title="Authentication Guide" icon="key" href="/cloud/authentication">
     Learn advanced authentication and access control
   </Card>
