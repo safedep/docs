@@ -179,9 +179,8 @@ jobs:
           cloud: true
           cloud-key: ${{ secrets.SAFEDEP_CLOUD_API_KEY }}
           cloud-tenant: ${{ secrets.SAFEDEP_CLOUD_TENANT_DOMAIN }}
-          policy: '.github/security-policy.yml'
-          fail-on-violation: true
-          malware: true
+          policy: '.github/vet/policy.yml'
+          paranoid: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           

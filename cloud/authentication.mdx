@@ -98,8 +98,8 @@ For custom applications, implement OAuth2 Device Code flow. Reference implementa
 
 ```bash
 # Set credentials
-export SAFEDEP_API_KEY=sk_your_api_key
-export SAFEDEP_TENANT_ID=your-company
+export SAFEDEP_API_KEY=your_api_key
+export SAFEDEP_TENANT_ID=your-company.safedep.io
 
 # Use with vet
 vet scan -D . --report-sync \
@@ -135,35 +135,26 @@ vet cloud whoami
 
 ## Authentication Headers
 
-### API Key Authentication
+The SafeDep API is a [gRPC API with a ConnectRPC facade](/api-reference/introduction), not a REST API — there are no REST paths to call. Whatever transport you use (gRPC over HTTP/2 or JSON over HTTP/1.1), requests carry the same two headers:
 
-```bash
-curl -H "Authorization: Bearer sk_your_api_key" \
-     -H "X-Tenant-ID: your-tenant" \
-     https://api.safedep.io/v2/insights/packages
-```
+| Header | Value |
+|--------|-------|
+| `Authorization` | Your API key or JWT, sent **as-is** (no `Bearer` prefix) |
+| `X-Tenant-ID` | Your tenant domain (e.g. `your-company.safedep.io`) |
 
-### JWT Authentication
+- **Data plane** (`api.safedep.io`) accepts an API key or a JWT.
+- **Control plane** (`cloud.safedep.io`) accepts a JWT.
 
-```bash
-curl -H "Authorization: Bearer your_jwt_token" \
-     -H "X-Tenant-ID: your-tenant" \
-     https://cloud.safedep.io/api/v1/projects
-```
+For the available services and methods, see the canonical API specification at [buf.build/safedep/api](https://buf.build/safedep/api), which also publishes generated SDKs.
 
 ## Rate Limiting
 
-### Data Plane Limits
+SafeDep Cloud enforces fair-usage rate limits at the API gateway, measured **per second** — there is no hourly quota:
 
-- **API Key Authentication**: Fair usage policy applies
-- **Rate limits**: 1000 requests per hour per API key
-- **Burst capacity**: 50 requests per minute
+- **Data plane** (`api.safedep.io`): up to **500 requests/second** per API key
+- **Management API**: up to **20 requests/second**
 
-### Control Plane Limits
-
-- **JWT Authentication**: Higher limits for authenticated users
-- **Rate limits**: 5000 requests per hour per user
-- **Burst capacity**: 100 requests per minute
+These limits are applied under a fair usage policy and are subject to change.
 
 ## Security Best Practices
 
@@ -238,11 +229,8 @@ vet cloud login --tenant your-tenant
 ## API Reference
 
 <CardGroup cols={2}>
-  <Card title="Control Plane API" icon="cog" href="https://cloud.safedep.io/api/docs">
-    Management and configuration API documentation
-  </Card>
-  <Card title="Data Plane API" icon="database" href="https://api.safedep.io/docs">
-    Insights and scanning data API documentation
+  <Card title="API Specification" icon="book" href="https://buf.build/safedep/api">
+    Canonical gRPC/ConnectRPC schemas, docs, and generated SDKs
   </Card>
   <Card title="OAuth2 Implementation" icon="code" href="https://github.com/safedep/vet/blob/main/cmd/cloud/login.go">
     Reference implementation for OAuth2 Device Code flow
