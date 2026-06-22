@@ -91,6 +91,6 @@ vet query --from /tmp/dump \
 ```bash
 # Find high-risk packages (multiple criteria)
 vet query --from /tmp/dump \
-    --filter 'vulns.high.size() > 0 && scorecard.scores.Security < 5 && projects.exists(p, p.stars < 100)'
+    --filter 'vulns.high.size() > 0 && scorecard.scores["Security-Policy"] < 5 && projects.exists(p, p.stars < 100)'
 ```
 

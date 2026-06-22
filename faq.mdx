@@ -301,10 +301,10 @@ Common filter issues and solutions:
   </Accordion>
   
   <Accordion title="Use Warning Mode">
-    Don't fail builds while tuning policies:
+    The action does not fail the build by default, so you can surface findings without blocking while you tune policies. Just leave `paranoid` off (its default is `false`):
     ```yaml
     with:
-      fail-on-violation: false
+      paranoid: false
     ```
   </Accordion>
 </AccordionGroup>
@@ -317,11 +317,12 @@ vet collects:
 - **Package metadata** from public registries
 - **Vulnerability data** from public databases (OSV, NVD)
 - **OpenSSF Scorecard** metrics from public repositories
-- **No source code** is ever analyzed or transmitted
+
+Only **package coordinates** (ecosystem, name, version) leave your machine. Your source code is never transmitted.
 
 ### Does vet send my code anywhere?
 
-No. vet only analyzes package manifest files (like package-lock.json) and does not access or transmit your source code. All analysis is based on publicly available package metadata.
+No. vet reads your manifests, lockfiles, and — when code analysis is enabled — your source code **locally** to identify and trace dependencies. Only package coordinates are sent to SafeDep for vulnerability and malware analysis; your source code never leaves your machine.
 
 ### Can I use vet in air-gapped environments?
 
