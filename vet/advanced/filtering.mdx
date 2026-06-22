@@ -104,7 +104,7 @@ Refer to the [filter input specification](https://github.com/safedep/vet/blob/ma
     scorecard.scores.Maintained == 0
     
     # Overall OpenSSF Scorecard score
-    scorecard.Score < 5
+    scorecard.score < 5
     ```
   </Tab>
   
@@ -152,7 +152,7 @@ projects.exists(x, x.stars < 50)
 # Compliance violations
 !licenses.exists(p, p in ["MIT", "Apache-2.0", "BSD-3-Clause"]) ||
 vulns.high.size() > 0 ||
-scorecard.Score < 3
+scorecard.score < 3
 
 # Production-ready packages
 vulns.critical.size() == 0 &&
@@ -253,7 +253,7 @@ vet scan -D . \
 
 # Identify potential supply chain risks
 vet scan -D . \
-    --filter 'scorecard.scores.Supply_Chain < 5 || scorecard.scores.Token_Permissions < 5' \
+    --filter 'scorecard.scores["Pinned-Dependencies"] < 5 || scorecard.scores["Token-Permissions"] < 5' \
     --report-json supply-chain-risks.json
 ```
 

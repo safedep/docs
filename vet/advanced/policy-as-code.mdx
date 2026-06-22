@@ -73,11 +73,11 @@ filters:
     
   - name: minimum-maintenance
     value: |
-      scorecard.scores.Maintained < 5
-    
-  - name: security-score
+      scorecard.scores["Maintained"] < 5
+
+  - name: low-overall-scorecard
     value: |
-      scorecard.Score < 3
+      scorecard.score < 3
   
 ```
 
@@ -112,8 +112,8 @@ Use filter suites in your CI pipeline:
 - name: Security Policy Check
   uses: safedep/vet-action@v1
   with:
-    policy: '.github/vet-policy.yml'
-    fail-on-violation: true
+    policy: '.github/vet/policy.yml'
+    paranoid: true
 ```
 
 ## Advanced Policy Examples
@@ -139,19 +139,17 @@ filters:
 name: Supply Chain Security
 description: Advanced supply chain security checks
 filters:
-  - name: unsigned-packages
+  - name: known-malware
     value: |
-      !package.signed
-    
-  - name: suspicious-maintainers
+      vulns.all.exists(v, v.id.startsWith("MAL-"))
+
+  - name: dangerous-release-workflow
     value: |
-      package.maintainers.size() == 1 && 
-      package.published_at > timestamp("2023-01-01T00:00:00Z")
-    
-  - name: typosquatting-risk
+      scorecard.scores["Dangerous-Workflow"] == 0
+
+  - name: low-popularity
     value: |
-      package.name.size() < 3 || 
-      package.name.contains("_") && package.downloads < 1000
+      projects.exists(p, (p.type == "GITHUB") && (p.stars < 10))
 ```
 
 ### Development vs Production Policies
@@ -183,11 +181,11 @@ filters:
       
       - name: maintenance-requirements
         value: |
-          scorecard.scores.Maintained < 7
+          scorecard.scores["Maintained"] < 7
       
       - name: security-requirements
         value: |
-          scorecard.scores.Security < 5
+          scorecard.scores["Security-Policy"] < 5
     ```
   </Tab>
 </Tabs>
@@ -229,10 +227,11 @@ The Common Expression Language (CEL) provides the foundation for writing policie
 
 ### Available Data Fields
 
-- `vulns.critical`, `vulns.high`, `vulns.medium`, `vulns.low` - Vulnerability arrays
-- `licenses` - Array of license identifiers
-- `scorecard.scores.*` - OpenSSF Scorecard metrics
-- `package.*` - Package metadata (name, version, published_at, etc.)
+- `pkg` - Package metadata: `pkg.ecosystem`, `pkg.name`, `pkg.version`
+- `vulns.all`, `vulns.critical`, `vulns.high`, `vulns.medium`, `vulns.low` - Vulnerability arrays; each item has an `id` (e.g. `vulns.all.exists(v, v.id.startsWith("MAL-"))`)
+- `licenses` - Array of SPDX license identifiers
+- `scorecard.score` - Aggregate OpenSSF Scorecard score; `scorecard.scores["Check-Name"]` - per-check score (e.g. `"Maintained"`, `"Dangerous-Workflow"`, `"Token-Permissions"`)
+- `projects` - Source project info (e.g. `projects.exists(p, p.type == "GITHUB" && p.stars < 10)`)
 
 ### Common Operations
 
