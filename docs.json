@@ -19,7 +19,8 @@
           {
             "group": "Introduction",
             "pages": [
-              "introduction"
+              "introduction",
+              "get-started/cli-tools"
             ]
           },
           {
@@ -45,7 +46,8 @@
           {
             "group": "AI Coding Protection & Audit",
             "pages": [
-              "apps/mcp/overview"
+              "apps/mcp/overview",
+              "ai-security/gryph-overview"
             ]
           },
           {
@@ -155,6 +157,7 @@
             "group": "API & Automation",
             "pages": [
               "api-reference/introduction",
+              "reference/endpoints",
               "vet/guides/insights-api-using-typescript"
             ]
           }
@@ -199,6 +202,12 @@
       ]
     }
   },
+  "redirects": [
+    {
+      "source": "/api/introduction",
+      "destination": "/api-reference/introduction"
+    }
+  ],
   "logo": {
     "light": "/images/full-logo-for-light-theme.png",
     "dark": "/images/full-logo-for-dark-theme.png"
