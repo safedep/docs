@@ -1,0 +1,88 @@
+---
+title: SafeDep CLI Tools
+description: "Which SafeDep command-line tool to use — vet, pmg, gryph, and the safedep CLI — and how they fit together."
+---
+
+SafeDep ships several command-line tools, each solving a different supply-chain problem. They are independent — install only the ones you need. This page helps you pick the right one and points you to its setup guide.
+
+## Which tool do I need?
+
+<CardGroup cols={2}>
+  <Card title="Scan code for supply-chain risk" icon="magnifying-glass" href="/vet/quickstart">
+    Use **vet** — scan repositories, lockfiles, and SBOMs for malicious packages, known vulnerabilities, and policy violations. The engine behind SafeDep's CI/CD scanning.
+  </Card>
+  <Card title="Block malicious installs on my machine" icon="shield-halved" href="/pmg/quickstart">
+    Use **pmg** — a guard around `npm`, `pip`, and other package managers that blocks known-malicious packages before they install. No account or API key required.
+  </Card>
+  <Card title="Audit what my AI coding agent does" icon="robot" href="/ai-security/gryph-overview">
+    Use **gryph** — records every file read, write, and command your AI coding agent runs to a local audit log you can query and replay. Fully local.
+  </Card>
+  <Card title="Work with SafeDep Cloud" icon="cloud" href="https://github.com/safedep/cli">
+    Use **safedep** — the unified CLI for SafeDep Cloud: authentication, endpoint telemetry queries, and AI agent hardening. New and evolving.
+  </Card>
+</CardGroup>
+
+## The tools at a glance
+
+| Tool | Solves | Needs an account? | Open source |
+|---|---|---|---|
+| **vet** | Detect malicious & vulnerable dependencies in code and CI/CD | No (Cloud optional) | Yes |
+| **pmg** | Block malicious packages at install time on the dev machine | No | Yes |
+| **gryph** | Local audit trail for AI coding agents | No (fully local) | Yes |
+| **safedep** | Manage and query SafeDep Cloud from the terminal | Yes (SafeDep Cloud) | Yes |
+
+<Note>
+vet, pmg, and gryph are free, open source, and work with no SafeDep account. **safedep** is the client for SafeDep Cloud's hosted features — see [pricing](https://safedep.io/pricing).
+</Note>
+
+## How they relate
+
+- **vet** is the scanning engine. It analyzes dependencies and produces risk reports, queries, and SBOMs. It can run standalone or sync results to SafeDep Cloud.
+- **pmg** and **gryph** are standalone, single-purpose guards — pmg at package-install time, gryph around AI coding agents. Neither requires vet or a SafeDep account.
+- **safedep** is an emerging unified CLI that brings SafeDep Cloud's workflows (auth, endpoint telemetry, agent hardening) to the terminal. It orchestrates the tools above and the Cloud APIs rather than re-implementing scanning — analysis stays in the upstream tools.
+
+<Info>
+There is no "v1 → v2" migration between these tools. `safedep` is a **new** Cloud-focused CLI, not a successor to `vet`. vet remains the standalone scanner and the recommended starting point for most users.
+</Info>
+
+## Install
+
+Each tool is published to the SafeDep Homebrew tap and to npm; vet, pmg, and gryph also ship as Go binaries and install scripts. The most common installs:
+
+<Tabs>
+  <Tab title="Homebrew">
+    ```bash
+    brew install safedep/tap/vet
+    brew install safedep/tap/pmg
+    brew install safedep/tap/gryph
+    brew install safedep/tap/cli   # the `safedep` command
+    ```
+  </Tab>
+  <Tab title="npm">
+    ```bash
+    npm install -g @safedep/vet
+    npm install -g @safedep/pmg
+    npm install -g @safedep/gryph
+    npm install -g @safedep/cli    # the `safedep` command
+    ```
+  </Tab>
+</Tabs>
+
+For all install methods, current versions, and the full command surface, see each tool's repository: [vet](https://github.com/safedep/vet), [pmg](https://github.com/safedep/pmg), [gryph](https://github.com/safedep/gryph), [safedep](https://github.com/safedep/cli).
+
+## Next steps
+
+<CardGroup cols={2}>
+  <Card title="vet Quickstart" icon="rocket" href="/vet/quickstart">
+    Scan your first repository for supply-chain risk.
+  </Card>
+  <Card title="pmg Quickstart" icon="rocket" href="/pmg/quickstart">
+    Guard your package installs in minutes.
+  </Card>
+  <Card title="gryph Overview" icon="robot" href="/ai-security/gryph-overview">
+    Set up an audit trail for your AI coding agents.
+  </Card>
+  <Card title="SafeDep Cloud Quickstart" icon="cloud" href="/cloud/quickstart">
+    Onboard to the hosted platform for org-wide visibility.
+  </Card>
+</CardGroup>

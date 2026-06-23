@@ -129,7 +129,7 @@ Don't mix Diátaxis types within a single page.
 *Tab names reflect the intended structure; `docs.json` is updated in a later implementation phase.*
 
 **Get Started**
-- Introduction: `introduction`
+- Introduction: `introduction`, `get-started/cli-tools`
 - Quickstarts: `vet/quickstart`, `cloud/quickstart`
 - Core Concepts: `concepts/cel`
 
@@ -138,7 +138,7 @@ Don't mix Diátaxis types within a single page.
 - CI/CD Package Blocking: *(pages TBD — vet-action blocking use case)*
 
 **AI Agent Security** *(currently split across "Protect Developers" and "Scan & Analyze" in docs.json)*
-- AI Agent Observability: `vet/guides/ai-governance`, `vet/guides/shadow-ai-detection`, `vet/guides/ai-tools-discovery`
+- AI Agent Observability: `ai-security/gryph-overview`, `vet/guides/ai-governance`, `vet/guides/shadow-ai-detection`, `vet/guides/ai-tools-discovery`
 - AI Coding Protection (MCP): `apps/mcp/overview`
 
 **Visibility & Governance** *(currently "Scan & Analyze" + "Govern & Manage" in docs.json)*
@@ -152,13 +152,13 @@ Don't mix Diátaxis types within a single page.
 
 **Reference**
 - vet Query & Policy: `vet/advanced/filtering`, `vet/advanced/build-your-own-queries`, `vet/advanced/policy-as-code`, `vet/advanced/exceptions`, `vet/advanced/path-exclusion`
-- API & Automation: `api-reference/introduction`, `vet/guides/insights-api-using-typescript`, `reference/sql-query`
+- API & Automation: `api-reference/introduction`, `reference/endpoints`, `vet/guides/insights-api-using-typescript`, `reference/sql-query`
 
 **Community & Support**
 - Community: `community`
 - Support: `faq`, `cloud/faq`
 
-Total: **47 pages**
+Total: **50 pages**
 
 ---
 
@@ -173,10 +173,9 @@ Total: **47 pages**
 | `concepts/tenant` | Get Started › Core Concepts |
 | `concepts/sbom` | Get Started › Core Concepts |
 | `concepts/policy-as-code` | Get Started › Core Concepts |
-| `ai-security/gryph-overview` | AI Agent Security |
 | Section landing pages | One per solution tab |
 | `governance/tenants-access-control` | Visibility & Governance › Access & Identity |
-| `reference/cli` | Reference |
+| `reference/cli` | Reference — *dry per-command surface; the orientation/"which CLI" map shipped as `get-started/cli-tools`* |
 
 ### Planned structural change — Threat Intelligence (fourth solution tab)
 

@@ -1,0 +1,81 @@
+---
+title: gryph — AI Coding Agent Audit Trail
+description: "gryph records what your AI coding agents do — every file read, write, and command — to a local audit log you can query and replay."
+---
+
+AI coding agents like Claude Code, Cursor, and Gemini CLI can read any file, write anywhere, and run arbitrary commands on your machine — often dozens of tool calls per session. When something goes wrong, there is usually no record of what happened. **gryph** gives you that record.
+
+gryph hooks into your AI coding agents, logs every action to a **local audit database**, and lets you query, review, and replay agent activity. It is an observability tool — it tells you what an agent *did*, after the fact. It does not block or sandbox agent actions.
+
+<Note>
+gryph is fully local: all data stays on your machine. There is no cloud component, no telemetry, and no SafeDep account or API key required.
+</Note>
+
+## What gryph does
+
+- **Records agent activity** — every file read, file write, and command execution is captured as a structured event.
+- **Stores it locally** — events go to a local SQLite database on your machine; nothing is transmitted.
+- **Lets you investigate** — query, filter, and replay sessions to understand, debug, and review what an agent did.
+- **Flags sensitive access** — detects when agents touch sensitive files (`.env`, keys, secrets) and can redact or hash captured content.
+
+## Supported agents
+
+gryph installs lightweight hooks into the agents you already use, including:
+
+- Claude Code
+- Cursor
+- Gemini CLI
+- Windsurf
+- OpenCode
+- Codex
+- Pi Agent
+
+The list grows over time — see the [gryph repository](https://github.com/safedep/gryph) for the current set and the events captured for each.
+
+## Get started
+
+<Steps>
+  <Step title="Install gryph">
+    ```bash
+    brew install safedep/tap/gryph
+    ```
+    Other methods (install script, npm, Go) are in the [gryph README](https://github.com/safedep/gryph#installation).
+  </Step>
+  <Step title="Install hooks into your agents">
+    ```bash
+    gryph install
+    ```
+    gryph detects the AI coding agents on your machine and wires up its hooks.
+  </Step>
+  <Step title="Use your agent normally">
+    Run your AI coding agent as usual. gryph records activity in the background.
+  </Step>
+  <Step title="Review what happened">
+    ```bash
+    gryph logs
+    ```
+    Query and replay agent sessions from your local audit log.
+  </Step>
+</Steps>
+
+<Info>
+gryph is young and evolving. For the latest commands, configuration, and supported agents, see the [gryph repository](https://github.com/safedep/gryph) and its [releases](https://github.com/safedep/gryph/releases).
+</Info>
+
+## How it differs from the SafeDep MCP server
+
+gryph and the [SafeDep MCP server](/apps/mcp/overview) both relate to AI coding tools but solve opposite problems:
+
+- **gryph** puts a fence around the agent — it observes and records what the agent *does* on your machine.
+- **The MCP server** gives capabilities *to* the agent — it lets the agent ask SafeDep "is this package safe?" before suggesting an install.
+
+Use them together: MCP helps the agent make safer suggestions; gryph keeps an audit trail of its actions.
+
+<CardGroup cols={2}>
+  <Card title="gryph on GitHub" icon="github" href="https://github.com/safedep/gryph">
+    Full documentation, configuration, and source.
+  </Card>
+  <Card title="SafeDep MCP server" icon="robot" href="/apps/mcp/overview">
+    Give your AI coding tools access to SafeDep package intelligence.
+  </Card>
+</CardGroup>
