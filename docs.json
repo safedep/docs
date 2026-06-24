@@ -24,6 +24,18 @@
               "introduction",
               "get-started/cli-tools"
             ]
+          },
+          {
+            "group": "Core Concepts",
+            "icon": "lightbulb",
+            "pages": [
+              "concepts/malicious-package-protection",
+              "concepts/policy",
+              "concepts/cel",
+              "concepts/sbom",
+              "concepts/tenant",
+              "concepts/endpoint"
+            ]
           }
         ]
       },

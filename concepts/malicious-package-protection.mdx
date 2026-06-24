@@ -1,0 +1,61 @@
+---
+title: Malicious Package Protection
+description: "How SafeDep detects malicious open-source packages: continuous registry monitoring, static and dynamic analysis, and expert verification."
+---
+
+SafeDep continuously scans open-source packages for malicious code and turns the result into a real-time database that its tools use to block bad packages before they reach you.
+
+## How detection works
+
+SafeDep monitors public package registries (npm, PyPI, RubyGems, and more) and analyzes new and updated packages with a combination of:
+
+- **Static analysis** of the package's code,
+- **Dynamic analysis** of its runtime behavior (network, file system, and process activity),
+- **Metadata analysis** of the package and its publisher.
+
+Suspicious packages are verified by security experts before classification. The result feeds a real-time malicious package database that every SafeDep tool reads from.
+
+```mermaid
+graph TD
+    NPM[npm Registry] --> MONITORING[SafeDep Monitoring]
+    PYPI[PyPI Registry] --> MONITORING
+    RUBYGEMS[RubyGems Registry] --> MONITORING
+    OTHER[Other Package Registries] --> MONITORING
+
+    MONITORING --> STATIC[Static Code Analysis]
+    STATIC --> DYNAMIC[Dynamic Analysis]
+    DYNAMIC --> EXPERT[Expert Verification]
+    EXPERT --> DATABASE[Real-time Malicious Package Database]
+
+    DATABASE --> VET[SafeDep vet<br/>CI/CD Protection]
+    DATABASE --> PMG[SafeDep pmg<br/>Developer Environment Protection]
+
+    VET --> CICD_BLOCK[Block Malicious Packages in CI/CD]
+    PMG --> DEV_BLOCK[Block Malicious Packages at Install Time]
+
+    classDef benefit fill:#4ade80,stroke:#16a34a,stroke-width:2px,color:#000000
+    class CICD_BLOCK,DEV_BLOCK benefit
+```
+
+## How SafeDep tools use it
+
+- [vet](/governance/vet/overview) blocks malicious packages in CI/CD.
+- [pmg](/package-security/pmg/overview) blocks them at install time on developer machines.
+- The [SafeDep MCP server](/ai-security/mcp-server) lets AI coding agents check a package before suggesting it.
+
+## Related
+
+<CardGroup cols={2}>
+  <Card title="Malware Analysis" icon="shield-virus" href="/governance/cloud/malware-analysis">
+    Analyze packages on demand in SafeDep Cloud.
+  </Card>
+  <Card title="pmg" icon="box" href="/package-security/pmg/overview">
+    Block malicious installs locally.
+  </Card>
+  <Card title="vet" icon="magnifying-glass" href="/governance/vet/overview">
+    Block malicious packages in CI/CD.
+  </Card>
+  <Card title="Policy" icon="file-shield" href="/concepts/policy">
+    Turn detection into enforceable rules.
+  </Card>
+</CardGroup>

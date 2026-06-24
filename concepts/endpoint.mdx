@@ -1,0 +1,38 @@
+---
+title: Endpoint
+description: "An endpoint is a developer machine, CI runner, or agent sandbox that runs SafeDep tooling and reports inventory to Endpoint Hub."
+---
+
+An endpoint is a managed asset, such as a developer machine, a CI runner, or an agent sandbox, that runs SafeDep's open-source tools and reports what it finds to [Endpoint Hub](/governance/cloud/endpoint-hub/overview) in SafeDep Cloud.
+
+<Note>
+An endpoint here is a machine, not an API endpoint. For SafeDep's service hostnames, see [API Endpoints](/reference/endpoints).
+</Note>
+
+## Why it matters
+
+Endpoints give a team visibility into what runs across its development infrastructure: AI coding agents, MCP servers, CLI tools, IDE extensions, and the packages developers install. That inventory is what you govern.
+
+## What an endpoint reports
+
+- AI tooling discovered by `vet endpoint scan`: coding agents, MCP servers, CLI tools, IDE extensions, and Agent Skills.
+- Package install activity captured by [pmg](/package-security/pmg/overview) through Package Guard.
+
+Each endpoint appears by hostname in Endpoint Hub, where you browse its inventory and package events. Reporting requires SafeDep Cloud credentials; without them, scans run locally only.
+
+## Related
+
+<CardGroup cols={2}>
+  <Card title="Endpoint Hub" icon="server" href="/governance/cloud/endpoint-hub/overview">
+    The console view of your endpoints.
+  </Card>
+  <Card title="Package Guard" icon="box" href="/governance/cloud/endpoint-hub/package-guard">
+    Package activity from each endpoint.
+  </Card>
+  <Card title="Tenant" icon="building" href="/concepts/tenant">
+    The org boundary endpoints report into.
+  </Card>
+  <Card title="API Endpoints" icon="server" href="/reference/endpoints">
+    SafeDep's service hostnames (different meaning).
+  </Card>
+</CardGroup>

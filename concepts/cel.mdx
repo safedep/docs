@@ -1,0 +1,49 @@
+---
+title: CEL
+description: "Common Expression Language (CEL) is the syntax SafeDep uses for filters, queries, and policy rules over package data."
+---
+
+[Common Expression Language (CEL)](https://cel.dev/) is a safe, sandboxed expression language. SafeDep adopts it as the common syntax for filtering scan results, running queries, and writing policy rules. A CEL expression evaluates to true or false for each package, so you describe exactly which dependencies you care about.
+
+## Why it matters
+
+One language covers three jobs: ad-hoc filtering during a scan, repeatable queries over saved scan data, and enforceable policy. You learn the syntax once and reuse it everywhere.
+
+## What you can reference
+
+A CEL expression in vet receives this data about each package:
+
+| Variable | What it holds |
+|---|---|
+| `pkg` | Package coordinates: `ecosystem`, `name`, `version` |
+| `vulns` | Vulnerabilities by severity: `all`, `critical`, `high`, `medium`, `low` (each item has an `id`) |
+| `scorecard` | OpenSSF Scorecard data: `score` and per-check `scores["Check-Name"]` |
+| `projects` | Source projects: `name`, `type`, `stars`, `forks`, `issues` |
+| `licenses` | SPDX license identifiers |
+
+A few expressions:
+
+```cel
+vulns.critical.exists(x, true)
+licenses.exists(p, p == "MIT")
+projects.exists(x, x.stars < 100) && scorecard.scores.Maintained < 5
+```
+
+Hyphenated scorecard checks use the bracket form, for example `scorecard.scores["Token-Permissions"]`.
+
+## Related
+
+<CardGroup cols={2}>
+  <Card title="Filtering" icon="filter" href="/reference/filtering">
+    The full filter input structure and recipes.
+  </Card>
+  <Card title="Build Your Own Queries" icon="magnifying-glass" href="/reference/build-your-own-queries">
+    Reuse CEL over saved scan data.
+  </Card>
+  <Card title="Policy" icon="file-shield" href="/concepts/policy">
+    How CEL rules become enforceable policy.
+  </Card>
+  <Card title="Policy as Code" icon="file-code" href="/reference/policy-as-code">
+    Write policy files with CEL.
+  </Card>
+</CardGroup>
