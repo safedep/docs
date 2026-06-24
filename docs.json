@@ -199,7 +199,7 @@
             "icon": "circle-question",
             "pages": [
               "faq",
-              "cloud/faq"
+              "governance/cloud/faq"
             ]
           }
         ]
@@ -361,6 +361,10 @@
     {
       "source": "/cloud/authentication",
       "destination": "/governance/cloud/authentication"
+    },
+    {
+      "source": "/cloud/faq",
+      "destination": "/governance/cloud/faq"
     },
     {
       "source": "/vet/advanced/filtering",
