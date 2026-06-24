@@ -24,14 +24,6 @@
               "introduction",
               "get-started/cli-tools"
             ]
-          },
-          {
-            "group": "Quickstarts",
-            "icon": "rocket",
-            "pages": [
-              "get-started/vet-quickstart",
-              "get-started/cloud-quickstart"
-            ]
           }
         ]
       },
@@ -40,7 +32,7 @@
         "icon": "shield-halved",
         "groups": [
           {
-            "group": "Package Manager Guard (pmg)",
+            "group": "Install-Time Package Blocking",
             "icon": "box",
             "root": "package-security/pmg/overview",
             "pages": [
@@ -72,7 +64,7 @@
             ]
           },
           {
-            "group": "AI Coding Protection (MCP)",
+            "group": "AI Coding Protection",
             "icon": "plug",
             "pages": [
               "ai-security/mcp-server"
@@ -85,17 +77,18 @@
         "icon": "binoculars",
         "groups": [
           {
-            "group": "Repository Scanning (vet)",
+            "group": "Repository Scanning",
             "icon": "magnifying-glass",
             "root": "governance/vet/overview",
             "pages": [
+              "governance/vet/quickstart",
               "governance/vet/dependency-inventory",
               "governance/vet/dependency-usage",
               "governance/vet/code-analysis"
             ]
           },
           {
-            "group": "Bill of Materials (xBom)",
+            "group": "Bill of Materials",
             "icon": "list-check",
             "root": "governance/xbom/overview",
             "pages": [
@@ -121,6 +114,7 @@
             "icon": "cloud",
             "root": "governance/cloud/overview",
             "pages": [
+              "governance/cloud/quickstart",
               "governance/cloud/authentication",
               "governance/cloud/sync",
               {
@@ -152,7 +146,7 @@
         "icon": "book",
         "groups": [
           {
-            "group": "vet Query & Policy",
+            "group": "Query & Policy",
             "icon": "filter",
             "pages": [
               "reference/filtering",
@@ -223,11 +217,11 @@
     },
     {
       "source": "/vet/quickstart",
-      "destination": "/get-started/vet-quickstart"
+      "destination": "/governance/vet/quickstart"
     },
     {
       "source": "/cloud/quickstart",
-      "destination": "/get-started/cloud-quickstart"
+      "destination": "/governance/cloud/quickstart"
     },
     {
       "source": "/pmg/concepts/why-pmg",
@@ -380,6 +374,14 @@
     {
       "source": "/vet/guides/insights-api-using-typescript",
       "destination": "/reference/insights-api-typescript"
+    },
+    {
+      "source": "/get-started/vet-quickstart",
+      "destination": "/governance/vet/quickstart"
+    },
+    {
+      "source": "/get-started/cloud-quickstart",
+      "destination": "/governance/cloud/quickstart"
     }
   ],
   "logo": {

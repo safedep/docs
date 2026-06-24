@@ -12,11 +12,11 @@ Six tabs — three solution tabs at the core, plus supporting tabs.
 
 | Tab | Purpose | Groups |
 |---|---|---|
-| **Get Started** | What is SafeDep, vocabulary, entry points | Introduction · Quickstarts · Core Concepts |
-| **Package Security** | Block malicious packages at install time — on dev machines and in CI/CD | Package Manager Guard (pmg) · CI/CD Package Blocking |
-| **AI Agent Security** | Discover, audit, and control what AI agents access and run | AI Agent Observability · AI Coding Protection (MCP) |
-| **Visibility & Governance** | Scan repos, SBOMs, and CI/CD for supply-chain risk; manage policy and org-wide cloud visibility | Repository Scanning (vet) · Bill of Materials · CI/CD & Platform Integrations · SafeDep Cloud · Endpoint Hub · Policy & Risk · Access & Identity |
-| **Reference** | Exact syntax, flags, API specs — no explanation | vet Query & Policy · API & Automation |
+| **Get Started** | What is SafeDep, vocabulary, entry points | Introduction · Core Concepts |
+| **Package Security** | Block malicious packages at install time — on dev machines and in CI/CD | Install-Time Package Blocking · CI/CD Package Blocking |
+| **AI Agent Security** | Discover, audit, and control what AI agents access and run | AI Agent Observability · AI Coding Protection |
+| **Visibility & Governance** | Scan repos, SBOMs, and CI/CD for supply-chain risk; manage policy and org-wide cloud visibility | Repository Scanning · Bill of Materials · CI/CD & Platform Integrations · SafeDep Cloud (nests Endpoint Hub, Policy & Risk, Authentication) |
+| **Reference** | Exact syntax, flags, API specs — no explanation | Query & Policy · API & Automation |
 | **Community & Support** | Community resources, FAQ | Community · Support |
 
 > **Implementation note:** the 6-tab structure is live in `docs.json` (Phase 1 re-tab complete). Moving page files to solution-aligned folders is a later phase; legacy paths (`vet/`, `cloud/`, `apps/`, `xbom/`) stay grandfathered until then.
@@ -54,7 +54,7 @@ Every structural decision derives from these rules. Full rationale in `docs-ia-p
 | If the page… | Tab | Example group |
 |---|---|---|
 | Defines a concept/term used across docs | Get Started | Core Concepts |
-| Onboards a new user / routes entry points | Get Started | Introduction / Quickstarts |
+| Onboards a new user / routes entry points | Get Started | Introduction (product quickstarts co-locate with their product) |
 | Covers malicious package blocking (install-time or CI/CD) | Package Security | pmg / CI/CD Package Blocking |
 | Covers AI agent discovery, audit, or control | AI Agent Security | AI Agent Observability / AI Coding Protection |
 | Covers scanning repos, SBOMs, or CI/CD for supply-chain risk | Visibility & Governance | Repository Scanning / Bill of Materials / CI/CD |
@@ -104,7 +104,7 @@ No H1 — Mintlify renders the title from frontmatter.
 
 | Type | Style | Location |
 |---|---|---|
-| **Tutorial** | Learning-oriented, hands-on | Get Started › Quickstarts |
+| **Tutorial** | Learning-oriented, hands-on | The product's group in its solution tab (quickstart co-located with the product) |
 | **How-to Guide** | Problem-oriented, step-by-step | The relevant solution tab |
 | **Reference** | Comprehensive, minimal explanation | Reference tab |
 | **Explanation** | Conceptual, connects ideas | Get Started › Core Concepts |
@@ -126,6 +126,8 @@ Don't mix Diátaxis types within a single page.
 ## 7. Authoritative tab → group → page map
 
 *Human-readable mirror of `docs.json`. Source of truth is `docs.json`.*
+
+> **⚠ Stale during migration:** the page list below predates the Phase 2 path migration and the Phase 3 sidebar restructure. `docs.json` is authoritative. This map gets one clean re-sync after the structural phases (path migration, sidebar, net-new pages) land.
 
 **Get Started**
 - Introduction: `introduction`, `get-started/cli-tools`

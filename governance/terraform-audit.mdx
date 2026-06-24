@@ -4,7 +4,7 @@ description: "Audit Terraform provider inventory for supply chain risks using Sa
 ---
 
 <Info>
-To follow this guide you need a SafeDep Cloud API Key and Tenant Identifier. See [Cloud Quickstart](/get-started/cloud-quickstart) on how to onboard to SafeDep Cloud and get an API key.
+To follow this guide you need a SafeDep Cloud API Key and Tenant Identifier. See [Cloud Quickstart](/governance/cloud/quickstart) on how to onboard to SafeDep Cloud and get an API key.
 </Info>
 
 In this guide, we'll discover [Terraform providers](https://developer.hashicorp.com/terraform/language/providers) used in a Terraform project, synchronize the inventory (BOM) with SafeDep Cloud, and execute queries to discover unofficial providers that may pose risks to developer, cloud, and CI/CD infrastructure security.
@@ -28,7 +28,7 @@ In this guide, we'll discover [Terraform providers](https://developer.hashicorp.
 
 ## Prerequisites
 
-- `vet` installed (see [quickstart](/get-started/vet-quickstart) for installation options)
+- `vet` installed (see [quickstart](/governance/vet/quickstart) for installation options)
 - SafeDep Cloud account with API key and tenant identifier
 - Terraform project with initialized providers (`.terraform.lock.hcl` must exist)
 
@@ -65,7 +65,7 @@ vet scan -D /path/to/terraform-code \
 
 ## Query Provider Inventory
 
-Use SafeDep Cloud SQL queries to analyze your Terraform provider inventory. See [SafeDep Cloud Quickstart](/get-started/cloud-quickstart) for more details on the query interface.
+Use SafeDep Cloud SQL queries to analyze your Terraform provider inventory. See [SafeDep Cloud Quickstart](/governance/cloud/quickstart) for more details on the query interface.
 
 ### Find Unofficial Terraform Providers
 
@@ -323,7 +323,7 @@ This will show you all available fields for building custom queries, including:
   <Card title="Terraform Provider Registry" icon="terraform" href="https://registry.terraform.io/">
     Browse official and community Terraform providers
   </Card>
-  <Card title="SafeDep Cloud Queries" icon="search" href="/get-started/cloud-quickstart#query-your-data">
+  <Card title="SafeDep Cloud Queries" icon="search" href="/governance/cloud/quickstart#query-your-data">
     Learn more about querying your infrastructure inventory
   </Card>
   <Card title="Supply Chain Security" icon="shield" href="https://about.gitlab.com/blog/2022/06/01/terraform-as-part-of-software-supply-chain-part1-modules-and-providers/">
