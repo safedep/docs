@@ -24,16 +24,15 @@ those packages for every developer on that instance.
 <Steps>
   <Step title="Authenticate with SafeDep">
     ```bash
-    # OAuth
+    # Option 1: OAuth device flow
     safedep auth login
 
-    # or, Tenant Domain & API key
-    safedep auth login --tenant your-tenant.safedep.io --api-key YOUR_API_KEY
+    # Option 2: API key login (--api-key is a flag; pass the value with --api-key-value)
+    safedep auth login --tenant your-tenant.safedep.io --api-key --api-key-value YOUR_API_KEY
 
-    # via Environment variables
+    # Option 3: Environment variables (read directly by safedep; no login command needed)
     export SAFEDEP_TENANT_ID=your-tenant.safedep.io
     export SAFEDEP_API_KEY=YOUR_API_KEY
-    safedep auth login
     ```
   </Step>
   <Step title="Start the integration daemon">

@@ -93,7 +93,7 @@ PMG currently supports the following package managers:
 ### If pmg isn't working after setup
 
 1. Restart your terminal
-2. Check that aliases were created: `which npm` should point to pmg
+2. Check that interception is active: `which npm` should resolve to `~/.pmg/bin/npm` (the pmg shim). If it points to system npm, make sure `~/.pmg/bin` is early in your `$PATH`, or run `type npm` to check for a shell alias.
 3. Verify pmg installation: `pmg version`
 
 ### If packages are incorrectly blocked
