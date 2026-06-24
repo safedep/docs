@@ -15,9 +15,11 @@
     "tabs": [
       {
         "tab": "Get Started",
+        "icon": "rocket",
         "groups": [
           {
             "group": "Introduction",
+            "icon": "book-open",
             "pages": [
               "introduction",
               "get-started/cli-tools"
@@ -25,6 +27,7 @@
           },
           {
             "group": "Quickstarts",
+            "icon": "rocket",
             "pages": [
               "get-started/vet-quickstart",
               "get-started/cloud-quickstart"
@@ -34,17 +37,20 @@
       },
       {
         "tab": "Package Security",
+        "icon": "shield-halved",
         "groups": [
           {
             "group": "Package Manager Guard (pmg)",
+            "icon": "box",
+            "root": "package-security/pmg/overview",
             "pages": [
-              "package-security/pmg/overview",
               "package-security/pmg/quickstart",
               "package-security/pmg/updates"
             ]
           },
           {
             "group": "CI/CD Package Blocking",
+            "icon": "shield-check",
             "pages": [
               "package-security/jfrog-xray"
             ]
@@ -53,9 +59,11 @@
       },
       {
         "tab": "AI Agent Security",
+        "icon": "robot",
         "groups": [
           {
             "group": "AI Agent Observability",
+            "icon": "eye",
             "pages": [
               "ai-security/gryph-overview",
               "ai-security/ai-governance",
@@ -65,6 +73,7 @@
           },
           {
             "group": "AI Coding Protection (MCP)",
+            "icon": "plug",
             "pages": [
               "ai-security/mcp-server"
             ]
@@ -73,28 +82,32 @@
       },
       {
         "tab": "Visibility & Governance",
+        "icon": "binoculars",
         "groups": [
           {
             "group": "Repository Scanning (vet)",
+            "icon": "magnifying-glass",
+            "root": "governance/vet/overview",
             "pages": [
-              "governance/vet/overview",
-              "governance/vet/code-analysis",
               "governance/vet/dependency-inventory",
-              "governance/vet/dependency-usage"
+              "governance/vet/dependency-usage",
+              "governance/vet/code-analysis"
             ]
           },
           {
             "group": "Bill of Materials (xBom)",
+            "icon": "list-check",
+            "root": "governance/xbom/overview",
             "pages": [
-              "governance/xbom/overview",
               "governance/xbom/quickstart",
               "governance/cyclonedx-sbom"
             ]
           },
           {
             "group": "CI/CD & Platform Integrations",
+            "icon": "plug",
+            "root": "governance/integrations/overview",
             "pages": [
-              "governance/integrations/overview",
               "governance/integrations/github",
               "governance/integrations/github-code-scanning",
               "governance/integrations/gitlab",
@@ -105,40 +118,42 @@
           },
           {
             "group": "SafeDep Cloud",
+            "icon": "cloud",
+            "root": "governance/cloud/overview",
             "pages": [
-              "governance/cloud/overview",
-              "governance/cloud/sync"
-            ]
-          },
-          {
-            "group": "Endpoint Hub",
-            "pages": [
-              "governance/cloud/endpoint-hub/overview",
-              "governance/cloud/endpoint-hub/inventory",
-              "governance/cloud/endpoint-hub/inventory-catalog",
-              "governance/cloud/endpoint-hub/package-guard"
-            ]
-          },
-          {
-            "group": "Policy & Risk",
-            "pages": [
-              "governance/cloud/malware-analysis",
-              "governance/cloud/package-exclusions"
-            ]
-          },
-          {
-            "group": "Access & Identity",
-            "pages": [
-              "governance/cloud/authentication"
+              "governance/cloud/authentication",
+              "governance/cloud/sync",
+              {
+                "group": "Endpoint Hub",
+                "icon": "server",
+                "expanded": false,
+                "root": "governance/cloud/endpoint-hub/overview",
+                "pages": [
+                  "governance/cloud/endpoint-hub/inventory",
+                  "governance/cloud/endpoint-hub/inventory-catalog",
+                  "governance/cloud/endpoint-hub/package-guard"
+                ]
+              },
+              {
+                "group": "Policy & Risk",
+                "icon": "shield-halved",
+                "expanded": false,
+                "pages": [
+                  "governance/cloud/malware-analysis",
+                  "governance/cloud/package-exclusions"
+                ]
+              }
             ]
           }
         ]
       },
       {
         "tab": "Reference",
+        "icon": "book",
         "groups": [
           {
             "group": "vet Query & Policy",
+            "icon": "filter",
             "pages": [
               "reference/filtering",
               "reference/build-your-own-queries",
@@ -149,6 +164,7 @@
           },
           {
             "group": "API & Automation",
+            "icon": "code",
             "pages": [
               "reference/api-introduction",
               "reference/endpoints",
@@ -160,15 +176,18 @@
       },
       {
         "tab": "Community & Support",
+        "icon": "comments",
         "groups": [
           {
             "group": "Community",
+            "icon": "users",
             "pages": [
               "community"
             ]
           },
           {
             "group": "Support",
+            "icon": "circle-question",
             "pages": [
               "faq",
               "cloud/faq"
