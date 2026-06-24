@@ -1,13 +1,27 @@
 ---
-title: "Platform Integrations"
+title: Platform Integrations
 description: "Integrate vet into your CI/CD and developer platforms for automated supply-chain scanning."
 ---
 
-SafeDep Apps are a suite of tools that help you manage your open source software supply chain in your
-developer and SDLC workflows.
+Run SafeDep where your code already lives. vet plugs into common CI/CD and developer platforms to scan dependencies automatically on every change.
 
-Following apps are currently available:
-
-- <Icon icon="github" size={18} /> [GitHub App](/governance/integrations/github)
-- <Icon icon="gitlab" size={18} /> [GitLab Integration](/governance/integrations/gitlab)
-- <Icon icon="bitbucket" size={18} /> [Bitbucket Pipes](/governance/integrations/bitbucket)
+<CardGroup cols={2}>
+  <Card title="GitHub App" icon="github" href="/governance/integrations/github">
+    Install the SafeDep GitHub App to scan pull requests.
+  </Card>
+  <Card title="GitHub Code Scanning" icon="github" href="/governance/integrations/github-code-scanning">
+    Run vet in GitHub Actions and surface findings in code scanning.
+  </Card>
+  <Card title="GitLab" icon="gitlab" href="/governance/integrations/gitlab">
+    Scan dependencies in GitLab CI.
+  </Card>
+  <Card title="Bitbucket" icon="bitbucket" href="/governance/integrations/bitbucket">
+    Scan with Bitbucket Pipes.
+  </Card>
+  <Card title="DefectDojo" icon="bug" href="/governance/integrations/defectdojo">
+    Send findings to DefectDojo for tracking.
+  </Card>
+  <Card title="Terraform" icon="cube" href="/governance/terraform-audit">
+    Audit Terraform providers for supply-chain risk.
+  </Card>
+</CardGroup>

@@ -42,7 +42,8 @@
       {
         "tab": "Package Security",
         "icon": "shield-halved",
-        "groups": [
+        "pages": [
+          "package-security/overview",
           {
             "group": "Install-Time Package Blocking",
             "icon": "box",
@@ -64,7 +65,8 @@
       {
         "tab": "AI Agent Security",
         "icon": "robot",
-        "groups": [
+        "pages": [
+          "ai-security/overview",
           {
             "group": "AI Agent Observability",
             "icon": "eye",
@@ -87,7 +89,8 @@
       {
         "tab": "Visibility & Governance",
         "icon": "binoculars",
-        "groups": [
+        "pages": [
+          "governance/overview",
           {
             "group": "Repository Scanning",
             "icon": "magnifying-glass",
