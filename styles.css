@@ -31,11 +31,3 @@ nav a:hover,
 a[href]:hover {
   text-decoration: none !important;
 }
-
-/* Reduce the sidebar's horizontal inset so nav text starts closer to the
-   page edge (Sidero/Talos-like). Mintlify exposes #sidebar / #sidebar-content
-   as stable selectors. Tune on preview. */
-#sidebar {
-  padding-left: 0.75rem;
-  padding-right: 0.75rem;
-}
