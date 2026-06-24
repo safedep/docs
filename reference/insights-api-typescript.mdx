@@ -55,7 +55,7 @@ Never hardcode API keys in your source code. Always use environment variables or
 
 ### Import Dependencies
 
-Set up the necessary imports for ConnectRPC client and SafeDep services:
+Set up the necessary imports for ConnectRPC client and SafeDep services. The exact import paths and client constructor track the connect-es version of the generated SDK, so validate them against the version you install:
 
 ```typescript
 import { createClient, Interceptor } from "@connectrpc/connect";
