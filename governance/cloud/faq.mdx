@@ -74,10 +74,9 @@ ERRO[0001] Request failed: rpc error: code = ResourceExhausted desc = rate limit
 ```
 
 **Solution:**
-- Wait for the rate limit window to reset (typically 1 hour)
-- Reduce the frequency of API calls
+- Back off briefly and retry. SafeDep enforces per-second rate limits, so a short pause clears the error (see [Authentication](/governance/cloud/authentication#rate-limiting) for the current limits)
+- Reduce the frequency of API calls and use batch operations where possible
 - Contact support for increased rate limits if needed
-- Use batch operations where possible
 
 ### Network Connectivity
 

@@ -24,8 +24,8 @@ The BYOQ workflow consists of two main phases:
 Collect and enrich package data, then save to a directory for reuse:
 
 ```bash
-# Single manifest file
-vet scan --lockfile /path/to/package-lock.json --json-dump-dir /tmp/dump
+# Single lockfile
+vet scan --lockfiles /path/to/package-lock.json --json-dump-dir /tmp/dump
 
 # Entire repository
 vet scan -D /path/to/repository --json-dump-dir /tmp/dump-many
