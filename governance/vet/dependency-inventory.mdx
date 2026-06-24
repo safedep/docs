@@ -160,14 +160,6 @@ vet scan --lockfiles build/reports/bom.json \
          --report-markdown=report.md
 ```
 
-### SPDX Format
-
-```bash
-vet scan --lockfiles build/reports/bom.json \
-         --lockfile-as bom-spdx \
-         --report-markdown=report.md
-```
-
 <img src="/images/vet-cyclonedx-scan-demo.png" alt="vet CycloneDX scan demonstration" />
 
 ## npm/Node.js Integration
@@ -193,8 +185,8 @@ For Python projects, use cyclonedx-python:
 # Install
 pip install cyclonedx-bom
 
-# Generate SBOM
-cyclonedx-py -o sbom.json
+# Generate SBOM (subcommand depends on project type: environment, requirements, poetry, pipenv)
+cyclonedx-py environment -o sbom.json
 
 # Scan with vet
 vet scan --lockfiles sbom.json --lockfile-as bom-cyclonedx
@@ -224,11 +216,11 @@ vet scan --lockfiles sbom.json --lockfile-as bom-cyclonedx
             run: ./gradlew cyclonedxBom
             
           - name: Scan SBOM with vet
-            uses: safedep/vet-action@v1
-            with:
-              scan-dir: 'build/reports'
-              lockfile-as: 'bom-cyclonedx'
-              
+            run: |
+              docker run --rm -v "$PWD:/app" ghcr.io/safedep/vet:latest \
+                scan --lockfiles /app/build/reports/bom.json \
+                --lockfile-as bom-cyclonedx
+
           - name: Upload SBOM
             uses: actions/upload-artifact@v4
             with:
@@ -256,9 +248,7 @@ vet scan --lockfiles sbom.json --lockfile-as bom-cyclonedx
       stage: security
       image: ghcr.io/safedep/vet:latest
       script:
-        - vet scan --lockfiles build/reports/bom.json 
-                   --lockfile-as bom-cyclonedx
-                   --report-json security-report.json
+        - vet scan --lockfiles build/reports/bom.json --lockfile-as bom-cyclonedx --report-json security-report.json
       dependencies:
         - generate-sbom
       artifacts:
@@ -272,14 +262,7 @@ vet scan --lockfiles sbom.json --lockfile-as bom-cyclonedx
 
 <AccordionGroup>
   <Accordion title="Environment-Specific SBOMs">
-    Generate different SBOMs for different environments:
-    ```bash
-    # Production SBOM (runtime only)
-    gradle cyclonedxBom -PincludeConfigs=runtimeClasspath
-    
-    # Development SBOM (including test dependencies)
-    gradle cyclonedxBom -PincludeConfigs=runtimeClasspath,testRuntimeClasspath
-    ```
+    Control which dependencies appear in the SBOM by setting `includeConfigs` and `skipConfigs` in your `build.gradle` (shown above). For example, list only `runtimeClasspath` for a production SBOM, or add `testRuntimeClasspath` to include test dependencies.
   </Accordion>
   
   <Accordion title="Regular Updates">
