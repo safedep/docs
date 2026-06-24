@@ -97,7 +97,7 @@ projects -> project_versions -> boms -> packages -> component_vulnerabilities ->
 | Feature | Notes |
 |---|---|
 | `SELECT` | Columns must be qualified `table.column`. |
-| `WHERE` | `=`, `<`, `<=`, `>`, `>=`, `AND`, `OR`. Enums filtered by name. |
+| `WHERE` | `=`, `!=`, `<`, `<=`, `>`, `>=`, `AND`, `OR`. Enums filtered by name. |
 | `LIKE` | Prefix only: `'name%'`. Leading wildcards (`'%name'`) are rejected. |
 | `JOIN` | Needs an `ON` clause, but its contents are ignored: the catalog applies a predefined join. Only join tables connected by an edge. |
 | `GROUP BY` | Only columns flagged `groupable`. |
