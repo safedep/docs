@@ -94,3 +94,18 @@ vet query --from /tmp/dump \
     --filter 'vulns.high.size() > 0 && scorecard.scores["Security-Policy"] < 5 && projects.exists(p, p.stars < 100)'
 ```
 
+<CardGroup cols={2}>
+  <Card title="Filtering" icon="filter" href="/reference/filtering">
+    The CEL filter input schema and syntax.
+  </Card>
+  <Card title="Policy as Code" icon="file-code" href="/reference/policy-as-code">
+    Turn these filters into reusable policy files.
+  </Card>
+  <Card title="Exceptions" icon="circle-minus" href="/reference/exceptions">
+    Generate exception lists from query results.
+  </Card>
+  <Card title="SafeDep Cloud SQL" icon="database" href="/reference/sql-query">
+    Query synced data across your org.
+  </Card>
+</CardGroup>
+

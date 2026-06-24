@@ -25,7 +25,7 @@ vet scan -D /path/to/target \
 ```
 
 <Info>
-The exclusion pattern matches any path, directory, or file. Internally, it uses Go's [regexp.MatchString](https://pkg.go.dev/regexp#MatchString) function.
+Exclusion patterns use [glob matching](https://github.com/bmatcuk/doublestar) (the `doublestar` library), not regular expressions. Use `*` to match within a single path segment and `**` to match across directories.
 </Info>
 
 ## Common Exclusion Patterns
@@ -81,10 +81,10 @@ vet scan -D . \
 ```bash
 # Exclude specific file types
 vet scan -D . \
-    --exclude '.*\.md$' \
-    --exclude '.*\.txt$' \
-    --exclude '.*\.png$' \
-    --exclude '.*\.jpg$'
+    --exclude '**/*.md' \
+    --exclude '**/*.txt' \
+    --exclude '**/*.png' \
+    --exclude '**/*.jpg'
 ```
 
 ### Environment-Specific Exclusions
@@ -92,9 +92,9 @@ vet scan -D . \
 ```bash
 # Development environment
 vet scan -D . \
-    --exclude 'dev-tools/*' \
-    --exclude 'local-config/*' \
-    --exclude '.*\.dev\..*'
+    --exclude 'dev-tools/**' \
+    --exclude 'local-config/**' \
+    --exclude '**/*.dev.*'
 
 # Production build
 vet scan -D . \
@@ -108,10 +108,10 @@ vet scan -D . \
 ```bash
 # Exclude multiple similar patterns
 vet scan -D . \
-    --exclude '.*/test/.*' \
-    --exclude '.*/tests/.*' \
-    --exclude '.*/spec/.*' \
-    --exclude '.*/mocks/.*'
+    --exclude '**/test/**' \
+    --exclude '**/tests/**' \
+    --exclude '**/spec/**' \
+    --exclude '**/mocks/**'
 ```
 
 ## Use Cases

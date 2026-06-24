@@ -33,7 +33,7 @@ npm config set @buf:registry https://buf.build/gen/npm/v1/
 Install the required SafeDep API libraries:
 
 ```bash
-npm install --save @buf/safedep_api.connectrpc_es@latest
+npm install --save @buf/safedep_api.connectrpc_es@latest @connectrpc/connect @connectrpc/connect-node
 ```
 
 ## Authentication Setup
@@ -58,7 +58,7 @@ Never hardcode API keys in your source code. Always use environment variables or
 Set up the necessary imports for ConnectRPC client and SafeDep services:
 
 ```typescript
-import { createPromiseClient, Interceptor } from "@connectrpc/connect";
+import { createClient, Interceptor } from "@connectrpc/connect";
 import { createConnectTransport } from "@connectrpc/connect-node";
 import { InsightService } from "@buf/safedep_api.connectrpc_es/safedep/services/insights/v2/insights_connect.js";
 import { Ecosystem } from "@buf/safedep_api.bufbuild_es/safedep/messages/package/v1/ecosystem_pb.js";
@@ -105,7 +105,7 @@ async function main() {
   });
 
   // Create client and make API call
-  const client = createPromiseClient(InsightService, transport);
+  const client = createClient(InsightService, transport);
   const res = await client.getPackageVersionInsight({
     packageVersion: {
       package: {
@@ -121,188 +121,6 @@ async function main() {
 
 // Run the application
 main().catch(console.error);
-```
-
-## Advanced Examples
-
-### Batch Package Analysis
-
-Analyze multiple packages in a single application:
-
-```typescript
-async function analyzePackages(packages: Array<{ecosystem: Ecosystem, name: string, version: string}>) {
-  const client = createPromiseClient(InsightService, transport);
-  const results = [];
-
-  for (const pkg of packages) {
-    try {
-      const res = await client.getPackageVersionInsight({
-        packageVersion: {
-          package: {
-            ecosystem: pkg.ecosystem,
-            name: pkg.name,
-          },
-          version: pkg.version,
-        }
-      });
-      results.push({
-        package: `${pkg.name}@${pkg.version}`,
-        insights: res.toJson()
-      });
-    } catch (error) {
-      console.error(`Error analyzing ${pkg.name}@${pkg.version}:`, error);
-    }
-  }
-
-  return results;
-}
-
-// Usage
-const packagesToAnalyze = [
-  { ecosystem: Ecosystem.NPM, name: "express", version: "4.18.2" },
-  { ecosystem: Ecosystem.NPM, name: "react", version: "18.2.0" },
-  { ecosystem: Ecosystem.PYPI, name: "requests", version: "2.31.0" }
-];
-
-analyzePackages(packagesToAnalyze).then(results => {
-  console.log("Analysis results:", JSON.stringify(results, null, 2));
-});
-```
-
-### Vulnerability Filtering
-
-Filter packages by vulnerability severity:
-
-```typescript
-interface VulnerabilityReport {
-  package: string;
-  criticalVulns: number;
-  highVulns: number;
-  mediumVulns: number;
-  lowVulns: number;
-}
-
-async function getVulnerabilityReport(packages: Array<{ecosystem: Ecosystem, name: string, version: string}>): Promise<VulnerabilityReport[]> {
-  const client = createPromiseClient(InsightService, transport);
-  const reports: VulnerabilityReport[] = [];
-
-  for (const pkg of packages) {
-    const res = await client.getPackageVersionInsight({
-      packageVersion: {
-        package: { ecosystem: pkg.ecosystem, name: pkg.name },
-        version: pkg.version,
-      }
-    });
-
-    const insights = res.toJson();
-    const vulns = insights.vulnerabilities || [];
-
-    reports.push({
-      package: `${pkg.name}@${pkg.version}`,
-      criticalVulns: vulns.filter(v => v.severity === 'CRITICAL').length,
-      highVulns: vulns.filter(v => v.severity === 'HIGH').length,
-      mediumVulns: vulns.filter(v => v.severity === 'MEDIUM').length,
-      lowVulns: vulns.filter(v => v.severity === 'LOW').length,
-    });
-  }
-
-  return reports;
-}
-```
-
-### Error Handling and Retry Logic
-
-Implement robust error handling:
-
-```typescript
-async function getPackageInsightWithRetry(
-  client: any, 
-  packageInfo: any, 
-  maxRetries: number = 3
-) {
-  let lastError;
-
-  for (let attempt = 1; attempt <= maxRetries; attempt++) {
-    try {
-      return await client.getPackageVersionInsight(packageInfo);
-    } catch (error) {
-      lastError = error;
-      console.warn(`Attempt ${attempt} failed:`, error.message);
-      
-      if (attempt < maxRetries) {
-        // Exponential backoff
-        const delay = Math.pow(2, attempt) * 1000;
-        await new Promise(resolve => setTimeout(resolve, delay));
-      }
-    }
-  }
-
-  throw lastError;
-}
-```
-
-## Integration Examples
-
-### Express.js Web API
-
-Create a web API that exposes package insights:
-
-```typescript
-import express from 'express';
-
-const app = express();
-app.use(express.json());
-
-app.post('/api/package/insights', async (req, res) => {
-  try {
-    const { ecosystem, name, version } = req.body;
-    
-    const insights = await client.getPackageVersionInsight({
-      packageVersion: {
-        package: { ecosystem, name },
-        version,
-      }
-    });
-
-    res.json(insights.toJson());
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
-
-app.listen(3000, () => {
-  console.log('SafeDep Insights API server running on port 3000');
-});
-```
-
-### CLI Tool
-
-Build a command-line tool for package analysis:
-
-```typescript
-#!/usr/bin/env node
-import { Command } from 'commander';
-
-const program = new Command();
-
-program
-  .name('safedep-insights')
-  .description('CLI tool for SafeDep package insights')
-  .version('1.0.0');
-
-program
-  .command('analyze')
-  .description('Analyze a package for security insights')
-  .requiredOption('-n, --name <name>', 'Package name')
-  .requiredOption('-v, --version <version>', 'Package version')
-  .option('-e, --ecosystem <ecosystem>', 'Package ecosystem', 'NPM')
-  .action(async (options) => {
-    const ecosystem = Ecosystem[options.ecosystem.toUpperCase()];
-    const insights = await getPackageInsights(ecosystem, options.name, options.version);
-    console.log(JSON.stringify(insights, null, 2));
-  });
-
-program.parse();
 ```
 
 ## API Reference
