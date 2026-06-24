@@ -213,10 +213,7 @@ security-scan:
   stage: security
   image: ghcr.io/safedep/vet:latest
   script:
-    - vet scan -D . 
-        --report-sync
-        --report-sync-project $CI_PROJECT_PATH
-        --report-sync-project-version $CI_COMMIT_REF_NAME
+    - vet scan -D . --report-sync --report-sync-project $CI_PROJECT_PATH --report-sync-project-version $CI_COMMIT_REF_NAME
   variables:
     SAFEDEP_API_KEY: $SAFEDEP_API_KEY
     SAFEDEP_TENANT_ID: $SAFEDEP_TENANT_ID

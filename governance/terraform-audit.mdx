@@ -36,6 +36,15 @@ In this guide, we'll discover [Terraform providers](https://developer.hashicorp.
 
 Run `vet` on your Terraform codebase to scan for Terraform providers. The Terraform project must be initialized so that `.terraform.lock.hcl` is available in the project directory.
 
+`--report-sync` uploads the provider inventory to SafeDep Cloud, so set your credentials first:
+
+```bash
+export SAFEDEP_API_KEY=your-api-key
+export SAFEDEP_TENANT_ID=your-tenant-domain
+```
+
+Then run the scan:
+
 ```bash
 vet scan -D /path/to/terraform-code \
   --report-sync \
@@ -151,7 +160,7 @@ jobs:
             --report-sync-project-version ${{ github.ref_name }}
         env:
           SAFEDEP_API_KEY: ${{ secrets.SAFEDEP_CLOUD_API_KEY }}
-          SAFEDEP_TENANT_ID: ${{ secrets.SAFEDEP_CLOUD_TENANT }}
+          SAFEDEP_TENANT_ID: ${{ secrets.SAFEDEP_CLOUD_TENANT_DOMAIN }}
           
       - name: Check for Unofficial Providers
         run: |
@@ -173,7 +182,7 @@ jobs:
           fi
         env:
           SAFEDEP_API_KEY: ${{ secrets.SAFEDEP_CLOUD_API_KEY }}
-          SAFEDEP_TENANT_ID: ${{ secrets.SAFEDEP_CLOUD_TENANT }}
+          SAFEDEP_TENANT_ID: ${{ secrets.SAFEDEP_CLOUD_TENANT_DOMAIN }}
 ```
 
 ### GitLab CI
@@ -197,15 +206,12 @@ terraform-audit:
   stage: audit
   image: ghcr.io/safedep/vet:latest
   script:
-    - vet scan -D . 
-        --report-sync 
-        --report-sync-project $CI_PROJECT_PATH 
-        --report-sync-project-version $CI_COMMIT_REF_NAME
+    - vet scan -D . --report-sync --report-sync-project $CI_PROJECT_PATH --report-sync-project-version $CI_COMMIT_REF_NAME
   dependencies:
     - terraform-init
   variables:
     SAFEDEP_API_KEY: $SAFEDEP_CLOUD_API_KEY
-    SAFEDEP_TENANT_ID: $SAFEDEP_CLOUD_TENANT
+    SAFEDEP_TENANT_ID: $SAFEDEP_CLOUD_TENANT_DOMAIN
 ```
 
 ## Policy Enforcement

@@ -73,9 +73,9 @@ You can also generate SARIF reports manually using the `vet` CLI:
 vet scan -D /path/to/project --report-sarif /path/to/report.sarif
 ```
 
-<Warning>
-`vet` will only include policy violations in the SARIF report. A policy must be provided using `--filter` or `--filter-suite` flag during scan.
-</Warning>
+<Note>
+By default the SARIF report includes vulnerabilities and malware findings. To also report policy violations, pass a policy with `--policy` or `--policy-suite` during the scan.
+</Note>
 
 ## Viewing Results
 

@@ -76,12 +76,12 @@ include:
   - component: gitlab.com/safedep/ci-components/vet/scan@v1.5.1
     inputs:
       cloud: true
-      cloud-key: $CLOUD_KEY
-      cloud-tenant: $CLOUD_TENANT
+      cloud-key: $SAFEDEP_CLOUD_API_KEY
+      cloud-tenant: $SAFEDEP_CLOUD_TENANT_DOMAIN
 ```
 
 <Warning>
-Store `CLOUD_KEY` and `CLOUD_TENANT` as GitLab CI/CD variables for security.
+Store `SAFEDEP_CLOUD_API_KEY` and `SAFEDEP_CLOUD_TENANT_DOMAIN` as GitLab CI/CD variables for security.
 </Warning>
 
 ### Policy Configuration
@@ -107,6 +107,10 @@ include:
     inputs:
       version: v1.9.0
 ```
+
+<Note>
+These are two independent versions: the component tag (`@v1.5.1`) pins the GitLab CI component, and the `version` input pins the `vet` binary the component downloads and runs.
+</Note>
 
 ### Trusted Registries
 
@@ -152,8 +156,8 @@ include:
       stage: security
       policy: '.gitlab/security-policy.yml'
       cloud: true
-      cloud-key: $SAFEDEP_CLOUD_KEY
-      cloud-tenant: $SAFEDEP_CLOUD_TENANT
+      cloud-key: $SAFEDEP_CLOUD_API_KEY
+      cloud-tenant: $SAFEDEP_CLOUD_TENANT_DOMAIN
 
 build:
   stage: build
