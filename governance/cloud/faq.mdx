@@ -210,7 +210,7 @@ ERRO[0001] Query execution failed: syntax error
 **Solution:**
 - Verify SQL syntax is correct
 - Check table and column names in schema
-- Use `vet cloud query schema` to view available tables
+- Use `safedep query schema list` to view available tables
 - Ensure proper quoting for identifiers with special characters
 
 ## GitHub Actions Issues
@@ -301,7 +301,7 @@ vet auth verify
 
 ### Test Cloud Connectivity
 ```bash
-vet cloud query execute --sql "SELECT 1"
+safedep query schema list
 ```
 
 ### Clear Configuration

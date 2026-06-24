@@ -322,24 +322,17 @@ jobs:
 
 ## Querying Synced Data
 
-Once data is synced to SafeDep Cloud, query it using the cloud interface:
+Once data is synced to SafeDep Cloud, query it with the `safedep` CLI:
 
 ```bash
-# List all synced projects
-vet cloud query execute --sql "SELECT DISTINCT name, version FROM projects"
-
-# Find critical vulnerabilities across projects
-vet cloud query execute --sql "
-  SELECT projects.name, packages.name, vulnerabilities.cve_id 
-  FROM projects 
-  WHERE vulnerabilities.severity = 'CRITICAL'
-"
-
-# Export project security summary
-vet cloud query execute \
-  --sql "SELECT * FROM projects WHERE name = 'my-project'" \
-  --csv my-project-summary.csv
+safedep query exec --sql "
+  SELECT projects.name
+  FROM projects
+  WHERE projects.origin_source = 'SOURCE_GITHUB'
+  ORDER BY projects.name"
 ```
+
+See the [SafeDep Cloud SQL guide](/reference/sql-query) for the full schema, the join model, and worked examples covering vulnerabilities, licenses, malware findings, and endpoint events.
 
 ## Best Practices
 

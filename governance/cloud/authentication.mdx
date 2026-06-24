@@ -112,14 +112,14 @@ vet scan -D . --report-sync \
 ### JWT-Based Access
 
 ```bash
-# Login with device code flow
-vet cloud login --tenant your-company
+# Login with the OAuth device code flow
+safedep auth login --tenant your-company.safedep.io
 
 # Query aggregated data
-vet cloud query execute --sql "SELECT * FROM projects"
+safedep query exec --sql "SELECT projects.name FROM projects WHERE projects.origin_source = 'SOURCE_GITHUB'"
 
 # Check authentication status
-vet cloud whoami
+safedep auth status
 ```
 
 ### GitHub Actions Integration
