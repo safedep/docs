@@ -125,41 +125,37 @@ Don't mix Diátaxis types within a single page.
 
 ## 7. Authoritative tab → group → page map
 
-*Human-readable mirror of `docs.json`. Source of truth is `docs.json`.*
-
-> **⚠ Stale during migration:** the page list below predates the Phase 2 path migration and the Phase 3 sidebar restructure. `docs.json` is authoritative. This map gets one clean re-sync after the structural phases (path migration, sidebar, net-new pages) land.
+*Human-readable mirror of `docs.json`. Source of truth is `docs.json`.* Re-synced after the Phase 2 path migration, the Phase 3 sidebar restructure, and the net-new pages landed. A group's clickable landing (Mintlify `root`) is marked *(landing)*.
 
 **Get Started**
 - Introduction: `introduction`, `get-started/cli-tools`
-- Quickstarts: `vet/quickstart`, `cloud/quickstart`
-- Core Concepts: *(planned, see §8; no pages live yet)*
+- Core Concepts: `concepts/malicious-package-protection`, `concepts/policy`, `concepts/cel`, `concepts/sbom`, `concepts/tenant`, `concepts/endpoint`
 
-**Package Security**
-- Package Manager Guard (pmg): `pmg/concepts/why-pmg`, `pmg/quickstart`, `pmg/updates`
-- CI/CD Package Blocking: `apps/jfrog/overview`
+**Package Security** *(tab landing: `package-security/overview`)*
+- Install-Time Package Blocking: `package-security/pmg/overview` *(landing)*, `package-security/pmg/quickstart`, `package-security/pmg/updates`
+- CI/CD Package Blocking: `package-security/jfrog-xray`
 
-**AI Agent Security**
-- AI Agent Observability: `ai-security/gryph-overview`, `vet/guides/ai-governance`, `vet/guides/shadow-ai-detection`, `vet/guides/ai-tools-discovery`
-- AI Coding Protection (MCP): `apps/mcp/overview`
+**AI Agent Security** *(tab landing: `ai-security/overview`)*
+- AI Agent Observability: `ai-security/gryph-overview`, `ai-security/ai-governance`, `ai-security/shadow-ai-detection`, `ai-security/ai-tools-discovery`
+- AI Coding Protection: `ai-security/mcp-server`
 
-**Visibility & Governance**
-- Repository Scanning (vet): `vet/concepts/why-vet`, `vet/guides/code-analysis`, `vet/guides/dependency-inventory`, `vet/guides/dependency-usage-identification`
-- Bill of Materials (xBom): `xbom/concepts/why-xbom`, `xbom/quickstart`, `vet/guides/cyclonedx-sbom`
-- CI/CD & Platform Integrations: `apps/overview`, `apps/github/overview`, `vet/guides/github-code-scanning`, `apps/gitlab/overview`, `apps/bitbucket/bitbucket-pipes`, `vet/guides/defect-dojo-integration`, `vet/guides/terraform-supply-chain-audit`
-- SafeDep Cloud: `cloud/overview`, `cloud/sync`
-- Endpoint Hub: `cloud/endpoint-hub/overview`, `cloud/endpoint-hub/inventory`, `cloud/endpoint-hub/inventory-catalog`, `cloud/endpoint-hub/package-guard`
-- Policy & Risk: `cloud/malware-analysis`, `cloud/package-exclusions`
-- Access & Identity: `cloud/authentication`
+**Visibility & Governance** *(tab landing: `governance/overview`)*
+- Repository Scanning: `governance/vet/overview` *(landing)*, `governance/vet/quickstart`, `governance/vet/dependency-inventory`, `governance/vet/dependency-usage`, `governance/vet/code-analysis`
+- Bill of Materials: `governance/xbom/overview` *(landing)*, `governance/xbom/quickstart`, `governance/cyclonedx-sbom`
+- CI/CD & Platform Integrations: `governance/integrations/overview` *(landing)*, `governance/integrations/github`, `governance/integrations/github-code-scanning`, `governance/integrations/gitlab`, `governance/integrations/bitbucket`, `governance/integrations/defectdojo`, `governance/terraform-audit`
+- SafeDep Cloud: `governance/cloud/overview` *(landing)*, `governance/cloud/quickstart`, `governance/cloud/authentication`, `governance/cloud/sync`
+  - Endpoint Hub: `governance/cloud/endpoint-hub/overview` *(landing)*, `governance/cloud/endpoint-hub/inventory`, `governance/cloud/endpoint-hub/inventory-catalog`, `governance/cloud/endpoint-hub/package-guard`
+  - Policy & Risk: `governance/cloud/malware-analysis`, `governance/cloud/package-exclusions`
 
 **Reference**
-- vet Query & Policy: `vet/advanced/filtering`, `vet/advanced/build-your-own-queries`, `vet/advanced/policy-as-code`, `vet/advanced/exceptions`, `vet/advanced/path-exclusion`
-- API & Automation: `api-reference/introduction`, `reference/endpoints`, `vet/guides/insights-api-using-typescript`, `reference/sql-query`
+- Query & Policy: `reference/filtering`, `reference/build-your-own-queries`, `reference/policy-as-code`, `reference/exceptions`, `reference/path-exclusion`
+- API & Automation: `reference/api-introduction`, `reference/endpoints`, `reference/insights-api-typescript`, `reference/sql-query`
 
 **Community & Support**
 - Community: `community`
-- Support: `faq`, `cloud/faq`
+- Support: `faq`, `governance/cloud/faq`
 
-Total: **48 pages**
+Total: **57 pages**
 
 ---
 
