@@ -3,7 +3,7 @@ title: Path Exclusion
 description: "Exclude specific directories and files from security scans using pattern matching"
 ---
 
-`vet` supports path exclusions for scenarios where a directory is the scan target but certain path patterns within the directory should be excluded from the scan. This feature is available only for the `scan` command and helps optimize scan performance and focus on relevant code.
+`vet` supports path exclusions when scanning a directory: use the `--exclude` flag to skip path patterns within the target. Path exclusions are available only for the `scan` command.
 
 ## Basic Usage
 
@@ -114,24 +114,7 @@ vet scan -D . \
     --exclude '**/mocks/**'
 ```
 
-## Use Cases
-
-<CardGroup cols={2}>
-  <Card title="Performance Optimization" icon="zap">
-    Skip large directories that don't contain relevant package manifests
-  </Card>
-  <Card title="Test Environment Exclusion" icon="flask">
-    Focus on production dependencies by excluding test files
-  </Card>
-  <Card title="Build Artifact Filtering" icon="hammer">
-    Avoid scanning generated files and build outputs
-  </Card>
-  <Card title="Monorepo Management" icon="layers">
-    Selectively scan specific parts of large monorepos
-  </Card>
-</CardGroup>
-
-### Makefile Integration
+## Makefile Integration
 
 ```makefile
 # Makefile with different scan targets

@@ -7,13 +7,13 @@ description: "Build applications that leverage SafeDep Insights API using TypeSc
 To follow this guide you need a SafeDep Cloud API Key and Tenant Identifier. See [Cloud Quickstart](/governance/cloud/quickstart) on how to onboard to SafeDep Cloud and get an API key.
 </Info>
 
-In this guide, we'll use TypeScript to build a client application that leverages SafeDep Insights API v2 to identify open source package security metadata. Any programming language [supported by our API SDK](https://buf.build/safedep/api/sdks) can be used to achieve the same results.
+This guide queries the SafeDep Insights API v2 for open-source package security metadata using TypeScript. Any language [supported by the API SDK](https://buf.build/safedep/api/sdks) follows the same pattern.
 
 ## Project Setup
 
 ### Initialize TypeScript Project
 
-Start by creating a new TypeScript project:
+Create a new TypeScript project:
 
 ```bash
 npm init -y
@@ -30,7 +30,7 @@ npm config set @buf:registry https://buf.build/gen/npm/v1/
 
 ### Install SafeDep API SDKs
 
-Install the required SafeDep API libraries:
+Install the required libraries:
 
 ```bash
 npm install --save @buf/safedep_api.connectrpc_es@latest @connectrpc/connect @connectrpc/connect-node
@@ -66,7 +66,7 @@ import { Ecosystem } from "@buf/safedep_api.bufbuild_es/safedep/messages/package
 
 ### Authentication Interceptor
 
-Create an interceptor to add authentication headers to each API call:
+This interceptor adds authentication headers to each request:
 
 ```typescript
 function authenticationInterceptor(token: string, tenant: string): Interceptor {
@@ -80,7 +80,7 @@ function authenticationInterceptor(token: string, tenant: string): Interceptor {
 
 ### Main Application Logic
 
-Implement the main function to query package insights:
+Query package insights with the main function:
 
 ```typescript
 async function main() {
@@ -125,22 +125,21 @@ main().catch(console.error);
 
 ## API Reference
 
-For complete information on request and response schemas, see the [Insights v2 API Specification](https://buf.build/safedep/api/docs/main:safedep.services.insights.v2#safedep.services.insights.v2.GetPackageVersionInsightRequest).
+For request and response schemas, see the [Insights v2 API Specification](https://buf.build/safedep/api/docs/main:safedep.services.insights.v2#safedep.services.insights.v2.GetPackageVersionInsightRequest).
 
 ### Available Ecosystems
 
-The API supports multiple package ecosystems:
+Supported package ecosystems:
 
 - `NPM` - Node.js packages
 - `PYPI` - Python packages
 - `MAVEN` - Java/JVM packages
 - `CARGO` - Rust packages
 - `NUGET` - .NET packages
-- And more...
 
 ### Response Data
 
-The API returns comprehensive security metadata including:
+The response includes:
 
 - **Vulnerabilities**: Known security vulnerabilities
 - **Licenses**: License information and compliance data

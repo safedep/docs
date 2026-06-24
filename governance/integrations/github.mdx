@@ -3,14 +3,11 @@ title: "GitHub App"
 description: "Set up the SafeDep GitHub App to scan pull requests for supply-chain risk."
 ---
 
-[SafeDep GitHub App](https://github.com/apps/safedep) integrates with your GitHub repositories to help you
-manage your open source software supply chain. The advantage of using the app over SafeDep
-[GitHub Action](https://github.com/safedep/vet-action) are:
+The [SafeDep GitHub App](https://github.com/apps/safedep) scans pull requests for supply-chain risk directly in GitHub. Unlike the [GitHub Action](https://github.com/safedep/vet-action), it requires no configuration and activates immediately after installation.
 
-- Zero configuration installation and immediate visibility of security findings in your repositories
+- Zero-configuration installation with immediate visibility of security findings
 - Protects against malicious open source packages
-- Easy to use and get started without friction
-- Provides optional [SafeDep Cloud](/governance/cloud/overview) integration for centralized policy management and reporting
+- Optional [SafeDep Cloud](/governance/cloud/overview) integration for centralized policy management and reporting
 
 ## How to Install
 
@@ -20,14 +17,13 @@ manage your open source software supply chain. The advantage of using the app ov
 
 ## How to Use
 
-SafeDep GitHub App automatically scans pull requests for open source dependency changes. Newly introduced
-or updated dependencies are scanned for vulnerabilities and malware.
+The SafeDep GitHub App automatically scans pull requests for open source dependency changes. Newly introduced or updated dependencies are checked for vulnerabilities and malware.
 
 ### Reports
 
 ![GitHub App Report Demo](../../images/github-app-report-demo.png)
 
-On every **Pull Request**, SafeDep GitHub App scans the updated packages and creates a detailed list with analysis on:
+On every pull request, the app scans updated packages and reports on:
 
 - [Malicious / Suspicious](/governance/cloud/malware-analysis)
 - [Vulnerabilities](#appendix)
@@ -37,20 +33,20 @@ On every **Pull Request**, SafeDep GitHub App scans the updated packages and cre
 
 ![GitHub App Gating Demo](../../images/github-app-gating-demo.png)
 
-Upon any failure to these reports the GitHub App **Check** will fail, protecting the branch from any harmful package.
+When any report fails, the GitHub App **Check** fails and blocks the branch from merging.
 
-The **GitHub Check** will fail if there is any _Verified Malicious Package_, any _Vulnerability_ or any _Risky License_.
+The check fails if any _Verified Malicious Package_, _Vulnerability_, or _Risky License_ is found.
 
 ## Appendix
 
-### **Vulnerabilities**
+### Vulnerabilities
 
-- The current version of _SafeDep GitHub App_ checks for any `CRITICAL` or `HIGH` risk vulnerability.
-- [OSV](https://osv.dev) is used as the vulnerability database
+- Checks for `CRITICAL` or `HIGH` severity vulnerabilities.
+- Uses [OSV](https://osv.dev) as the vulnerability database.
 
-### **Risky Licenses**
+### Risky Licenses
 
-- The current version of _SafeDep GitHub App_ classify following licenses as **Risky**:
+- The app currently classifies the following licenses as **Risky**:
 
   - `GPL-2.0`
   - `GPL-2.0-only`
@@ -62,9 +58,9 @@ The **GitHub Check** will fail if there is any _Verified Malicious Package_, any
   - `AGPL-3.0-only`
   - `AGPL-3.0-or-later`
 
-### **Supported Lockfiles**
+### Supported Lockfiles
 
-- The current version of _SafeDep GitHub App_ supports these lockfiles and ecosystems:
+Supported lockfiles and ecosystems:
   1. **NPM**
   - `package-lock.json`
   - `pnpm-lock.yaml`

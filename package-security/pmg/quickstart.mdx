@@ -1,6 +1,6 @@
 ---
 title: "pmg Quickstart"
-description: "Get started with SafeDep PMG - Package Manager Guard that protects against malicious open source packages"
+description: "Install and configure pmg (Package Manager Guard) to block malicious packages at install time."
 ---
 
 <Card
@@ -11,7 +11,7 @@ description: "Get started with SafeDep PMG - Package Manager Guard that protects
   View the PMG source code and contribute on GitHub
 </Card>
 
-**Package Manager Guard (PMG)** protects developers from getting compromised by malicious packages by wrapping your favorite package manager and blocking malicious packages at install time.
+**Package Manager Guard (PMG)** wraps your package manager and blocks malicious packages at install time.
 
 <Info>
   PMG requires **no configuration** - just install and use it as you normally
@@ -42,18 +42,18 @@ Download the latest release from our [GitHub releases page](https://github.com/s
 
 ### Automated Setup (Recommended)
 
-The easiest way to get started is with pmg's automated setup:
+Run pmg's automated setup:
 
 ```bash
 # Install shell aliases automatically
 pmg setup install
 ```
 
-This command will:
+This command:
 
-- Create a `~/.pmg.rc` file containing package manager aliases
-- Add a source line to your shell configuration files
-- Support bash, zsh, and fish shells
+- Creates `~/.pmg.rc` with package manager aliases
+- Adds a source line to your shell configuration files
+- Supports bash, zsh, and fish shells
 
 <Info>
   After running `pmg setup install`, restart your terminal or run `source
@@ -62,7 +62,7 @@ This command will:
 
 ### Manual Usage (Alternative)
 
-You can also run pmg manually without aliases:
+To run pmg without aliases:
 
 ```bash
 pmg npm install <package-name>
@@ -70,11 +70,11 @@ pmg pnpm add <package-name>
 pmg pip install <package-name>
 ```
 
-If pmg detects a malicious package, it will block the installation and show you a warning.
+If pmg detects a malicious package, it blocks the install and displays a warning.
 
 ## Supported Package Managers
 
-PMG currently supports the following package managers:
+PMG supports these package managers:
 
 | Package Manager | Status  | Command                                                  |
 | --------------- | ------- | -------------------------------------------------------- |

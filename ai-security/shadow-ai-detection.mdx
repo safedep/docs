@@ -3,7 +3,7 @@ title: Shadow AI in Code
 description: "Detect AI and LLM SDK usage in your codebase using static code analysis and generate an SBOM with AI component evidence"
 ---
 
-Shadow AI is the unauthorized use of AI services and SDKs within a codebase. It is a growing security and compliance risk. Developers may integrate OpenAI, Anthropic, LangChain, or other AI services without security review, creating blind spots in your software supply chain.
+Shadow AI is the unauthorized use of AI services and SDKs within a codebase. Developers may integrate OpenAI, Anthropic, LangChain, or other AI services without security review, creating blind spots in your software supply chain.
 
 This guide walks you through detecting Shadow AI using `vet`'s static code analysis, querying the results, and generating a CycloneDX SBOM enriched with AI component evidence.
 
@@ -108,7 +108,7 @@ AI capabilities detected in first-party code (e.g., direct standard library HTTP
 }
 ```
 
-The `ai` property tag makes it straightforward to filter AI components from the SBOM programmatically.
+The `ai` property tag lets you filter AI components from the SBOM programmatically.
 
 ## What Gets Detected
 

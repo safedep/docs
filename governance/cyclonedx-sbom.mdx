@@ -1,9 +1,9 @@
 ---
 title: "CycloneDX SBOM"
-description: "Generate comprehensive Software Bill of Materials (SBOM) with security metadata using vet"
+description: "Generate a Software Bill of Materials (SBOM) with security metadata using vet"
 ---
 
-`vet` supports [CycloneDX v1.6](https://cyclonedx.org/docs/1.6/json) SBOM generation. The generated SBOM provides a comprehensive inventory of all packages and their dependencies in your project, including security metadata like detected vulnerabilities, malware, and license information.
+`vet` supports [CycloneDX v1.6](https://cyclonedx.org/docs/1.6/json) SBOM generation. The generated SBOM lists all packages and their dependencies, including security metadata: detected vulnerabilities, malware, and license information.
 
 ## Quick Start
 
@@ -21,7 +21,7 @@ The `--report-cdx-app-name` parameter is optional. If omitted, vet will use a de
 
 ## What's Included in the SBOM
 
-The generated CycloneDX SBOM contains comprehensive information about your software supply chain:
+The generated CycloneDX SBOM contains:
 
 <CardGroup cols={2}>
   <Card title="Package Inventory" icon="box">
@@ -109,8 +109,6 @@ vet scan -D /path/to/project \
 
 ## Sample SBOMs
 
-Explore example SBOMs to understand the format and content:
-
 <CardGroup cols={2}>
   <Card title="Chat Server SBOM" icon="download" href="/downloads/chat-server.cdx.json">
     Example SBOM for a Node.js chat application
@@ -124,9 +122,7 @@ Explore example SBOMs to understand the format and content:
 
 ### Viewing SBOM Content
 
-Use standard CycloneDX tools to analyze your SBOM:
-
-Install the [CycloneDX CLI](https://github.com/CycloneDX/cyclonedx-cli) (a .NET global tool):
+Install the [CycloneDX CLI](https://github.com/CycloneDX/cyclonedx-cli) (a .NET global tool) to validate and convert your SBOM:
 
 ```bash
 dotnet tool install --global CycloneDX
@@ -147,25 +143,14 @@ Many security tools can consume CycloneDX SBOMs:
 - **Snyk**: Security scanning and monitoring
 - **JFrog Xray**: Artifact analysis and security scanning
 
-## Best Practices
+## Naming Convention
 
-<AccordionGroup>
-  <Accordion title="Naming Conventions">
-    Use consistent naming patterns for your SBOMs:
-    ```
-    {app-name}-{version}-{environment}.cdx.json
-    myapp-1.2.3-production.cdx.json
-    ```
-  </Accordion>
-  
-  <Accordion title="Version Control">
-    Consider storing SBOMs in version control alongside releases for traceability and historical analysis.
-  </Accordion>
-  
-  <Accordion title="Automation">
-    Generate SBOMs automatically in your CI/CD pipeline to ensure they stay current with your dependencies.
-  </Accordion>
-</AccordionGroup>
+Use a consistent pattern for SBOM filenames:
+
+```
+{app-name}-{version}-{environment}.cdx.json
+myapp-1.2.3-production.cdx.json
+```
 
 ## Troubleshooting
 

@@ -7,7 +7,7 @@ description: "Stream SafeDep malware intelligence to JFrog Xray"
   The JFrog Xray Integration is available on **SafeDep Professional and Enterprise** plans only. [Upgrade your plan](https://safedep.io/pricing) to access this feature.
 </Warning>
 
-The JFrog Xray integration runs as a daemon that polls SafeDep for verified malicious packages
+The JFrog Xray integration runs as a daemon. It polls SafeDep for verified malicious packages
 and pushes them to JFrog Xray as Custom Issues. With a blocking policy in place, Xray blocks
 those packages for every developer on that instance.
 
@@ -116,7 +116,7 @@ npm cache clean --force
 
 ### Environment Variables
 
-For server deployments or CI pipelines, use environment variables to avoid passing secrets as CLI arguments. Flags take precedence when both are set.
+For server deployments or CI pipelines, use environment variables to avoid passing secrets as CLI flags. When both are set, flags take precedence.
 
 | Variable | Corresponding Flag |
 |---|---|

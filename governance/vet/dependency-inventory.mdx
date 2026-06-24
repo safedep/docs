@@ -3,28 +3,11 @@ title: Dependency Inventory
 description: "Generate accurate dependency inventories using package managers and SBOM tools"
 ---
 
-Package managers such as Maven, Gradle, npm, and others have the most accurate view of library dependencies. They can be used to resolve dependencies, generate an SBOM, and scan using `vet` for better accuracy. In this guide, we'll use the [CycloneDX Gradle plugin](https://github.com/CycloneDX/cyclonedx-gradle-plugin) to generate a Software Bill of Materials (SBOM) and scan it using `vet`.
-
-## Why Use Package Manager Integration?
-
-<CardGroup cols={2}>
-  <Card title="Accurate Resolution" icon="target">
-    Package managers resolve exact versions and transitive dependencies
-  </Card>
-  <Card title="Complete Inventory" icon="list">
-    Capture all dependencies including build-time and runtime components
-  </Card>
-  <Card title="Standardized Format" icon="file-check">
-    Generate industry-standard SBOM formats (CycloneDX, SPDX)
-  </Card>
-  <Card title="Better Analysis" icon="magnifying-glass">
-    More accurate security analysis with complete dependency information
-  </Card>
-</CardGroup>
+Package managers such as Maven, Gradle, and npm have the most accurate view of library dependencies. They resolve exact versions and can generate an SBOM for `vet` to scan with higher fidelity. This guide uses the [CycloneDX Gradle plugin](https://github.com/CycloneDX/cyclonedx-gradle-plugin) to generate an SBOM and scan it with `vet`.
 
 ## Gradle Integration
 
-The CycloneDX Gradle plugin generates comprehensive SBOMs that can be analyzed by vet for security issues.
+The CycloneDX Gradle plugin generates SBOMs that `vet` can analyze for security issues.
 
 ### Plugin Configuration
 
@@ -94,14 +77,13 @@ gradle clean build cyclonedxBom
 
 <img src="/images/sample-gradle-build.png" alt="Sample Gradle build output" />
 
-After a successful build, SBOM artifacts will be stored in the `build/reports` directory.
+After a successful build, SBOM artifacts are stored in the `build/reports` directory.
 
 ## Multi-Project Configuration
 
-For multi-module projects, configure the plugin in each module or use a shared configuration:
+For multi-module projects, configure the plugin in each module or use a shared configuration in the root `build.gradle`:
 
 ```groovy
-// In root build.gradle
 subprojects {
     apply plugin: 'org.cyclonedx.bom'
     
@@ -150,7 +132,7 @@ mvn clean package cyclonedx:makeAggregateBom
 
 ## Scanning SBOMs with vet
 
-Once you have generated SBOM files, use vet to scan them for security issues:
+Once you have generated SBOM files, scan them with `vet`:
 
 ### CycloneDX Format
 
@@ -258,51 +240,19 @@ vet scan --lockfiles sbom.json --lockfile-as bom-cyclonedx
   </Tab>
 </Tabs>
 
-## Best Practices
+## Configuration Notes
 
 <AccordionGroup>
   <Accordion title="Environment-Specific SBOMs">
     Control which dependencies appear in the SBOM by setting `includeConfigs` and `skipConfigs` in your `build.gradle` (shown above). For example, list only `runtimeClasspath` for a production SBOM, or add `testRuntimeClasspath` to include test dependencies.
   </Accordion>
   
-  <Accordion title="Regular Updates">
-    Generate SBOMs regularly to track dependency changes:
-    - On every build in CI/CD
-    - Before releases
-    - After dependency updates
-  </Accordion>
-  
   <Accordion title="Storage and Versioning">
-    Store SBOMs alongside releases for compliance and audit purposes:
+    Store SBOMs alongside releases for compliance and audit:
     ```bash
     # Tag SBOMs with version information
     cp build/reports/bom.json "release-artifacts/sbom-v${VERSION}.json"
     ```
-  </Accordion>
-</AccordionGroup>
-
-## Troubleshooting
-
-<AccordionGroup>
-  <Accordion title="Missing Dependencies">
-    If dependencies are missing from the SBOM:
-    - Check that all relevant configurations are included
-    - Verify dependency resolution succeeded
-    - Review skipConfigs and skipProjects settings
-  </Accordion>
-  
-  <Accordion title="Plugin Version Issues">
-    For plugin compatibility issues:
-    - Use the latest stable version of CycloneDX plugins
-    - Check compatibility with your build tool version
-    - Review plugin documentation for breaking changes
-  </Accordion>
-  
-  <Accordion title="Large SBOM Files">
-    For projects with many dependencies:
-    - Filter out unnecessary configurations
-    - Consider splitting large projects into modules
-    - Use compression for storage and transmission
   </Accordion>
 </AccordionGroup>
 

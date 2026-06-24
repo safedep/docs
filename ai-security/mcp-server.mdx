@@ -3,7 +3,7 @@ title: "SafeDep MCP Server"
 description: "Protect your AI coding agents against malicious packages using SafeDep MCP"
 ---
 
-The easiest way to get started is the SafeDep CLI. One command signs you in, sets up your API key, and configures SafeDep protection in every AI coding agent it finds on your machine. If you prefer to set things up manually, instructions for each agent are available [below](#manual-setup).
+The SafeDep CLI is the fastest way to get started. One command signs you in, sets up your API key, and configures SafeDep in every AI coding agent it finds on your machine. To configure things manually, see [Manual Setup](#manual-setup).
 
 SafeDep monitors npm, PyPI, and other package registries in real time. It stays invisible when packages are safe and surfaces only when it blocks something dangerous.
 
@@ -54,7 +54,7 @@ SafeDep monitors npm, PyPI, and other package registries in real time. It stays 
 
 ### Authentication
 
-The MCP server requires SafeDep API key based authentication. Following HTTP headers are required:
+The MCP server requires API key authentication. The following HTTP headers are required:
 
 | Header          | Description                                                     |
 | --------------- | --------------------------------------------------------------- |
@@ -65,7 +65,7 @@ The MCP server requires SafeDep API key based authentication. Following HTTP hea
 
 ## Manual Setup
 
-If you'd rather configure things yourself, or your agent isn't auto-detected by the CLI, here's how to set up each one manually. Each configuration needs a SafeDep API key and your tenant domain; create an API key in [SafeDep Cloud settings](https://app.safedep.io/settings/api-keys).
+To configure an agent manually, or if the CLI did not auto-detect yours, follow the instructions below. Each configuration requires a SafeDep API key and your tenant domain. Create an API key in [SafeDep Cloud settings](https://app.safedep.io/settings/api-keys).
 
 <AccordionGroup>
   <Accordion title="Claude Code" icon="https://img.logo.dev/claude.ai?token=pk_JMA7_TgCSx--JsncHKu2cA">
@@ -253,14 +253,14 @@ If you'd rather configure things yourself, or your agent isn't auto-detected by 
 
 ## Testing
 
-After setting up the MCP server, you can verify the integration is working by asking your coding agent to install one of the following test packages:
+After setup, verify the integration by asking your coding agent to install one of the following test packages:
 
 | Package            | Ecosystem |
 | ------------------ | --------- |
 | `safedep-test-pkg` | npm       |
 | `safedep-test-pkg` | PyPI      |
 
-These are harmless packages that are marked as malicious in the SafeDep database, specifically meant for testing. Your coding agent should block the installation and warn you about the package being flagged as malicious.
+These packages are harmless but are marked as malicious in the SafeDep database for testing purposes. Your coding agent should block the installation and warn that the package is flagged.
 
 For example, try prompting your agent with:
 

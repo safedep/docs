@@ -5,8 +5,8 @@ description: "Get started with SafeDep Cloud in under 10 minutes"
 
 <Note>[GitHub App Integration](https://github.com/apps/safedep) is available for free. See [other integrations](/governance/integrations/overview) for more details</Note>
 
-SafeDep Cloud provides a control and data aggregation service on top of security tools like [vet](https://github.com/safedep/vet). 
-This guide will help you connect your vet instances to SafeDep Cloud for centralized policy management and reporting.
+SafeDep Cloud is a control and data aggregation service that works with security tools like [vet](https://github.com/safedep/vet).
+This guide walks you through connecting vet to SafeDep Cloud for centralized policy management and reporting.
 
 ## What You'll Accomplish
 
@@ -21,7 +21,7 @@ This guide will help you connect your vet instances to SafeDep Cloud for central
     Test and deploy policies across all vet deployments
   </Card>
   <Card title="Malware Analysis" icon="virus">
-    Enhanced threat detection with cloud-powered analysis
+    Threat detection backed by cloud malware analysis
   </Card>
 </CardGroup>
 
@@ -50,11 +50,11 @@ See [supported integrations](/governance/integrations/overview) for more details
 
 ## Quick Onboarding with vet CLI
 
-The easiest way to get started is using the `vet cloud quickstart` command:
+The quickest path is the `vet cloud quickstart` command:
 
 <Steps>
   <Step title="Install vet">
-    Ensure you have vet installed on your system 
+    Ensure vet is installed on your system:
 
     ```bash
     brew tap safedep/tap
@@ -63,7 +63,7 @@ The easiest way to get started is using the `vet cloud quickstart` command:
   </Step>
 
   <Step title="Run Quickstart">
-    Execute the quickstart command and follow the prompts
+    Run the command and follow the prompts:
 
     ```bash
     vet cloud quickstart
@@ -142,8 +142,8 @@ Configure [vet-action](https://github.com/safedep/vet-action) to sync with SafeD
 
 ## Query Your Data
 
-Once your data is syncing, query your tenant's aggregated inventory and findings:
-projects, packages, endpoints, and security findings enriched with global threat
+Once data is syncing, query your tenant's aggregated inventory and findings:
+projects, packages, endpoints, and security findings enriched with threat
 intelligence (vulnerabilities, EPSS, CISA KEV, OpenSSF Scorecard).
 
 Queries run through the [`safedep` CLI](https://github.com/safedep/cli#safedep-cli).

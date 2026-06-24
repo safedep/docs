@@ -3,7 +3,7 @@ title: AI Tools Discovery
 description: "Discover AI coding agents, MCP servers, CLI tools, IDE extensions, and agent skills across developer machines and project repositories"
 ---
 
-`vet ai discover` is an alias for `vet endpoint scan --kind ai-tool --kind agent-skill`. It scans the local system and project directory to build an inventory of AI tool usage signals: coding agents, MCP servers, CLI tools, IDE extensions, project configuration files, and agent skills. When SafeDep credentials are configured, discovered items are synced to SafeDep Cloud's Endpoint Hub automatically. See [Inventory](/governance/cloud/endpoint-hub/inventory).
+`vet ai discover` is an alias for `vet endpoint scan --kind ai-tool --kind agent-skill`. It scans the local system and project directory to inventory AI tool usage signals: coding agents, MCP servers, CLI tools, IDE extensions, project configuration files, and agent skills. When SafeDep credentials are configured, discovered items sync to SafeDep Cloud's Endpoint Hub automatically. See [Inventory](/governance/cloud/endpoint-hub/inventory).
 
 ## Prerequisites
 
@@ -73,17 +73,17 @@ The `--kind` flag on `vet endpoint scan` controls which signal types are collect
 
 ## What Gets Scanned
 
-**App configuration** is read from well-known system and project-level config paths for each supported application. System-level configs indicate the tool is installed. Project-level configs indicate the project is set up for a tool.
+**App configuration** is read from well-known system and project-level config paths for each supported application. System-level configs indicate the tool is installed; project-level configs indicate the project is set up for a tool.
 
-**CLI binaries** are discovered by searching `$PATH` for known binary names. Each candidate is executed with a version flag and the output is verified against known patterns.
+**CLI binaries** are discovered by searching `$PATH` for known binary names. Each candidate is executed with a version flag and the output verified against known patterns.
 
 **IDE extensions** are discovered by reading extension manifests from supported IDE distributions and matching against a curated list of known AI extension identifiers.
 
-**Agent skill directories** are discovered by scanning known per-agent skill paths at both system and project scope.
+**Agent skill directories** are discovered by scanning known per-agent skill paths at system and project scope.
 
 ## Security
 
-During discovery, no network calls are made. All scanning is based on local filesystem and `$PATH` inspection. The discovery process never captures environment variable or header values; only key names are recorded. CLI arguments matching secret patterns (`--token=`, `--api-key=`, `--password=`, etc.) are redacted. Sync to SafeDep Cloud is a separate step that only runs when credentials are configured.
+Discovery makes no network calls. All scanning reads the local filesystem and `$PATH`. Environment variable and header values are never captured; only key names are recorded. CLI arguments matching secret patterns (`--token=`, `--api-key=`, `--password=`, etc.) are redacted. Sync to SafeDep Cloud is a separate step that runs only when credentials are configured.
 
 <CardGroup cols={2}>
   <Card title="Inventory" icon="cloud" href="/governance/cloud/endpoint-hub/inventory">

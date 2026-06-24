@@ -13,15 +13,9 @@ description: "Get started with SafeDep xBom, an open source Bill of Materials ge
 
 **xBom** generates a Bill of Materials (BOM) enriched with AI components, SaaS integrations, and more. It uses static code analysis to find these in your code, not just your declared dependencies.
 
-<Tip>
-  This allows for a more comprehensive understanding of all the software and
-  services your application relies on, going beyond _traditional dependency
-  tracking_.
-</Tip>
+## Installation
 
-### Installation
-
-You can install xBom using one of the following methods:
+Install xBom using one of the following methods:
 
 **macOS & Linux (Homebrew):**
 
@@ -31,9 +25,9 @@ brew install safedep/tap/xbom
 ```
 
 **Pre-built binary:**
-Alternatively, you can download a **[pre-built binary](https://github.com/safedep/xbom/releases)** suitable for your operating system from the GitHub releases page.
+Download a **[pre-built binary](https://github.com/safedep/xbom/releases)** for your operating system from the GitHub releases page.
 
-### Generating Your First BOM
+## Generating Your First BOM
 
 To generate a BOM for your source code, use the `generate` command:
 
@@ -42,9 +36,9 @@ To generate a BOM for your source code, use the `generate` command:
 xbom generate --dir /path/to/your/code --bom /path/to/output/bom.cdx.json
 ```
 
-Replace `/path/to/your/code` with the actual path to your project's source code directory and `/path/to/output/bom.cdx.json` with the desired path and filename for the generated BOM.
+Replace `/path/to/your/code` with your project directory and `/path/to/output/bom.cdx.json` with your desired output path.
 
-This command will produce a Software Bill of Materials (SBOM) in the **[CycloneDX v1.6 JSON format](https://cyclonedx.org/docs/1.6/json/)**. The BOM will include any AI components and other supported elements detected within the codebase.
+The output is an SBOM in **[CycloneDX v1.6 JSON format](https://cyclonedx.org/docs/1.6/json/)**, including any AI components and other supported elements detected in the codebase.
 
 ## Supported Languages
 
@@ -64,7 +58,7 @@ xBom specializes in identifying a variety of components beyond traditional libra
 
 ### AI Components
 
-xBom can detect the usage of various AI SDKs and services, including:
+xBom detects usage of AI SDKs and services, including:
 
 - LangChain
 - Anthropic
@@ -73,7 +67,7 @@ xBom can detect the usage of various AI SDKs and services, including:
 
 ### Cloud Services
 
-It can also identify integrations with major cloud platforms:
+xBom also identifies integrations with major cloud platforms:
 
 - Google Cloud Platform (GCP)
 - Microsoft Azure
@@ -86,7 +80,7 @@ It can also identify integrations with major cloud platforms:
 
 ## HTML report
 
-The primary output is a standardized CycloneDX JSON file. For a quick human-readable view, xBom also prints a link to an interactive HTML report of the BOM, so you can browse the detected components in a browser.
+The primary output is a CycloneDX JSON file. xBom also prints a link to an interactive HTML report so you can browse the detected components in a browser.
 
 <div align="center">
   <img
@@ -99,25 +93,23 @@ The primary output is a standardized CycloneDX JSON file. For a quick human-read
 ### <Icon icon="flag" size={20} /> Limitations
 
 **Current focus (AI BOM generation):**
-It's important to note that `xbom` is currently focused on AI BOM generation. Its primary strength lies in using static code analysis to identify AI products, SaaS APIs, and similar non-library components used in your codebase.
+`xbom` is currently focused on AI BOM generation. It uses static code analysis to identify AI products, SaaS APIs, and similar non-library components in your codebase.
 
-**Recommendation for comprehensive SBOMs (vet tool):**
-For generating a more comprehensive SBOM that includes a detailed list of all your open-source library dependencies (often derived from manifest files), we recommend using a complementary tool like [vet](https://github.com/safedep/vet). `vet` is another tool from SafeDep that specializes in dependency analysis and vulnerability management. Using xBom and vet together can provide a more holistic view of your software supply chain.
+**For full dependency SBOMs:**
+To generate an SBOM covering open-source library dependencies from manifest files, use [vet](https://github.com/safedep/vet) alongside xBom. `vet` specializes in dependency analysis and vulnerability management, and the two tools together cover more of the software supply chain.
 
 ### <Icon icon="telescope" size={20} /> Telemetry
 
 **Purpose:**
-`xbom` collects anonymous usage telemetry to show which integrations and use cases are common, which guides what to build next. It collects no personally identifiable information or sensitive data.
+`xbom` collects anonymous usage telemetry to show which integrations and use cases are common, guiding what to build next. It collects no personally identifiable information or sensitive data.
 
 **How to disable:**
 
-If you prefer to disable telemetry collection, you can do so by setting the `XBOM_DISABLE_TELEMETRY` environment variable to `true`:
+Set the `XBOM_DISABLE_TELEMETRY` environment variable to `true`:
 
 ```bash
 export XBOM_DISABLE_TELEMETRY=true
 ```
-
-This will prevent xBom from sending any usage data.
 
 <CardGroup cols={2}>
   <Card title="xBom" icon="boxes-stacked" href="/governance/xbom/overview">

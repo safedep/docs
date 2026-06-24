@@ -3,7 +3,7 @@ title: Authentication
 description: "Understand SafeDep Cloud authentication methods and API access patterns"
 ---
 
-SafeDep Cloud API operates on two distinct planes, each with different authentication requirements and access patterns.
+The SafeDep Cloud API has two planes, each with different authentication requirements and access patterns.
 
 ## API Architecture
 
@@ -22,7 +22,7 @@ All APIs for security tools integration are part of the Data Plane. These APIs r
 
 ## API Endpoints and Authentication
 
-SafeDep's API is split across two planes, each with its own authentication:
+Each plane has its own endpoint and authentication method:
 
 - **Data plane** (`api.safedep.io`): package insights, scanning, and malware analysis. Authenticated with an **API key**.
 - **Control plane** (`cloud.safedep.io`): tenant, policy, and management operations. Authenticated with a **JWT**.
@@ -33,7 +33,7 @@ For the full list of SafeDep hostnames, including the console, identity provider
 
 ### API Key Authentication
 
-The most common method for tool integrations and automated access:
+The standard method for tool integrations and automated access:
 
 <Steps>
   <Step title="Generate API Key">
@@ -60,7 +60,7 @@ The most common method for tool integrations and automated access:
 
 ### OAuth2/OIDC Integration
 
-SafeDep Cloud Identity Service is hosted at `https://auth.safedep.io` and provides OAuth2/OIDC compatible authentication.
+The SafeDep Cloud Identity Service at `https://auth.safedep.io` provides OAuth2/OIDC authentication.
 
 **OpenID Configuration Endpoint:**
 ```
@@ -80,7 +80,7 @@ This opens a browser for authentication and stores the JWT token locally.
 
 ### Programmatic Integration
 
-For custom applications, implement OAuth2 Device Code flow. Reference implementation available in the [vet OAuth2 client](https://github.com/safedep/vet/blob/main/cmd/cloud/login.go).
+For custom applications, implement the OAuth2 Device Code flow. A reference implementation is available in the [vet OAuth2 client](https://github.com/safedep/vet/blob/main/cmd/cloud/login.go).
 
 ## Authentication Examples
 
@@ -125,7 +125,7 @@ safedep auth status
 
 ## Authentication Headers
 
-The SafeDep API is a [gRPC API with a ConnectRPC facade](/reference/api-introduction), not a REST API, so there are no REST paths to call. Whatever transport you use (gRPC over HTTP/2 or JSON over HTTP/1.1), requests carry the same two headers:
+The SafeDep API is a [gRPC API with a ConnectRPC facade](/reference/api-introduction), not a REST API. Regardless of transport (gRPC over HTTP/2 or JSON over HTTP/1.1), requests carry the same two headers:
 
 | Header | Value |
 |--------|-------|
@@ -139,12 +139,12 @@ For the available services and methods, see the canonical API specification at [
 
 ## Rate Limiting
 
-SafeDep Cloud enforces fair-usage rate limits at the API gateway, measured **per second**, with no hourly quota:
+SafeDep Cloud enforces rate limits at the API gateway, measured **per second**, with no hourly quota:
 
 - **Data plane** (`api.safedep.io`): up to **500 requests/second** per API key
 - **Management API**: up to **20 requests/second**
 
-These limits are applied under a fair usage policy and are subject to change.
+These limits are subject to change.
 
 ## Security Best Practices
 

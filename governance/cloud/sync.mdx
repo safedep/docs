@@ -20,7 +20,7 @@ This page covers syncing `vet scan` results from CI/CD pipelines to SafeDep Clou
 
 ### Prerequisites
 
-Configure `vet` to authenticate with SafeDep Cloud. See [quickstart guide](/governance/cloud/quickstart) for onboarding and authentication setup.
+Configure `vet` to authenticate with SafeDep Cloud before using `--report-sync`. See the [quickstart guide](/governance/cloud/quickstart) for onboarding and authentication setup.
 
 <Info>
 The `--report-sync` flag enables data synchronization to SafeDep Cloud.
@@ -196,7 +196,7 @@ jobs:
 
 ### Project Identification
 
-vet-action automatically uses repository information for project identification:
+vet-action automatically sets project identification from repository information:
 
 - **Project Name**: `${{ github.repository }}` (e.g., `org/repo`)
 - **Project Version**: `${{ github.ref_name }}` (branch or tag name)
@@ -312,7 +312,7 @@ jobs:
 
 ### Sync Frequency
 
-- **On-demand**: Manual scans using CLI
+- **On-demand**: Manual scans using the CLI
 - **CI/CD triggered**: Automated scans on code changes
 - **Scheduled**: Regular scans via cron or scheduled workflows
 - **Event-driven**: Scans triggered by specific events
@@ -335,10 +335,9 @@ See the [SafeDep Cloud SQL guide](/reference/sql-query) for the full schema, the
 
 <AccordionGroup>
   <Accordion title="Project Naming">
-    Use consistent project naming conventions:
-    - Include organization: `org/project-name`
-    - Use repository URLs for uniqueness
-    - Maintain consistency across teams
+    Use consistent naming:
+    - Include the organization: `org/project-name`
+    - Use repository URLs for uniqueness across teams
   </Accordion>
   
   <Accordion title="Version Management">
@@ -349,10 +348,9 @@ See the [SafeDep Cloud SQL guide](/reference/sql-query) for the full schema, the
   </Accordion>
   
   <Accordion title="Sync Strategy">
-    Optimize sync frequency and scope:
-    - Sync on every main branch commit
+    - Sync on every commit to the main branch
     - Include pull request scans for early detection
-    - Use scheduled scans for comprehensive analysis
+    - Add scheduled scans to catch drift between commits
   </Accordion>
 </AccordionGroup>
 
@@ -360,24 +358,21 @@ See the [SafeDep Cloud SQL guide](/reference/sql-query) for the full schema, the
 
 <AccordionGroup>
   <Accordion title="Sync Failures">
-    If data sync fails:
-    - Verify API key and tenant configuration
+    - Verify the API key and tenant configuration
     - Check network connectivity to SafeDep Cloud
     - Ensure project names don't contain invalid characters
   </Accordion>
   
   <Accordion title="Missing Data">
-    If expected data doesn't appear in SafeDep Cloud:
-    - Confirm the sync flags are properly set
+    - Confirm `--report-sync` and the project flags are set
     - Check that the scan completed successfully
-    - Verify the project and version identifiers
+    - Verify the project name and version identifiers match what you expect
   </Accordion>
   
   <Accordion title="Authentication Issues">
-    If authentication fails during sync:
-    - Verify API key has sync permissions
-    - Check tenant domain configuration
-    - Ensure credentials are properly set in CI/CD
+    - Verify the API key has sync permissions
+    - Check the tenant domain configuration
+    - Confirm credentials are set correctly in your CI/CD environment
   </Accordion>
 </AccordionGroup>
 

@@ -1,9 +1,9 @@
 ---
 title: GitLab Dependency Scanning
-description: "Native GitLab integration for dependency security scanning with vet"
+description: "Native GitLab integration for dependency security scanning with vet."
 ---
 
-`vet` supports native GitLab Dependency Scanning. You can use `vet` to protect your project from malicious and vulnerable dependencies on every push and merge request to GitLab.
+`vet` integrates with GitLab Dependency Scanning to detect malicious and vulnerable dependencies on every push and merge request.
 
 <iframe 
   width="100%" 
@@ -49,11 +49,11 @@ include:
   - component: gitlab.com/safedep/ci-components/vet/scan@v1.5.1
 ```
 
-**That's it! 🚀** Commit and push changes to trigger your first scan.
+Commit and push to trigger your first scan.
 
 ## Viewing Results
 
-Once configured, you'll see the `vet` job in your pipeline with a security tab:
+Once configured, the `vet` job appears in your pipeline with a security tab:
 
 <img src="/images/gitlab/pipeline.png" alt="GitLab Pipeline with vet" />
 
@@ -95,7 +95,7 @@ include:
       policy: '.gitlab/vet/policy.yml'
 ```
 
-The CI job will fail if any policy violations are found. Check the logs to identify which policies were violated.
+The CI job fails if any policy violations are found. Check the logs to identify which policies were violated.
 
 ### Version Control
 
@@ -137,7 +137,7 @@ include:
 ```
 
 <Warning>
-Only use `all` if you're comfortable exposing security scan results publicly.
+Only use `all` if you are comfortable exposing security scan results publicly.
 </Warning>
 
 ## Advanced Examples
@@ -188,7 +188,7 @@ include:
   </Accordion>
   
   <Accordion title="Policy Violations Failing Build">
-    This is expected behavior when violations are found. Review the job logs to understand which policies were violated and either fix the issues or adjust your policy configuration.
+    This is expected behavior when violations are found. Review the job logs to see which policies were violated, then fix the issues or adjust your policy configuration.
   </Accordion>
 </AccordionGroup>
 
@@ -197,6 +197,6 @@ include:
     View complete configuration options and examples
   </Card>
   <Card title="Report Issues" icon="bug" href="https://gitlab.com/safedep/ci-components/vet/-/issues">
-    Found a bug? Report it to help us improve
+    Report bugs or request improvements
   </Card>
 </CardGroup>

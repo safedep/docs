@@ -7,7 +7,7 @@ description: 'Get started with vet in under 5 minutes'
 For SafeDep Cloud, refer to [Cloud Quickstart](/governance/cloud/quickstart)
 </Info>
 
-Learn how to use [SafeDep vet](https://github.com/safedep/vet) to detect security risks and implement policy-based controls that help you avoid incorporating vulnerable or malicious open source dependencies into your projects.
+Use [SafeDep vet](https://github.com/safedep/vet) to detect security risks and apply policy-based controls that block vulnerable or malicious open source dependencies.
 
 ## Installation
 
@@ -30,7 +30,7 @@ Learn how to use [SafeDep vet](https://github.com/safedep/vet) to detect securit
   </Accordion>
 </AccordionGroup>
 
-For additional installation options, refer to [vet's README](https://github.com/safedep/vet).
+For additional installation options, see [vet's README](https://github.com/safedep/vet).
 
 ## Running Your First Scan
 
@@ -70,11 +70,11 @@ vet scan -D /path/to/dir
   </Accordion>
 </AccordionGroup>
 
-For more information on scanning options, refer to [vet's README](https://github.com/safedep/vet).
+For more scanning options, see [vet's README](https://github.com/safedep/vet).
 
 ## Policy as Code
 
-`vet` supports [CEL](https://cel.dev/) based policy language for identifying risks. Scan and fail on critical or high risk vulnerabilities:
+`vet` supports a [CEL](https://cel.dev/)-based policy language for identifying risks. Scan and fail on critical or high vulnerabilities:
 
 ```bash
 vet scan -D /path/to/dir \
@@ -84,7 +84,7 @@ vet scan -D /path/to/dir \
 
 ### Advanced Policy Configuration
 
-Multiple CEL queries can be combined to create a comprehensive policy. [See example](https://github.com/safedep/vet/blob/main/samples/filter-suites/fs-generic.yml). Audit your application using your opinionated policy as code:
+Combine multiple CEL queries into a policy suite ([example](https://github.com/safedep/vet/blob/main/samples/filter-suites/fs-generic.yml)) and audit your application:
 
 ```bash
 vet scan -D /path/to/dir \
@@ -94,7 +94,7 @@ vet scan -D /path/to/dir \
 
 ## Setup CI/CD Guardrails
 
-`vet` supports a native [GitHub Action](https://github.com/safedep/vet-action) that can be used to easily setup policy-driven guardrails against risky OSS components.
+`vet` includes a native [GitHub Action](https://github.com/safedep/vet-action) for policy-driven guardrails against risky OSS components.
 
 <img src="/images/vet-guardrails.png" alt="vet guardrails in GitHub" />
 
@@ -115,6 +115,6 @@ vet scan -D /path/to/dir \
 
 ## What's Next?
 
-- Refer to [vet GitHub Repository](https://github.com/safedep/vet) for the latest documentation on usage and advanced features.
+- See the [vet GitHub Repository](https://github.com/safedep/vet) for the latest documentation on usage and advanced features.
 
-- For `vet`s complete **commands**, **sub-commands**, **flags** and **usage** documentation refer to [Vet CLI Reference Manual](https://safedep.github.io/vet) 
+- For `vet`'s complete commands, sub-commands, flags, and usage documentation, see the [Vet CLI Reference Manual](https://safedep.github.io/vet).

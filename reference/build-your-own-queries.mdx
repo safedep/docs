@@ -3,7 +3,7 @@ title: Build Your Own Queries
 description: "Speed up filtering and reporting by working with enriched JSON data dumps"
 ---
 
-Scanning package manifests is resource-intensive as it involves enriching package metadata by querying the Insights API. However, filtering and reporting may be done multiple times on the same manifest. To speed up this process, you can dump enriched data as JSON and load it for subsequent filtering and reporting operations.
+Scanning package manifests is resource-intensive: `vet` must enrich each package by querying the Insights API. Because filtering and reporting can run many times on the same manifest, you can dump the enriched data as JSON once and reload it for subsequent operations.
 
 ## Query Workflow
 
@@ -59,7 +59,7 @@ vet query --from /path/to/json-dump \
     --filter-fail
 ```
 
-When packages match the filter criteria, the command exits with a non-zero status:
+When any package matches the filter, the command exits with a non-zero status:
 
 ```bash
 echo $?

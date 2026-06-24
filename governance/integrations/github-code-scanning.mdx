@@ -1,13 +1,13 @@
 ---
 title: GitHub Code Scanning
-description: "Integrate vet with GitHub Actions and Code Scanning for automated security alerts"
+description: "Integrate vet with GitHub Actions and Code Scanning for automated security alerts."
 ---
 
-GitHub supports [uploading SARIF](https://docs.github.com/en/code-security/code-scanning/integrating-with-code-scanning/sarif-support-for-code-scanning) reports to enable repository and organization-wide visibility of security events across different tools. `vet` supports exporting policy violation reports as SARIF which can be uploaded to GitHub.
+GitHub supports [uploading SARIF](https://docs.github.com/en/code-security/code-scanning/integrating-with-code-scanning/sarif-support-for-code-scanning) reports for repository and organization-wide visibility of security events. `vet` exports policy violation reports as SARIF for upload to GitHub Code Scanning.
 
 ## Quick Setup with GitHub Action
 
-`vet` has a dedicated GitHub Action for easy integration. This is the recommended approach for most teams.
+`vet` has a dedicated GitHub Action, which is the recommended approach for most teams.
 
 ### Basic Configuration
 
@@ -53,7 +53,7 @@ SARIF reports work when you enable GitHub Code Scanning in your repository. [Lea
 
 ### Advanced Configuration
 
-For more control over the scanning process:
+To use a custom policy:
 
 ```yaml
 - name: Run vet with custom policy
@@ -67,7 +67,7 @@ For more control over the scanning process:
 
 ## Manual SARIF Generation
 
-You can also generate SARIF reports manually using the `vet` CLI:
+To generate a SARIF report using the `vet` CLI:
 
 ```bash
 vet scan -D /path/to/project --report-sarif /path/to/report.sarif
@@ -79,33 +79,21 @@ By default the SARIF report includes vulnerabilities and malware findings. To al
 
 ## Viewing Results
 
-Once the SARIF report is uploaded to GitHub, policy violations will be available in the GitHub Security tab. This provides a centralized view of policy violations across different repositories.
+Once uploaded, policy violations appear in the GitHub Security tab, giving a centralized view across repositories.
 
 <img src="/images/vet-github-code-scanning-alerts.png" alt="GitHub Code Scanning Alerts" />
 
 ## Pull Request Integration
 
-The GitHub Action automatically adds comments to pull requests when security issues are found:
+The GitHub Action adds a comment to pull requests when security issues are found:
 
 <img src="/images/vet-github-action-pr.png" alt="vet GitHub Action PR comment" />
 
 ## Best Practices
 
 <AccordionGroup>
-  <Accordion title="Policy Configuration">
-    Store your vet policies in version control (e.g., `.github/vet/policy.yml`) to ensure consistent security standards across your organization.
-  </Accordion>
-  
-  <Accordion title="Branch Protection">
-    Configure branch protection rules to require the vet check to pass before merging pull requests.
-  </Accordion>
-  
-  <Accordion title="Organization-wide Deployment">
-    Use GitHub organization templates to deploy vet across all repositories automatically.
-  </Accordion>
-
   <Accordion title="Pin third-party actions to commit SHAs">
-    For production workflows, pin third-party GitHub Actions to a full commit SHA rather than a mutable tag. This protects against tag-moving attacks where a compromised upstream action could inject malicious code.
+    For production workflows, pin third-party GitHub Actions to a full commit SHA rather than a mutable tag. This protects against tag-moving attacks, where a compromised upstream action could inject malicious code.
 
     ```yaml
     # Instead of:
@@ -115,7 +103,7 @@ The GitHub Action automatically adds comments to pull requests when security iss
     uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
     ```
 
-    The [actions/checkout](https://github.com/actions/checkout/releases) and [github/codeql-action](https://github.com/github/codeql-action/releases) release pages list the commit SHA for each release. `safedep/vet-action` uses [semantic versioning tags](https://github.com/safedep/vet-action/releases) that we control directly.
+    The [actions/checkout](https://github.com/actions/checkout/releases) and [github/codeql-action](https://github.com/github/codeql-action/releases) release pages list the commit SHA for each release. `safedep/vet-action` uses [semantic versioning tags](https://github.com/safedep/vet-action/releases) maintained directly by SafeDep.
   </Accordion>
 </AccordionGroup>
 

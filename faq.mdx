@@ -7,15 +7,13 @@ description: "Frequently asked questions about using vet and troubleshooting com
 
 ### How do I disable the banner?
 
-Set the environment variable to disable the vet banner:
-
 ```bash
 export VET_DISABLE_BANNER=1
 ```
 
 ### Something is wrong! How do I debug this?
 
-Run vet with debug logging enabled to diagnose issues:
+Enable debug logging:
 
 <Tabs>
   <Tab title="Log to stdout">
@@ -66,7 +64,7 @@ For offline environments, consider using the [JSON dump workflow](/reference/bui
 
 ### What package managers does vet support?
 
-vet supports a wide range of package managers:
+vet supports:
 
 <AccordionGroup>
   <Accordion title="JavaScript/Node.js">
@@ -105,7 +103,7 @@ vet supports a wide range of package managers:
 
 ### Why is my scan taking so long?
 
-Several factors can affect scan performance:
+Common causes:
 
 <AccordionGroup>
   <Accordion title="Large dependency trees">
@@ -156,32 +154,17 @@ vet scan -M package-lock.json -M requirements.txt
 
 ### How do I create effective policies?
 
-Follow these best practices for policy creation:
+Start with a basic vulnerability check, then layer in additional conditions:
 
-<AccordionGroup>
-  <Accordion title="Start Simple">
-    Begin with basic vulnerability checks:
-    ```bash
-    --filter 'vulns.critical.size() > 0'
-    ```
-  </Accordion>
-  
-  <Accordion title="Test Thoroughly">
-    Test policies against known good and bad packages before deploying.
-  </Accordion>
-  
-  <Accordion title="Use Gradual Rollout">
-    Start with warning-only mode before enforcing blocking policies.
-  </Accordion>
-  
-  <Accordion title="Document Decisions">
-    Include comments in policy files explaining the rationale for each rule.
-  </Accordion>
-</AccordionGroup>
+```bash
+--filter 'vulns.critical.size() > 0'
+```
+
+Test against known-good and known-bad packages before deploying. Enable warning-only mode first, then switch to blocking once the policy is stable. Add comments to policy files explaining the rationale for each rule.
 
 ### Why is my filter not working?
 
-Common filter issues and solutions:
+Common causes:
 
 <AccordionGroup>
   <Accordion title="Syntax Errors">
@@ -364,13 +347,13 @@ vet requires internet access for vulnerability data and package metadata. For ai
 
 <CardGroup cols={2}>
   <Card title="Community Discord" icon="discord" href="https://discord.gg/kAGEj25dCn">
-    Join our community for real-time help and discussions
+    Real-time help and discussions
   </Card>
   <Card title="GitHub Issues" icon="github" href="https://github.com/safedep/vet/issues">
     Report bugs or search existing issues
   </Card>
   <Card title="Documentation" icon="book" href="/introduction">
-    Comprehensive guides and API reference
+    Guides and API reference
   </Card>
   <Card title="Email Support" icon="envelope" href="mailto:support@safedep.io">
     Direct support for complex issues

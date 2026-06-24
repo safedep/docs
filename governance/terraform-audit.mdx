@@ -7,24 +7,7 @@ description: "Audit Terraform provider inventory for supply chain risks using Sa
 To follow this guide you need a SafeDep Cloud API Key and Tenant Identifier. See [Cloud Quickstart](/governance/cloud/quickstart) on how to onboard to SafeDep Cloud and get an API key.
 </Info>
 
-In this guide, we'll discover [Terraform providers](https://developer.hashicorp.com/terraform/language/providers) used in a Terraform project, synchronize the inventory (BOM) with SafeDep Cloud, and execute queries to discover unofficial providers that may pose risks to developer, cloud, and CI/CD infrastructure security.
-
-## Why Audit Terraform Providers?
-
-<CardGroup cols={2}>
-  <Card title="Supply Chain Security" icon="shield-check">
-    Unofficial providers may lack security oversight and could introduce vulnerabilities
-  </Card>
-  <Card title="Compliance Requirements" icon="clipboard-check">
-    Many organizations require approved provider lists for infrastructure code
-  </Card>
-  <Card title="Risk Management" icon="chart-line">
-    Understand the security posture of your infrastructure dependencies
-  </Card>
-  <Card title="Centralized Visibility" icon="eye">
-    Get organization-wide visibility into Terraform provider usage
-  </Card>
-</CardGroup>
+This guide covers how to discover [Terraform providers](https://developer.hashicorp.com/terraform/language/providers) used in a Terraform project, synchronize the inventory (BOM) with SafeDep Cloud, and query for unofficial providers that may pose supply chain risks.
 
 ## Prerequisites
 
@@ -34,7 +17,7 @@ In this guide, we'll discover [Terraform providers](https://developer.hashicorp.
 
 ## Scan and Discover Terraform Providers
 
-Run `vet` on your Terraform codebase to scan for Terraform providers. The Terraform project must be initialized so that `.terraform.lock.hcl` is available in the project directory.
+Run `vet` on your Terraform project to discover providers. The project must be initialized so that `.terraform.lock.hcl` is present in the project directory.
 
 `--report-sync` uploads the provider inventory to SafeDep Cloud, so set your credentials first:
 
@@ -228,37 +211,12 @@ List all queryable columns for Terraform providers:
 safedep query schema show terraform_providers
 ```
 
-This will show you all available fields for building custom queries, including:
+Available fields include:
 - `terraform_providers.tier` - Provider tier (official, partner, community)
 - `terraform_providers.source` - Provider source URL
 - `terraform_providers.namespace` - Provider namespace
 - `packages.name` - Full provider name
 - `packages.version` - Provider version
-
-## Best Practices
-
-<AccordionGroup>
-  <Accordion title="Regular Audits">
-    Schedule regular provider audits:
-    - Weekly scans for critical infrastructure
-    - On every Terraform configuration change
-    - Before major deployments
-  </Accordion>
-  
-  <Accordion title="Provider Approval Process">
-    Establish a formal process for approving new providers:
-    - Security review for community providers
-    - Documentation of approved providers
-    - Regular review of existing approvals
-  </Accordion>
-  
-  <Accordion title="Version Management">
-    Track provider versions carefully:
-    - Pin provider versions in production
-    - Test new versions in staging environments
-    - Monitor for security updates
-  </Accordion>
-</AccordionGroup>
 
 ## Troubleshooting
 
