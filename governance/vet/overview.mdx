@@ -1,112 +1,44 @@
 ---
 title: "vet"
-description: "Understanding the need for automated open source dependency vetting"
+description: "vet is a free, open-source SCA scanner that finds malicious, vulnerable, and risky open-source dependencies in code and CI/CD."
 ---
 
-> It has been estimated that Free and Open Source Software (FOSS) constitutes 70-90% of any given piece of modern software solutions.
->
-> [Source](https://www.linuxfoundation.org/blog/blog/a-summary-of-census-ii-open-source-software-application-libraries-the-world-depends-on)
+[vet](https://github.com/safedep/vet) is a free, open-source software composition analysis (SCA) scanner. It checks your open-source dependencies for malicious packages, known vulnerabilities, license issues, and weak project health, then lets you enforce policy on what it finds. Run it locally, in CI/CD, or against a whole repository.
 
-Industry dependency on OSS will only increase. We need better tooling to help security engineering teams to safely consume OSS components.
-
-## Problem
-
-Product security practices secure software developed and deployed internally. They do not cover software consumed from external sources in form of libraries from the Open Source ecosystem. The growing risk of vulnerable, unmaintained and malicious dependencies establishes the need for product security teams to vet 3rd party dependencies before consumption.
-
-## Current State
-
-Vetting open source packages are largely a manual and opinionated process involving engineering teams as the requester and security teams as the service provider. A typical OSS vetting process involves auditing dependencies to ensure security, popularity, license compliance, trusted publisher etc. The manual nature of this activity increases cycle time and slows down engineering velocity, especially for evolving products.
-
-## What is vet?
-
-SafeDep vet is a free, open-source next-generation software composition analysis (SCA) tool.
-It can be used in development, CI/CD, and production environments to protect against risky open source components
-including vulnerabilities and malware. It is built in public at [safedep/vet](https://github.com/safedep/vet).
-
-## What vet aims to solve
-
-[vet](https://github.com/safedep/vet) solves the problem of OSS dependency vetting by providing a policy driven automated analysis of libraries. It can be seamlessly integrated with any CI tool or used in local environments.
+## What vet does
 
 <CardGroup cols={2}>
-  <Card title="Automated Analysis" icon="robot">
-    Replace manual dependency reviews with automated policy-driven analysis
+  <Card title="Automated analysis" icon="robot">
+    Replace manual dependency reviews with policy-driven analysis.
   </Card>
-  <Card title="Policy as Code" icon="file-code">
-    Define and version control your security policies using CEL expressions
+  <Card title="Policy as code" icon="file-code">
+    Define and version security policy with [CEL](/concepts/cel).
   </Card>
-  <Card title="CI/CD Integration" icon="code-branch">
-    Seamlessly integrate with any CI tool or development workflow
+  <Card title="CI/CD integration" icon="code-branch">
+    Run in any CI tool or your local workflow.
   </Card>
-  <Card title="Trusted Sources" icon="shield-check">
-    Leverage data from OSV, OpenSSF Scorecard, and other trusted sources
+  <Card title="Trusted data" icon="shield-check">
+    Built on OSV, OpenSSF Scorecard, deps.dev, and SafeDep malware intelligence.
   </Card>
 </CardGroup>
 
-## Benefits
+## Get started
 
-- **Reduced Cycle Time**: Eliminate manual review bottlenecks
-- **Consistent Policies**: Apply the same security standards across all projects
-- **Developer Velocity**: Enable teams to move fast while staying secure
-- **Scalable Security**: Handle thousands of dependencies automatically
-
----
-
-## About vet
-
-[SafeDep vet](https://github.com/safedep/vet) is a free and open source tool for identifying risks in open source software supply chain. It helps security engineering teams to establish policy driven guard rails against risky OSS components.
-
-### Architecture Overview
-
-```mermaid
-flowchart TD
-    subgraph Config["🔧 Configuration"]
-        A[Package Manifests]
-        B[CEL Policies]
-    end
-
-    subgraph Analysis["🔍 Analysis Engine"]
-        D[vet]
-        E[["CEL Policy Engine"]]
-        F[Insights]
-    end
-
-    subgraph Sources["📚 Trusted Sources"]
-        G[OSV Database]
-        H[OpenSSF Scorecard]
-        I[deps.dev]
-        J[Package Registries]
-    end
-
-    subgraph Cache["📚 Cache"]
-        K[Cache]
-    end
-
-    %% Connections
-    A --> D
-    B --> E
-    D --> F
-    D --> E
-    E --> F
-    F --- K
-    F --> Sources
-
-    %% Styling
-    classDef config fill:#6a0dad,stroke:#333,stroke-width:2px,color:white
-    classDef analysis fill:#6a0dad,stroke:#333,stroke-width:2px,color:white
-    classDef sources fill:#999,stroke:#333,stroke-width:1px
-    classDef results fill:#6a0dad,stroke:#333,stroke-width:2px,color:white
-
-    class A,B config
-    class D,F analysis
-    class E analysis,thick
-    class G,H,I,J sources
-    class K results
-```
-
-**SafeDep vet** automates the analysis of open source dependencies by combining insights from trusted sources and allowing developers to enforce custom security policies using CEL.
-
-### vet in Action
+<CardGroup cols={2}>
+  <Card title="vet Quickstart" icon="rocket" href="/governance/vet/quickstart">
+    Scan your first project in minutes.
+  </Card>
+  <Card title="Dependency Inventory" icon="boxes-stacked" href="/governance/vet/dependency-inventory">
+    Generate an accurate dependency inventory.
+  </Card>
+  <Card title="Code Analysis" icon="magnifying-glass" href="/governance/vet/code-analysis">
+    See how dependencies are actually used.
+  </Card>
+  <Card title="Filtering & Policy" icon="filter" href="/reference/filtering">
+    Query results and enforce policy with CEL.
+  </Card>
+</CardGroup>
 
 <div style={{textAlign: 'center'}}>
-    <img src="/images/vet/vet-demo.gif" alt="Vet Demo" style={{maxWidth: '100%', height: 'auto'}} />
+    <img src="/images/vet/vet-demo.gif" alt="vet scanning a project" style={{maxWidth: '100%', height: 'auto'}} />
 </div>
