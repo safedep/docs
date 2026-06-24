@@ -33,7 +33,7 @@
         ]
       },
       {
-        "tab": "Protect Developers",
+        "tab": "Package Security",
         "groups": [
           {
             "group": "Package Manager Guard (pmg)",
@@ -44,22 +44,35 @@
             ]
           },
           {
-            "group": "AI Coding Protection & Audit",
+            "group": "CI/CD Package Blocking",
             "pages": [
-              "apps/mcp/overview",
-              "ai-security/gryph-overview"
-            ]
-          },
-          {
-            "group": "Endpoint Sync",
-            "pages": [
-              "cloud/endpoint-hub/package-guard"
+              "apps/jfrog/overview"
             ]
           }
         ]
       },
       {
-        "tab": "Scan & Analyze",
+        "tab": "AI Agent Security",
+        "groups": [
+          {
+            "group": "AI Agent Observability",
+            "pages": [
+              "ai-security/gryph-overview",
+              "vet/guides/ai-governance",
+              "vet/guides/shadow-ai-detection",
+              "vet/guides/ai-tools-discovery"
+            ]
+          },
+          {
+            "group": "AI Coding Protection (MCP)",
+            "pages": [
+              "apps/mcp/overview"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "Visibility & Governance",
         "groups": [
           {
             "group": "Repository Scanning (vet)",
@@ -79,14 +92,6 @@
             ]
           },
           {
-            "group": "AI Governance",
-            "pages": [
-              "vet/guides/ai-governance",
-              "vet/guides/shadow-ai-detection",
-              "vet/guides/ai-tools-discovery"
-            ]
-          },
-          {
             "group": "CI/CD & Platform Integrations",
             "pages": [
               "apps/overview",
@@ -94,16 +99,10 @@
               "vet/guides/github-code-scanning",
               "apps/gitlab/overview",
               "apps/bitbucket/bitbucket-pipes",
-              "apps/jfrog/overview",
               "vet/guides/defect-dojo-integration",
               "vet/guides/terraform-supply-chain-audit"
             ]
-          }
-        ]
-      },
-      {
-        "tab": "Govern & Manage",
-        "groups": [
+          },
           {
             "group": "SafeDep Cloud",
             "pages": [
@@ -116,7 +115,8 @@
             "pages": [
               "cloud/endpoint-hub/overview",
               "cloud/endpoint-hub/inventory",
-              "cloud/endpoint-hub/inventory-catalog"
+              "cloud/endpoint-hub/inventory-catalog",
+              "cloud/endpoint-hub/package-guard"
             ]
           },
           {
@@ -148,17 +148,12 @@
             ]
           },
           {
-            "group": "SQL Query",
-            "pages": [
-              "reference/sql-query"
-            ]
-          },
-          {
             "group": "API & Automation",
             "pages": [
               "api-reference/introduction",
               "reference/endpoints",
-              "vet/guides/insights-api-using-typescript"
+              "vet/guides/insights-api-using-typescript",
+              "reference/sql-query"
             ]
           }
         ]

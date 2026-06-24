@@ -1,26 +1,26 @@
 ---
-title: gryph — AI Coding Agent Audit Trail
-description: "gryph records what your AI coding agents do — every file read, write, and command — to a local audit log you can query and replay."
+title: Why gryph?
+description: "gryph records what your AI coding agents do, every file read, write, and command, to a local audit log you can query and replay."
 ---
 
-AI coding agents like Claude Code, Cursor, and Gemini CLI can read any file, write anywhere, and run arbitrary commands on your machine — often dozens of tool calls per session. When something goes wrong, there is usually no record of what happened. **gryph** gives you that record.
+AI coding agents like Claude Code, Cursor, and Gemini CLI can read any file, write anywhere, and run arbitrary commands on your machine. They fire off dozens of tool calls per session, and when something goes wrong there is usually no record of what happened. **gryph** gives you that record.
 
-gryph hooks into your AI coding agents, logs every action to a **local audit database**, and lets you query, review, and replay agent activity. It is an observability tool — it tells you what an agent *did*, after the fact. It does not block or sandbox agent actions.
+gryph hooks into your AI coding agents, logs every action to a local audit database, and lets you query, review, and replay agent activity. It is an observability tool. It tells you what an agent did, after the fact. It does not block or sandbox agent actions.
 
 <Note>
-gryph is fully local: all data stays on your machine. There is no cloud component, no telemetry, and no SafeDep account or API key required.
+gryph runs fully locally. All data stays on your machine. There is no cloud component, no telemetry, and no SafeDep account or API key.
 </Note>
 
 ## What gryph does
 
-- **Records agent activity** — every file read, file write, and command execution is captured as a structured event.
-- **Stores it locally** — events go to a local SQLite database on your machine; nothing is transmitted.
-- **Lets you investigate** — query, filter, and replay sessions to understand, debug, and review what an agent did.
-- **Flags sensitive access** — detects when agents touch sensitive files (`.env`, keys, secrets) and can redact or hash captured content.
+- **Records agent activity.** Every file read, file write, and command execution becomes a structured event.
+- **Stores it locally.** Events go to a local SQLite database on your machine. Nothing is transmitted.
+- **Lets you investigate.** Query, filter, and replay sessions to understand and debug what an agent did.
+- **Flags sensitive access.** gryph detects when agents touch sensitive files like `.env`, keys, and secrets, and it can redact or hash captured content.
 
 ## Supported agents
 
-gryph installs lightweight hooks into the agents you already use, including:
+gryph installs lightweight hooks into the agents you already use:
 
 - Claude Code
 - Cursor
@@ -30,7 +30,7 @@ gryph installs lightweight hooks into the agents you already use, including:
 - Codex
 - Pi Agent
 
-The list grows over time — see the [gryph repository](https://github.com/safedep/gryph) for the current set and the events captured for each.
+The list grows over time. See the [gryph repository](https://github.com/safedep/gryph) for the current set and the events captured for each agent.
 
 ## Get started
 
@@ -59,17 +59,17 @@ The list grows over time — see the [gryph repository](https://github.com/safed
 </Steps>
 
 <Info>
-gryph is young and evolving. For the latest commands, configuration, and supported agents, see the [gryph repository](https://github.com/safedep/gryph) and its [releases](https://github.com/safedep/gryph/releases).
+gryph is young and changes often. For the latest commands, configuration, and supported agents, see the [gryph repository](https://github.com/safedep/gryph) and its [releases](https://github.com/safedep/gryph/releases).
 </Info>
 
 ## How it differs from the SafeDep MCP server
 
-gryph and the [SafeDep MCP server](/apps/mcp/overview) both relate to AI coding tools but solve opposite problems:
+gryph and the [SafeDep MCP server](/apps/mcp/overview) both work with AI coding tools, but they solve opposite problems:
 
-- **gryph** puts a fence around the agent — it observes and records what the agent *does* on your machine.
-- **The MCP server** gives capabilities *to* the agent — it lets the agent ask SafeDep "is this package safe?" before suggesting an install.
+- **gryph** puts a fence around the agent. It observes and records what the agent does on your machine.
+- **The MCP server** gives capabilities to the agent. It lets the agent ask SafeDep "is this package safe?" before suggesting an install.
 
-Use them together: MCP helps the agent make safer suggestions; gryph keeps an audit trail of its actions.
+Use them together. MCP helps the agent make safer suggestions, and gryph keeps an audit trail of its actions.
 
 <CardGroup cols={2}>
   <Card title="gryph on GitHub" icon="github" href="https://github.com/safedep/gryph">

@@ -20,7 +20,7 @@ The documentation is organized into **6 tabs** — three solution tabs at the co
 5. **Reference** — exact syntax/APIs (vet query & policy, API & automation)
 6. **Community & Support** — community resources and FAQ
 
-> **Implementation note:** Tab renames in `docs.json` are a later phase. `docs-ia.md` records the intended structure.
+> **Implementation note:** the 6-tab structure is live in `docs.json` (Phase 1 re-tab complete). Moving page files to solution-aligned folders is a later phase; legacy paths stay grandfathered until then.
 
 ### Governing Rules (how the IA evolves)
 

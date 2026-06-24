@@ -1,24 +1,24 @@
 ---
 title: SafeDep CLI Tools
-description: "Which SafeDep command-line tool to use — vet, pmg, gryph, and the safedep CLI — and how they fit together."
+description: "Which SafeDep command-line tool to use: vet, pmg, gryph, and the safedep CLI, and how they fit together."
 ---
 
-SafeDep ships several command-line tools, each solving a different supply-chain problem. They are independent — install only the ones you need. This page helps you pick the right one and points you to its setup guide.
+SafeDep ships several command-line tools. Each one solves a different supply-chain problem, and they run independently, so you install only what you need. This page helps you pick the right tool and points you to its setup guide.
 
 ## Which tool do I need?
 
 <CardGroup cols={2}>
   <Card title="Scan code for supply-chain risk" icon="magnifying-glass" href="/vet/quickstart">
-    Use **vet** — scan repositories, lockfiles, and SBOMs for malicious packages, known vulnerabilities, and policy violations. The engine behind SafeDep's CI/CD scanning.
+    Use **vet** to scan repositories, lockfiles, and SBOMs for malicious packages, known vulnerabilities, and policy violations. It is the engine behind SafeDep's CI/CD scanning.
   </Card>
   <Card title="Block malicious installs on my machine" icon="shield-halved" href="/pmg/quickstart">
-    Use **pmg** — a guard around `npm`, `pip`, and other package managers that blocks known-malicious packages before they install. No account or API key required.
+    Use **pmg**, a guard around `npm`, `pip`, and other package managers that blocks known-malicious packages before they install. No account or API key required.
   </Card>
   <Card title="Audit what my AI coding agent does" icon="robot" href="/ai-security/gryph-overview">
-    Use **gryph** — records every file read, write, and command your AI coding agent runs to a local audit log you can query and replay. Fully local.
+    Use **gryph** to record every file read, write, and command your AI coding agent runs. It keeps a local audit log you can query and replay.
   </Card>
   <Card title="Work with SafeDep Cloud" icon="cloud" href="https://github.com/safedep/cli">
-    Use **safedep** — the unified CLI for SafeDep Cloud: authentication, endpoint telemetry queries, and AI agent hardening. New and evolving.
+    Use **safedep**, the unified CLI for SafeDep Cloud: authentication, endpoint telemetry queries, and AI agent hardening. It is new and still evolving.
   </Card>
 </CardGroup>
 
@@ -26,28 +26,28 @@ SafeDep ships several command-line tools, each solving a different supply-chain 
 
 | Tool | Solves | Needs an account? | Open source |
 |---|---|---|---|
-| **vet** | Detect malicious & vulnerable dependencies in code and CI/CD | No (Cloud optional) | Yes |
+| **vet** | Detect malicious and vulnerable dependencies in code and CI/CD | No (Cloud optional) | Yes |
 | **pmg** | Block malicious packages at install time on the dev machine | No | Yes |
 | **gryph** | Local audit trail for AI coding agents | No (fully local) | Yes |
 | **safedep** | Manage and query SafeDep Cloud from the terminal | Yes (SafeDep Cloud) | Yes |
 
 <Note>
-vet, pmg, and gryph are free, open source, and work with no SafeDep account. **safedep** is the client for SafeDep Cloud's hosted features — see [pricing](https://safedep.io/pricing).
+vet, pmg, and gryph are free, open source, and work with no SafeDep account. The **safedep** CLI is the client for SafeDep Cloud's hosted features. See [pricing](https://safedep.io/pricing).
 </Note>
 
 ## How they relate
 
-- **vet** is the scanning engine. It analyzes dependencies and produces risk reports, queries, and SBOMs. It can run standalone or sync results to SafeDep Cloud.
-- **pmg** and **gryph** are standalone, single-purpose guards — pmg at package-install time, gryph around AI coding agents. Neither requires vet or a SafeDep account.
-- **safedep** is an emerging unified CLI that brings SafeDep Cloud's workflows (auth, endpoint telemetry, agent hardening) to the terminal. It orchestrates the tools above and the Cloud APIs rather than re-implementing scanning — analysis stays in the upstream tools.
+- **vet** is the scanning engine. It analyzes dependencies and produces risk reports, queries, and SBOMs. It runs standalone or syncs results to SafeDep Cloud.
+- **pmg** and **gryph** are standalone, single-purpose guards. pmg works at package-install time, gryph around AI coding agents. Neither needs vet or a SafeDep account.
+- **safedep** is an emerging unified CLI that brings SafeDep Cloud's workflows (auth, endpoint telemetry, agent hardening) to the terminal. It orchestrates the tools above and the Cloud APIs rather than re-implementing scanning, so the analysis stays in the upstream tools.
 
 <Info>
-There is no "v1 → v2" migration between these tools. `safedep` is a **new** Cloud-focused CLI, not a successor to `vet`. vet remains the standalone scanner and the recommended starting point for most users.
+These tools have no "v1 to v2" relationship. `safedep` is a new Cloud-focused CLI, not a replacement for `vet`. vet stays the standalone scanner and the recommended starting point for most users.
 </Info>
 
 ## Install
 
-Each tool is published to the SafeDep Homebrew tap and to npm; vet, pmg, and gryph also ship as Go binaries and install scripts. The most common installs:
+Each tool is published to the SafeDep Homebrew tap and to npm. vet, pmg, and gryph also ship as Go binaries and install scripts. The most common installs:
 
 <Tabs>
   <Tab title="Homebrew">
@@ -68,7 +68,7 @@ Each tool is published to the SafeDep Homebrew tap and to npm; vet, pmg, and gry
   </Tab>
 </Tabs>
 
-For all install methods, current versions, and the full command surface, see each tool's repository: [vet](https://github.com/safedep/vet), [pmg](https://github.com/safedep/pmg), [gryph](https://github.com/safedep/gryph), [safedep](https://github.com/safedep/cli).
+For every install method, current versions, and the full command surface, see each tool's repository: [vet](https://github.com/safedep/vet), [pmg](https://github.com/safedep/pmg), [gryph](https://github.com/safedep/gryph), [safedep](https://github.com/safedep/cli).
 
 ## Next steps
 

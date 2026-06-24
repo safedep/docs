@@ -19,7 +19,7 @@ Six tabs — three solution tabs at the core, plus supporting tabs.
 | **Reference** | Exact syntax, flags, API specs — no explanation | vet Query & Policy · API & Automation |
 | **Community & Support** | Community resources, FAQ | Community · Support |
 
-> **Implementation note:** Tab renames in `docs.json` are a later phase. This file records the intended structure.
+> **Implementation note:** the 6-tab structure is live in `docs.json` (Phase 1 re-tab complete). Moving page files to solution-aligned folders is a later phase; legacy paths (`vet/`, `cloud/`, `apps/`, `xbom/`) stay grandfathered until then.
 
 ---
 
@@ -126,25 +126,24 @@ Don't mix Diátaxis types within a single page.
 ## 7. Authoritative tab → group → page map
 
 *Human-readable mirror of `docs.json`. Source of truth is `docs.json`.*
-*Tab names reflect the intended structure; `docs.json` is updated in a later implementation phase.*
 
 **Get Started**
 - Introduction: `introduction`, `get-started/cli-tools`
 - Quickstarts: `vet/quickstart`, `cloud/quickstart`
-- Core Concepts: `concepts/cel`
+- Core Concepts: *(planned, see §8; no pages live yet)*
 
-**Package Security** *(currently "Protect Developers" in docs.json)*
+**Package Security**
 - Package Manager Guard (pmg): `pmg/concepts/why-pmg`, `pmg/quickstart`, `pmg/updates`
-- CI/CD Package Blocking: *(pages TBD — vet-action blocking use case)*
+- CI/CD Package Blocking: `apps/jfrog/overview`
 
-**AI Agent Security** *(currently split across "Protect Developers" and "Scan & Analyze" in docs.json)*
+**AI Agent Security**
 - AI Agent Observability: `ai-security/gryph-overview`, `vet/guides/ai-governance`, `vet/guides/shadow-ai-detection`, `vet/guides/ai-tools-discovery`
 - AI Coding Protection (MCP): `apps/mcp/overview`
 
-**Visibility & Governance** *(currently "Scan & Analyze" + "Govern & Manage" in docs.json)*
-- Repository Scanning (vet): `vet/concepts/why-vet`, `vet/guides/code-analysis`, `vet/guides/dependency-inventory`, `vet/guides/dependency-usage-identification`, `scan/filtering-recipes`
+**Visibility & Governance**
+- Repository Scanning (vet): `vet/concepts/why-vet`, `vet/guides/code-analysis`, `vet/guides/dependency-inventory`, `vet/guides/dependency-usage-identification`
 - Bill of Materials (xBom): `xbom/concepts/why-xbom`, `xbom/quickstart`, `vet/guides/cyclonedx-sbom`
-- CI/CD & Platform Integrations: `apps/overview`, `apps/github/overview`, `vet/guides/github-code-scanning`, `apps/gitlab/overview`, `apps/bitbucket/bitbucket-pipes`, `apps/jfrog/overview`, `vet/guides/defect-dojo-integration`, `vet/guides/terraform-supply-chain-audit`
+- CI/CD & Platform Integrations: `apps/overview`, `apps/github/overview`, `vet/guides/github-code-scanning`, `apps/gitlab/overview`, `apps/bitbucket/bitbucket-pipes`, `vet/guides/defect-dojo-integration`, `vet/guides/terraform-supply-chain-audit`
 - SafeDep Cloud: `cloud/overview`, `cloud/sync`
 - Endpoint Hub: `cloud/endpoint-hub/overview`, `cloud/endpoint-hub/inventory`, `cloud/endpoint-hub/inventory-catalog`, `cloud/endpoint-hub/package-guard`
 - Policy & Risk: `cloud/malware-analysis`, `cloud/package-exclusions`
@@ -158,7 +157,7 @@ Don't mix Diátaxis types within a single page.
 - Community: `community`
 - Support: `faq`, `cloud/faq`
 
-Total: **50 pages**
+Total: **48 pages**
 
 ---
 
