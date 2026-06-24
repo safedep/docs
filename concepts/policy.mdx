@@ -14,7 +14,7 @@ Manual vetting does not scale and misses transitive dependencies. A policy makes
 A policy is a set of [CEL](/concepts/cel) rules, written as a filter suite in a YAML file. vet evaluates each package against the rules, and you decide what a match does:
 
 - During a local scan, vet can exit non-zero when a package matches a blocking rule.
-- In CI/CD with [vet-action](/governance/integrations/github-code-scanning), `paranoid: true` fails the build on a violation; the policy file is passed via the `policy` input (conventionally `.github/vet/policy.yml`).
+- In CI/CD with [vet-action](https://github.com/safedep/vet-action), the policy file is passed via the `policy` input (conventionally `.github/vet/policy.yml`), and `paranoid: true` fails the build on a violation.
 
 See [Policy as Code](/reference/policy-as-code) for the full syntax and examples.
 

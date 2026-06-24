@@ -3,8 +3,6 @@ title: vet FAQ
 description: "Frequently asked questions about using vet and troubleshooting common issues"
 ---
 
-Common questions and troubleshooting tips for using vet effectively.
-
 ## General Usage
 
 ### How do I disable the banner?
@@ -64,7 +62,7 @@ vet requires internet connectivity to:
 - Access package registry metadata
 - Communicate with SafeDep Cloud (if using cloud features)
 
-For offline environments, consider using the JSON dump workflow to cache data locally.
+For offline environments, consider using the [JSON dump workflow](/reference/build-your-own-queries) to cache data locally.
 
 ### What package managers does vet support?
 
@@ -198,7 +196,7 @@ Common filter issues and solutions:
   </Accordion>
   
   <Accordion title="Data Structure">
-    Check the filter input specification to understand available fields.
+    Check the [filter input specification](/reference/filtering) to understand available fields.
   </Accordion>
   
   <Accordion title="Boolean Logic">
@@ -322,13 +320,13 @@ Only **package coordinates** (ecosystem, name, version) leave your machine. Your
 
 ### Does vet send my code anywhere?
 
-No. vet reads your manifests, lockfiles, and (when code analysis is enabled) your source code **locally** to identify and trace dependencies. Only package coordinates are sent to SafeDep for vulnerability and malware analysis; your source code never leaves your machine.
+No. vet reads your manifests, lockfiles, and (when [code analysis](/governance/vet/code-analysis) is enabled) your source code **locally** to identify and trace dependencies. Only package coordinates are sent to SafeDep for vulnerability and malware analysis; your source code never leaves your machine.
 
 ### Can I use vet in air-gapped environments?
 
 vet requires internet access for vulnerability data and package metadata. For air-gapped environments:
 
-1. **Pre-cache data** using the JSON dump workflow
+1. **Pre-cache data** using the [JSON dump workflow](/reference/build-your-own-queries)
 2. **Use proxy servers** to control external access
 3. **Consider enterprise solutions** for offline vulnerability databases
 
