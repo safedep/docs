@@ -32,14 +32,10 @@ a[href]:hover {
   text-decoration: none !important;
 }
 
-/* Denser sidebar navigation: slightly smaller font + tighter item spacing,
-   closer to the Sidero/Talos density. Mintlify exposes #sidebar and
-   #sidebar-content as stable selectors. Tune the values on preview. */
+/* Reduce the sidebar's horizontal inset so nav text starts closer to the
+   page edge (Sidero/Talos-like). Mintlify exposes #sidebar / #sidebar-content
+   as stable selectors. Tune on preview. */
 #sidebar {
-  font-size: 0.8125rem; /* ~13px, down from the ~14px default */
-}
-
-#sidebar-content a {
-  padding-top: 0.3rem !important;
-  padding-bottom: 0.3rem !important;
+  padding-left: 0.75rem;
+  padding-right: 0.75rem;
 }
