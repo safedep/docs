@@ -5,6 +5,12 @@ description: "Identify which dependencies are actually used in your code using s
 
 `vet` can identify dependency usage in your code using static code analysis. This is particularly useful when dealing with vulnerabilities, allowing you to prioritize only those dependencies you've actually used in your code.
 
+<Warning>
+**EXPERIMENTAL**: This feature is experimental and may introduce breaking changes.
+</Warning>
+
+This page focuses on the dependency-usage workflow. For the underlying [Code Analysis](/governance/vet/code-analysis) feature (the framework, supported languages, and options), see its dedicated page.
+
 ## Why Identify Dependency Usage?
 
 <CardGroup cols={2}>
@@ -116,10 +122,7 @@ The code analysis provides several types of evidence:
 
 ### Tags and Annotations
 
-In the scan results, you'll see tags like:
-- `used-in-code`: Dependency is actually used in source code
-- `imported`: Module is imported but usage unclear
-- `declared-only`: Listed in manifest but no code usage found
+In the scan results, dependencies that the analysis finds used in your source code are marked with the `used-in-code` tag, so you can prioritize them over dependencies that are only declared in a manifest.
 
 ## Best Practices
 
