@@ -45,7 +45,7 @@ For policy customization and [SafeDep Cloud](/governance/cloud/sync) integration
 
 ### On Pull Request
 
-`vet-pipe` includes a feature to scan only the packages changed within a **Pull Request**. However, this functionality relies on environment variables — such as `BITBUCKET_PR_DESTINATION_BRANCH` — which are only populated when using Bitbucket's `pull-requests` pipeline trigger.
+`vet-pipe` includes a feature to scan only the packages changed within a **Pull Request**. However, this functionality relies on environment variables (such as `BITBUCKET_PR_DESTINATION_BRANCH`) that are only populated when using Bitbucket's `pull-requests` pipeline trigger.
 
 To enable changed packages scanning for **PRs** while still supporting **Push** and **Merge** events, you must configure both the `pull-requests` and `default` (or branches) triggers. The most efficient way to implement this without code redundancy is as follows:
 

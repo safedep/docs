@@ -257,7 +257,7 @@ terraform-audit:
 
 ## Policy Enforcement
 
-Terraform provider tier (official, partner, community) lives in SafeDep Cloud's query layer — not in vet's local `--filter-suite` engine, which evaluates package-level signals (vulnerabilities, licenses, OpenSSF Scorecard) and has no notion of provider tiers. To enforce provider policies, query the synced inventory and fail the build on disallowed providers.
+Terraform provider tier (official, partner, community) lives in SafeDep Cloud's query layer, not in vet's local `--filter-suite` engine, which evaluates package-level signals (vulnerabilities, licenses, OpenSSF Scorecard) and has no notion of provider tiers. To enforce provider policies, query the synced inventory and fail the build on disallowed providers.
 
 The **Check for Unofficial Providers** step in the GitHub Actions example above demonstrates this pattern: it queries `terraform_providers.tier` and exits non-zero when any non-official provider is present. Adapt that query to encode your approved-provider rules.
 

@@ -137,7 +137,7 @@ vet cloud whoami
 
 ## Authentication Headers
 
-The SafeDep API is a [gRPC API with a ConnectRPC facade](/reference/api-introduction), not a REST API — there are no REST paths to call. Whatever transport you use (gRPC over HTTP/2 or JSON over HTTP/1.1), requests carry the same two headers:
+The SafeDep API is a [gRPC API with a ConnectRPC facade](/reference/api-introduction), not a REST API, so there are no REST paths to call. Whatever transport you use (gRPC over HTTP/2 or JSON over HTTP/1.1), requests carry the same two headers:
 
 | Header | Value |
 |--------|-------|
@@ -151,7 +151,7 @@ For the available services and methods, see the canonical API specification at [
 
 ## Rate Limiting
 
-SafeDep Cloud enforces fair-usage rate limits at the API gateway, measured **per second** — there is no hourly quota:
+SafeDep Cloud enforces fair-usage rate limits at the API gateway, measured **per second**, with no hourly quota:
 
 - **Data plane** (`api.safedep.io`): up to **500 requests/second** per API key
 - **Management API**: up to **20 requests/second**

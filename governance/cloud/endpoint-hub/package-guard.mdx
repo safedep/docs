@@ -64,7 +64,7 @@ Package Guard shows package installs and usage across your endpoints. It runs on
 
 ## Automatic sync
 
-Once cloud sync is enabled, PMG syncs events on its own — you don't need to run `pmg cloud sync` by hand. At the end of each PMG invocation, PMG drains its local event log to SafeDep Cloud in a short-lived detached process, so your command returns immediately.
+Once cloud sync is enabled, PMG syncs events on its own, so you don't need to run `pmg cloud sync` by hand. At the end of each PMG invocation, PMG drains its local event log to SafeDep Cloud in a short-lived detached process, so your command returns immediately.
 
 This applies whether you invoke PMG directly (`pmg npm install ...`) or indirectly through the shell aliases and path shims installed by `pmg setup install`, which route plain `npm`, `pip`, and other package manager commands through PMG.
 
@@ -77,8 +77,8 @@ cloud:
   enabled: true
   auto_sync:
     enabled: true       # set to false to disable automatic sync
-    min_interval: 15m   # example — minimum gap between sync attempts
-    timeout: 5m         # example — hard timeout for a single sync attempt
+    min_interval: 15m   # example: minimum gap between sync attempts
+    timeout: 5m         # example: hard timeout for a single sync attempt
 ```
 
 PMG ships with sensible defaults for `min_interval` and `timeout`. See the [PMG config template](https://github.com/safedep/pmg/blob/main/config/config.template.yml) for the current values.
