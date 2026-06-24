@@ -59,7 +59,7 @@ ERRO[0001] Failed to execute query: rpc error: code = Unknown desc = failed to r
     If you've forgotten your tenant domain:
     ```bash
     vet cloud login
-    vet cloud whoami  # Shows available tenants
+    vet cloud whoami  # Shows your identity and accessible tenants
     ```
   </Tab>
 </Tabs>
@@ -301,13 +301,12 @@ vet auth verify
 
 ### Test Cloud Connectivity
 ```bash
-safedep query schema list
+vet cloud ping
 ```
 
 ### Clear Configuration
 ```bash
-vet auth logout
-rm -rf ~/.config/vet/
+rm ~/.safedep/vet-auth.yml
 ```
 
 ### Re-authenticate
@@ -317,5 +316,5 @@ vet cloud login --tenant your-tenant
 
 ### View Detailed Logs
 ```bash
-vet --log-level debug scan -D . --report-sync
+vet --debug scan -D . --report-sync
 ```

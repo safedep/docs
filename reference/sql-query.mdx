@@ -165,7 +165,7 @@ safedep query exec --sql "
   SELECT packages.ecosystem, vulnerabilities.severity_rating,
          COUNT(DISTINCT vulnerabilities.vuln_id) AS num_vulns
   FROM packages
-  JOIN component_vulnerabilities ON component_vulnerabilities.vulnerability_id = packages.id
+  JOIN component_vulnerabilities ON component_vulnerabilities.component_id = packages.id
   JOIN vulnerabilities ON vulnerabilities.vuln_id = component_vulnerabilities.vulnerability_id
   WHERE packages.ecosystem = 'ECOSYSTEM_NPM'
   GROUP BY packages.ecosystem, vulnerabilities.severity_rating
@@ -180,7 +180,7 @@ safedep query exec --sql "
 safedep query exec --sql "
   SELECT packages.name, COUNT(DISTINCT vulnerabilities.vuln_id) AS critical_vulns
   FROM packages
-  JOIN component_vulnerabilities ON component_vulnerabilities.vulnerability_id = packages.id
+  JOIN component_vulnerabilities ON component_vulnerabilities.component_id = packages.id
   JOIN vulnerabilities ON vulnerabilities.vuln_id = component_vulnerabilities.vulnerability_id
   WHERE vulnerabilities.severity_rating = 'CRITICAL'
   GROUP BY packages.name
@@ -198,7 +198,7 @@ out. Sorting by EPSS surfaces the CVEs most likely to be exploited:
 safedep query exec -o json --sql "
   SELECT packages.name, vulnerabilities.cve_id, epss.epss, epss.percentile
   FROM packages
-  JOIN component_vulnerabilities ON component_vulnerabilities.vulnerability_id = packages.id
+  JOIN component_vulnerabilities ON component_vulnerabilities.component_id = packages.id
   JOIN vulnerabilities ON vulnerabilities.vuln_id = component_vulnerabilities.vulnerability_id
   JOIN epss ON epss.cve = vulnerabilities.cve_id
   WHERE vulnerabilities.severity_rating = 'CRITICAL'
@@ -223,7 +223,7 @@ the indexed `kev.date_added` to anchor the query:
 safedep query exec --sql "
   SELECT packages.name, packages.ecosystem, vulnerabilities.cve_id, vulnerabilities.severity_rating
   FROM packages
-  JOIN component_vulnerabilities ON component_vulnerabilities.vulnerability_id = packages.id
+  JOIN component_vulnerabilities ON component_vulnerabilities.component_id = packages.id
   JOIN vulnerabilities ON vulnerabilities.vuln_id = component_vulnerabilities.vulnerability_id
   JOIN kev ON kev.cve_id = vulnerabilities.cve_id
   WHERE kev.date_added >= '2018-01-01T00:00:00Z'

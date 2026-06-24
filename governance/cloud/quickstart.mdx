@@ -154,7 +154,7 @@ safedep auth login
 safedep query exec --sql "
   SELECT packages.name, COUNT(DISTINCT vulnerabilities.vuln_id) AS critical_vulns
   FROM packages
-  JOIN component_vulnerabilities ON component_vulnerabilities.vulnerability_id = packages.id
+  JOIN component_vulnerabilities ON component_vulnerabilities.component_id = packages.id
   JOIN vulnerabilities ON vulnerabilities.vuln_id = component_vulnerabilities.vulnerability_id
   WHERE vulnerabilities.severity_rating = 'CRITICAL'
   GROUP BY packages.name
