@@ -1,110 +1,25 @@
 ---
 title: "What is SafeDep?"
-description: "Secure your open source software supply chain with SafeDep"
-mode: "center"
+description: "SafeDep secures your open source software supply chain: block malicious packages, govern dependency risk, and control what AI coding agents can do."
 ---
 
-This is the official documentation website for [safedep.io](https://safedep.io).
-Here you will find everything you need to know about using **SafeDep's open source tools** and
-**SafeDep Cloud** to safeguard your applications against open source software supply chain risks.
+SafeDep secures your open source software supply chain. It blocks malicious and vulnerable packages before they reach your code, gives you visibility and policy over the dependencies you ship, and helps you control what AI coding agents pull in and run.
 
----
+Its core tools ([vet](https://github.com/safedep/vet), [pmg](https://github.com/safedep/pmg), [xBom](https://github.com/safedep/xbom), and [gryph](/ai-security/gryph-overview)) are free, open source, and usable without a SafeDep account. [SafeDep Cloud](/governance/cloud/overview) adds hosted policy, inventory, and org-wide visibility when your team is ready.
 
-## Why Open Source Security Matters
-
-<Info>
-**Did you know?** It has been estimated that Free and Open Source Software (FOSS) constitutes **70-90%** of any given piece of modern software solutions.
-</Info>
-
-With this level of dependency on open source, security teams need automated tools to safely consume OSS components without slowing down development velocity.
-
-In 2026, open source usage is no longer limited to libraries. Adoption of [Agent Skills](https://agentskills.io) and community projects like [Clawhub](https://clawhub.ai) has extended open source software supply chain security risks to AI Agents.
-
-## Open Source First
-
-SafeDep is built on the belief that security tools should be **free, transparent, and accessible to everyone**.
-Our core mission is to provide the security community with powerful open source tools that protect applications
-from supply chain threats.
-
-**Our Open Source Tools:**
-- **[vet](https://github.com/safedep/vet)** - Supply chain security analysis for CI/CD pipelines
-- **[pmg](https://github.com/safedep/pmg)** - Protect developers from malicious open source packages
-- **[xBom](https://github.com/safedep/xbom)** - SBOM enriched with AI, Crypto and other metadata using static code analysis
-- **[gryph](/ai-security/gryph-overview)** - Audit trail for AI coding agents
-
-These tools are completely free and built in public with community involvement. They operate independently and can be
-used without any commercial relationship with SafeDep.
-
----
-
-## How SafeDep Works
-
-SafeDep is a cloud platform for end-end open source software supply chain security. At its core, SafeDep builds and operates a
-large scale [malicious package scanning](#malicious-package-protection) infrastructure for real-time analysis of open source packages.
-
-SafeDep open source tools are free to use and can be used independently of SafeDep Cloud. However, SafeDep provides a zero-friction,
-unified platform experience for security teams to manage open source software supply chain risks across their entire SDLC.
-
-**Start for free. Expand to SafeDep for a unified platform experience.** See [pricing](https://safedep.io/pricing).
-
----
-
-## Malicious Package Protection
-
-SafeDep [continuously scans open source packages for malicious code](https://safedep.io/how-safedep-works/)
-using a combination of static and dynamic analysis. Suspicious packages are verified by security experts to confirm malicious behavior.
-
-Both our open source tools and SafeDep Cloud leverage this malicious package detection capability to provide
-comprehensive protection against open source software supply chain risks.
-
-<Info>
-The diagram below shows how SafeDep works to protect your open source software supply chain
-against malicious packages.
-</Info>
-
-```mermaid
-graph TD
-    NPM[npm Registry] --> MONITORING[SafeDep Monitoring]
-    PYPI[PyPI Registry] --> MONITORING
-    RUBYGEMS[RubyGems Registry] --> MONITORING
-    OTHER[Other Package Registries] --> MONITORING
-    
-    MONITORING --> STATIC[Static Code Analysis]
-    STATIC --> DYNAMIC[Dynamic Analysis]
-    DYNAMIC --> DATABASE[Real-time Malicious Package Database]
-    
-    DATABASE --> VET[SafeDep vet<br/>CI/CD Protection]
-    DATABASE --> PMG[SafeDep PMG<br/>Developer Environment Protection]
-    
-    VET --> CICD_BLOCK[Block Malicious Packages in CI/CD]
-    PMG --> DEV_BLOCK[Block Malicious Packages at Install Time]
-    
-    classDef benefit fill:#4ade80,stroke:#16a34a,stroke-width:2px,color:#000000
-    class CICD_BLOCK,DEV_BLOCK benefit
-```
-
----
-
-## Choose your path
+## Where to start
 
 <CardGroup cols={2}>
-  <Card title="I'm a developer" icon="laptop-code" href="/package-security/pmg/quickstart">
-    Block malicious packages at install time and in your AI coding tools. Start with **pmg**, then add CI/CD scanning with **vet**.
+  <Card title="Block malicious packages" icon="shield-halved" href="/package-security/overview">
+    Stop malicious and vulnerable packages at install time and in CI/CD, with pmg and vet.
   </Card>
-  <Card title="I'm a security engineer" icon="shield-halved" href="/governance/cloud/quickstart">
-    Get org-wide visibility, policy, and governance. Start with **SafeDep Cloud** and the **Endpoint Hub**.
+  <Card title="Secure AI coding agents" icon="robot" href="/ai-security/overview">
+    Discover, audit, and control what AI agents access and run, with gryph and the MCP server.
   </Card>
-</CardGroup>
-
-<CardGroup cols={2}>
-  <Card title="Scan a repository" icon="magnifying-glass" href="/governance/vet/quickstart">
-    Find supply-chain risk in code, dependencies, and SBOMs with vet.
+  <Card title="Scan & govern dependencies" icon="magnifying-glass" href="/governance/overview">
+    Scan repositories, SBOMs, and CI/CD for risk, and govern policy across your org with vet and SafeDep Cloud.
   </Card>
-  <Card title="Join the community" icon="discord" href="https://discord.gg/kAGEj25dCn">
-    Connect with other security engineers and get support.
+  <Card title="How SafeDep works" icon="book" href="/concepts/malicious-package-protection">
+    Understand how SafeDep detects malicious packages, plus the core terms used across these docs.
   </Card>
 </CardGroup>
-
----
-
-
