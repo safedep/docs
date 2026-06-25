@@ -49,8 +49,7 @@
             "icon": "box",
             "root": "package-security/pmg/overview",
             "pages": [
-              "package-security/pmg/quickstart",
-              "package-security/pmg/updates"
+              "package-security/pmg/quickstart"
             ]
           },
           {
@@ -67,23 +66,9 @@
         "icon": "robot",
         "pages": [
           "ai-security/overview",
-          {
-            "group": "AI Agent Observability",
-            "icon": "eye",
-            "pages": [
-              "ai-security/gryph-overview",
-              "ai-security/ai-governance",
-              "ai-security/shadow-ai-detection",
-              "ai-security/ai-tools-discovery"
-            ]
-          },
-          {
-            "group": "AI Coding Protection",
-            "icon": "plug",
-            "pages": [
-              "ai-security/mcp-server"
-            ]
-          }
+          "ai-security/ai-tools-discovery",
+          "ai-security/gryph-overview",
+          "ai-security/mcp-server"
         ]
       },
       {
@@ -109,6 +94,14 @@
             "pages": [
               "governance/xbom/quickstart",
               "governance/cyclonedx-sbom"
+            ]
+          },
+          {
+            "group": "AI Visibility",
+            "icon": "robot",
+            "root": "governance/ai-governance",
+            "pages": [
+              "governance/shadow-ai-detection"
             ]
           },
           {
@@ -248,7 +241,11 @@
     },
     {
       "source": "/pmg/updates",
-      "destination": "/package-security/pmg/updates"
+      "destination": "/package-security/pmg/overview"
+    },
+    {
+      "source": "/package-security/pmg/updates",
+      "destination": "/package-security/pmg/overview"
     },
     {
       "source": "/apps/jfrog/overview",
@@ -256,11 +253,19 @@
     },
     {
       "source": "/vet/guides/ai-governance",
-      "destination": "/ai-security/ai-governance"
+      "destination": "/governance/ai-governance"
+    },
+    {
+      "source": "/ai-security/ai-governance",
+      "destination": "/governance/ai-governance"
     },
     {
       "source": "/vet/guides/shadow-ai-detection",
-      "destination": "/ai-security/shadow-ai-detection"
+      "destination": "/governance/shadow-ai-detection"
+    },
+    {
+      "source": "/ai-security/shadow-ai-detection",
+      "destination": "/governance/shadow-ai-detection"
     },
     {
       "source": "/vet/guides/ai-tools-discovery",

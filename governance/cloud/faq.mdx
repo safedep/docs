@@ -36,7 +36,7 @@ ERRO[0001] Failed to execute whoami: rpc error: code = Unauthenticated desc = un
 ERRO[0001] Failed to execute query: rpc error: code = Unknown desc = failed to resolve tenant: record not found
 ```
 
-**Cause:** The tenant is not properly configured in vet, or the tenant domain is incorrect.
+**Cause:** The tenant is not properly configured in Vet, or the tenant domain is incorrect.
 
 **Solution:**
 
@@ -100,7 +100,7 @@ ERRO[0001] Failed to connect: x509: certificate verify failed
 - Update your system's CA certificates
 - Check system clock accuracy
 - Verify no proxy is interfering with SSL
-- Try updating vet to the latest version
+- Try updating Vet to the latest version
 
 ## Configuration Issues
 
@@ -153,7 +153,7 @@ ERRO[0001] Failed to load config: permission denied
 ```
 
 **Solution:**
-- Check file permissions on vet configuration directory
+- Check file permissions on Vet configuration directory
 - Ensure user has write access to `~/.config/vet/`
 - Try running with appropriate permissions
 - Clear and recreate configuration if corrupted
@@ -260,7 +260,7 @@ ERRO[0001] Query execution failed: syntax error
 
 ### Memory Issues
 
-**Issue:** vet runs out of memory during scans
+**Issue:** Vet runs out of memory during scans
 
 **Solution:**
 - Scan smaller directory trees

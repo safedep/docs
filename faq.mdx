@@ -1,6 +1,6 @@
 ---
-title: vet FAQ
-description: "Frequently asked questions about using vet and troubleshooting common issues"
+title: Vet FAQ
+description: "Frequently asked questions about using Vet and troubleshooting common issues"
 ---
 
 ## General Usage
@@ -37,7 +37,7 @@ Enable debug logging:
 
 ## Installation and Setup
 
-### Which version of vet should I use?
+### Which version of Vet should I use?
 
 Always use the latest stable version available:
 
@@ -52,9 +52,9 @@ brew upgrade safedep/tap/vet
 # https://github.com/safedep/vet/releases
 ```
 
-### Does vet work offline?
+### Does Vet work offline?
 
-vet requires internet connectivity to:
+Vet requires internet connectivity to:
 - Download vulnerability data from OSV database
 - Fetch OpenSSF Scorecard information
 - Access package registry metadata
@@ -62,9 +62,9 @@ vet requires internet connectivity to:
 
 For offline environments, consider using the [JSON dump workflow](/reference/build-your-own-queries) to cache data locally.
 
-### What package managers does vet support?
+### What package managers does Vet support?
 
-vet supports:
+Vet supports:
 
 <AccordionGroup>
   <Accordion title="JavaScript/Node.js">
@@ -125,16 +125,16 @@ Common causes:
   </Accordion>
   
   <Accordion title="First-time caching">
-    Initial scans may be slower as vet builds local caches.
+    Initial scans may be slower as Vet builds local caches.
   </Accordion>
 </AccordionGroup>
 
 ### No vulnerabilities found - is this correct?
 
-If vet reports no vulnerabilities:
+If Vet reports no vulnerabilities:
 
 1. **Check the package versions** - Ensure you're scanning current dependency versions
-2. **Verify manifest files** - Confirm vet is finding and parsing your package manifests
+2. **Verify manifest files** - Confirm Vet is finding and parsing your package manifests
 3. **Check exclusions** - Make sure you haven't excluded relevant directories
 4. **Review scan output** - Look for any warnings or errors during scanning
 
@@ -292,22 +292,22 @@ Common causes:
 
 ## Data and Privacy
 
-### What data does vet collect?
+### What data does Vet collect?
 
-vet collects:
+Vet collects:
 - **Package metadata** from public registries
 - **Vulnerability data** from public databases (OSV, NVD)
 - **OpenSSF Scorecard** metrics from public repositories
 
 Only **package coordinates** (ecosystem, name, version) leave your machine. Your source code is never transmitted.
 
-### Does vet send my code anywhere?
+### Does Vet send my code anywhere?
 
-No. vet reads your manifests, lockfiles, and (when [code analysis](/governance/vet/code-analysis) is enabled) your source code **locally** to identify and trace dependencies. Only package coordinates are sent to SafeDep for vulnerability and malware analysis; your source code never leaves your machine.
+No. Vet reads your manifests, lockfiles, and (when [code analysis](/governance/vet/code-analysis) is enabled) your source code **locally** to identify and trace dependencies. Only package coordinates are sent to SafeDep for vulnerability and malware analysis; your source code never leaves your machine.
 
-### Can I use vet in air-gapped environments?
+### Can I use Vet in air-gapped environments?
 
-vet requires internet access for vulnerability data and package metadata. For air-gapped environments:
+Vet requires internet access for vulnerability data and package metadata. For air-gapped environments:
 
 1. **Pre-cache data** using the [JSON dump workflow](/reference/build-your-own-queries)
 2. **Use proxy servers** to control external access

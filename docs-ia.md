@@ -132,16 +132,16 @@ Don't mix Diátaxis types within a single page.
 - Core Concepts: `concepts/malicious-package-protection`, `concepts/policy`, `concepts/cel`, `concepts/sbom`, `concepts/tenant`, `concepts/endpoint`
 
 **Package Security** *(tab landing: `package-security/overview`)*
-- Install-Time Package Blocking: `package-security/pmg/overview` *(landing)*, `package-security/pmg/quickstart`, `package-security/pmg/updates`
+- Install-Time Package Blocking: `package-security/pmg/overview` *(landing)*, `package-security/pmg/quickstart`
 - CI/CD Package Blocking: `package-security/jfrog-xray`
 
-**AI Agent Security** *(tab landing: `ai-security/overview`)*
-- AI Agent Observability: `ai-security/gryph-overview`, `ai-security/ai-governance`, `ai-security/shadow-ai-detection`, `ai-security/ai-tools-discovery`
-- AI Coding Protection: `ai-security/mcp-server`
+**AI Agent Security** *(tab landing: `ai-security/overview`)* — flat list, scoped to securing AI coding *agents*. The "AI as a software component" pages (Shadow AI in Code, AI Governance) moved to Visibility & Governance, since AI SDKs in your app are a supply-chain concern, not agent security. Order is discover → observe → augment.
+- `ai-security/ai-tools-discovery`, `ai-security/gryph-overview`, `ai-security/mcp-server`
 
 **Visibility & Governance** *(tab landing: `governance/overview`)*
 - Repository Scanning: `governance/vet/overview` *(landing)*, `governance/vet/quickstart`, `governance/vet/dependency-inventory`, `governance/vet/dependency-usage`, `governance/vet/code-analysis`
 - Bill of Materials: `governance/xbom/overview` *(landing)*, `governance/xbom/quickstart`, `governance/cyclonedx-sbom`
+- AI Visibility: `governance/ai-governance` *(landing)*, `governance/shadow-ai-detection`
 - CI/CD & Platform Integrations: `governance/integrations/overview` *(landing)*, `governance/integrations/github`, `governance/integrations/github-code-scanning`, `governance/integrations/gitlab`, `governance/integrations/bitbucket`, `governance/integrations/defectdojo`, `governance/terraform-audit`
 - SafeDep Cloud: `governance/cloud/overview` *(landing)*, `governance/cloud/quickstart`, `governance/cloud/authentication`, `governance/cloud/sync`
   - Endpoint Hub: `governance/cloud/endpoint-hub/overview` *(landing)*, `governance/cloud/endpoint-hub/inventory`, `governance/cloud/endpoint-hub/inventory-catalog`, `governance/cloud/endpoint-hub/package-guard`
@@ -155,7 +155,7 @@ Don't mix Diátaxis types within a single page.
 - Community: `community`
 - Support: `faq`, `governance/cloud/faq`
 
-Total: **57 pages**
+Total: **56 pages**
 
 ---
 
@@ -184,3 +184,13 @@ Threat Intelligence is expected to productize. When the product ships, it become
 - **R9 guard:** the tab is named for the solution, never "For SOC Teams." A distinct consuming team is *evidence* the outcome is distinct, not the organizing principle.
 - **Not a dual-home product:** TI does not get nav entries under Package Security or AI Agent Security. Cross-surface from those tabs via in-body `<Card>`s only.
 - **Standard kit on launch (R8/R6):** landing page, concept page(s) under Core Concepts, quickstart, integration how-tos, API reference linking to `buf.build/safedep/api` rather than restating schemas.
+
+### Watch items / deferred structural changes (from team review, 2026-06-25)
+
+These are decided or flagged but deliberately out of scope for the IA-revamp PR (that PR fixes what was broken or disorganized; these are larger moves). Tracked here so they are not lost.
+
+- **Concept reclassification (decided, deferred).** Standup ruling: "malicious package protection" is a **solution**, while **malicious package** and **vulnerability** are the **core concepts**. This amends R4 (which today treats `concepts/malicious-package-protection` as the user-facing detection-story concept page). Follow-up, with Abhisek: reclassify that page out of Core Concepts, add `concepts/malicious-package` and `concepts/vulnerability`, rewrite R4, and repoint the home + pmg cards. On the plate, not this PR.
+- **JFrog Xray placement (watch).** `package-security/jfrog-xray` is the lone paid (Professional/Enterprise), registry-level, team-scoped item in a tab that otherwise sells free, no-account, install-time blocking. It reads as out of place not because the tab is thin (thinness is by design until pmg is fully documented) but because of that coherence mismatch. Candidate move: relocate it to the team/Cloud cluster. Structural call for Abhisek, not a "broken" fix.
+- **Visibility & Governance breadth (watch).** Four groups, two nested two levels deep, spanning the whole capability ladder. Accepted risk for now; the natural relief valve is the Threat Intelligence tab above, which will draw intel-consumption use-cases out of V&G.
+- **Reference how-to misfiles (flagged).** `reference/build-your-own-queries` and `reference/insights-api-typescript` are how-tos (goal-phrased, step-by-step) sitting in the Reference tab. Diátaxis says how-tos belong in a solution tab (Visibility & Governance). Needs a landing-group decision before moving (redirects required). Interim: a one-line cross-link to the Insights API was added on `package-security/overview` to serve the "check a package programmatically" use-case.
+- **Endpoint Hub: MCP advisor stream (hold until GA, ~early July 2026, week of 2026-06-29).** Endpoint Hub actually has **three** sources, not the two the docs describe: Inventory (`vet endpoint scan`), Package Guard (PMG), and **Advisor events (SafeDep MCP server)**. Verified in control-tower `services/endpoint_management/list_endpoint_advisor_events.go` (`mcp_tool_call_logs` JOIN `endpoints`, gated by `FEATURE_ENDPOINT_SYNC`). When the advisor feature goes GA: (1) rewrite `governance/cloud/endpoint-hub/overview` "two views" → three (Inventory · Package Guard · Advisor), naming the MCP server as the source; (2) add an Endpoint Hub `<Note>` to `ai-security/mcp-server`. PMG's Endpoint Hub up-link (Package Guard) shipped in this PR; AI Tools Discovery already documents its Inventory sync. Gryph stays local-only (no endpoint link until it gains Cloud sync).

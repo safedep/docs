@@ -1,6 +1,6 @@
 ---
-title: "pmg Quickstart"
-description: "Install and configure pmg (Package Manager Guard) to block malicious packages at install time."
+title: "PMG Quickstart"
+description: "Install and configure PMG (Package Manager Guard) to block malicious packages at install time."
 ---
 
 <Card
@@ -18,7 +18,7 @@ description: "Install and configure pmg (Package Manager Guard) to block malicio
   would with your package managers.
 </Info>
 
-For what pmg is and how it works, see the [pmg overview](/package-security/pmg/overview).
+For what PMG is and how it works, see the [PMG overview](/package-security/pmg/overview).
 
 ## Installation
 
@@ -42,7 +42,7 @@ Download the latest release from our [GitHub releases page](https://github.com/s
 
 ### Automated Setup (Recommended)
 
-Run pmg's automated setup:
+Run PMG's automated setup:
 
 ```bash
 # Install shell aliases automatically
@@ -62,7 +62,7 @@ This command:
 
 ### Manual Usage (Alternative)
 
-To run pmg without aliases:
+To run PMG without aliases:
 
 ```bash
 pmg npm install <package-name>
@@ -70,7 +70,7 @@ pmg pnpm add <package-name>
 pmg pip install <package-name>
 ```
 
-If pmg detects a malicious package, it blocks the install and displays a warning.
+If PMG detects a malicious package, it blocks the install and displays a warning.
 
 ## Supported Package Managers
 
@@ -90,11 +90,11 @@ PMG supports these package managers:
 
 ## Troubleshooting
 
-### If pmg isn't working after setup
+### If PMG isn't working after setup
 
 1. Restart your terminal
-2. Check that interception is active: `which npm` should resolve to `~/.pmg/bin/npm` (the pmg shim). If it points to system npm, make sure `~/.pmg/bin` is early in your `$PATH`, or run `type npm` to check for a shell alias.
-3. Verify pmg installation: `pmg version`
+2. Check that interception is active: `which npm` should resolve to `~/.pmg/bin/npm` (the PMG shim). If it points to system npm, make sure `~/.pmg/bin` is early in your `$PATH`, or run `type npm` to check for a shell alias.
+3. Verify PMG installation: `pmg version`
 
 ### If packages are incorrectly blocked
 
@@ -104,13 +104,13 @@ PMG supports these package managers:
 
 ## Next Steps
 
-- Learn [what pmg is and how it works](/package-security/pmg/overview)
-- See the [pmg repository](https://github.com/safedep/pmg) for complete documentation and examples
+- Learn [what PMG is and how it works](/package-security/pmg/overview)
+- See the [PMG repository](https://github.com/safedep/pmg) for complete documentation and examples
 - Join our [Discord community](https://discord.gg/kAGEj25dCn) for support
-- Check out other SafeDep tools like [vet](/governance/vet/overview) and [SafeDep Cloud](/governance/cloud/overview)
+- Check out other SafeDep tools like [Vet](/governance/vet/overview) and [SafeDep Cloud](/governance/cloud/overview)
 
 <Tip>
-  Run `pmg --help` to see all available commands and options. pmg runs
+  Run `pmg --help` to see all available commands and options. PMG runs
   transparently in the background and only surfaces when it blocks a
   malicious package.
 </Tip>

@@ -1,6 +1,6 @@
 ---
 title: "Exceptions"
-description: "Reference for vet exceptions: the file format, the flags that generate and apply them, and the matching rules."
+description: "Reference for Vet exceptions: the file format, the flags that generate and apply them, and the matching rules."
 ---
 
 An exception excludes a package from scan results and reports. Use it for false positives, accepted risks during remediation, or legacy dependencies being migrated. This page is the reference for the exceptions file and the flags that work with it.
@@ -36,7 +36,7 @@ exceptions:
 | `ecosystem` | Case-insensitive (`PyPi`, `pypi`, `PyPI` all match). |
 | `version` | Exact version, or `*` to match any version. |
 
-Supported ecosystems include `npm`, `PyPI`, `Maven`, `Go`, `RubyGems`, `Cargo`, `NuGet`, `Packagist`, `Hex`, `Pub`, `GitHubActions`, `Terraform`, `VSCodeExtensions`, `OpenVSXExtensions`, and `Homebrew`. For the authoritative list, see the [vet source](https://github.com/safedep/vet/blob/main/pkg/models/models.go).
+Supported ecosystems include `npm`, `PyPI`, `Maven`, `Go`, `RubyGems`, `Cargo`, `NuGet`, `Packagist`, `Hex`, `Pub`, `GitHubActions`, `Terraform`, `VSCodeExtensions`, `OpenVSXExtensions`, and `Homebrew`. For the authoritative list, see the [Vet source](https://github.com/safedep/vet/blob/main/pkg/models/models.go).
 
 ## Generating exceptions
 

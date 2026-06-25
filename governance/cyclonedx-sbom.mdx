@@ -1,6 +1,6 @@
 ---
 title: "CycloneDX SBOM"
-description: "Generate a Software Bill of Materials (SBOM) with security metadata using vet"
+description: "Generate a Software Bill of Materials (SBOM) with security metadata using Vet"
 ---
 
 `vet` supports [CycloneDX v1.6](https://cyclonedx.org/docs/1.6/json) SBOM generation. The generated SBOM lists all packages and their dependencies, including security metadata: detected vulnerabilities, malware, and license information.
@@ -16,7 +16,7 @@ vet scan -D /path/to/project \
 ```
 
 <Note>
-The `--report-cdx-app-name` parameter is optional. If omitted, vet will use a default application name.
+The `--report-cdx-app-name` parameter is optional. If omitted, Vet will use a default application name.
 </Note>
 
 ## What's Included in the SBOM
@@ -165,7 +165,7 @@ myapp-1.2.3-production.cdx.json
   <Accordion title="Missing Components">
     If components are missing from your SBOM:
     - Ensure all package manifest files are included in the scan
-    - Check that vet supports your package manager
+    - Check that Vet supports your package manager
     - Verify dependencies are properly declared in manifest files
   </Accordion>
   
@@ -181,8 +181,8 @@ myapp-1.2.3-production.cdx.json
   <Card title="CycloneDX Documentation" icon="book" href="https://cyclonedx.org/docs/1.6/json/">
     Learn more about the CycloneDX v1.6 JSON specification
   </Card>
-  <Card title="vet Repository" icon="github" href="https://github.com/safedep/vet">
-    Explore vet's complete SBOM generation capabilities
+  <Card title="Vet Repository" icon="github" href="https://github.com/safedep/vet">
+    Explore Vet's complete SBOM generation capabilities
   </Card>
   <Card title="Dependency Inventory" icon="list" href="/governance/vet/dependency-inventory">
     Learn how to create accurate dependency inventories

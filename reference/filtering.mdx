@@ -1,12 +1,12 @@
 ---
 title: Filtering
-description: "Reference for vet's CEL filter expressions: the input schema, available fields, and the operators and functions you can use."
+description: "Reference for Vet's CEL filter expressions: the input schema, available fields, and the operators and functions you can use."
 ---
 
-vet filters dependencies with [CEL](https://cel.dev/) expressions. A filter is a boolean expression evaluated against each package; a package is included in the results when the expression evaluates to `true`. This page is the reference for the filter input and CEL syntax. For the concept, see [CEL](/concepts/cel).
+Vet filters dependencies with [CEL](https://cel.dev/) expressions. A filter is a boolean expression evaluated against each package; a package is included in the results when the expression evaluates to `true`. This page is the reference for the filter input and CEL syntax. For the concept, see [CEL](/concepts/cel).
 
 <Note>
-The `vet scan --filter` examples below use vet's original filter interface. vet also ships a newer `--policy` engine with a different input schema; see the [vet repository](https://github.com/safedep/vet) for its format.
+The `vet scan --filter` examples below use Vet's original filter interface. Vet also ships a newer `--policy` engine with a different input schema; see the [Vet repository](https://github.com/safedep/vet) for its format.
 </Note>
 
 ## Running a filter

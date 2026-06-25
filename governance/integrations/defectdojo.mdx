@@ -1,6 +1,6 @@
 ---
 title: DefectDojo Integration
-description: "Integrate vet with DefectDojo for centralized vulnerability tracking and management"
+description: "Integrate Vet with DefectDojo for centralized vulnerability tracking and management"
 ---
 
 `vet` integrates with [DefectDojo](https://github.com/DefectDojo/django-DefectDojo) to export vulnerabilities, policy violations, and other findings. Each scan is reported as a new engagement in DefectDojo.
@@ -14,15 +14,15 @@ description: "Integrate vet with DefectDojo for centralized vulnerability tracki
   <Card title="DefectDojo Instance" icon="server">
     Either local or cloud-hosted DefectDojo installation
   </Card>
-  <Card title="vet CLI" icon="terminal">
-    Install vet following the quickstart guide
+  <Card title="Vet CLI" icon="terminal">
+    Install Vet following the quickstart guide
   </Card>
   <Card title="API Access" icon="key">
     DefectDojo API key for authentication
   </Card>
 </CardGroup>
 
-If you don't have vet installed yet, follow the [quickstart guide](/governance/vet/quickstart) to get started.
+If you don't have Vet installed yet, follow the [quickstart guide](/governance/vet/quickstart) to get started.
 
 ## Quick Setup with Docker
 
@@ -80,18 +80,18 @@ The steps below use Docker Compose to run DefectDojo locally and scan the [demo-
   </Step>
   
   <Step title="Generate API Key">
-    Navigate to `http://localhost:8080/api/key-v2` to generate an API key for vet integration.
+    Navigate to `http://localhost:8080/api/key-v2` to generate an API key for Vet integration.
   </Step>
   
   <Step title="Set Environment Variable">
-    Configure the API key for vet usage:
+    Configure the API key for Vet usage:
     ```bash
     export DEFECT_DOJO_APIV2_KEY=<your-api-key>
     ```
   </Step>
 </Steps>
 
-## Scanning with vet
+## Scanning with Vet
 
 Now you can scan a project and send results to DefectDojo:
 
@@ -106,7 +106,7 @@ vet scan --github https://github.com/safedep/demo-client-python \
 Each scan creates a new engagement in DefectDojo; policy violations are reported as findings and visible in DefectDojo's dashboard.
 
 <Warning>
-Currently, vet reports only policy violations to DefectDojo. Support for reporting vulnerabilities and malicious package information is planned in [GitHub issue #430](https://github.com/safedep/vet/issues/430).
+Currently, Vet reports only policy violations to DefectDojo. Support for reporting vulnerabilities and malicious package information is planned in [GitHub issue #430](https://github.com/safedep/vet/issues/430).
 </Warning>
 
 ## Advanced Configuration
@@ -215,7 +215,7 @@ vet scan -D ./project-b \
   <Accordion title="No Findings Reported">
     If no findings appear in DefectDojo:
     - Confirm that policy violations exist in your scan
-    - Check the vet scan output for errors
+    - Check the Vet scan output for errors
     - Verify the DefectDojo integration is properly configured
   </Accordion>
 </AccordionGroup>
@@ -227,7 +227,7 @@ vet scan -D ./project-b \
   <Card title="Policy as Code Guide" icon="file-code" href="/reference/policy-as-code">
     Create effective security policies for DefectDojo integration
   </Card>
-  <Card title="vet GitHub Issues" icon="bug" href="https://github.com/safedep/vet/issues/430">
+  <Card title="Vet GitHub Issues" icon="bug" href="https://github.com/safedep/vet/issues/430">
     Track progress on enhanced DefectDojo integration features
   </Card>
   <Card title="Demo Repository" icon="github" href="https://github.com/safedep/demo-client-python">

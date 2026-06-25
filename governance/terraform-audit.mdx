@@ -199,7 +199,7 @@ terraform-audit:
 
 ## Policy Enforcement
 
-Terraform provider tier (official, partner, community) lives in SafeDep Cloud's query layer, not in vet's local `--filter-suite` engine, which evaluates package-level signals (vulnerabilities, licenses, OpenSSF Scorecard) and has no notion of provider tiers. To enforce provider policies, query the synced inventory and fail the build on disallowed providers.
+Terraform provider tier (official, partner, community) lives in SafeDep Cloud's query layer, not in Vet's local `--filter-suite` engine, which evaluates package-level signals (vulnerabilities, licenses, OpenSSF Scorecard) and has no notion of provider tiers. To enforce provider policies, query the synced inventory and fail the build on disallowed providers.
 
 The **Check for Unofficial Providers** step in the GitHub Actions example above demonstrates this pattern: it queries `terraform_providers.tier` and exits non-zero when any non-official provider is present. Adapt that query to encode your approved-provider rules.
 
@@ -225,7 +225,7 @@ Available fields include:
     If no providers are detected:
     - Ensure `.terraform.lock.hcl` exists (run `terraform init`)
     - Verify Terraform configuration files are present
-    - Check that vet supports your Terraform version
+    - Check that Vet supports your Terraform version
   </Accordion>
   
   <Accordion title="Sync Issues">
@@ -246,7 +246,7 @@ Available fields include:
   <Card title="Supply Chain Security" icon="shield" href="https://about.gitlab.com/blog/2022/06/01/terraform-as-part-of-software-supply-chain-part1-modules-and-providers/">
     Learn about Terraform in the software supply chain
   </Card>
-  <Card title="vet CLI Documentation" icon="terminal" href="https://github.com/safedep/vet">
-    Complete vet CLI documentation and examples
+  <Card title="Vet CLI Documentation" icon="terminal" href="https://github.com/safedep/vet">
+    Complete Vet CLI documentation and examples
   </Card>
 </CardGroup>

@@ -3,7 +3,7 @@ title: Package Guard
 description: "Monitor and control package installations across your endpoints using SafeDep Cloud"
 ---
 
-Package Guard shows package installs and usage across your endpoints. It runs on [pmg](/package-security/pmg/quickstart), SafeDep's open-source Package Manager Guard CLI that intercepts package manager commands and syncs the activity to SafeDep Cloud.
+Package Guard shows package installs and usage across your endpoints. It runs on [PMG](/package-security/pmg/quickstart), SafeDep's open-source Package Manager Guard CLI that intercepts package manager commands and syncs the activity to SafeDep Cloud.
 
 <iframe 
   width="100%" 
@@ -91,7 +91,7 @@ PMG ships with sensible defaults for `min_interval` and `timeout`. See the [PMG 
 
 Run `pmg cloud sync` to push local events immediately instead of waiting for the next automatic sync:
 
-- **In CI/CD pipelines:** Disable auto-sync and add `pmg cloud sync` as a post-step after pmg runs, so events are flushed before the runner is torn down.
+- **In CI/CD pipelines:** Disable auto-sync and add `pmg cloud sync` as a post-step after PMG runs, so events are flushed before the runner is torn down.
 - **Forcing an immediate push:** When you don't want to wait out the cooldown, for example right after a large dependency update.
 
 ## View package events in SafeDep Cloud

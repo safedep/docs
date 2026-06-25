@@ -7,10 +7,10 @@ A Software Bill of Materials (SBOM) is a complete inventory of the components yo
 
 ## SBOM and xBOM
 
-- A plain **SBOM** lists the dependencies declared in your manifests and lockfiles. vet generates a CycloneDX SBOM as part of a scan.
+- A plain **SBOM** lists the dependencies declared in your manifests and lockfiles. Vet generates a CycloneDX SBOM as part of a scan.
 - An **xBOM** goes further: [xBom](/governance/xbom/overview) analyzes your source code to also surface AI SDKs, SaaS APIs, and cryptographic usage that never appear in a manifest.
 
-Use vet's SBOM for dependency inventory. Reach for xBom when you also need to see the AI, SaaS, and crypto components your code actually uses.
+Use Vet's SBOM for dependency inventory. Reach for xBom when you also need to see the AI, SaaS, and crypto components your code actually uses.
 
 ## Why it matters
 
@@ -20,12 +20,12 @@ An accurate inventory underpins vulnerability management, license compliance, an
 
 <CardGroup cols={2}>
   <Card title="CycloneDX SBOM" icon="file-lines" href="/governance/cyclonedx-sbom">
-    Generate an SBOM with vet.
+    Generate an SBOM with Vet.
   </Card>
   <Card title="xBom" icon="list-check" href="/governance/xbom/overview">
     Enriched BOMs from static code analysis.
   </Card>
   <Card title="Dependency Inventory" icon="boxes-stacked" href="/governance/vet/dependency-inventory">
-    Inventory your dependencies with vet.
+    Inventory your dependencies with Vet.
   </Card>
 </CardGroup>

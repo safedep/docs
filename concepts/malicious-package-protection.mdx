@@ -27,8 +27,8 @@ graph TD
     DYNAMIC --> EXPERT[Expert Verification]
     EXPERT --> DATABASE[Real-time Malicious Package Database]
 
-    DATABASE --> VET[SafeDep vet<br/>CI/CD Protection]
-    DATABASE --> PMG[SafeDep pmg<br/>Developer Environment Protection]
+    DATABASE --> VET[SafeDep Vet<br/>CI/CD Protection]
+    DATABASE --> PMG[SafeDep PMG<br/>Developer Environment Protection]
 
     VET --> CICD_BLOCK[Block Malicious Packages in CI/CD]
     PMG --> DEV_BLOCK[Block Malicious Packages at Install Time]
@@ -39,8 +39,8 @@ graph TD
 
 ## How SafeDep tools use it
 
-- [vet](/governance/vet/overview) blocks malicious packages in CI/CD.
-- [pmg](/package-security/pmg/overview) blocks them at install time on developer machines.
+- [Vet](/governance/vet/overview) blocks malicious packages in CI/CD.
+- [PMG](/package-security/pmg/overview) blocks them at install time on developer machines.
 - The [SafeDep MCP server](/ai-security/mcp-server) lets AI coding agents check a package before suggesting it.
 
 ## Related
@@ -49,10 +49,10 @@ graph TD
   <Card title="Malware Analysis" icon="shield-virus" href="/governance/cloud/malware-analysis">
     Analyze packages on demand in SafeDep Cloud.
   </Card>
-  <Card title="pmg" icon="box" href="/package-security/pmg/overview">
+  <Card title="PMG" icon="box" href="/package-security/pmg/overview">
     Block malicious installs locally.
   </Card>
-  <Card title="vet" icon="magnifying-glass" href="/governance/vet/overview">
+  <Card title="Vet" icon="magnifying-glass" href="/governance/vet/overview">
     Block malicious packages in CI/CD.
   </Card>
   <Card title="Policy" icon="file-shield" href="/concepts/policy">

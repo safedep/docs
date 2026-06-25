@@ -1,46 +1,37 @@
 ---
-title: "pmg"
-description: "pmg wraps your package managers and blocks malicious packages at install time, before any code runs. Free, open source, no account required."
+title: "PMG"
+description: "PMG wraps your package managers and blocks malicious packages at install time, before any code runs. Free, open source, no account required."
 ---
 
-[pmg](https://github.com/safedep/pmg) (Package Manager Guard) blocks malicious packages at install time. It wraps the package managers you already use, so every `npm install` or `pip install` is checked against SafeDep's malware intelligence before any code runs. It is free, open source, and needs no account or API key.
+[PMG](https://github.com/safedep/pmg) (Package Manager Guard) blocks malicious packages at install time. It wraps the package managers you already use, so every `npm install` or `pip install` is checked against SafeDep's malware intelligence before any code runs. It is free, open source, and needs no account or API key.
 
-## What pmg does
+## What PMG does
 
-<CardGroup cols={2}>
-  <Card title="Blocks before code runs" icon="shield-check">
-    Catches malicious packages at install time, not after they are already in your environment.
-  </Card>
-  <Card title="No workflow change" icon="plug">
-    Wraps your existing package managers. You and your AI coding agents run the same commands.
-  </Card>
-  <Card title="Deep dependency analysis" icon="diagram-project">
-    Resolves and checks the full transitive dependency tree, not just the package you asked for.
-  </Card>
-  <Card title="No account needed" icon="lock-open">
-    Uses SafeDep's free community API. Apache 2.0 licensed, no signup or API key.
-  </Card>
-</CardGroup>
+- **Blocks before code runs:** catches malicious packages at install time, not after they are already in your environment.
+- **No workflow change:** wraps your existing package managers. You and your AI coding agents run the same commands.
+- **Deep dependency analysis:** resolves and checks the full transitive dependency tree, not just the package you asked for.
+- **No account needed:** uses SafeDep's free community API. Apache 2.0 licensed, no signup or API key.
 
 ## How it works
 
-pmg intercepts each install command, resolves the dependency tree, and checks every package against SafeDep's [malicious package intelligence](/concepts/malicious-package-protection) before allowing the install to proceed. Known malicious packages are blocked outright. An optional dependency cooldown policy can also skip package versions published inside a recent time window, when a freshly compromised release is most likely to slip through.
+PMG intercepts each install command, resolves the dependency tree, and checks every package against SafeDep's [malicious package intelligence](/concepts/malicious-package-protection) before allowing the install to proceed. Known malicious packages are blocked outright. An optional dependency cooldown policy can also skip package versions published inside a recent time window, when a freshly compromised release is most likely to slip through.
 
-It supports `npm`, `pnpm`, `yarn`, `bun`, `npx`, `pnpx`, `pip`, `uv`, and `poetry`. For dependency-resolution internals and CLI flags, see the [pmg repository](https://github.com/safedep/pmg).
+It supports `npm`, `pnpm`, `yarn`, `bun`, `npx`, `pnpx`, `pip`, `uv`, and `poetry`. For dependency-resolution internals and CLI flags, see the [PMG repository](https://github.com/safedep/pmg).
+
+<Note>
+  Connect PMG to [SafeDep Cloud](/governance/cloud/overview) and the installs it checks sync to [Endpoint Hub](/governance/cloud/endpoint-hub/overview) as Package Guard events, a timeline of package activity across your team's endpoints. Local blocking works the same with or without an account.
+</Note>
 
 ## Get started
 
 <CardGroup cols={2}>
-  <Card title="pmg Quickstart" icon="rocket" href="/package-security/pmg/quickstart">
-    Install pmg and protect your package managers in minutes.
+  <Card title="PMG Quickstart" icon="rocket" href="/package-security/pmg/quickstart">
+    Install PMG and protect your package managers in minutes.
   </Card>
-  <Card title="Keeping pmg updated" icon="arrows-rotate" href="/package-security/pmg/updates">
-    Keep pmg current so it catches the latest threats.
-  </Card>
-  <Card title="Why malicious packages matter" icon="lightbulb" href="/concepts/malicious-package-protection">
+  <Card title="Malicious Package Protection" icon="lightbulb" href="/concepts/malicious-package-protection">
     How SafeDep detects malicious packages across registries.
   </Card>
-  <Card title="pmg on GitHub" icon="github" href="https://github.com/safedep/pmg">
+  <Card title="PMG on GitHub" icon="github" href="https://github.com/safedep/pmg">
     Source, full documentation, and CI usage.
   </Card>
 </CardGroup>
