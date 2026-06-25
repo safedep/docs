@@ -29,7 +29,8 @@
             "group": "Core Concepts",
             "icon": "lightbulb",
             "pages": [
-              "concepts/malicious-package-protection",
+              "concepts/malicious-package",
+              "concepts/vulnerability",
               "concepts/policy",
               "concepts/cel",
               "concepts/sbom",
@@ -219,6 +220,10 @@
     }
   },
   "redirects": [
+    {
+      "source": "/concepts/malicious-package-protection",
+      "destination": "/concepts/malicious-package"
+    },
     {
       "source": "/api/introduction",
       "destination": "/reference/api-introduction"

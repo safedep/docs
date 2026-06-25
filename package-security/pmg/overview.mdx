@@ -14,7 +14,7 @@ description: "PMG wraps your package managers and blocks malicious packages at i
 
 ## How it works
 
-PMG intercepts each install command, resolves the dependency tree, and checks every package against SafeDep's [malicious package intelligence](/concepts/malicious-package-protection) before allowing the install to proceed. Known malicious packages are blocked outright. An optional dependency cooldown policy can also skip package versions published inside a recent time window, when a freshly compromised release is most likely to slip through.
+PMG intercepts each install command, resolves the dependency tree, and checks every package against SafeDep's [malicious package intelligence](/concepts/malicious-package) before allowing the install to proceed. Known malicious packages are blocked outright. An optional dependency cooldown policy can also skip package versions published inside a recent time window, when a freshly compromised release is most likely to slip through.
 
 It supports `npm`, `pnpm`, `yarn`, `bun`, `npx`, `pnpx`, `pip`, `uv`, and `poetry`. For dependency-resolution internals and CLI flags, see the [PMG repository](https://github.com/safedep/pmg).
 
@@ -28,7 +28,7 @@ It supports `npm`, `pnpm`, `yarn`, `bun`, `npx`, `pnpx`, `pip`, `uv`, and `poetr
   <Card title="PMG Quickstart" icon="rocket" href="/package-security/pmg/quickstart">
     Install PMG and protect your package managers in minutes.
   </Card>
-  <Card title="Malicious Package Protection" icon="lightbulb" href="/concepts/malicious-package-protection">
+  <Card title="Malicious Package" icon="lightbulb" href="/concepts/malicious-package">
     How SafeDep detects malicious packages across registries.
   </Card>
   <Card title="PMG on GitHub" icon="github" href="https://github.com/safedep/pmg">

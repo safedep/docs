@@ -33,7 +33,7 @@ Every structural decision derives from these rules. Full rationale in `docs-ia-p
 
 - **R3 — Organize by solution, not by tool.** Tabs name the security outcome SafeDep delivers. Tools appear one level deeper, inside groups. Grammar test: "SafeDep solves ___" must complete naturally with the tab name. Imperative verbs ("Scan & Analyze") fail; solution nouns ("Package Security") pass.
 
-- **R4 — Concepts are first-class, atomic, linkable.** Each concept (Policy, Endpoint, Tenant, Malysis/Malbase, SBOM, CEL) gets one dedicated page under Get Started › Core Concepts. The Malysis *pipeline* is internal infrastructure — it is never a product tab or sidebar group. If SafeDep's threat-intelligence offering productizes, the user-facing *product* gets a docs home under the planned Threat Intelligence tab (§8); the pipeline stays invisible. The distinction this rule protects is pipeline vs product — not "intelligence never gets a tab."
+- **R4 — Concepts are first-class, atomic, linkable.** Each concept (Malicious Package, Vulnerability, Policy, CEL, SBOM, Tenant, Endpoint) gets one dedicated page under Get Started › Core Concepts. **Malicious-package *protection* is a solution (the Package Security tab), not a concept**: the concept is the malicious package itself, and `concepts/malicious-package` carries the user-facing detection story (how SafeDep classifies a package as malicious). The Malysis/Malbase *pipeline* is internal infrastructure, never a concept page, product tab, or sidebar group. If SafeDep's threat-intelligence offering productizes, the user-facing *product* gets a docs home under the planned Threat Intelligence tab (§8); the pipeline stays invisible. The distinction this rule protects is pipeline vs product, not "intelligence never gets a tab."
 
 - **R5 — Progressive disclosure.** Tab depth is unlimited; groups handle it. A tab splits only when it covers fundamentally different security outcomes. The Reference tab is the technical lookup layer — CLI flags, filter syntax, API specs — and is the only place exhaustive lookup content belongs.
 
@@ -129,7 +129,7 @@ Don't mix Diátaxis types within a single page.
 
 **Get Started**
 - Introduction: `introduction`, `get-started/cli-tools`
-- Core Concepts: `concepts/malicious-package-protection`, `concepts/policy`, `concepts/cel`, `concepts/sbom`, `concepts/tenant`, `concepts/endpoint`
+- Core Concepts: `concepts/malicious-package`, `concepts/vulnerability`, `concepts/policy`, `concepts/cel`, `concepts/sbom`, `concepts/tenant`, `concepts/endpoint`
 
 **Package Security** *(tab landing: `package-security/overview`)*
 - Install-Time Package Blocking: `package-security/pmg/overview` *(landing)*, `package-security/pmg/quickstart`
@@ -155,7 +155,7 @@ Don't mix Diátaxis types within a single page.
 - Community: `community`
 - Support: `faq`, `governance/cloud/faq`
 
-Total: **56 pages**
+Total: **57 pages**
 
 ---
 
@@ -164,7 +164,8 @@ Total: **56 pages**
 | New page | Destination |
 |---|---|
 | `get-started/choose-your-path` | Get Started › Introduction |
-| `concepts/malicious-package-protection` | Get Started › Core Concepts |
+| `concepts/malicious-package` | Get Started › Core Concepts |
+| `concepts/vulnerability` | Get Started › Core Concepts |
 | `concepts/policy` | Get Started › Core Concepts |
 | `concepts/endpoint` | Get Started › Core Concepts |
 | `concepts/tenant` | Get Started › Core Concepts |
@@ -189,7 +190,7 @@ Threat Intelligence is expected to productize. When the product ships, it become
 
 These are decided or flagged but deliberately out of scope for the IA-revamp PR (that PR fixes what was broken or disorganized; these are larger moves). Tracked here so they are not lost.
 
-- **Concept reclassification (decided, deferred).** Standup ruling: "malicious package protection" is a **solution**, while **malicious package** and **vulnerability** are the **core concepts**. This amends R4 (which today treats `concepts/malicious-package-protection` as the user-facing detection-story concept page). Follow-up, with Abhisek: reclassify that page out of Core Concepts, add `concepts/malicious-package` and `concepts/vulnerability`, rewrite R4, and repoint the home + pmg cards. On the plate, not this PR.
+- **Concept reclassification (DONE).** Standup ruling applied: "malicious package protection" is a **solution** (the Package Security tab), and **malicious package** + **vulnerability** are the core concepts. `concepts/malicious-package` (carries the detection story) and `concepts/vulnerability` replace `concepts/malicious-package-protection` (retired, redirected). R4 rewritten in §2, `CLAUDE.md`, and the skill. Inbound cards repointed.
 - **JFrog Xray placement (watch).** `package-security/jfrog-xray` is the lone paid (Professional/Enterprise), registry-level, team-scoped item in a tab that otherwise sells free, no-account, install-time blocking. It reads as out of place not because the tab is thin (thinness is by design until pmg is fully documented) but because of that coherence mismatch. Candidate move: relocate it to the team/Cloud cluster. Structural call for Abhisek, not a "broken" fix.
 - **Visibility & Governance breadth (watch).** Four groups, two nested two levels deep, spanning the whole capability ladder. Accepted risk for now; the natural relief valve is the Threat Intelligence tab above, which will draw intel-consumption use-cases out of V&G.
 - **Reference how-to misfiles (flagged).** `reference/build-your-own-queries` and `reference/insights-api-typescript` are how-tos (goal-phrased, step-by-step) sitting in the Reference tab. Diátaxis says how-tos belong in a solution tab (Visibility & Governance). Needs a landing-group decision before moving (redirects required). Interim: a one-line cross-link to the Insights API was added on `package-security/overview` to serve the "check a package programmatically" use-case.
