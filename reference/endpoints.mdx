@@ -1,0 +1,40 @@
+---
+title: "API Endpoints"
+description: "Canonical list of SafeDep service hostnames: console, data plane, control plane, identity, community API, and MCP."
+---
+
+These are the public SafeDep hosts you work with directly: the console, the API planes, identity, the community API, and the hosted MCP server. Use this page as the canonical reference for what each host does and how it authenticates. For how to authenticate against the API planes, see [Authentication](/governance/cloud/authentication).
+
+<Note>
+This list is not a complete egress allowlist. Some integrations reach additional internal hosts. Enabling vet-action's comments proxy, for example, adds `ghcp-integrations.safedep.io`. Check the relevant integration's docs when you configure strict firewall rules.
+</Note>
+
+## Hosts
+
+| Host | Role | Authentication |
+|---|---|---|
+| `app.safedep.io` | Web console: sign in, manage your tenant, and create API keys | Interactive login (OAuth/OIDC) |
+| `api.safedep.io` | Data plane: package insights, scanning, and malware analysis (gRPC / ConnectRPC) | API key |
+| `cloud.safedep.io` | Control plane: tenant, policy, and management operations | JWT |
+| `auth.safedep.io` | Identity provider: OAuth2 / OIDC, issues and validates JWTs | OAuth2 / OIDC |
+| `community-api.safedep.io` | Community API: public malware and package queries | None (keyless) |
+| `mcp.safedep.io` | Hosted [Model Context Protocol](/ai-security/mcp-server) server for AI coding tools | API key |
+
+<Info>
+You create API keys in the web console at [`app.safedep.io/settings/api-keys`](https://app.safedep.io/settings/api-keys). Your **tenant ID** is your tenant domain, for example `your-company.safedep.io`.
+</Info>
+
+## Notes
+
+- `app.safedep.io` is the SafeDep Cloud console. It replaces the retired `platform.safedep.io`, which is no longer in use. Update any old references to that host.
+- The data plane (`api.safedep.io`) and control plane (`cloud.safedep.io`) speak gRPC with a [ConnectRPC facade](/reference/api-introduction), not REST. See the canonical schemas at [buf.build/safedep/api](https://buf.build/safedep/api).
+- The community API (`community-api.safedep.io`) needs no authentication and is rate-limited under a fair-usage policy.
+
+<CardGroup cols={2}>
+  <Card title="Authentication" icon="key" href="/governance/cloud/authentication">
+    How to authenticate against the data and control planes.
+  </Card>
+  <Card title="API Specification" icon="book" href="https://buf.build/safedep/api">
+    Canonical gRPC / ConnectRPC schemas and generated SDKs.
+  </Card>
+</CardGroup>

@@ -1,0 +1,97 @@
+---
+title: Filtering
+description: "Reference for Vet's CEL filter expressions: the input schema, available fields, and the operators and functions you can use."
+---
+
+Vet filters dependencies with [CEL](https://cel.dev/) expressions. A filter is a boolean expression evaluated against each package; a package is included in the results when the expression evaluates to `true`. This page is the reference for the filter input and CEL syntax. For the concept, see [CEL](/concepts/cel).
+
+<Note>
+The `vet scan --filter` examples below use Vet's original filter interface. Vet also ships a newer `--policy` engine with a different input schema; see the [Vet repository](https://github.com/safedep/vet) for its format.
+</Note>
+
+## Running a filter
+
+Filter a scan directly, or filter cached results from a [JSON dump](/reference/build-your-own-queries):
+
+```bash
+# Filter a scan
+vet scan -D /path/to/repo --filter 'vulns.critical.size() > 0'
+
+# Filter cached results
+vet query --from /tmp/dump --filter 'licenses.exists(p, p == "GPL-3.0")'
+```
+
+Add `--filter-fail` to exit non-zero when any package matches, for CI/CD gating.
+
+## Filter input
+
+Each expression receives these variables:
+
+| Variable | Content |
+|---|---|
+| `_` | Root variable holding the others |
+| `pkg` | Package info: `pkg.ecosystem`, `pkg.name`, `pkg.version` |
+| `vulns` | Vulnerabilities by severity: `vulns.all`, `vulns.critical`, `vulns.high`, `vulns.medium`, `vulns.low` |
+| `scorecard` | OpenSSF Scorecard: `scorecard.score`, `scorecard.scores["Check-Name"]` |
+| `projects` | Source projects, each with `stars`, `forks`, `issues`, `type` |
+| `licenses` | SPDX license codes |
+
+<Tip>
+See the [filter input specification](https://github.com/safedep/vet/blob/main/api/filter_input_spec.proto) for the full message structure.
+</Tip>
+
+### Input example
+
+A filter sees each package as a structured input:
+
+```json
+{
+  "pkg": { "ecosystem": "npm", "name": "lodash.camelcase", "version": "4.3.0" },
+  "vulns": { "all": [], "critical": [], "high": [], "medium": [], "low": [] },
+  "scorecard": { "scores": { "Maintained": 0, "Dangerous-Workflow": 10, "Token-Permissions": 0 } },
+  "projects": [ { "name": "lodash/lodash", "type": "GITHUB", "stars": 55518, "forks": 6787, "issues": 464 } ],
+  "licenses": ["MIT"]
+}
+```
+
+## CEL syntax
+
+Functions: `size()` (array or map length), `exists(var, condition)` (any element matches), `in` (membership), `contains()`, `startsWith()` / `endsWith()`.
+
+Operators: `==` `!=` `<` `<=` `>` `>=` (comparison), `&&` `||` `!` (logical), `+` `-` `*` `/` (arithmetic).
+
+Types: booleans (`true` / `false`), double-quoted strings, numbers, arrays (`["a", "b"]`), and maps (`{"key": "value"}`).
+
+## Example expressions
+
+```bash
+# Any critical or high vulnerability
+vulns.critical.size() > 0 || vulns.high.size() > 0
+
+# Unmaintained per OpenSSF Scorecard
+scorecard.scores.Maintained == 0
+
+# Not an approved license
+!licenses.exists(p, p in ["MIT", "Apache-2.0", "BSD-3-Clause"])
+
+# Low-popularity GitHub project
+projects.exists(x, x.type == "GITHUB" && x.stars < 100)
+
+# Missing license information
+licenses.size() == 0
+```
+
+<CardGroup cols={2}>
+  <Card title="CEL" icon="code" href="/concepts/cel">
+    What CEL is and how SafeDep uses it.
+  </Card>
+  <Card title="Policy as Code" icon="file-code" href="/reference/policy-as-code">
+    Combine expressions into reusable policy files.
+  </Card>
+  <Card title="Build Your Own Queries" icon="magnifying-glass" href="/reference/build-your-own-queries">
+    Filter cached scan data with the query workflow.
+  </Card>
+  <Card title="OpenSSF Scorecard" icon="shield-check" href="https://github.com/ossf/scorecard#checks-1">
+    The scorecard checks referenced in scores.
+  </Card>
+</CardGroup>

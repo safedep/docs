@@ -1,0 +1,163 @@
+---
+title: Insights API with TypeScript
+description: "Build applications that leverage SafeDep Insights API using TypeScript and ConnectRPC"
+---
+
+<Info>
+To follow this guide you need a SafeDep Cloud API Key and Tenant Identifier. See [Cloud Quickstart](/governance/cloud/quickstart) on how to onboard to SafeDep Cloud and get an API key.
+</Info>
+
+This guide queries the SafeDep Insights API v2 for open-source package security metadata using TypeScript. Any language [supported by the API SDK](https://buf.build/safedep/api/sdks) follows the same pattern.
+
+## Project Setup
+
+### Initialize TypeScript Project
+
+Create a new TypeScript project:
+
+```bash
+npm init -y
+npm install --save-dev typescript @types/node
+```
+
+### Configure Buf Registry
+
+Configure npm to use the [Buf Registry](https://buf.build/docs/bsr/generated-sdks/npm/) for SafeDep API SDKs:
+
+```bash
+npm config set @buf:registry https://buf.build/gen/npm/v1/
+```
+
+### Install SafeDep API SDKs
+
+Install the required libraries:
+
+```bash
+npm install --save @buf/safedep_api.connectrpc_es@latest @connectrpc/connect @connectrpc/connect-node
+```
+
+## Authentication Setup
+
+### Environment Variables
+
+Set your SafeDep Cloud credentials:
+
+```bash
+export SAFEDEP_API_KEY=your-api-key
+export SAFEDEP_TENANT_ID=your-tenant-id
+```
+
+<Warning>
+Never hardcode API keys in your source code. Always use environment variables or secure configuration management.
+</Warning>
+
+## Implementation
+
+### Import Dependencies
+
+Set up the necessary imports for ConnectRPC client and SafeDep services. The exact import paths and client constructor track the connect-es version of the generated SDK, so validate them against the version you install:
+
+```typescript
+import { createClient, Interceptor } from "@connectrpc/connect";
+import { createConnectTransport } from "@connectrpc/connect-node";
+import { InsightService } from "@buf/safedep_api.connectrpc_es/safedep/services/insights/v2/insights_connect.js";
+import { Ecosystem } from "@buf/safedep_api.bufbuild_es/safedep/messages/package/v1/ecosystem_pb.js";
+```
+
+### Authentication Interceptor
+
+This interceptor adds authentication headers to each request:
+
+```typescript
+function authenticationInterceptor(token: string, tenant: string): Interceptor {
+  return (next) => async (req) => {
+    req.header.set("authorization", token);
+    req.header.set("x-tenant-id", tenant);
+    return await next(req);
+  }
+}
+```
+
+### Main Application Logic
+
+Query package insights with the main function:
+
+```typescript
+async function main() {
+  // Validate environment variables
+  const token = process.env.SAFEDEP_API_KEY;
+  if (!token) {
+    console.error("SAFEDEP_API_KEY is required");
+    process.exit(1);
+  }
+
+  const tenantId = process.env.SAFEDEP_TENANT_ID;
+  if (!tenantId) {
+    console.error("SAFEDEP_TENANT_ID is required");
+    process.exit(1);
+  }
+
+  // Create transport with authentication
+  const transport = createConnectTransport({
+    baseUrl: "https://api.safedep.io",
+    httpVersion: "1.1",
+    interceptors: [authenticationInterceptor(token, tenantId)]
+  });
+
+  // Create client and make API call
+  const client = createClient(InsightService, transport);
+  const res = await client.getPackageVersionInsight({
+    packageVersion: {
+      package: {
+        ecosystem: Ecosystem.NPM,
+        name: "lodash",
+      },
+      version: "4.17.21",
+    }
+  });
+
+  console.log(res.toJson());
+}
+
+// Run the application
+main().catch(console.error);
+```
+
+## API Reference
+
+For request and response schemas, see the [Insights v2 API Specification](https://buf.build/safedep/api/docs/main:safedep.services.insights.v2#safedep.services.insights.v2.GetPackageVersionInsightRequest).
+
+### Available Ecosystems
+
+Supported package ecosystems:
+
+- `NPM` - Node.js packages
+- `PYPI` - Python packages
+- `MAVEN` - Java/JVM packages
+- `CARGO` - Rust packages
+- `NUGET` - .NET packages
+
+### Response Data
+
+The response includes:
+
+- **Vulnerabilities**: Known security vulnerabilities
+- **Licenses**: License information and compliance data
+- **Scorecard**: OpenSSF Scorecard metrics
+- **Malware**: Malware detection results
+- **Metadata**: Package information and statistics
+
+<CardGroup cols={2}>
+  <Card title="API Documentation" icon="book" href="https://buf.build/safedep/api/docs/main:safedep.services.insights.v2">
+    Complete API specification and schema documentation
+  </Card>
+  <Card title="SDK Support" icon="code" href="https://buf.build/safedep/api/sdks">
+    SDKs available for multiple programming languages
+  </Card>
+  <Card title="SafeDep Cloud" icon="cloud" href="/governance/cloud/quickstart">
+    Get started with SafeDep Cloud and API access
+  </Card>
+  <Card title="ConnectRPC" icon="plug" href="https://connectrpc.com/">
+    Learn more about the ConnectRPC framework
+  </Card>
+</CardGroup>

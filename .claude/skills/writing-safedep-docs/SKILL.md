@@ -95,7 +95,7 @@ See `products.md` in this skill for: per-product one-liner, source repo path, do
 **Quick map:**
 - **vet** — repository scanning + filtering / queries → Visibility & Governance
 - **pmg** — install-time malicious package blocking → Package Security
-- **gryph** — AI coding agent runtime sandbox → AI Agent Security
+- **gryph** — AI coding agent observability / local audit trail (records what the agent does; does **not** block or sandbox) → AI Agent Security
 - **xBom** — standalone xBOM/SBOM generator via static code analysis → Visibility & Governance › Bill of Materials
 - **MCP** — SafeDep MCP server for AI coding tools → AI Agent Security › AI Coding Protection
 - **vet-action** — GitHub Action; split by use-case (blocking → Package Security; scanning → Visibility & Governance)
@@ -108,10 +108,10 @@ See `products.md` in this skill for: per-product one-liner, source repo path, do
 2. **Pick the Diátaxis mode.** One per page.
 3. **Look up tab + group + path prefix** in the placement table above (and verify against `docs-ia.md` §3–§4).
 4. **Check the page map (`docs-ia.md` §7)** to see what already exists in that group — don't duplicate.
-5. **Check `products.md` and the product's repo README** for up-to-date facts. Don't paraphrase from memory; CLI flags and feature lists drift.
-6. **Write the page** in the right voice for the mode. Add frontmatter (`title`, `description` < 160 chars). No H1 — Mintlify renders the title.
-7. **Update `docs.json`** under the correct tab/group.
-8. **Verify:** `node_modules/.bin/mintlify broken-links` from the repo root must not add new failures.
+5. **Verify facts against source, not memory or the existing docs.** Read `products.md` (especially its "Verified facts & gotchas" appendix) and the product's repo README/source. The sibling repos are checked out under `../` (`vet`, `pmg`, `safedep-cli`, `control-tower`, `xbom`, `homebrew-tap`). CLI flags, hosts, install methods, and feature lists drift, and the docs have shipped wrong ones; confirm every command, flag, and host before you write it.
+6. **Write the page** in the right voice for the mode. No em-dashes (run `stop-slop`). Add frontmatter (`title`, `description` < 160 chars). No H1 — Mintlify renders the title.
+7. **Update `docs.json`** under the correct tab/group; add a `redirects[]` entry if you moved a page.
+8. **Verify:** run `bunx -b mintlify broken-links` (or `node_modules/.bin/mintlify broken-links`) from the repo root; only the three pre-existing `essentials/` failures are expected. broken-links does **not** catch wrong commands, bad in-page anchors, or dropped content — check those by hand.
 9. **If you added a concept page**, also update `docs-ia.md` §7 and the Notion mirror.
 
 ## Workflow: reviewing / refactoring an existing page
@@ -143,7 +143,9 @@ See `products.md` in this skill for: per-product one-liner, source repo path, do
 | Repeating CEL syntax in three guides | Violates R4 | One canonical page in `concepts/`; others link |
 | Long CLI flag table on docs.safedep.io | Violates R6 | Lives in the product repo's README/manual |
 | Adding a page to two sidebar groups | One slot per page | Pick the primary home; cross-surface with `<Card>` |
-| Paraphrasing vet/pmg flags from memory | Drifts from product reality | Read the product's README; cite the version |
+| Asserting a command, flag, or host from memory or the existing docs | The docs have shipped wrong commands; facts drift | Verify against the product repo under `../` and `products.md`'s gotchas appendix |
+| Em-dash (`—`) anywhere in page prose | Violates the stop-slop invariant | Commas, colons, parentheses, or two sentences |
+| "Benefits" / "Why use…" / "Best Practices" / "Limitations" sections in a how-to or tutorial | Diátaxis mode-drift (explanation/advice in the wrong mode) | Move the "what/why" to a concept page; cut generic advice |
 | Skipping the product landing page | Violates R8 | Write the overview before linking setup steps |
 
 ## Red flags — STOP and re-read `docs-ia.md`

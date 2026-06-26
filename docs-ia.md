@@ -12,14 +12,14 @@ Six tabs — three solution tabs at the core, plus supporting tabs.
 
 | Tab | Purpose | Groups |
 |---|---|---|
-| **Get Started** | What is SafeDep, vocabulary, entry points | Introduction · Quickstarts · Core Concepts |
-| **Package Security** | Block malicious packages at install time — on dev machines and in CI/CD | Package Manager Guard (pmg) · CI/CD Package Blocking |
-| **AI Agent Security** | Discover, audit, and control what AI agents access and run | AI Agent Observability · AI Coding Protection (MCP) |
-| **Visibility & Governance** | Scan repos, SBOMs, and CI/CD for supply-chain risk; manage policy and org-wide cloud visibility | Repository Scanning (vet) · Bill of Materials · CI/CD & Platform Integrations · SafeDep Cloud · Endpoint Hub · Policy & Risk · Access & Identity |
-| **Reference** | Exact syntax, flags, API specs — no explanation | vet Query & Policy · API & Automation |
+| **Get Started** | What is SafeDep, vocabulary, entry points | Introduction · Core Concepts |
+| **Package Security** | Block malicious packages at install time — on dev machines and in CI/CD | Install-Time Package Blocking · CI/CD Package Blocking |
+| **AI Agent Security** | Discover, audit, and control what AI agents access and run | AI Agent Observability · AI Coding Protection |
+| **Visibility & Governance** | Scan repos, SBOMs, and CI/CD for supply-chain risk; manage policy and org-wide cloud visibility | Repository Scanning · Bill of Materials · CI/CD & Platform Integrations · SafeDep Cloud (nests Endpoint Hub, Policy & Risk, Authentication) |
+| **Reference** | Exact syntax, flags, API specs — no explanation | Query & Policy · API & Automation |
 | **Community & Support** | Community resources, FAQ | Community · Support |
 
-> **Implementation note:** Tab renames in `docs.json` are a later phase. This file records the intended structure.
+> **Implementation note:** the 6-tab structure is live in `docs.json` (Phase 1 re-tab complete). Moving page files to solution-aligned folders is a later phase; legacy paths (`vet/`, `cloud/`, `apps/`, `xbom/`) stay grandfathered until then.
 
 ---
 
@@ -33,7 +33,7 @@ Every structural decision derives from these rules. Full rationale in `docs-ia-p
 
 - **R3 — Organize by solution, not by tool.** Tabs name the security outcome SafeDep delivers. Tools appear one level deeper, inside groups. Grammar test: "SafeDep solves ___" must complete naturally with the tab name. Imperative verbs ("Scan & Analyze") fail; solution nouns ("Package Security") pass.
 
-- **R4 — Concepts are first-class, atomic, linkable.** Each concept (Policy, Endpoint, Tenant, Malysis/Malbase, SBOM, CEL) gets one dedicated page under Get Started › Core Concepts. The Malysis *pipeline* is internal infrastructure — it is never a product tab or sidebar group. If SafeDep's threat-intelligence offering productizes, the user-facing *product* gets a docs home under the planned Threat Intelligence tab (§8); the pipeline stays invisible. The distinction this rule protects is pipeline vs product — not "intelligence never gets a tab."
+- **R4 — Concepts are first-class, atomic, linkable.** Each concept (Malicious Package, Vulnerability, Policy, CEL, SBOM, Tenant, Endpoint) gets one dedicated page under Get Started › Core Concepts. **Malicious-package *protection* is a solution (the Package Security tab), not a concept**: the concept is the malicious package itself, and `concepts/malicious-package` carries the user-facing detection story (how SafeDep classifies a package as malicious). The Malysis/Malbase *pipeline* is internal infrastructure, never a concept page, product tab, or sidebar group. If SafeDep's threat-intelligence offering productizes, the user-facing *product* gets a docs home under the planned Threat Intelligence tab (§8); the pipeline stays invisible. The distinction this rule protects is pipeline vs product, not "intelligence never gets a tab."
 
 - **R5 — Progressive disclosure.** Tab depth is unlimited; groups handle it. A tab splits only when it covers fundamentally different security outcomes. The Reference tab is the technical lookup layer — CLI flags, filter syntax, API specs — and is the only place exhaustive lookup content belongs.
 
@@ -54,7 +54,7 @@ Every structural decision derives from these rules. Full rationale in `docs-ia-p
 | If the page… | Tab | Example group |
 |---|---|---|
 | Defines a concept/term used across docs | Get Started | Core Concepts |
-| Onboards a new user / routes entry points | Get Started | Introduction / Quickstarts |
+| Onboards a new user / routes entry points | Get Started | Introduction (product quickstarts co-locate with their product) |
 | Covers malicious package blocking (install-time or CI/CD) | Package Security | pmg / CI/CD Package Blocking |
 | Covers AI agent discovery, audit, or control | AI Agent Security | AI Agent Observability / AI Coding Protection |
 | Covers scanning repos, SBOMs, or CI/CD for supply-chain risk | Visibility & Governance | Repository Scanning / Bill of Materials / CI/CD |
@@ -104,7 +104,7 @@ No H1 — Mintlify renders the title from frontmatter.
 
 | Type | Style | Location |
 |---|---|---|
-| **Tutorial** | Learning-oriented, hands-on | Get Started › Quickstarts |
+| **Tutorial** | Learning-oriented, hands-on | The product's group in its solution tab (quickstart co-located with the product) |
 | **How-to Guide** | Problem-oriented, step-by-step | The relevant solution tab |
 | **Reference** | Comprehensive, minimal explanation | Reference tab |
 | **Explanation** | Conceptual, connects ideas | Get Started › Core Concepts |
@@ -125,40 +125,37 @@ Don't mix Diátaxis types within a single page.
 
 ## 7. Authoritative tab → group → page map
 
-*Human-readable mirror of `docs.json`. Source of truth is `docs.json`.*
-*Tab names reflect the intended structure; `docs.json` is updated in a later implementation phase.*
+*Human-readable mirror of `docs.json`. Source of truth is `docs.json`.* Re-synced after the Phase 2 path migration, the Phase 3 sidebar restructure, and the net-new pages landed. A group's clickable landing (Mintlify `root`) is marked *(landing)*.
 
 **Get Started**
-- Introduction: `introduction`
-- Quickstarts: `vet/quickstart`, `cloud/quickstart`
-- Core Concepts: `concepts/cel`
+- Introduction: `introduction`, `get-started/cli-tools`
+- Core Concepts: `concepts/malicious-package`, `concepts/vulnerability`, `concepts/policy`, `concepts/cel`, `concepts/sbom`, `concepts/tenant`, `concepts/endpoint`
 
-**Package Security** *(currently "Protect Developers" in docs.json)*
-- Package Manager Guard (pmg): `pmg/concepts/why-pmg`, `pmg/quickstart`, `pmg/updates`
-- CI/CD Package Blocking: *(pages TBD — vet-action blocking use case)*
+**Package Security** *(tab landing: `package-security/overview`)*
+- Install-Time Package Blocking: `package-security/pmg/overview` *(landing)*, `package-security/pmg/quickstart`
+- CI/CD Package Blocking: `package-security/jfrog-xray`
 
-**AI Agent Security** *(currently split across "Protect Developers" and "Scan & Analyze" in docs.json)*
-- AI Agent Observability: `vet/guides/ai-governance`, `vet/guides/shadow-ai-detection`, `vet/guides/ai-tools-discovery`
-- AI Coding Protection (MCP): `apps/mcp/overview`
+**AI Agent Security** *(tab landing: `ai-security/overview`)* — flat list, scoped to securing AI coding *agents*. The "AI as a software component" pages (Shadow AI in Code, AI Governance) moved to Visibility & Governance, since AI SDKs in your app are a supply-chain concern, not agent security. Order is discover → observe → augment.
+- `ai-security/ai-tools-discovery`, `ai-security/gryph-overview`, `ai-security/mcp-server`
 
-**Visibility & Governance** *(currently "Scan & Analyze" + "Govern & Manage" in docs.json)*
-- Repository Scanning (vet): `vet/concepts/why-vet`, `vet/guides/code-analysis`, `vet/guides/dependency-inventory`, `vet/guides/dependency-usage-identification`, `scan/filtering-recipes`
-- Bill of Materials (xBom): `xbom/concepts/why-xbom`, `xbom/quickstart`, `vet/guides/cyclonedx-sbom`
-- CI/CD & Platform Integrations: `apps/overview`, `apps/github/overview`, `vet/guides/github-code-scanning`, `apps/gitlab/overview`, `apps/bitbucket/bitbucket-pipes`, `apps/jfrog/overview`, `vet/guides/defect-dojo-integration`, `vet/guides/terraform-supply-chain-audit`
-- SafeDep Cloud: `cloud/overview`, `cloud/sync`
-- Endpoint Hub: `cloud/endpoint-hub/overview`, `cloud/endpoint-hub/inventory`, `cloud/endpoint-hub/inventory-catalog`, `cloud/endpoint-hub/package-guard`
-- Policy & Risk: `cloud/malware-analysis`, `cloud/package-exclusions`
-- Access & Identity: `cloud/authentication`
+**Visibility & Governance** *(tab landing: `governance/overview`)*
+- Repository Scanning: `governance/vet/overview` *(landing)*, `governance/vet/quickstart`, `governance/vet/dependency-inventory`, `governance/vet/dependency-usage`, `governance/vet/code-analysis`
+- Bill of Materials: `governance/xbom/overview` *(landing)*, `governance/xbom/quickstart`, `governance/cyclonedx-sbom`
+- AI Visibility: `governance/ai-governance` *(landing)*, `governance/shadow-ai-detection`
+- CI/CD & Platform Integrations: `governance/integrations/overview` *(landing)*, `governance/integrations/github`, `governance/integrations/github-code-scanning`, `governance/integrations/gitlab`, `governance/integrations/bitbucket`, `governance/integrations/defectdojo`, `governance/terraform-audit`
+- SafeDep Cloud: `governance/cloud/overview` *(landing)*, `governance/cloud/quickstart`, `governance/cloud/authentication`, `governance/cloud/sync`
+  - Endpoint Hub: `governance/cloud/endpoint-hub/overview` *(landing)*, `governance/cloud/endpoint-hub/inventory`, `governance/cloud/endpoint-hub/inventory-catalog`, `governance/cloud/endpoint-hub/package-guard`
+  - Policy & Risk: `governance/cloud/malware-analysis`, `governance/cloud/package-exclusions`
 
 **Reference**
-- vet Query & Policy: `vet/advanced/filtering`, `vet/advanced/build-your-own-queries`, `vet/advanced/policy-as-code`, `vet/advanced/exceptions`, `vet/advanced/path-exclusion`
-- API & Automation: `api-reference/introduction`, `vet/guides/insights-api-using-typescript`, `reference/sql-query`
+- Query & Policy: `reference/filtering`, `reference/build-your-own-queries`, `reference/policy-as-code`, `reference/exceptions`, `reference/path-exclusion`
+- API & Automation: `reference/api-introduction`, `reference/endpoints`, `reference/insights-api-typescript`, `reference/sql-query`
 
 **Community & Support**
 - Community: `community`
-- Support: `faq`, `cloud/faq`
+- Support: `faq`, `governance/cloud/faq`
 
-Total: **47 pages**
+Total: **57 pages**
 
 ---
 
@@ -167,16 +164,16 @@ Total: **47 pages**
 | New page | Destination |
 |---|---|
 | `get-started/choose-your-path` | Get Started › Introduction |
-| `concepts/malicious-package-protection` | Get Started › Core Concepts |
+| `concepts/malicious-package` | Get Started › Core Concepts |
+| `concepts/vulnerability` | Get Started › Core Concepts |
 | `concepts/policy` | Get Started › Core Concepts |
 | `concepts/endpoint` | Get Started › Core Concepts |
 | `concepts/tenant` | Get Started › Core Concepts |
 | `concepts/sbom` | Get Started › Core Concepts |
 | `concepts/policy-as-code` | Get Started › Core Concepts |
-| `ai-security/gryph-overview` | AI Agent Security |
 | Section landing pages | One per solution tab |
 | `governance/tenants-access-control` | Visibility & Governance › Access & Identity |
-| `reference/cli` | Reference |
+| `reference/cli` | Reference — *dry per-command surface; the orientation/"which CLI" map shipped as `get-started/cli-tools`* |
 
 ### Planned structural change — Threat Intelligence (fourth solution tab)
 
@@ -188,3 +185,13 @@ Threat Intelligence is expected to productize. When the product ships, it become
 - **R9 guard:** the tab is named for the solution, never "For SOC Teams." A distinct consuming team is *evidence* the outcome is distinct, not the organizing principle.
 - **Not a dual-home product:** TI does not get nav entries under Package Security or AI Agent Security. Cross-surface from those tabs via in-body `<Card>`s only.
 - **Standard kit on launch (R8/R6):** landing page, concept page(s) under Core Concepts, quickstart, integration how-tos, API reference linking to `buf.build/safedep/api` rather than restating schemas.
+
+### Watch items / deferred structural changes (from team review, 2026-06-25)
+
+These are decided or flagged but deliberately out of scope for the IA-revamp PR (that PR fixes what was broken or disorganized; these are larger moves). Tracked here so they are not lost.
+
+- **Concept reclassification (DONE).** Standup ruling applied: "malicious package protection" is a **solution** (the Package Security tab), and **malicious package** + **vulnerability** are the core concepts. `concepts/malicious-package` (carries the detection story) and `concepts/vulnerability` replace `concepts/malicious-package-protection` (retired, redirected). R4 rewritten in §2, `CLAUDE.md`, and the skill. Inbound cards repointed.
+- **JFrog Xray placement (watch).** `package-security/jfrog-xray` is the lone paid (Professional/Enterprise), registry-level, team-scoped item in a tab that otherwise sells free, no-account, install-time blocking. It reads as out of place not because the tab is thin (thinness is by design until pmg is fully documented) but because of that coherence mismatch. Candidate move: relocate it to the team/Cloud cluster. Structural call for Abhisek, not a "broken" fix.
+- **Visibility & Governance breadth (watch).** Four groups, two nested two levels deep, spanning the whole capability ladder. Accepted risk for now; the natural relief valve is the Threat Intelligence tab above, which will draw intel-consumption use-cases out of V&G.
+- **Reference how-to misfiles (flagged).** `reference/build-your-own-queries` and `reference/insights-api-typescript` are how-tos (goal-phrased, step-by-step) sitting in the Reference tab. Diátaxis says how-tos belong in a solution tab (Visibility & Governance). Needs a landing-group decision before moving (redirects required). Interim: a one-line cross-link to the Insights API was added on `package-security/overview` to serve the "check a package programmatically" use-case.
+- **Endpoint Hub: MCP advisor stream (hold until GA, ~early July 2026, week of 2026-06-29).** Endpoint Hub actually has **three** sources, not the two the docs describe: Inventory (`vet endpoint scan`), Package Guard (PMG), and **Advisor events (SafeDep MCP server)**. Verified in control-tower `services/endpoint_management/list_endpoint_advisor_events.go` (`mcp_tool_call_logs` JOIN `endpoints`, gated by `FEATURE_ENDPOINT_SYNC`). When the advisor feature goes GA: (1) rewrite `governance/cloud/endpoint-hub/overview` "two views" → three (Inventory · Package Guard · Advisor), naming the MCP server as the source; (2) add an Endpoint Hub `<Note>` to `ai-security/mcp-server`. PMG's Endpoint Hub up-link (Package Guard) shipped in this PR; AI Tools Discovery already documents its Inventory sync. Gryph stays local-only (no endpoint link until it gains Cloud sync).

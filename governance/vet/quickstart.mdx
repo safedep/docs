@@ -1,0 +1,120 @@
+---
+title: "Vet Quickstart"
+description: 'Get started with Vet in under 5 minutes'
+---
+
+<Info>
+For SafeDep Cloud, refer to [Cloud Quickstart](/governance/cloud/quickstart)
+</Info>
+
+Use [SafeDep Vet](https://github.com/safedep/vet) to detect security risks and apply policy-based controls that block vulnerable or malicious open source dependencies.
+
+## Installation
+
+<AccordionGroup>
+  <Accordion icon="beer-mug" title="Homebrew (macOS/Linux)">
+    ```bash
+    brew tap safedep/tap
+    brew install safedep/tap/vet
+    ```
+  </Accordion>
+  
+  <Accordion icon="docker" title="Container Image">
+    ```bash
+    docker run --rm -it ghcr.io/safedep/vet:latest version
+    ```
+  </Accordion>
+  
+  <Accordion icon="download" title="Pre-built Binary">
+    Download a pre-built binary suitable for your OS at [GitHub Releases](https://github.com/safedep/vet/releases)
+  </Accordion>
+</AccordionGroup>
+
+For additional installation options, see [Vet's README](https://github.com/safedep/vet).
+
+## Running Your First Scan
+
+Scan a source code repository, auto-discovering well-known manifest files:
+
+```bash
+vet scan -D /path/to/dir
+```
+
+<img src="/images/vet/vet-scan-directory.png" alt="vet scanning a directory" />
+
+### Other scanning options
+
+<AccordionGroup>
+  <Accordion icon="file" title="Scan a single file">
+    ```bash
+    vet scan -M package-lock.json
+    ```
+  </Accordion>
+  
+  <Accordion icon="link" title="Scan a PURL">
+    ```bash
+    vet scan --purl pkg:npm/express@4.18.2
+    ```
+  </Accordion>
+  
+  <Accordion icon="java" title="Scan a Java JAR file">
+    ```bash
+    vet scan -M /path/to/my-app.jar
+    ```
+  </Accordion>
+  
+  <Accordion icon="docker" title="Scan an OCI image">
+    ```bash
+    vet scan --image ghcr.io/safedep/vet:latest
+    ```
+  </Accordion>
+</AccordionGroup>
+
+For more scanning options, see [Vet's README](https://github.com/safedep/vet).
+
+## Policy as Code
+
+`vet` supports a [CEL](https://cel.dev/)-based policy language for identifying risks. Scan and fail on critical or high vulnerabilities:
+
+```bash
+vet scan -D /path/to/dir \
+  --filter '(vulns.critical.size() > 0) || (vulns.high.size() > 0)' \
+  --filter-fail
+```
+
+### Advanced Policy Configuration
+
+Combine multiple CEL queries into a policy suite ([example](https://github.com/safedep/vet/blob/main/samples/filter-suites/fs-generic.yml)) and audit your application:
+
+```bash
+vet scan -D /path/to/dir \
+  --filter-suite /path/to/policy.yml \
+  --filter-fail
+```
+
+## Setup CI/CD Guardrails
+
+`vet` includes a native [GitHub Action](https://github.com/safedep/vet-action) for policy-driven guardrails against risky OSS components.
+
+<img src="/images/vet-guardrails.png" alt="vet guardrails in GitHub" />
+
+<CardGroup cols={2}>
+  <Card title="GitHub Integration" icon="github" href="/governance/integrations/github-code-scanning">
+    Setup Vet with GitHub Actions and Code Scanning
+  </Card>
+  <Card title="GitLab Integration" icon="gitlab" href="/governance/integrations/gitlab">
+    Integrate Vet with GitLab CI/CD pipelines
+  </Card>
+  <Card title="Policy Configuration" icon="shield-check" href="/reference/policy-as-code">
+    Learn advanced policy configuration with CEL
+  </Card>
+  <Card title="Cloud Platform" icon="cloud" href="/governance/cloud/quickstart">
+    Scale across your organization with SafeDep Cloud
+  </Card>
+</CardGroup>
+
+## What's Next?
+
+- See the [Vet GitHub Repository](https://github.com/safedep/vet) for the latest documentation on usage and advanced features.
+
+- For `vet`'s complete commands, sub-commands, flags, and usage documentation, see the [Vet CLI Reference Manual](https://safedep.github.io/vet).

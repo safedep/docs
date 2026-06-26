@@ -20,7 +20,7 @@ The documentation is organized into **6 tabs** — three solution tabs at the co
 5. **Reference** — exact syntax/APIs (vet query & policy, API & automation)
 6. **Community & Support** — community resources and FAQ
 
-> **Implementation note:** Tab renames in `docs.json` are a later phase. `docs-ia.md` records the intended structure.
+> **Status:** the IA migration is complete. The 6-tab structure is live in `docs.json`, and all pages have moved to solution-aligned paths (`get-started/`, `concepts/`, `package-security/`, `ai-security/`, `governance/`, `reference/`). Old paths (`vet/`, `pmg/`, `cloud/`, `apps/`, `scan/`, `xbom/`, `api-reference/`) are **redirects** in `docs.json` `redirects[]`, not live files. When you add or move a page, add its redirect there too.
 
 ### Governing Rules (how the IA evolves)
 
@@ -29,7 +29,7 @@ Every placement decision derives from these rules. Full rationale and page map: 
 - **R1 — One primary entry point.** New visitors meet a clear "What is SafeDep?" primer, not a tool catalog.
 - **R2 — Capability ladder, not persona gate.** The journey runs: individual dev → team → org-wide governance. Navigation doesn't pin users to a tier. Features requiring SafeDep Cloud are marked with a `<Note>` callout — no structural separation.
 - **R3 — Organize by solution, not by tool.** Tabs name the security outcome SafeDep delivers. Grammar test: "SafeDep solves ___" must complete naturally with the tab name.
-- **R4 — Concepts are first-class, atomic, linkable.** Each concept (Policy, Endpoint, Tenant, Malysis/Malbase, SBOM, CEL) gets one dedicated page under Get Started › Core Concepts. The Malysis *pipeline* is never a product tab; a productized Threat Intelligence offering gets its planned fourth solution tab (`docs-ia.md` §8) — the rule protects pipeline vs product.
+- **R4 — Concepts are first-class, atomic, linkable.** Each concept gets one dedicated page under Get Started › Core Concepts (`concepts/`). The seven that exist: `malicious-package`, `vulnerability`, `policy`, `cel`, `sbom`, `tenant`, `endpoint`. **Malicious-package *protection* is a solution (the Package Security tab), not a concept** — the concept is the malicious package itself, and `concepts/malicious-package` carries the user-facing detection story (how SafeDep classifies a package as malicious). Malysis/Malbase are **not** concept pages — they are internal infrastructure (R6). The Malysis *pipeline* is never a product tab; a productized Threat Intelligence offering gets its planned fourth solution tab (`docs-ia.md` §8) — the rule protects pipeline vs product.
 - **R5 — Progressive disclosure.** Tab depth is unlimited; groups handle it. A tab splits only when it covers fundamentally different security outcomes. The Reference tab is the only place for exhaustive lookup content.
 - **R6 — docs.safedep.io is the guide layer.** Product-level technical reference (CLI flags, type definitions) lives in individual product repos. This site covers concepts, how-tos, and integration guides.
 - **R7 — AI-agent consumability is first-class.** One concept per atomic page, predictable headings, stable URLs.
@@ -43,7 +43,7 @@ Every placement decision derives from these rules. Full rationale and page map: 
 | If the page… | Tab | Example group |
 |---|---|---|
 | Defines a concept/term used across docs | Get Started | Core Concepts |
-| Onboards a new user / routes entry points | Get Started | Introduction / Quickstarts |
+| Onboards a new user / routes entry points | Get Started | Introduction (product quickstarts co-locate with their product) |
 | Covers malicious package blocking (install-time or CI/CD) | Package Security | pmg / CI/CD Package Blocking |
 | Covers AI agent discovery, audit, or control | AI Agent Security | AI Agent Observability / AI Coding Protection |
 | Covers scanning repos, SBOMs, CI/CD for risk | Visibility & Governance | Repository Scanning / Bill of Materials / CI/CD |
@@ -66,7 +66,7 @@ All documentation follows the **Diátaxis framework** with four content types:
    - CI/CD & Platform Integrations: GitHub, GitLab, Bitbucket, JFrog, DefectDojo
    - SBOM & Analysis: CycloneDX, dependency inventory, code analysis
    - API & Automation: TypeScript API usage, Terraform audits
-3. **Reference** (`vet/advanced/`, `api-reference/`) — Technical specifications and lookup. All live in the **Reference** tab.
+3. **Reference** (`reference/`) — Technical specifications and lookup. All live in the **Reference** tab.
 4. **Explanation / Concepts** (`concepts/`) — Conceptual understanding. Live in Get Started › Core Concepts (atomic, first-class, linkable — R4).
 
 **Diátaxis → location quick map:** Tutorial → Get Started · How-to → relevant solution tab · Reference → Reference tab · Explanation → Get Started › Core Concepts.
@@ -75,36 +75,26 @@ All documentation follows the **Diátaxis framework** with four content types:
 
 ```
 /
-├── docs.json              # Mintlify config: navigation, theme, SEO
-├── docs-ia.md             # Canonical living IA document (← update when IA changes)
+├── docs.json              # Mintlify config: navigation, theme, SEO, redirects[]
+├── docs-ia.md             # Canonical living IA document (← update §7 when pages change)
 ├── docs-ia-proposal.md    # Design/decision record (benchmarks, rationale)
 ├── styles.css             # Custom styling
 │
-├── concepts/              # ★ New: atomic concept pages (Get Started › Core Concepts)
-├── get-started/           # ★ New: primer, entry points, quickstart aggregators
-├── package-security/      # ★ New: Package Security tab content
-├── ai-security/           # ★ New: AI Agent Security tab content
-├── governance/            # ★ New: Visibility & Governance tab content
-├── reference/             # ★ New: Reference tab content
-│
-├── vet/                   # Legacy tool path (grandfathered — don't move files)
-│   ├── quickstart.mdx
-│   ├── concepts/
-│   ├── guides/
-│   └── advanced/
-├── pmg/                   # Legacy tool path (grandfathered)
-├── xbom/                  # Legacy tool path (grandfathered)
-├── cloud/                 # Legacy tool path (grandfathered)
-├── apps/                  # Legacy tool path (grandfathered)
-├── scan/                  # Legacy tool path (grandfathered)
-├── api-reference/         # API specifications (grandfathered)
+├── introduction.mdx       # Home: "What is SafeDep?" (Get Started)
+├── get-started/           # Primer, cli-tools, entry points (Get Started)
+├── concepts/              # Atomic concept pages → Get Started › Core Concepts
+├── package-security/      # Package Security tab content (incl. pmg/)
+├── ai-security/           # AI Agent Security tab content
+├── governance/            # Visibility & Governance tab content (vet/, xbom/, cloud/, integrations/)
+├── reference/             # Reference tab content
+├── community.mdx, faq.mdx # Community & Support tab
 │
 ├── images/                # Static images and screenshots
 ├── logo/                  # Brand assets
 └── snippets/              # Reusable MDX content blocks
 ```
 
-**Path convention:** New pages use solution-aligned paths (`package-security/`, `ai-security/`, `governance/`, `concepts/`). Legacy paths (`vet/`, `pmg/`, `cloud/`, `apps/`, `scan/`) are grandfathered — moving them requires a `redirects` entry in `docs.json`.
+**Path convention:** every page lives under its solution-aligned prefix (`get-started/`, `concepts/`, `package-security/`, `ai-security/`, `governance/`, `reference/`). The old tool-shaped paths (`vet/`, `pmg/`, `cloud/`, `apps/`, `scan/`, `xbom/`, `api-reference/`) no longer hold files — they exist only as `redirects[]` entries in `docs.json`. **When you move or rename a page, add a `{ "source": "/old", "destination": "/new" }` redirect** and update internal links, then run broken-links.
 
 ## Common Development Commands
 
@@ -120,6 +110,18 @@ mintlify install
 ```
 
 **Important:** All Mintlify commands must be run from the repository root where `docs.json` is located.
+
+## Before you write or edit (hard-won rules)
+
+These four rules prevent the mistakes that recur most. They are not optional.
+
+1. **Verify every product fact against the source, never from docs or memory.** Commands, flags, hosts, env vars, install methods, supported ecosystems, and version behavior *drift* — and the docs themselves have shipped wrong ones. The sibling product repos are checked out next to this one under `../`: `vet`, `pmg`, `safedep-cli`, `control-tower`, `xbom`, `homebrew-tap`. Read the relevant `README.md` / source (e.g. `vet/scan.go`, `pmg` README, `control-tower/services/query/v2/catalog`) before asserting a command or flag. The skill's `products.md` has a "Verified facts & gotchas" appendix with the known traps. If you cannot verify a claim, say so in the page rather than guess.
+
+2. **No em-dashes. Run stop-slop.** Never use `—` anywhere (use commas, colons, parentheses, or two sentences). Cut hype adjectives, throat-clearing intros, and lines that restate the page title or `description`. Prefer plain words and short sentences.
+
+3. **One Diátaxis mode per page.** A how-to or tutorial must not carry "Benefits", "Why use…", hollow benefit-card groups, or generic "Best Practices"/advice accordions — that explanation/marketing drift belongs in a concept page or gets cut. Reference pages stay terse. Exhaustive CLI flag tables, SDK code, and tool internals belong in the product repo (R6) — link to them, don't restate.
+
+4. **`broken-links` and an em-dash grep do not prove correctness.** They pass whether or not a command is real, an in-page link resolves, or content was silently dropped. Verify commands against source, anchors against the target page's headings, and (after any trim) that no procedural content was lost. When editing in bulk, read the diff.
 
 ## Documentation Writing Guidelines
 
@@ -182,21 +184,21 @@ When adding new pages, update `docs.json`:
 Example — adding a new CI/CD integration guide:
 ```json
 {
-  "tab": "Scan & Analyze",
+  "tab": "Visibility & Governance",
   "groups": [
     {
       "group": "CI/CD & Platform Integrations",
       "pages": [
-        "apps/github/overview",
-        "vet/guides/github-code-scanning",
-        "scan/new-platform-integration"  // ← new page at goal-based path
+        "governance/integrations/overview",
+        "governance/integrations/github-code-scanning",
+        "governance/integrations/new-platform"  // ← new page at a solution-aligned path
       ]
     }
   ]
 }
 ```
 
-After every `docs.json` change, run: `node_modules/.bin/mintlify broken-links`
+After every `docs.json` change, run broken-links: `bunx -b mintlify broken-links` (or `node_modules/.bin/mintlify broken-links` if installed). Only the three pre-existing `essentials/` failures are expected; any others are yours to fix.
 
 ## Development Notes
 

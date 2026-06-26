@@ -1,0 +1,82 @@
+---
+title: Policy as Code
+description: "Reference for SafeDep policy files: the filter suite format, the flags that apply it, and the CEL fields available to rules."
+---
+
+A policy file (a *filter suite*) is a YAML document of [CEL](/concepts/cel) rules that Vet evaluates against every package in a scan. For what policies are and why they matter, see [Policy](/concepts/policy). This page is the syntax reference.
+
+<Note>
+This page documents the `--filter-suite` format, Vet's original policy interface. Vet also ships a newer `--policy-suite` engine that uses a different rule schema; see the [Vet repository](https://github.com/safedep/vet) for its format.
+</Note>
+
+## Filter suite format
+
+A filter suite has a `name`, a `description`, and an ordered list of `filters`. Each filter has a `name` and a `value` (a CEL expression). A package matches the suite when any filter's expression evaluates to true.
+
+```yaml
+name: Enterprise Security Policy
+description: Comprehensive security policy for open source components
+filters:
+  - name: critical-vulnerabilities
+    value: |
+      vulns.critical.size() > 0
+  - name: approved-licenses
+    value: |
+      !licenses.exists(p, p in ["MIT", "Apache-2.0", "BSD-3-Clause", "ISC"])
+  - name: minimum-maintenance
+    value: |
+      scorecard.scores["Maintained"] < 5
+  - name: known-malware
+    value: |
+      vulns.all.exists(v, v.id.startsWith("MAL-"))
+```
+
+Browse complete, ready-to-use suites in the [Vet samples directory](https://github.com/safedep/vet/tree/main/samples/filter-suites).
+
+## Applying a filter suite
+
+Pass the suite to `vet scan` and fail the scan when any package matches:
+
+```bash
+vet scan -D /path/to/project \
+  --filter-suite /path/to/policy.yml \
+  --filter-fail
+```
+
+| Flag | Purpose |
+|---|---|
+| `--filter-suite <file>` | Evaluate packages against the filter suite in `<file>`. |
+| `--filter-fail` | Exit non-zero if any package matches, for CI/CD gating. |
+
+In CI/CD with [vet-action](/governance/integrations/github-code-scanning), pass the file via the `policy` input and set `paranoid: true` to fail the build on a violation.
+
+## Evaluation
+
+Filters are evaluated as an ordered list. Vet stops at the first match per package and reports it as a violation. Order filters from most specific to least specific.
+
+## CEL fields
+
+The expression in each filter's `value` is written in [CEL](/concepts/cel). These fields are available:
+
+- `pkg` - package metadata: `pkg.ecosystem`, `pkg.name`, `pkg.version`
+- `vulns.all`, `vulns.critical`, `vulns.high`, `vulns.medium`, `vulns.low` - vulnerability arrays; each item has an `id` (e.g. `vulns.all.exists(v, v.id.startsWith("MAL-"))`)
+- `licenses` - array of SPDX license identifiers
+- `scorecard.score` - aggregate OpenSSF Scorecard score; `scorecard.scores["Check-Name"]` - per-check score (e.g. `"Maintained"`, `"Dangerous-Workflow"`, `"Token-Permissions"`)
+- `projects` - source project info (e.g. `projects.exists(p, p.type == "GITHUB" && p.stars < 10)`)
+
+Common operations: `size()` (array length), `exists(item, condition)`, `in` (membership), `contains()` (string contains).
+
+<CardGroup cols={2}>
+  <Card title="Policy" icon="scale-balanced" href="/concepts/policy">
+    What policies are and why they matter.
+  </Card>
+  <Card title="CEL" icon="code" href="/concepts/cel">
+    The expression syntax rules are built from.
+  </Card>
+  <Card title="Filtering" icon="filter" href="/reference/filtering">
+    Query scan results with one-off CEL expressions.
+  </Card>
+  <Card title="Example Policies" icon="file-code" href="https://github.com/safedep/vet/tree/main/samples/filter-suites">
+    Ready-to-use filter suites in the Vet repository.
+  </Card>
+</CardGroup>

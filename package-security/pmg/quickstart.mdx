@@ -1,0 +1,116 @@
+---
+title: "PMG Quickstart"
+description: "Install and configure PMG (Package Manager Guard) to block malicious packages at install time."
+---
+
+<Card
+  title="PMG Repository"
+  icon="github"
+  href="https://github.com/safedep/pmg"
+>
+  View the PMG source code and contribute on GitHub
+</Card>
+
+**Package Manager Guard (PMG)** wraps your package manager and blocks malicious packages at install time.
+
+<Info>
+  PMG requires **no configuration** - just install and use it as you normally
+  would with your package managers.
+</Info>
+
+For what PMG is and how it works, see the [PMG overview](/package-security/pmg/overview).
+
+## Installation
+
+### Using Homebrew (Recommended)
+
+```bash
+brew install safedep/tap/pmg
+```
+
+### Using Go Install
+
+```bash
+go install github.com/safedep/pmg@latest
+```
+
+### Download Binary
+
+Download the latest release from our [GitHub releases page](https://github.com/safedep/pmg/releases) and add it to your PATH.
+
+## Quick Setup
+
+### Automated Setup (Recommended)
+
+Run PMG's automated setup:
+
+```bash
+# Install shell aliases automatically
+pmg setup install
+```
+
+This command:
+
+- Creates `~/.pmg.rc` with package manager aliases
+- Adds a source line to your shell configuration files
+- Supports bash, zsh, and fish shells
+
+<Info>
+  After running `pmg setup install`, restart your terminal or run `source
+  ~/.zshrc` (or your shell's config file) to activate the aliases.
+</Info>
+
+### Manual Usage (Alternative)
+
+To run PMG without aliases:
+
+```bash
+pmg npm install <package-name>
+pmg pnpm add <package-name>
+pmg pip install <package-name>
+```
+
+If PMG detects a malicious package, it blocks the install and displays a warning.
+
+## Supported Package Managers
+
+PMG supports these package managers:
+
+| Package Manager | Status  | Command                                                  |
+| --------------- | ------- | -------------------------------------------------------- |
+| `npm`           | Active  | `pmg npm install <package>`                              |
+| `npx`           | Active  | `pmg npx <package> <action>`                             |
+| `pnpm`          | Active  | `pmg pnpm add <package>`                                 |
+| `pnpx`          | Active  | `pmg pnpx <package> <action>`                            |
+| `bun`           | Active  | `pmg bun add <package>`                                  |
+| `pip`           | Active  | `pmg pip install <package>`                              |
+| `uv`            | Active  | `pmg uv add <package>` or `pmg uv pip install <package>` |
+| `poetry`        | Active  | `pmg poetry add <package>`                               |
+| `yarn`          | Active  | `pmg yarn add <package>`                                 |
+
+## Troubleshooting
+
+### If PMG isn't working after setup
+
+1. Restart your terminal
+2. Check that interception is active: `which npm` should resolve to `~/.pmg/bin/npm` (the PMG shim). If it points to system npm, make sure `~/.pmg/bin` is early in your `$PATH`, or run `type npm` to check for a shell alias.
+3. Verify PMG installation: `pmg version`
+
+### If packages are incorrectly blocked
+
+1. Run with `--verbose` to see detection details
+2. Check the [SafeDep community](https://discord.gg/kAGEj25dCn) for known issues
+3. Report false positives on [GitHub Issues](https://github.com/safedep/pmg/issues)
+
+## Next Steps
+
+- Learn [what PMG is and how it works](/package-security/pmg/overview)
+- See the [PMG repository](https://github.com/safedep/pmg) for complete documentation and examples
+- Join our [Discord community](https://discord.gg/kAGEj25dCn) for support
+- Check out other SafeDep tools like [Vet](/governance/vet/overview) and [SafeDep Cloud](/governance/cloud/overview)
+
+<Tip>
+  Run `pmg --help` to see all available commands and options. PMG runs
+  transparently in the background and only surfaces when it blocks a
+  malicious package.
+</Tip>

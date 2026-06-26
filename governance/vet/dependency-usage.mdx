@@ -1,0 +1,135 @@
+---
+title: "Dependency Usage"
+description: "Identify which dependencies are actually used in your code using static code analysis"
+---
+
+`vet` can identify which dependencies your code actually uses via static code analysis. When triaging vulnerabilities, this lets you focus on packages that are imported and deprioritize those that are only declared.
+
+<Warning>
+**EXPERIMENTAL**: This feature is experimental and may introduce breaking changes.
+</Warning>
+
+This page covers the dependency-usage workflow. For the underlying [Code Analysis](/governance/vet/code-analysis) feature, including supported languages and options, see that page.
+
+## Demo
+
+<iframe 
+  width="100%" 
+  height="400" 
+  src="https://www.youtube.com/embed/yFUuMMAsnfI?si=hqL3SIIMjlN_kNpr" 
+  title="Dependency Usage Identification Demo" 
+  frameBorder="0" 
+  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+  allowFullScreen
+></iframe>
+
+## Quick Start
+
+### Step 1: Create Code Analysis Database
+
+Build a code analysis database for your source code:
+
+```bash
+vet code scan --app src --db /tmp/dump/vet-test.db
+```
+
+This analyzes code in the `src` directory, extracts import statements and usage patterns, and stores the results in a SQLite database.
+
+### Step 2: Scan with Usage Enrichment
+
+Run a Vet scan enriched with the dependency usage database:
+
+```bash
+vet scan --code /tmp/dump/vet-test.db
+```
+
+Results now include:
+- **Usage Evidence**: which dependencies are actually imported and used
+- **Used-in-Code Tags**: markers on packages confirmed as used in code
+- **Prioritized Results**: packages with real usage are highlighted
+
+## Advanced Usage Patterns
+
+### Language-Specific Analysis
+
+To target a specific language:
+
+```bash
+# Python projects
+vet code scan --app src --db python-analysis.db --lang python
+
+# JavaScript/TypeScript projects  
+vet code scan --app src --db js-analysis.db --lang javascript
+
+# Multi-language projects
+vet code scan --app src --db full-analysis.db  # Auto-detect all languages
+```
+
+## Understanding the Results
+
+### Usage Evidence Types
+
+The code analysis records several types of evidence:
+
+<Tabs>
+  <Tab title="Import Statements">
+    ```python
+    # Python example
+    import requests
+    from flask import Flask
+    ```
+    These direct imports are tracked as usage evidence.
+  </Tab>
+  
+  <Tab title="Function Calls">
+    ```javascript
+    // JavaScript example
+    const axios = require('axios');
+    axios.get('https://api.example.com');
+    ```
+    Actual usage of imported modules is recorded.
+  </Tab>
+  
+  <Tab title="Module References">
+    ```java
+    // Java example
+    import org.apache.commons.lang3.StringUtils;
+    String result = StringUtils.capitalize(input);
+    ```
+    References to specific classes and methods are tracked.
+  </Tab>
+</Tabs>
+
+### Tags and Annotations
+
+Dependencies found in your source code are marked with the `used-in-code` tag, so you can prioritize them over packages that are only declared in a manifest.
+
+## Scope Separation
+
+<AccordionGroup>
+  <Accordion title="Environment Separation">
+    Create separate databases for different scopes:
+    ```bash
+    # Production code only
+    vet code scan --app src/main --db prod-analysis.db
+    
+    # Include test code
+    vet code scan --app src --db full-analysis.db
+    ```
+  </Accordion>
+</AccordionGroup>
+
+<CardGroup cols={2}>
+  <Card title="Code Analysis Guide" icon="magnifying-glass" href="/governance/vet/code-analysis">
+    Learn more about Vet's code analysis capabilities
+  </Card>
+  <Card title="Policy as Code" icon="file-code" href="/reference/policy-as-code">
+    Create policies that leverage usage information
+  </Card>
+  <Card title="Vet Repository" icon="github" href="https://github.com/safedep/vet">
+    Access complete documentation and examples
+  </Card>
+  <Card title="Tree-sitter Parsers" icon="tree" href="https://tree-sitter.github.io/tree-sitter/">
+    Learn about the parsing technology behind code analysis
+  </Card>
+</CardGroup>

@@ -1,0 +1,111 @@
+---
+title: Build Your Own Queries
+description: "Speed up filtering and reporting by working with enriched JSON data dumps"
+---
+
+Scanning package manifests is resource-intensive: `vet` must enrich each package by querying the Insights API. Because filtering and reporting can run many times on the same manifest, you can dump the enriched data as JSON once and reload it for subsequent operations.
+
+## Query Workflow
+
+The BYOQ workflow consists of two main phases:
+
+<Steps>
+  <Step title="Data Collection">
+    Scan and enrich package data, then dump to JSON files for reuse
+  </Step>
+  
+  <Step title="Analysis & Reporting">
+    Load enriched data for fast filtering, querying, and report generation
+  </Step>
+</Steps>
+
+### Phase 1: Dump Enriched JSON Manifests
+
+Collect and enrich package data, then save to a directory for reuse:
+
+```bash
+# Single lockfile
+vet scan --lockfiles /path/to/package-lock.json --json-dump-dir /tmp/dump
+
+# Entire repository
+vet scan -D /path/to/repository --json-dump-dir /tmp/dump-many
+```
+
+<Info>
+The JSON dump contains all enriched metadata including vulnerabilities, scorecard data, licenses, and project information.
+</Info>
+
+### Phase 2: Load and Query Enriched Metadata
+
+Use the dumped data for fast filtering and reporting:
+
+```bash
+# Generate summary report
+vet query --from /tmp/dump --report-summary
+
+# Apply custom filters
+vet query --from /tmp/dump --filter 'scorecard.scores.Maintained == 0'
+```
+
+## Security Guardrails with Filters
+
+Implement security guardrails in CI/CD pipelines using the `--filter-fail` argument, which causes the command to fail if any package matches the given filter.
+
+### Example: Fail Build on Unmaintained Packages
+
+```bash
+vet query --from /path/to/json-dump \
+    --filter 'scorecard.scores.Maintained == 0' \
+    --filter-fail
+```
+
+When any package matches the filter, the command exits with a non-zero status:
+
+```bash
+echo $?
+# Output: 255
+```
+
+## Advanced Query Examples
+
+### Multi-Criteria Security Checks
+
+```bash
+# Fail on critical vulnerabilities OR unmaintained packages
+vet query --from /tmp/dump \
+    --filter 'vulns.critical.size() > 0 || scorecard.scores.Maintained == 0' \
+    --filter-fail
+```
+
+### License Compliance Checks
+
+```bash
+# Find packages with non-approved licenses
+vet query --from /tmp/dump \
+    --filter '!licenses.exists(p, p in ["MIT", "Apache-2.0", "BSD-3-Clause"])' \
+    --report-json compliance-violations.json
+```
+
+### Risk Assessment Queries
+
+```bash
+# Find high-risk packages (multiple criteria)
+vet query --from /tmp/dump \
+    --filter 'vulns.high.size() > 0 && scorecard.scores["Security-Policy"] < 5 && projects.exists(p, p.stars < 100)'
+```
+
+<CardGroup cols={2}>
+  <Card title="Filtering" icon="filter" href="/reference/filtering">
+    The CEL filter input schema and syntax.
+  </Card>
+  <Card title="Policy as Code" icon="file-code" href="/reference/policy-as-code">
+    Turn these filters into reusable policy files.
+  </Card>
+  <Card title="Exceptions" icon="circle-minus" href="/reference/exceptions">
+    Generate exception lists from query results.
+  </Card>
+  <Card title="SafeDep Cloud SQL" icon="database" href="/reference/sql-query">
+    Query synced data across your org.
+  </Card>
+</CardGroup>
+

@@ -1,0 +1,99 @@
+---
+title: "Exceptions"
+description: "Reference for Vet exceptions: the file format, the flags that generate and apply them, and the matching rules."
+---
+
+An exception excludes a package from scan results and reports. Use it for false positives, accepted risks during remediation, or legacy dependencies being migrated. This page is the reference for the exceptions file and the flags that work with it.
+
+<Warning>
+An excepted package is skipped entirely, including any future issues it develops. Every exception must carry an expiry date; permanent exceptions are not allowed. Exceptions also cannot be scoped to a whole manifest, only to specific packages.
+</Warning>
+
+## Exceptions file format
+
+An exceptions file lists packages by ecosystem, name, and version, each with a unique `id` and an `expires` timestamp:
+
+```yaml
+description: Exceptions File for vet
+exceptions:
+  - ecosystem: npm
+    expires: "2025-05-10T00:00:00Z"
+    id: 01JKMC07KAGJYEDZX1XPAC3SKP
+    name: '@babel/plugin-transform-function-name'
+    version: 7.18.9
+
+  - ecosystem: pypi
+    expires: "2025-05-10T00:00:00Z"
+    id: 01JKMC07KASSGYH1PHQY09QNZ3
+    name: 'pillow'
+    version: '12.1.0'
+```
+
+| Field | Rule |
+|---|---|
+| `expires` | Mandatory. RFC3339 timestamp. Expired exceptions are ignored automatically. |
+| `id` | Mandatory. Any unique string. |
+| `ecosystem` | Case-insensitive (`PyPi`, `pypi`, `PyPI` all match). |
+| `version` | Exact version, or `*` to match any version. |
+
+Supported ecosystems include `npm`, `PyPI`, `Maven`, `Go`, `RubyGems`, `Cargo`, `NuGet`, `Packagist`, `Hex`, `Pub`, `GitHubActions`, `Terraform`, `VSCodeExtensions`, `OpenVSXExtensions`, and `Homebrew`. For the authoritative list, see the [Vet source](https://github.com/safedep/vet/blob/main/pkg/models/models.go).
+
+## Generating exceptions
+
+Generate an exceptions file from a [JSON dump](/reference/build-your-own-queries) using a [CEL filter](/reference/filtering). For example, except packages that have no critical or high vulnerabilities:
+
+```bash
+vet scan -D /path/to/repo --json-dump-dir /path/to/dump
+
+vet query --from /path/to/dump \
+    --exceptions-generate /path/to/exceptions.yml \
+    --exceptions-filter '!vulns.critical.exists(p, true) && !vulns.high.exists(p, true)' \
+    --exceptions-till '2025-05-01'
+```
+
+| Flag | Purpose |
+|---|---|
+| `--exceptions-generate <file>` | Write the generated exceptions to `<file>`. |
+| `--exceptions-filter <cel>` | Except only packages matching this CEL expression. |
+| `--exceptions-till <date>` | Expiry date, parsed as `YYYY-mm-dd` (set to `00:00:00` UTC, RFC3339). |
+
+Review the generated file before using it, and do not pass `--exceptions` while generating, or the active exceptions will skew the output.
+
+## Applying exceptions
+
+Pass an exceptions file to `vet` as a global flag:
+
+```bash
+vet --exceptions /path/to/exceptions.yml scan -D /path/to/repo
+```
+
+With [vet-action](https://github.com/safedep/vet-action), commit the file (conventionally `.github/vet/exceptions.yml`) and reference it:
+
+```yaml
+- name: Vet Scan
+  uses: safedep/vet-action@v1
+  with:
+    exception-file: .github/vet/exceptions.yml
+```
+
+## Matching rules
+
+- Exceptions apply at the package level and are shared across all analyzers and reporters.
+- Comparisons are case-insensitive, except `version`, which matches exactly unless set to `*`.
+- The first matching exception applies.
+- Expired exceptions are ignored, and an exception cannot be created without an expiry date.
+
+<CardGroup cols={2}>
+  <Card title="Filtering" icon="filter" href="/reference/filtering">
+    The CEL expressions used in `--exceptions-filter`.
+  </Card>
+  <Card title="Build Your Own Queries" icon="magnifying-glass" href="/reference/build-your-own-queries">
+    The JSON dump and query workflow exceptions build on.
+  </Card>
+  <Card title="Policy as Code" icon="file-code" href="/reference/policy-as-code">
+    Enforce policy on the packages that remain.
+  </Card>
+  <Card title="vet-action" icon="github" href="https://github.com/safedep/vet-action?tab=readme-ov-file#configuration">
+    Configure exceptions in GitHub Actions.
+  </Card>
+</CardGroup>

@@ -1,0 +1,96 @@
+---
+title: SafeDep CLI Tools
+description: "Which SafeDep command-line tool to use: Vet, PMG, Gryph, and the safedep CLI, and how they fit together."
+---
+
+SafeDep ships several command-line tools. Each one solves a different supply-chain problem, and they run independently, so you install only what you need. This page helps you pick the right tool and points you to its setup guide.
+
+## Which tool do I need?
+
+<CardGroup cols={2}>
+  <Card title="Scan code for supply-chain risk" icon="magnifying-glass" href="/governance/vet/quickstart">
+    Use **Vet** to scan repositories, lockfiles, and SBOMs for malicious packages, known vulnerabilities, and policy violations. It is the engine behind SafeDep's CI/CD scanning.
+  </Card>
+  <Card title="Block malicious installs on my machine" icon="shield-halved" href="/package-security/pmg/quickstart">
+    Use **PMG**, a guard around `npm`, `pip`, and other package managers that blocks known-malicious packages before they install. No account or API key required.
+  </Card>
+  <Card title="Audit what my AI coding agent does" icon="robot" href="/ai-security/gryph-overview">
+    Use **Gryph** to record every file read, write, and command your AI coding agent runs. It keeps a local audit log you can query.
+  </Card>
+  <Card title="Generate a Bill of Materials" icon="boxes-stacked" href="/governance/xbom/quickstart">
+    Use **xBom** to inventory dependencies plus AI and SaaS usage detected from your source code, as a CycloneDX BOM.
+  </Card>
+  <Card title="Work with SafeDep Cloud" icon="cloud" href="https://github.com/safedep/cli">
+    Use **safedep**, the unified CLI for SafeDep Cloud: authentication, endpoint telemetry queries, and AI agent hardening. It is new and still evolving.
+  </Card>
+</CardGroup>
+
+## The tools at a glance
+
+| Tool | Solves | Needs an account? | Open source |
+|---|---|---|---|
+| **Vet** | Detect malicious and vulnerable dependencies in code and CI/CD | No (Cloud optional) | Yes |
+| **PMG** | Block malicious packages at install time on the dev machine | No | Yes |
+| **Gryph** | Local audit trail for AI coding agents | No (fully local) | Yes |
+| **xBom** | Generate a BOM enriched with AI and SaaS usage from source code | No | Yes |
+| **safedep** | Manage and query SafeDep Cloud from the terminal | Yes (SafeDep Cloud) | Yes |
+
+<Note>
+Vet, PMG, and Gryph are free, open source, and work with no SafeDep account. The **safedep** CLI is the client for SafeDep Cloud's hosted features. See [pricing](https://safedep.io/pricing).
+</Note>
+
+## How they relate
+
+- **Vet** is the scanning engine. It analyzes dependencies and produces risk reports, queries, and SBOMs. It runs standalone or syncs results to SafeDep Cloud.
+- **PMG** and **Gryph** are standalone, single-purpose guards. PMG works at package-install time, Gryph around AI coding agents. Neither needs Vet or a SafeDep account.
+- **safedep** is an emerging unified CLI that brings SafeDep Cloud's workflows (auth, endpoint telemetry, agent hardening) to the terminal. It orchestrates the tools above and the Cloud APIs rather than re-implementing scanning, so the analysis stays in the upstream tools.
+
+<Info>
+These tools have no "v1 to v2" relationship. `safedep` is a new Cloud-focused CLI, not a replacement for `vet`. Vet stays the standalone scanner and the recommended starting point for most users.
+</Info>
+
+## Install
+
+Each tool is on the SafeDep Homebrew tap. Vet, PMG, Gryph, and safedep are also published to npm; Vet, PMG, Gryph, and xBom ship as pre-built binaries. The most common installs:
+
+<Tabs>
+  <Tab title="Homebrew">
+    ```bash
+    brew install safedep/tap/vet
+    brew install safedep/tap/pmg
+    brew install safedep/tap/gryph
+    brew install safedep/tap/xbom
+    brew install --cask safedep/tap/cli   # the `safedep` command
+    ```
+  </Tab>
+  <Tab title="npm">
+    ```bash
+    npm install -g @safedep/vet
+    npm install -g @safedep/pmg
+    npm install -g @safedep/gryph
+    npm install -g @safedep/cli    # the `safedep` command
+    ```
+  </Tab>
+</Tabs>
+
+For every install method, current versions, and the full command surface, see each tool's repository: [Vet](https://github.com/safedep/vet), [PMG](https://github.com/safedep/pmg), [Gryph](https://github.com/safedep/gryph), [safedep](https://github.com/safedep/cli).
+
+## Next steps
+
+<CardGroup cols={2}>
+  <Card title="Vet Quickstart" icon="rocket" href="/governance/vet/quickstart">
+    Scan your first repository for supply-chain risk.
+  </Card>
+  <Card title="PMG Quickstart" icon="rocket" href="/package-security/pmg/quickstart">
+    Guard your package installs in minutes.
+  </Card>
+  <Card title="Gryph Overview" icon="robot" href="/ai-security/gryph-overview">
+    Set up an audit trail for your AI coding agents.
+  </Card>
+  <Card title="xBom Quickstart" icon="boxes-stacked" href="/governance/xbom/quickstart">
+    Generate an enriched Bill of Materials from your code.
+  </Card>
+  <Card title="SafeDep Cloud Quickstart" icon="cloud" href="/governance/cloud/quickstart">
+    Onboard to the hosted platform for org-wide visibility.
+  </Card>
+</CardGroup>

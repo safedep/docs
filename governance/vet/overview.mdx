@@ -1,0 +1,47 @@
+---
+title: "Vet"
+description: "Vet is a free, open-source SCA scanner that finds malicious, vulnerable, and risky open-source dependencies in code and CI/CD."
+---
+
+[Vet](https://github.com/safedep/vet) is a free, open-source software composition analysis (SCA) scanner. It checks your open-source dependencies for malicious packages, known vulnerabilities, license issues, and weak project health, then lets you enforce policy on what it finds. Run it locally, in CI/CD, or against a whole repository.
+
+## What Vet does
+
+<CardGroup cols={2}>
+  <Card title="Automated analysis" icon="robot">
+    Replace manual dependency reviews with policy-driven analysis.
+  </Card>
+  <Card title="Policy as code" icon="file-code">
+    Define and version security policy with [CEL](/concepts/cel).
+  </Card>
+  <Card title="CI/CD integration" icon="code-branch">
+    Run in any CI tool or your local workflow.
+  </Card>
+  <Card title="Trusted data" icon="shield-check">
+    Built on OSV, OpenSSF Scorecard, deps.dev, and SafeDep malware intelligence.
+  </Card>
+</CardGroup>
+
+## Get started
+
+<CardGroup cols={2}>
+  <Card title="Vet Quickstart" icon="rocket" href="/governance/vet/quickstart">
+    Scan your first project in minutes.
+  </Card>
+  <Card title="Dependency Inventory" icon="boxes-stacked" href="/governance/vet/dependency-inventory">
+    Generate an accurate dependency inventory.
+  </Card>
+  <Card title="Code Analysis" icon="magnifying-glass" href="/governance/vet/code-analysis">
+    See how dependencies are actually used.
+  </Card>
+  <Card title="Dependency Usage" icon="diagram-project" href="/governance/vet/dependency-usage">
+    Prioritize findings by which dependencies your code actually uses.
+  </Card>
+  <Card title="Filtering & Policy" icon="filter" href="/reference/filtering">
+    Query results and enforce policy with CEL.
+  </Card>
+</CardGroup>
+
+<div style={{textAlign: 'center'}}>
+    <img src="/images/vet/vet-demo.gif" alt="vet scanning a project" style={{maxWidth: '100%', height: 'auto'}} />
+</div>

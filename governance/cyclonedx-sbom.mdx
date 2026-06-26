@@ -1,0 +1,190 @@
+---
+title: "CycloneDX SBOM"
+description: "Generate a Software Bill of Materials (SBOM) with security metadata using Vet"
+---
+
+`vet` supports [CycloneDX v1.6](https://cyclonedx.org/docs/1.6/json) SBOM generation. The generated SBOM lists all packages and their dependencies, including security metadata: detected vulnerabilities, malware, and license information.
+
+## Quick Start
+
+Generate an SBOM with a custom application name:
+
+```bash
+vet scan -D /path/to/project \
+  --report-cdx report.cdx.json \
+  --report-cdx-app-name myproject
+```
+
+<Note>
+The `--report-cdx-app-name` parameter is optional. If omitted, Vet will use a default application name.
+</Note>
+
+## What's Included in the SBOM
+
+The generated CycloneDX SBOM contains:
+
+<CardGroup cols={2}>
+  <Card title="Package Inventory" icon="box">
+    Complete list of all direct and transitive dependencies
+  </Card>
+  <Card title="Vulnerability Data" icon="shield-exclamation">
+    Known vulnerabilities from OSV database and other sources
+  </Card>
+  <Card title="License Information" icon="scale-balanced">
+    License identifiers and compliance data for each component
+  </Card>
+  <Card title="Malware Detection" icon="virus">
+    Results from malware analysis and threat detection
+  </Card>
+</CardGroup>
+
+## Advanced Usage
+
+### Custom Application Metadata
+
+Provide detailed metadata about your application:
+
+```bash
+vet scan -D /path/to/project \
+  --report-cdx myapp-v1.2.3.cdx.json \
+  --report-cdx-app-name "MyApplication"
+```
+
+### Combined with Other Reports
+
+Generate multiple report formats simultaneously:
+
+```bash
+vet scan -D /path/to/project \
+  --report-cdx sbom.cdx.json \
+  --report-json results.json \
+  --report-markdown report.md \
+  --report-cdx-app-name "production-app"
+```
+
+### Integration with CI/CD
+
+<Tabs>
+  <Tab title="GitHub Actions">
+    ```yaml
+    name: Generate SBOM
+    on: [push, pull_request]
+    
+    jobs:
+      sbom:
+        runs-on: ubuntu-latest
+        steps:
+          - uses: actions/checkout@v4
+          
+          - name: Generate SBOM
+            run: |
+              docker run --rm -v "$PWD:/app" ghcr.io/safedep/vet:latest \
+                scan -D /app \
+                --report-cdx /app/sbom.cdx.json \
+                --report-cdx-app-name "${{ github.repository }}"
+
+          - name: Upload SBOM
+            uses: actions/upload-artifact@v4
+            with:
+              name: sbom
+              path: sbom.cdx.json
+    ```
+  </Tab>
+  
+  <Tab title="GitLab CI">
+    ```yaml
+    generate-sbom:
+      image: ghcr.io/safedep/vet:latest
+      script:
+        - vet scan -D . --report-cdx sbom.cdx.json --report-cdx-app-name "$CI_PROJECT_NAME"
+      artifacts:
+        reports:
+          cyclonedx: sbom.cdx.json
+        paths:
+          - sbom.cdx.json
+        expire_in: 30 days
+    ```
+  </Tab>
+</Tabs>
+
+## Sample SBOMs
+
+<CardGroup cols={2}>
+  <Card title="Chat Server SBOM" icon="download" href="/downloads/chat-server.cdx.json">
+    Example SBOM for a Node.js chat application
+  </Card>
+  <Card title="Express.js SBOM" icon="download" href="/downloads/express.cdx.json">
+    Example SBOM for an Express.js web application
+  </Card>
+</CardGroup>
+
+## SBOM Analysis and Consumption
+
+### Viewing SBOM Content
+
+Install the [CycloneDX CLI](https://github.com/CycloneDX/cyclonedx-cli) (a .NET global tool) to validate and convert your SBOM:
+
+```bash
+dotnet tool install --global CycloneDX
+
+# Validate SBOM
+cyclonedx validate --input-file sbom.cdx.json
+
+# Convert to other formats
+cyclonedx convert --input-file sbom.cdx.json --output-file sbom.xml --output-format xml
+```
+
+### Integration with Security Tools
+
+Many security tools can consume CycloneDX SBOMs:
+
+- **Dependency Track**: Import SBOMs for vulnerability monitoring
+- **FOSSA**: License compliance analysis
+- **Snyk**: Security scanning and monitoring
+- **JFrog Xray**: Artifact analysis and security scanning
+
+## Naming Convention
+
+Use a consistent pattern for SBOM filenames:
+
+```
+{app-name}-{version}-{environment}.cdx.json
+myapp-1.2.3-production.cdx.json
+```
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="Large SBOM Files">
+    For projects with many dependencies, SBOMs can become large. Consider:
+    - Filtering out development dependencies in production SBOMs
+    - Using compressed storage formats
+    - Implementing SBOM splitting for microservices
+  </Accordion>
+  
+  <Accordion title="Missing Components">
+    If components are missing from your SBOM:
+    - Ensure all package manifest files are included in the scan
+    - Check that Vet supports your package manager
+    - Verify dependencies are properly declared in manifest files
+  </Accordion>
+  
+  <Accordion title="Validation Errors">
+    If SBOM validation fails:
+    - Check the CycloneDX schema version compatibility
+    - Verify all required fields are present
+    - Use cyclonedx-cli for detailed validation errors
+  </Accordion>
+</AccordionGroup>
+
+<CardGroup cols={2}>
+  <Card title="CycloneDX Documentation" icon="book" href="https://cyclonedx.org/docs/1.6/json/">
+    Learn more about the CycloneDX v1.6 JSON specification
+  </Card>
+  <Card title="Vet Repository" icon="github" href="https://github.com/safedep/vet">
+    Explore Vet's complete SBOM generation capabilities
+  </Card>
+  <Card title="Dependency Inventory" icon="list" href="/governance/vet/dependency-inventory">
+    Learn how to create accurate dependency inventories
+  </Card>
+</CardGroup>

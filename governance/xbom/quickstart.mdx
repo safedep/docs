@@ -1,0 +1,127 @@
+---
+title: "xBom Quickstart"
+description: "Get started with SafeDep xBom, an open source Bill of Materials generator enriched with AI and SaaS usage detected from source code."
+---
+
+<Card
+  title="xBom Repository"
+  icon="github"
+  href="https://github.com/safedep/xbom"
+>
+  View the xBom source code and contribute on GitHub
+</Card>
+
+**xBom** generates a Bill of Materials (BOM) enriched with AI components, SaaS integrations, and more. It uses static code analysis to find these in your code, not just your declared dependencies.
+
+## Installation
+
+Install xBom using one of the following methods:
+
+**macOS & Linux (Homebrew):**
+
+```bash
+# Installation on macOS & Linux
+brew install safedep/tap/xbom
+```
+
+**Pre-built binary:**
+Download a **[pre-built binary](https://github.com/safedep/xbom/releases)** for your operating system from the GitHub releases page.
+
+## Generating Your First BOM
+
+To generate a BOM for your source code, use the `generate` command:
+
+```bash
+# Generate BOM for your source code
+xbom generate --dir /path/to/your/code --bom /path/to/output/bom.cdx.json
+```
+
+Replace `/path/to/your/code` with your project directory and `/path/to/output/bom.cdx.json` with your desired output path.
+
+The output is an SBOM in **[CycloneDX v1.6 JSON format](https://cyclonedx.org/docs/1.6/json/)**, including any AI components and other supported elements detected in the codebase.
+
+## Supported Languages
+
+Currently, `xbom` supports the following programming languages:
+
+| Language   | Status                                                  |
+| ---------- | ------------------------------------------------------- |
+| Python     | <Icon icon="circle-check" size={16} iconType="solid" /> |
+| Java       | <Icon icon="circle-check" size={16} iconType="solid" /> |
+| JavaScript | <Icon icon="timer" size={16} />                         |
+
+We are continuously working to expand language support.
+
+## Supported BOM Types
+
+xBom specializes in identifying a variety of components beyond traditional libraries.
+
+### AI Components
+
+xBom detects usage of AI SDKs and services, including:
+
+- LangChain
+- Anthropic
+- CrewAI
+- OpenAI
+
+### Cloud Services
+
+xBom also identifies integrations with major cloud platforms:
+
+- Google Cloud Platform (GCP)
+- Microsoft Azure
+
+<Info>
+  To request support for a new AI framework or cloud service, please{" "}
+  <a href="https://github.com/safedep/xbom/issues/new">create an issue</a> on
+  our GitHub repository
+</Info>
+
+## HTML report
+
+The primary output is a CycloneDX JSON file. xBom also prints a link to an interactive HTML report so you can browse the detected components in a browser.
+
+<div align="center">
+  <img
+    src="https://raw.githubusercontent.com/safedep/xbom/main/docs/assets/xbom-demo.gif"
+    alt="xbom-demo"
+    width="100%"
+  />
+</div>
+
+### <Icon icon="flag" size={20} /> Limitations
+
+**Current focus (AI BOM generation):**
+`xbom` is currently focused on AI BOM generation. It uses static code analysis to identify AI products, SaaS APIs, and similar non-library components in your codebase.
+
+**For full dependency SBOMs:**
+To generate an SBOM covering open-source library dependencies from manifest files, use [Vet](https://github.com/safedep/vet) alongside xBom. `vet` specializes in dependency analysis and vulnerability management, and the two tools together cover more of the software supply chain.
+
+### <Icon icon="telescope" size={20} /> Telemetry
+
+**Purpose:**
+`xbom` collects anonymous usage telemetry to show which integrations and use cases are common, guiding what to build next. It collects no personally identifiable information or sensitive data.
+
+**How to disable:**
+
+Set the `XBOM_DISABLE_TELEMETRY` environment variable to `true`:
+
+```bash
+export XBOM_DISABLE_TELEMETRY=true
+```
+
+<CardGroup cols={2}>
+  <Card title="xBom" icon="boxes-stacked" href="/governance/xbom/overview">
+    What xBom is and how it works.
+  </Card>
+  <Card title="What is an SBOM?" icon="lightbulb" href="/concepts/sbom">
+    SBOM versus xBOM, explained.
+  </Card>
+  <Card title="CycloneDX SBOM" icon="file-lines" href="/governance/cyclonedx-sbom">
+    Generate a standard SBOM with Vet.
+  </Card>
+  <Card title="xBom on GitHub" icon="github" href="https://github.com/safedep/xbom">
+    Source and signature contributions.
+  </Card>
+</CardGroup>

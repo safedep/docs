@@ -1,0 +1,24 @@
+---
+title: Package Security
+description: "Block malicious open-source packages before they reach your code, on developer machines and in CI/CD."
+---
+
+Stop malicious open-source packages before they reach your code. SafeDep blocks known-bad packages wherever they enter: a developer's install, your CI/CD pipeline, or your artifact registry.
+
+<CardGroup cols={2}>
+  <Card title="Block at install time" icon="box" href="/package-security/pmg/overview">
+    **PMG** guards `npm`, `pip`, and other package managers on the developer machine. No account or API key needed.
+  </Card>
+  <Card title="Block in your CI/CD pipeline" icon="code-branch" href="/governance/integrations/overview">
+    Stop risky dependencies in pull requests and pipelines with the GitHub App, GitLab, and Bitbucket integrations.
+  </Card>
+  <Card title="Block in JFrog Xray" icon="shield-halved" href="/package-security/jfrog-xray">
+    Stop malicious packages in your JFrog artifact registry with SafeDep.
+  </Card>
+</CardGroup>
+
+New to how SafeDep decides what is malicious? See [Malicious Package](/concepts/malicious-package). To check a package's risk from your own code, use the [Insights API](/reference/insights-api-typescript).
+
+<Note>
+  For teams, [**SafeDep Cloud**](/governance/cloud/overview) adds centralized policy, endpoint inventory, and org-wide visibility on top of the open-source tools.
+</Note>

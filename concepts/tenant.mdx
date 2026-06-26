@@ -1,0 +1,32 @@
+---
+title: Tenant
+description: "A tenant is your organization's isolated space in SafeDep Cloud, identified by its tenant domain such as your-company.safedep.io."
+---
+
+A tenant is your organization's isolated space in SafeDep Cloud. Your users, API keys, policies, scan data, and endpoints all live inside it, separate from every other tenant.
+
+## Your tenant ID is your tenant domain
+
+The tenant identifier is a domain, for example `your-company.safedep.io`. There is no separate tenant ID to look up. You use the domain to:
+
+- send the `X-Tenant-ID` header on API requests,
+- configure Vet with `vet auth configure --tenant your-company.safedep.io`,
+- set the `SAFEDEP_TENANT_ID` environment variable.
+
+## Why it matters
+
+The tenant is the boundary for isolation and governance: scan results, policies, and access are all scoped to it. You create and manage API keys inside your tenant from the SafeDep Cloud console.
+
+## Related
+
+<CardGroup cols={2}>
+  <Card title="Authentication" icon="key" href="/governance/cloud/authentication">
+    Authenticate against your tenant.
+  </Card>
+  <Card title="Endpoint" icon="server" href="/concepts/endpoint">
+    Assets that report into your tenant.
+  </Card>
+  <Card title="API Endpoints" icon="server" href="/reference/endpoints">
+    Where the X-Tenant-ID header is sent.
+  </Card>
+</CardGroup>

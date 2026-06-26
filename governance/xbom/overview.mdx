@@ -1,0 +1,40 @@
+---
+title: "xBom"
+description: "xBom generates a Bill of Materials enriched with AI and SaaS usage by analyzing your source code, not just manifests."
+---
+
+Modern applications reach far beyond declared dependencies: AI SDKs, ML models, and third-party SaaS APIs. Traditional BOM tools only read manifest files like `requirements.txt` or `pom.xml`. [xBom](https://github.com/safedep/xbom) analyzes your source code to find what your application actually uses, for a more accurate [SBOM](/concepts/sbom).
+
+## What xBom does
+
+<CardGroup cols={2}>
+  <Card title="Beyond manifests" icon="magnifying-glass">
+    Finds real evidence of AI SDKs, cloud APIs, and crypto in your code, not just declared packages.
+  </Card>
+  <Card title="Extensible signatures" icon="fingerprint">
+    Community-driven signatures detect components; add your own for proprietary tools.
+  </Card>
+  <Card title="CycloneDX output" icon="file-lines">
+    Produces standard CycloneDX BOMs for compliance and tooling.
+  </Card>
+  <Card title="Multi-ecosystem" icon="layer-group">
+    Supports Java and Python today, with JavaScript in progress.
+  </Card>
+</CardGroup>
+
+## Get started
+
+<CardGroup cols={2}>
+  <Card title="xBom Quickstart" icon="rocket" href="/governance/xbom/quickstart">
+    Generate your first xBOM.
+  </Card>
+  <Card title="CycloneDX SBOM" icon="file-lines" href="/governance/cyclonedx-sbom">
+    Generate a standard SBOM with Vet.
+  </Card>
+  <Card title="What is an SBOM?" icon="lightbulb" href="/concepts/sbom">
+    SBOM versus xBOM, explained.
+  </Card>
+  <Card title="Contribute signatures" icon="github" href="https://github.com/safedep/xbom/blob/main/CONTRIBUTING.md#contributing-signatures">
+    Add detections for new components.
+  </Card>
+</CardGroup>

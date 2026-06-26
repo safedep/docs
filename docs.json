@@ -15,165 +15,185 @@
     "tabs": [
       {
         "tab": "Get Started",
+        "icon": "rocket",
         "groups": [
           {
             "group": "Introduction",
+            "icon": "book-open",
             "pages": [
-              "introduction"
+              "introduction",
+              "get-started/cli-tools"
             ]
           },
           {
-            "group": "Quickstarts",
+            "group": "Core Concepts",
+            "icon": "lightbulb",
             "pages": [
-              "vet/quickstart",
-              "cloud/quickstart"
+              "concepts/malicious-package",
+              "concepts/vulnerability",
+              "concepts/policy",
+              "concepts/cel",
+              "concepts/sbom",
+              "concepts/tenant",
+              "concepts/endpoint"
             ]
           }
         ]
       },
       {
-        "tab": "Protect Developers",
-        "groups": [
+        "tab": "Package Security",
+        "icon": "shield-halved",
+        "pages": [
+          "package-security/overview",
           {
-            "group": "Package Manager Guard (pmg)",
+            "group": "Install-Time Package Blocking",
+            "icon": "box",
+            "root": "package-security/pmg/overview",
             "pages": [
-              "pmg/concepts/why-pmg",
-              "pmg/quickstart",
-              "pmg/updates"
+              "package-security/pmg/quickstart"
             ]
           },
           {
-            "group": "AI Coding Protection & Audit",
+            "group": "CI/CD Package Blocking",
+            "icon": "shield-check",
             "pages": [
-              "apps/mcp/overview"
-            ]
-          },
-          {
-            "group": "Endpoint Sync",
-            "pages": [
-              "cloud/endpoint-hub/package-guard"
+              "package-security/jfrog-xray"
             ]
           }
         ]
       },
       {
-        "tab": "Scan & Analyze",
-        "groups": [
+        "tab": "AI Agent Security",
+        "icon": "robot",
+        "pages": [
+          "ai-security/overview",
+          "ai-security/ai-tools-discovery",
+          "ai-security/gryph-overview",
+          "ai-security/mcp-server"
+        ]
+      },
+      {
+        "tab": "Visibility & Governance",
+        "icon": "binoculars",
+        "pages": [
+          "governance/overview",
           {
-            "group": "Repository Scanning (vet)",
+            "group": "Repository Scanning",
+            "icon": "magnifying-glass",
+            "root": "governance/vet/overview",
             "pages": [
-              "vet/concepts/why-vet",
-              "vet/guides/code-analysis",
-              "vet/guides/dependency-inventory",
-              "vet/guides/dependency-usage-identification"
+              "governance/vet/quickstart",
+              "governance/vet/dependency-inventory",
+              "governance/vet/dependency-usage",
+              "governance/vet/code-analysis"
             ]
           },
           {
-            "group": "Bill of Materials (xBom)",
+            "group": "Bill of Materials",
+            "icon": "list-check",
+            "root": "governance/xbom/overview",
             "pages": [
-              "xbom/concepts/why-xbom",
-              "xbom/quickstart",
-              "vet/guides/cyclonedx-sbom"
+              "governance/xbom/quickstart",
+              "governance/cyclonedx-sbom"
             ]
           },
           {
-            "group": "AI Governance",
+            "group": "AI Visibility",
+            "icon": "robot",
+            "root": "governance/ai-governance",
             "pages": [
-              "vet/guides/ai-governance",
-              "vet/guides/shadow-ai-detection",
-              "vet/guides/ai-tools-discovery"
+              "governance/shadow-ai-detection"
             ]
           },
           {
             "group": "CI/CD & Platform Integrations",
+            "icon": "plug",
+            "root": "governance/integrations/overview",
             "pages": [
-              "apps/overview",
-              "apps/github/overview",
-              "vet/guides/github-code-scanning",
-              "apps/gitlab/overview",
-              "apps/bitbucket/bitbucket-pipes",
-              "apps/jfrog/overview",
-              "vet/guides/defect-dojo-integration",
-              "vet/guides/terraform-supply-chain-audit"
+              "governance/integrations/github",
+              "governance/integrations/github-code-scanning",
+              "governance/integrations/gitlab",
+              "governance/integrations/bitbucket",
+              "governance/integrations/defectdojo",
+              "governance/terraform-audit"
             ]
-          }
-        ]
-      },
-      {
-        "tab": "Govern & Manage",
-        "groups": [
+          },
           {
             "group": "SafeDep Cloud",
+            "icon": "cloud",
+            "root": "governance/cloud/overview",
             "pages": [
-              "cloud/overview",
-              "cloud/sync"
-            ]
-          },
-          {
-            "group": "Endpoint Hub",
-            "pages": [
-              "cloud/endpoint-hub/overview",
-              "cloud/endpoint-hub/inventory",
-              "cloud/endpoint-hub/inventory-catalog"
-            ]
-          },
-          {
-            "group": "Policy & Risk",
-            "pages": [
-              "cloud/malware-analysis",
-              "cloud/package-exclusions"
-            ]
-          },
-          {
-            "group": "Access & Identity",
-            "pages": [
-              "cloud/authentication"
+              "governance/cloud/quickstart",
+              "governance/cloud/authentication",
+              "governance/cloud/sync",
+              {
+                "group": "Endpoint Hub",
+                "icon": "server",
+                "expanded": false,
+                "root": "governance/cloud/endpoint-hub/overview",
+                "pages": [
+                  "governance/cloud/endpoint-hub/inventory",
+                  "governance/cloud/endpoint-hub/inventory-catalog",
+                  "governance/cloud/endpoint-hub/package-guard"
+                ]
+              },
+              {
+                "group": "Policy & Risk",
+                "icon": "shield-halved",
+                "expanded": false,
+                "pages": [
+                  "governance/cloud/malware-analysis",
+                  "governance/cloud/package-exclusions"
+                ]
+              }
             ]
           }
         ]
       },
       {
         "tab": "Reference",
+        "icon": "book",
         "groups": [
           {
-            "group": "vet Query & Policy",
+            "group": "Query & Policy",
+            "icon": "filter",
             "pages": [
-              "vet/advanced/filtering",
-              "vet/advanced/build-your-own-queries",
-              "vet/advanced/policy-as-code",
-              "vet/advanced/exceptions",
-              "vet/advanced/path-exclusion"
-            ]
-          },
-          {
-            "group": "SQL Query",
-            "pages": [
-              "reference/sql-query"
+              "reference/filtering",
+              "reference/build-your-own-queries",
+              "reference/policy-as-code",
+              "reference/exceptions",
+              "reference/path-exclusion"
             ]
           },
           {
             "group": "API & Automation",
+            "icon": "code",
             "pages": [
-              "api-reference/introduction",
-              "vet/guides/insights-api-using-typescript"
+              "reference/api-introduction",
+              "reference/endpoints",
+              "reference/insights-api-typescript",
+              "reference/sql-query"
             ]
           }
         ]
       },
       {
         "tab": "Community & Support",
+        "icon": "comments",
         "groups": [
           {
             "group": "Community",
+            "icon": "users",
             "pages": [
               "community"
             ]
           },
           {
             "group": "Support",
+            "icon": "circle-question",
             "pages": [
               "faq",
-              "cloud/faq"
+              "governance/cloud/faq"
             ]
           }
         ]
@@ -199,6 +219,200 @@
       ]
     }
   },
+  "redirects": [
+    {
+      "source": "/concepts/malicious-package-protection",
+      "destination": "/concepts/malicious-package"
+    },
+    {
+      "source": "/api/introduction",
+      "destination": "/reference/api-introduction"
+    },
+    {
+      "source": "/vet/quickstart",
+      "destination": "/governance/vet/quickstart"
+    },
+    {
+      "source": "/cloud/quickstart",
+      "destination": "/governance/cloud/quickstart"
+    },
+    {
+      "source": "/pmg/concepts/why-pmg",
+      "destination": "/package-security/pmg/overview"
+    },
+    {
+      "source": "/pmg/quickstart",
+      "destination": "/package-security/pmg/quickstart"
+    },
+    {
+      "source": "/pmg/updates",
+      "destination": "/package-security/pmg/overview"
+    },
+    {
+      "source": "/package-security/pmg/updates",
+      "destination": "/package-security/pmg/overview"
+    },
+    {
+      "source": "/apps/jfrog/overview",
+      "destination": "/package-security/jfrog-xray"
+    },
+    {
+      "source": "/vet/guides/ai-governance",
+      "destination": "/governance/ai-governance"
+    },
+    {
+      "source": "/ai-security/ai-governance",
+      "destination": "/governance/ai-governance"
+    },
+    {
+      "source": "/vet/guides/shadow-ai-detection",
+      "destination": "/governance/shadow-ai-detection"
+    },
+    {
+      "source": "/ai-security/shadow-ai-detection",
+      "destination": "/governance/shadow-ai-detection"
+    },
+    {
+      "source": "/vet/guides/ai-tools-discovery",
+      "destination": "/ai-security/ai-tools-discovery"
+    },
+    {
+      "source": "/apps/mcp/overview",
+      "destination": "/ai-security/mcp-server"
+    },
+    {
+      "source": "/vet/concepts/why-vet",
+      "destination": "/governance/vet/overview"
+    },
+    {
+      "source": "/vet/guides/code-analysis",
+      "destination": "/governance/vet/code-analysis"
+    },
+    {
+      "source": "/vet/guides/dependency-inventory",
+      "destination": "/governance/vet/dependency-inventory"
+    },
+    {
+      "source": "/vet/guides/dependency-usage-identification",
+      "destination": "/governance/vet/dependency-usage"
+    },
+    {
+      "source": "/xbom/concepts/why-xbom",
+      "destination": "/governance/xbom/overview"
+    },
+    {
+      "source": "/xbom/quickstart",
+      "destination": "/governance/xbom/quickstart"
+    },
+    {
+      "source": "/vet/guides/cyclonedx-sbom",
+      "destination": "/governance/cyclonedx-sbom"
+    },
+    {
+      "source": "/apps/overview",
+      "destination": "/governance/integrations/overview"
+    },
+    {
+      "source": "/apps/github/overview",
+      "destination": "/governance/integrations/github"
+    },
+    {
+      "source": "/vet/guides/github-code-scanning",
+      "destination": "/governance/integrations/github-code-scanning"
+    },
+    {
+      "source": "/apps/gitlab/overview",
+      "destination": "/governance/integrations/gitlab"
+    },
+    {
+      "source": "/apps/bitbucket/bitbucket-pipes",
+      "destination": "/governance/integrations/bitbucket"
+    },
+    {
+      "source": "/vet/guides/defect-dojo-integration",
+      "destination": "/governance/integrations/defectdojo"
+    },
+    {
+      "source": "/vet/guides/terraform-supply-chain-audit",
+      "destination": "/governance/terraform-audit"
+    },
+    {
+      "source": "/cloud/overview",
+      "destination": "/governance/cloud/overview"
+    },
+    {
+      "source": "/cloud/sync",
+      "destination": "/governance/cloud/sync"
+    },
+    {
+      "source": "/cloud/endpoint-hub/overview",
+      "destination": "/governance/cloud/endpoint-hub/overview"
+    },
+    {
+      "source": "/cloud/endpoint-hub/inventory",
+      "destination": "/governance/cloud/endpoint-hub/inventory"
+    },
+    {
+      "source": "/cloud/endpoint-hub/inventory-catalog",
+      "destination": "/governance/cloud/endpoint-hub/inventory-catalog"
+    },
+    {
+      "source": "/cloud/endpoint-hub/package-guard",
+      "destination": "/governance/cloud/endpoint-hub/package-guard"
+    },
+    {
+      "source": "/cloud/malware-analysis",
+      "destination": "/governance/cloud/malware-analysis"
+    },
+    {
+      "source": "/cloud/package-exclusions",
+      "destination": "/governance/cloud/package-exclusions"
+    },
+    {
+      "source": "/cloud/authentication",
+      "destination": "/governance/cloud/authentication"
+    },
+    {
+      "source": "/cloud/faq",
+      "destination": "/governance/cloud/faq"
+    },
+    {
+      "source": "/vet/advanced/filtering",
+      "destination": "/reference/filtering"
+    },
+    {
+      "source": "/vet/advanced/build-your-own-queries",
+      "destination": "/reference/build-your-own-queries"
+    },
+    {
+      "source": "/vet/advanced/policy-as-code",
+      "destination": "/reference/policy-as-code"
+    },
+    {
+      "source": "/vet/advanced/exceptions",
+      "destination": "/reference/exceptions"
+    },
+    {
+      "source": "/vet/advanced/path-exclusion",
+      "destination": "/reference/path-exclusion"
+    },
+    {
+      "source": "/api-reference/introduction",
+      "destination": "/reference/api-introduction"
+    },
+    {
+      "source": "/vet/guides/insights-api-using-typescript",
+      "destination": "/reference/insights-api-typescript"
+    },
+    {
+      "source": "/get-started/vet-quickstart",
+      "destination": "/governance/vet/quickstart"
+    },
+    {
+      "source": "/get-started/cloud-quickstart",
+      "destination": "/governance/cloud/quickstart"
+    }
+  ],
   "logo": {
     "light": "/images/full-logo-for-light-theme.png",
     "dark": "/images/full-logo-for-dark-theme.png"

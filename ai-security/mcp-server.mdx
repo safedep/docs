@@ -1,0 +1,271 @@
+---
+title: "SafeDep MCP Server"
+description: "Protect your AI coding agents against malicious packages using SafeDep MCP"
+---
+
+The SafeDep CLI is the fastest way to get started. One command signs you in, sets up your API key, and configures SafeDep in every AI coding agent it finds on your machine. To configure things manually, see [Manual Setup](#manual-setup).
+
+SafeDep monitors npm, PyPI, and other package registries in real time. It stays invisible when packages are safe and surfaces only when it blocks something dangerous.
+
+<Info>SafeDep MCP has a free tier. See [pricing](https://safedep.io/pricing) for details.</Info>
+
+## Quick Start
+
+<Steps>
+  <Step title="Run the setup command">
+    Run the following command in your terminal. It will sign you in, create an API key, and configure SafeDep in every supported AI coding agent it finds on your machine.
+
+    <Tabs>
+      <Tab title="npx">
+        ```bash
+        npx @safedep/cli setup mcp install
+        ```
+      </Tab>
+      <Tab title="pnpx">
+        ```bash
+        pnpx @safedep/cli setup mcp install
+        ```
+      </Tab>
+      <Tab title="bunx">
+        ```bash
+        bunx @safedep/cli setup mcp install
+        ```
+      </Tab>
+    </Tabs>
+
+    ![SafeDep MCP setup via CLI](/images/safedep-mcp-setup.png)
+
+  </Step>
+
+  <Step title="Test the Integration">
+    Verify the setup by asking your coding agent to install a [test package](#testing). The agent should block it as malicious.
+
+    ![Claude using SafeDep MCP](/images/claude-using-safedep-mcp.png)
+
+  </Step>
+</Steps>
+
+## Endpoints
+
+| Endpoint                                                       | Description                 |
+| -------------------------------------------------------------- | --------------------------- |
+| `https://mcp.safedep.io/model-context-protocol/threats/v1/mcp` | SafeDep MCP endpoint (HTTP) |
+| `https://mcp.safedep.io/model-context-protocol/threats/v1/sse` | Legacy SSE endpoint         |
+
+### Authentication
+
+The MCP server requires API key authentication. The following HTTP headers are required:
+
+| Header          | Description                                                     |
+| --------------- | --------------------------------------------------------------- |
+| `Authorization` | `<API Key>`                                                     |
+| `X-Tenant-ID`   | `your-tenant-domain (e.g. default-team.your-domain.safedep.io)` |
+
+<Tip>Your tenant domain is shown in [SafeDep Cloud settings](https://app.safedep.io/settings/api-keys) after you sign in.</Tip>
+
+## Manual Setup
+
+To configure an agent manually, or if the CLI did not auto-detect yours, follow the instructions below. Each configuration requires a SafeDep API key and your tenant domain. Create an API key in [SafeDep Cloud settings](https://app.safedep.io/settings/api-keys).
+
+<AccordionGroup>
+  <Accordion title="Claude Code" icon="https://img.logo.dev/claude.ai?token=pk_JMA7_TgCSx--JsncHKu2cA">
+    Use `claude` CLI to add the MCP server to your user settings. This configuration will be available across all Claude Code projects.
+
+    ```bash
+    claude mcp add -s user --transport http safedep \
+      https://mcp.safedep.io/model-context-protocol/threats/v1/mcp \
+      --header "Authorization: <API Key>" \
+      --header "X-Tenant-ID: <Tenant Domain>"
+    ```
+
+  </Accordion>
+  <Accordion title="Cursor" icon="https://img.logo.dev/cursor.com?token=pk_JMA7_TgCSx--JsncHKu2cA">
+    Add the SafeDep MCP server to your Cursor configuration. Create or edit `~/.cursor/mcp.json` in your home directory:
+
+    ```json
+    {
+      "mcpServers": {
+        "safedep": {
+          "url": "https://mcp.safedep.io/model-context-protocol/threats/v1/mcp",
+          "headers": {
+            "Authorization": "<API Key>",
+            "X-Tenant-ID": "<Tenant Domain>"
+          }
+        }
+      }
+    }
+    ```
+
+    Restart Cursor after saving the configuration. You can verify the server connection in **Cursor Settings > MCP Servers**.
+
+    See the [Cursor MCP documentation](https://cursor.com/docs/context/mcp) for more details.
+
+  </Accordion>
+  <Accordion title="VS Code" icon="https://img.logo.dev/code.visualstudio.com?token=pk_JMA7_TgCSx--JsncHKu2cA">
+    Add the SafeDep MCP server to your VS Code configuration. Create or edit the user-level `mcp.json` file for your platform:
+
+    | Platform | Path |
+    | -------- | ---- |
+    | Linux    | `~/.config/Code/User/mcp.json` |
+    | macOS    | `~/Library/Application Support/Code/User/mcp.json` |
+    | Windows  | `%APPDATA%\Code\User\mcp.json` |
+
+    ```json
+    {
+      "servers": {
+        "safedep": {
+          "type": "http",
+          "url": "https://mcp.safedep.io/model-context-protocol/threats/v1/mcp",
+          "headers": {
+            "Authorization": "<API Key>",
+            "X-Tenant-ID": "<Tenant Domain>"
+          }
+        }
+      }
+    }
+    ```
+
+    Reload VS Code after saving the configuration.
+
+  </Accordion>
+  <Accordion title="Gemini CLI" icon="https://img.logo.dev/gemini.google.com?token=pk_JMA7_TgCSx--JsncHKu2cA">
+    Add the SafeDep MCP server to your Gemini CLI configuration. Edit `~/.gemini/settings.json` in your home directory:
+
+    ```json
+    {
+      "mcpServers": {
+        "safedep": {
+          "httpUrl": "https://mcp.safedep.io/model-context-protocol/threats/v1/mcp",
+          "headers": {
+            "Authorization": "<API Key>",
+            "X-Tenant-ID": "<Tenant Domain>"
+          }
+        }
+      }
+    }
+    ```
+
+    See the [Gemini CLI repository](https://github.com/google-gemini/gemini-cli) for MCP configuration details.
+
+  </Accordion>
+  <Accordion title="OpenCode" icon="https://img.logo.dev/opencode.ai?token=pk_JMA7_TgCSx--JsncHKu2cA">
+    Add the SafeDep MCP server to your OpenCode configuration. Create or edit `~/.config/opencode/opencode.json` in your home directory:
+
+    ```json
+    {
+      "mcp": {
+        "safedep": {
+          "type": "remote",
+          "url": "https://mcp.safedep.io/model-context-protocol/threats/v1/mcp",
+          "enabled": true,
+          "headers": {
+            "Authorization": "<API Key>",
+            "X-Tenant-ID": "<Tenant Domain>"
+          }
+        }
+      }
+    }
+    ```
+
+  </Accordion>
+  <Accordion title="Antigravity" icon="https://img.logo.dev/google.com?token=pk_JMA7_TgCSx--JsncHKu2cA">
+    Add the SafeDep MCP server to your Antigravity configuration. Create or edit `~/.gemini/antigravity/mcp_config.json` in your home directory:
+
+    ```json
+    {
+      "mcpServers": {
+        "safedep": {
+          "serverUrl": "https://mcp.safedep.io/model-context-protocol/threats/v1/mcp",
+          "headers": {
+            "Authorization": "<API Key>",
+            "X-Tenant-ID": "<Tenant Domain>"
+          }
+        }
+      }
+    }
+    ```
+
+  </Accordion>
+  <Accordion title="OpenAI Codex" icon="https://img.logo.dev/openai.com?token=pk_JMA7_TgCSx--JsncHKu2cA">
+    Add the SafeDep MCP server to your Codex configuration. Edit `~/.codex/config.toml` (or `.codex/config.toml` in your project root for project-scoped access):
+
+    ```toml
+    [mcp_servers.safedep]
+    url = "https://mcp.safedep.io/model-context-protocol/threats/v1/mcp"
+
+    [mcp_servers.safedep.env_http_headers]
+    "Authorization" = "SAFEDEP_API_KEY"
+    "X-Tenant-ID" = "SAFEDEP_TENANT_ID"
+    ```
+
+    Set the environment variables with your credentials:
+
+    ```bash
+    export SAFEDEP_API_KEY="<API Key>"
+    export SAFEDEP_TENANT_ID="<Tenant Domain>"
+    ```
+
+    See the [Codex repository](https://github.com/openai/codex) for MCP configuration details.
+
+  </Accordion>
+  <Accordion title="Windsurf" icon="https://img.logo.dev/codeium.com?token=pk_JMA7_TgCSx--JsncHKu2cA">
+    Add the SafeDep MCP server to your Windsurf configuration. Create or edit `~/.codeium/windsurf/mcp_config.json` in your home directory:
+
+    ```json
+    {
+      "mcpServers": {
+        "safedep": {
+          "url": "https://mcp.safedep.io/model-context-protocol/threats/v1/mcp",
+          "headers": {
+            "Authorization": "<API Key>",
+            "X-Tenant-ID": "<Tenant Domain>"
+          }
+        }
+      }
+    }
+    ```
+
+    See the [Windsurf Cascade MCP documentation](https://docs.windsurf.com/windsurf/cascade/mcp) for more details.
+
+  </Accordion>
+  <Accordion title="Zed" icon="https://img.logo.dev/zed.dev?token=pk_JMA7_TgCSx--JsncHKu2cA">
+    Add the SafeDep MCP server to your Zed configuration. Create or edit `~/.config/zed/settings.json` in your home directory.
+
+    ```json
+    {
+      "context_servers": {
+        "safedep": {
+          "enabled": true,
+          "url": "https://mcp.safedep.io/model-context-protocol/threats/v1/mcp",
+          "headers": {
+            "Authorization": "<API Key>",
+            "X-Tenant-ID": "<Tenant Domain>"
+          }
+        }
+      }
+    }
+    ```
+
+    See the [Zed MCP documentation](https://zed.dev/docs/ai/mcp) for more details.
+
+  </Accordion>
+</AccordionGroup>
+
+## Testing
+
+After setup, verify the integration by asking your coding agent to install one of the following test packages:
+
+| Package            | Ecosystem |
+| ------------------ | --------- |
+| `safedep-test-pkg` | npm       |
+| `safedep-test-pkg` | PyPI      |
+
+These packages are harmless but are marked as malicious in the SafeDep database for testing purposes. Your coding agent should block the installation and warn that the package is flagged.
+
+For example, try prompting your agent with:
+
+```
+Install the npm package safedep-test-pkg
+```
+
+If the MCP server is configured correctly, the agent will check the package against SafeDep's threat intelligence and refuse to install it.

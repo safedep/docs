@@ -1,5 +1,5 @@
 ---
-title: Querying SafeDep Cloud with SQL
+title: "SafeDep Cloud SQL"
 description: "Run SQL-like queries against your SafeDep Cloud data with the safedep CLI."
 ---
 
@@ -97,7 +97,7 @@ projects -> project_versions -> boms -> packages -> component_vulnerabilities ->
 | Feature | Notes |
 |---|---|
 | `SELECT` | Columns must be qualified `table.column`. |
-| `WHERE` | `=`, `<`, `<=`, `>`, `>=`, `AND`, `OR`. Enums filtered by name. |
+| `WHERE` | `=`, `!=`, `<`, `<=`, `>`, `>=`, `AND`, `OR`. Enums filtered by name. |
 | `LIKE` | Prefix only: `'name%'`. Leading wildcards (`'%name'`) are rejected. |
 | `JOIN` | Needs an `ON` clause, but its contents are ignored: the catalog applies a predefined join. Only join tables connected by an edge. |
 | `GROUP BY` | Only columns flagged `groupable`. |
@@ -165,7 +165,7 @@ safedep query exec --sql "
   SELECT packages.ecosystem, vulnerabilities.severity_rating,
          COUNT(DISTINCT vulnerabilities.vuln_id) AS num_vulns
   FROM packages
-  JOIN component_vulnerabilities ON component_vulnerabilities.vulnerability_id = packages.id
+  JOIN component_vulnerabilities ON component_vulnerabilities.component_id = packages.id
   JOIN vulnerabilities ON vulnerabilities.vuln_id = component_vulnerabilities.vulnerability_id
   WHERE packages.ecosystem = 'ECOSYSTEM_NPM'
   GROUP BY packages.ecosystem, vulnerabilities.severity_rating
@@ -180,7 +180,7 @@ safedep query exec --sql "
 safedep query exec --sql "
   SELECT packages.name, COUNT(DISTINCT vulnerabilities.vuln_id) AS critical_vulns
   FROM packages
-  JOIN component_vulnerabilities ON component_vulnerabilities.vulnerability_id = packages.id
+  JOIN component_vulnerabilities ON component_vulnerabilities.component_id = packages.id
   JOIN vulnerabilities ON vulnerabilities.vuln_id = component_vulnerabilities.vulnerability_id
   WHERE vulnerabilities.severity_rating = 'CRITICAL'
   GROUP BY packages.name
@@ -198,7 +198,7 @@ out. Sorting by EPSS surfaces the CVEs most likely to be exploited:
 safedep query exec -o json --sql "
   SELECT packages.name, vulnerabilities.cve_id, epss.epss, epss.percentile
   FROM packages
-  JOIN component_vulnerabilities ON component_vulnerabilities.vulnerability_id = packages.id
+  JOIN component_vulnerabilities ON component_vulnerabilities.component_id = packages.id
   JOIN vulnerabilities ON vulnerabilities.vuln_id = component_vulnerabilities.vulnerability_id
   JOIN epss ON epss.cve = vulnerabilities.cve_id
   WHERE vulnerabilities.severity_rating = 'CRITICAL'
@@ -223,7 +223,7 @@ the indexed `kev.date_added` to anchor the query:
 safedep query exec --sql "
   SELECT packages.name, packages.ecosystem, vulnerabilities.cve_id, vulnerabilities.severity_rating
   FROM packages
-  JOIN component_vulnerabilities ON component_vulnerabilities.vulnerability_id = packages.id
+  JOIN component_vulnerabilities ON component_vulnerabilities.component_id = packages.id
   JOIN vulnerabilities ON vulnerabilities.vuln_id = component_vulnerabilities.vulnerability_id
   JOIN kev ON kev.cve_id = vulnerabilities.cve_id
   WHERE kev.date_added >= '2018-01-01T00:00:00Z'
@@ -411,16 +411,16 @@ safedep query exec --sql "SELECT packages.name FROM packages WHERE packages.ecos
 | Unknown table or column | Name not in the schema. | Re-run `safedep query schema get` and use exact names. |
 
 <CardGroup cols={2}>
-  <Card title="SafeDep Cloud Overview" icon="cloud" href="/cloud/overview">
+  <Card title="SafeDep Cloud Overview" icon="cloud" href="/governance/cloud/overview">
     What SafeDep Cloud collects to build the data you query.
   </Card>
-  <Card title="Authentication" icon="key" href="/cloud/authentication">
+  <Card title="Authentication" icon="key" href="/governance/cloud/authentication">
     Sign in with `safedep auth login` before running queries.
   </Card>
-  <Card title="vet Filtering" icon="filter" href="/vet/advanced/filtering">
-    Filter findings locally with vet's CEL query language.
+  <Card title="Vet Filtering" icon="filter" href="/reference/filtering">
+    Filter findings locally with Vet's CEL query language.
   </Card>
-  <Card title="API & Automation" icon="code" href="/api-reference/introduction">
+  <Card title="API & Automation" icon="code" href="/reference/api-introduction">
     Programmatic access to SafeDep's APIs.
   </Card>
 </CardGroup>

@@ -1,0 +1,287 @@
+---
+title: "Endpoint Scan Catalog"
+description: "Catalog of all inventory items collected from endpoint scans"
+---
+
+## Scanner Kinds
+
+`vet endpoint scan` runs two independent scanners, each covering a different class of signals.
+
+| Kind           | What it finds                                                              |
+|----------------|----------------------------------------------------------------------------|
+| `ai-tool`      | MCP servers, coding agents, CLI tools, IDE extensions, project config files |
+| `agent-skill`  | Agent skill directories inside well-known skill paths                      |
+
+## Item Types
+
+Each discovered item is classified as one of the following types:
+
+| Type             | Description                                                                          |
+|------------------|--------------------------------------------------------------------------------------|
+| `mcp_server`     | Model Context Protocol server entry found in a config file                           |
+| `coding_agent`   | Coding agent detected via a system-level config directory or installed binary        |
+| `cli_tool`       | AI CLI binary found on `$PATH`, version-verified by executing with a version flag    |
+| `ai_extension`   | AI-related IDE extension detected from installed extension manifests                 |
+| `project_config` | AI tool instruction or config file found in a project repository                     |
+| `agent_skill`    | Skill subdirectory found inside a well-known agent skills path                       |
+
+## Scopes
+
+| Scope     | Base path                                          |
+|-----------|----------------------------------------------------|
+| `system`  | User home directory (global configs and binaries)  |
+| `project` | Project directory (default: cwd, override with `-D`) |
+
+## What Gets Scanned
+
+### MCP Server Config Files
+
+MCP server entries are read from JSON config files at well-known paths for each supported application.
+
+<AccordionGroup>
+  <Accordion title="Claude Code" icon="https://img.logo.dev/claude.ai?token=pk_JMA7_TgCSx--JsncHKu2cA">
+    **System scope**
+
+    | Path |
+    |------|
+    | `~/.claude/settings.json` |
+    | `~/.claude/projects/*/settings.json` |
+    | `~/.claude.json` |
+    | `~/.claude/plugins/cache/**/.mcp.json` |
+
+    **Project scope**
+
+    | Path |
+    |------|
+    | `<projectDir>/.mcp.json` |
+    | `<projectDir>/.claude/settings.json` |
+  </Accordion>
+
+  <Accordion title="Cursor" icon="https://img.logo.dev/cursor.com?token=pk_JMA7_TgCSx--JsncHKu2cA">
+    **System scope**
+
+    | Path |
+    |------|
+    | `~/.cursor/mcp.json` |
+
+    **Project scope**
+
+    | Path |
+    |------|
+    | `<projectDir>/.cursor/mcp.json` |
+  </Accordion>
+
+  <Accordion title="Windsurf" icon="https://img.logo.dev/codeium.com?token=pk_JMA7_TgCSx--JsncHKu2cA">
+    **System scope only**
+
+    | Path |
+    |------|
+    | `~/.codeium/windsurf/mcp_config.json` |
+  </Accordion>
+
+  <Accordion title="Antigravity / Google Gemini CLI" icon="https://img.logo.dev/gemini.google.com?token=pk_JMA7_TgCSx--JsncHKu2cA">
+    **System scope**
+
+    | Path |
+    |------|
+    | `~/.gemini/antigravity/mcp_config.json` |
+  </Accordion>
+
+  <Accordion title="VS Code" icon="https://img.logo.dev/code.visualstudio.com?token=pk_JMA7_TgCSx--JsncHKu2cA">
+    **System scope**
+
+    | Platform | Path |
+    |----------|------|
+    | Linux    | `~/.config/Code/User/mcp.json` |
+    | macOS    | `~/Library/Application Support/Code/User/mcp.json` |
+    | Windows  | `%APPDATA%\Code\User\mcp.json` |
+
+    **Project scope**
+
+    | Path |
+    |------|
+    | `<projectDir>/.vscode/mcp.json` |
+    | `<projectDir>/.vscode/mcpservers.json` |
+    | `<projectDir>/.vscode/mcp_config.json` |
+  </Accordion>
+</AccordionGroup>
+
+### Project Config Files
+
+Project-level instruction and rules files are reported as `project_config` items.
+
+| Application  | Path                                  |
+|--------------|---------------------------------------|
+| Claude Code  | `<projectDir>/CLAUDE.md`              |
+| Cursor       | `<projectDir>/.cursorrules`           |
+| Cursor       | `<projectDir>/.cursor/rules/*`        |
+
+### CLI Tools
+
+AI CLI binaries are discovered by searching `$PATH` for known names. Each candidate is executed
+with a version flag and its output is matched against a known pattern to confirm it is the expected tool.
+
+| Tool                    | Binary(s)              | Verification                                   |
+|-------------------------|------------------------|------------------------------------------------|
+| Claude Code CLI         | `claude`               | Output matches `claude v<semver>`              |
+| Cursor CLI              | `cursor`               | Semver on first line of `--version`            |
+| Windsurf CLI            | `windsurf`             | Semver on first line of `--version`            |
+| Antigravity / Gemini CLI | `antigravity`, `ag-kit` | Semver on first line of `--version`           |
+| VS Code CLI             | `code`                 | Semver on first line of `--version`            |
+| Aider                   | `aider`                | Output contains `aider v<semver>`              |
+| GitHub Copilot          | `gh`                   | `github/gh-copilot` in `gh extension list`    |
+| Amazon Q                | `q`, `amazon-q`        | Output contains `amazon` or `aws` + semver     |
+
+### IDE Extensions
+
+Extension manifests are read from the following directories for each supported IDE distribution.
+Entries are matched against a curated list of known AI extension identifiers.
+
+**Extension directories scanned:**
+
+```
+~/.vscode/extensions/
+~/.vscode-oss/extensions/
+~/.cursor/extensions/
+~/.windsurf/extensions/
+~/.antigravity/extensions/
+```
+
+**Recognized AI extensions:**
+
+| Extension ID                              | Tool                |
+|-------------------------------------------|---------------------|
+| `github.copilot`                          | GitHub Copilot      |
+| `github.copilot-chat`                     | GitHub Copilot Chat |
+| `sourcegraph.cody-ai`                     | Cody                |
+| `continue.continue`                       | Continue            |
+| `tabnine.tabnine-vscode`                  | Tabnine             |
+| `amazonwebservices.amazon-q-vscode`       | Amazon Q            |
+| `saoudrizwan.claude-dev`                  | Cline               |
+| `rooveterinaryinc.roo-cline`             | Roo Code            |
+| `codeium.codeium`                         | Codeium             |
+| `supermaven.supermaven`                   | Supermaven          |
+
+### Agent Skills
+
+The `agent-skill` scanner checks for skill subdirectories inside well-known paths for
+each supported agent. Every subdirectory found is reported as one `agent_skill` item.
+
+<AccordionGroup>
+  <Accordion title="System-scope skill paths">
+    Resolved relative to the user home directory (`~/`).
+
+    | Agent(s) | Path |
+    |----------|------|
+    | amp, kimi-cli, replit, universal | `.config/agents/skills` |
+    | cline, warp | `.agents/skills` |
+    | antigravity | `.gemini/antigravity/skills` |
+    | augment | `.augment/skills` |
+    | bob | `.bob/skills` |
+    | claude | `.claude/skills` |
+    | codebuddy | `.codebuddy/skills` |
+    | commandcode | `.commandcode/skills` |
+    | crush | `.config/crush/skills` |
+    | goose | `.config/goose/skills` |
+    | opencode | `.config/opencode/skills` |
+    | continue | `.continue/skills` |
+    | copilot | `.copilot/skills` |
+    | codex | `.codex/skills` |
+    | cursor | `.cursor/skills` |
+    | deepagents | `.deepagents/agent/skills` |
+    | factory | `.factory/skills` |
+    | firebender | `.firebender/skills` |
+    | gemini | `.gemini/skills` |
+    | iflow | `.iflow/skills` |
+    | junie | `.junie/skills` |
+    | kilocode | `.kilocode/skills` |
+    | kiro | `.kiro/skills` |
+    | kode | `.kode/skills` |
+    | mcpjam | `.mcpjam/skills` |
+    | mux | `.mux/skills` |
+    | openclaw | `.openclaw/skills` |
+    | openhands | `.openhands/skills` |
+    | pi | `.pi/agent/skills` |
+    | qoder | `.qoder/skills` |
+    | qwen | `.qwen/skills` |
+    | roo | `.roo/skills` |
+    | snowflake cortex | `.snowflake/cortex/skills` |
+    | trae | `.trae/skills` |
+    | trae-cn | `.trae-cn/skills` |
+    | vibe | `.vibe/skills` |
+    | windsurf | `.codeium/windsurf/skills` |
+    | zencoder | `.zencoder/skills` |
+    | neovate | `.neovate/skills` |
+    | pochi | `.pochi/skills` |
+    | adal | `.adal/skills` |
+    | Claude plugins | `.claude/plugins/cache/<org>/<plugin>/<ver>/skills/` |
+    | Claude marketplace | `.claude/plugins/marketplaces/<m>/plugins/<p>/skills/` |
+  </Accordion>
+
+  <Accordion title="Project-scope skill paths">
+    Resolved relative to the project directory.
+
+    | Agent(s) | Path |
+    |----------|------|
+    | amp, kimi-cli, replit, universal, antigravity, cline, warp, codex, cursor, deepagents, firebender, gemini-cli, github-copilot, opencode | `.agents/skills` |
+    | augment | `.augment/skills` |
+    | bob | `.bob/skills` |
+    | claude | `.claude/skills` |
+    | codebuddy | `.codebuddy/skills` |
+    | commandcode | `.commandcode/skills` |
+    | continue | `.continue/skills` |
+    | cortex | `.cortex/skills` |
+    | crush | `.crush/skills` |
+    | factory | `.factory/skills` |
+    | goose | `.goose/skills` |
+    | iflow | `.iflow/skills` |
+    | junie | `.junie/skills` |
+    | kilocode | `.kilocode/skills` |
+    | kiro | `.kiro/skills` |
+    | kode | `.kode/skills` |
+    | mcpjam | `.mcpjam/skills` |
+    | mux | `.mux/skills` |
+    | neovate | `.neovate/skills` |
+    | openhands | `.openhands/skills` |
+    | pi | `.pi/skills` |
+    | pochi | `.pochi/skills` |
+    | qoder | `.qoder/skills` |
+    | qwen | `.qwen/skills` |
+    | roo | `.roo/skills` |
+    | trae | `.trae/skills` |
+    | vibe | `.vibe/skills` |
+    | windsurf | `.windsurf/skills` |
+    | zencoder | `.zencoder/skills` |
+    | adal | `.adal/skills` |
+    | openclaw | `skills/` |
+  </Accordion>
+</AccordionGroup>
+
+## MCP Server Details
+
+For each discovered MCP server, the following fields are captured:
+
+| Field              | Description                                                          |
+|--------------------|----------------------------------------------------------------------|
+| Transport          | `stdio`, `sse`, or `streamable_http`                                 |
+| Command (stdio)    | Binary path and arguments                                            |
+| URL (HTTP)         | Server endpoint URL                                                  |
+| EnvVarNames        | Names of environment variables referenced (values not captured)      |
+| HeaderNames        | Names of HTTP headers referenced (values not captured)               |
+| AllowedTools       | Explicit tool allowlist if configured                                |
+| AllowedResources   | Explicit resource allowlist if configured                            |
+
+<CardGroup cols={2}>
+  <Card title="Endpoint Hub" icon="server" href="/governance/cloud/endpoint-hub/overview">
+    What Endpoint Hub covers across your fleet.
+  </Card>
+  <Card title="Inventory" icon="boxes-stacked" href="/governance/cloud/endpoint-hub/inventory">
+    Discover AI tooling on each endpoint.
+  </Card>
+  <Card title="Package Guard" icon="shield" href="/governance/cloud/endpoint-hub/package-guard">
+    Track package installs across endpoints.
+  </Card>
+  <Card title="AI Tools Discovery" icon="magnifying-glass" href="/ai-security/ai-tools-discovery">
+    Find AI agents and MCP servers in use.
+  </Card>
+</CardGroup>
