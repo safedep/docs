@@ -1,0 +1,94 @@
+---
+title: "PMG in GitHub Actions"
+description: "Block malicious packages in GitHub Actions CI by routing package installs through PMG's persistent proxy."
+---
+
+[PMG](https://github.com/safedep/pmg) runs as a persistent proxy in CI/CD. It starts once per job, intercepts installs from every [supported package manager](https://github.com/safedep/pmg#supported-package-managers) through standard proxy environment variables, and auto-blocks any package flagged as malicious.
+
+<Note>
+  In CI, PMG is non-interactive: flagged packages are always blocked, never prompted. For local development use the wrapped commands (`pmg npm install`) covered in the [PMG quickstart](/package-security/pmg/quickstart).
+</Note>
+
+## Use the SafeDep PMG action
+
+Run the [`safedep/pmg`](https://github.com/safedep/pmg) action in `server-mode`, then add a final `pmg proxy stop` step to enforce the result.
+
+```yaml
+- uses: safedep/pmg@v1
+  with:
+    server-mode: true
+    api-key: ${{ secrets.SAFEDEP_API_KEY }}
+    tenant-id: ${{ secrets.SAFEDEP_TENANT_ID }}
+
+- run: npm ci   # intercepted automatically
+
+- name: Enforce PMG policy
+  if: always()
+  run: pmg proxy stop --fail-on-violation
+```
+
+The `pmg proxy stop --fail-on-violation` step is what fails the job on a block and flushes the final events to the cloud. Without it the proxy keeps running and events still sync in the background, but the job won't fail on a violation and the most recent events may be missed. The `if: always()` ensures it runs even when an earlier step fails.
+
+PMG blocks malicious packages using SafeDep's free community intelligence with or without credentials. Add the optional `api-key` and `tenant-id` to connect the run to [SafeDep Cloud](/governance/cloud/overview), so block events sync to [Endpoint Hub](/governance/cloud/endpoint-hub/overview) before the runner is destroyed.
+
+## Example workflow
+
+A full workflow that installs dependencies through PMG on every pull request:
+
+```yaml install-dependencies.yml expandable
+name: Install Dependencies
+on:
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  install-deps:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      # Start PMG in server mode
+      - uses: safedep/pmg@v1
+        with:
+          server-mode: true
+          api-key: ${{ secrets.SAFEDEP_API_KEY }}
+          tenant-id: ${{ secrets.SAFEDEP_TENANT_ID }}
+
+      # Your usual language setup and install
+      - uses: actions/setup-node@v6
+        with:
+          node-version: "24"
+
+      - run: npm ci
+
+      # Enforce the result and flush events
+      - name: Stop proxy
+        if: always()
+        run: pmg proxy stop --fail-on-violation
+```
+
+## Use raw commands
+
+To wire the proxy up directly without the action:
+
+```yaml
+- run: pmg proxy start --daemon
+- run: pmg proxy env >> "$GITHUB_ENV"
+- run: npm ci
+- run: pmg proxy stop --fail-on-violation
+  if: always()
+```
+
+For the proxy lifecycle, certificate trust, bind address, and cloud event sync, see the [persistent proxy server docs](https://github.com/safedep/pmg/blob/main/docs/persistent-proxy.md).
+
+<CardGroup cols={2}>
+  <Card title="PMG" icon="box" href="/package-security/pmg/overview">
+    How PMG blocks malicious packages at install time.
+  </Card>
+  <Card title="Malicious Package" icon="virus" href="/concepts/malicious-package">
+    How SafeDep detects malicious packages.
+  </Card>
+</CardGroup>
