@@ -57,6 +57,7 @@
             "group": "CI/CD Package Blocking",
             "icon": "shield-check",
             "pages": [
+              "package-security/pmg/github-actions",
               "package-security/jfrog-xray"
             ]
           }
