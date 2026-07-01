@@ -127,6 +127,7 @@
               "governance/cloud/quickstart",
               "governance/cloud/authentication",
               "governance/cloud/sync",
+              "governance/cloud/alerts",
               {
                 "group": "Endpoint Hub",
                 "icon": "server",

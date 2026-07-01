@@ -1,0 +1,324 @@
+---
+title: "Send Alerts from SafeDep Cloud"
+description: "Turn any safedep query exec result into a Slack, Discord, Teams, PagerDuty, or custom HTTP alert."
+---
+
+Any SafeDep Cloud table you can query with `safedep query exec` can drive an
+alert. The recipe stays the same for every destination:
+
+1. Write the SQL for the events you care about.
+2. Run `safedep query exec -o json` to get rows.
+3. Format the rows into your destination's payload shape.
+4. `POST` to the webhook.
+
+The rest of this page is a **worked example**: PMG block events, formatted
+as a Slack message, sent to a Slack Incoming Webhook, every 5 minutes.
+Everything below is a stand-in — swap the query, the formatter, or the
+`curl` target for your own destination.
+
+## Example: Slack alert for PMG blocks
+
+Every 5 minutes, a scheduled job queries SafeDep Cloud for packages PMG
+blocked in the last 5 minutes and posts a Slack message like:
+
+```
+🛡️ PMG blocked 2 package(s)
+
+🟡 COOLDOWN • lodash@0.1.0 • npm
+Endpoint: MacBook-Pro.local
+
+🔴 MALICIOUS • safedep-test-pkg@0.1.3 • PyPI
+Endpoint: runnervmkkn4f
+```
+
+Both the package and endpoint are clickable: the package links to its
+SafeDep community report, the endpoint links to its page in SafeDep Cloud.
+
+## Prerequisites
+
+You always need:
+
+- `safedep` CLI installed and signed in. See the [SafeDep Cloud Quickstart](/governance/cloud/quickstart).
+
+For the Slack + Python example below, you also need:
+
+- `python3` and `curl` on the host running the script.
+- A Slack Incoming Webhook URL. See Slack's [Sending messages using incoming webhooks](https://api.slack.com/messaging/webhooks).
+
+Confirm the CLI can reach SafeDep Cloud:
+
+```bash
+safedep auth status
+```
+
+## Step 1: Write the query
+
+Save the SQL to a file so you can version it in git and rerun it:
+
+```sql blocks.sql
+SELECT
+  package_guard_events.package_ecosystem,
+  package_guard_events.package_name,
+  package_guard_events.package_version,
+  package_guard_events.package_action,
+  package_guard_events.timestamp,
+  endpoints.id,
+  endpoints.identifier
+FROM package_guard_events
+JOIN endpoints ON endpoints.id = package_guard_events.invocation_id
+WHERE package_guard_events.package_action IN (
+  'PMG_PACKAGE_ACTION_BLOCKED',
+  'PMG_PACKAGE_ACTION_COOLDOWN_BLOCKED'
+)
+ORDER BY package_guard_events.timestamp DESC
+```
+
+Two things to notice:
+
+- **`package_action` filter.** `PMG_PACKAGE_ACTION_BLOCKED` is a malicious-package
+  block. `PMG_PACKAGE_ACTION_COOLDOWN_BLOCKED` is a cooldown-window block
+  (packages held back until they age past your cooldown threshold).
+- **Join on `invocation_id`.** Each block event was produced by a PMG
+  invocation on some developer machine or CI runner. Joining `endpoints` on
+  `invocation_id` gives you the endpoint's human-readable name
+  (`endpoints.identifier`) and its ID (`endpoints.id`, used to build the
+  Cloud deep-link).
+
+Run it once to see the shape of the data:
+
+```bash
+safedep query exec -o json --sql-file blocks.sql --limit 5
+```
+
+Enum columns (like `package_action` and `package_ecosystem`) return numeric
+ordinals in JSON; the formatter decodes them in Step 2. For the full schema,
+tables, and enum values, see the [SafeDep Cloud SQL reference](/reference/sql-query).
+
+## Step 2: Format events for Slack
+
+Slack's Incoming Webhook takes a JSON payload with a `blocks` array. The
+script below reads rows from stdin, decodes the enum ordinals, builds one
+Slack section block per event, and prints the payload on stdout.
+
+Save this as `format.py`:
+
+```python format.py
+#!/usr/bin/env python3
+"""Read safedep query exec JSON on stdin, print a Slack payload on stdout."""
+import json, sys
+
+ACTION = {1: ("🔴", "MALICIOUS"), 4: ("🟡", "COOLDOWN")}
+ECOSYSTEM = {
+    1: ("ECOSYSTEM_MAVEN",           "Maven"),
+    2: ("ECOSYSTEM_NPM",             "npm"),
+    3: ("ECOSYSTEM_PYPI",            "PyPI"),
+    4: ("ECOSYSTEM_RUBYGEMS",        "RubyGems"),
+    5: ("ECOSYSTEM_NUGET",           "NuGet"),
+    6: ("ECOSYSTEM_CARGO",           "Cargo"),
+    7: ("ECOSYSTEM_GO",              "Go"),
+    8: ("ECOSYSTEM_GITHUB_ACTIONS",  "GitHub Actions"),
+    9: ("ECOSYSTEM_PACKAGIST",       "Packagist"),
+}
+
+rows = json.load(sys.stdin).get("rows", [])
+if not rows:
+    sys.exit(0)  # empty stdout, curl skips the POST
+
+def section(r):
+    icon, reason         = ACTION[r["package_guard_events.package_action"]]
+    eco_enum, eco_label  = ECOSYSTEM[r["package_guard_events.package_ecosystem"]]
+    name, version        = r["package_guard_events.package_name"], r["package_guard_events.package_version"]
+    ep_id, ep_name       = r["endpoints.id"], r["endpoints.identifier"]
+    report   = f"https://app.safedep.io/community/packages/{eco_enum}/{name}/{version}"
+    endpoint = f"https://app.safedep.io/endpoints/{ep_id}"
+    text = (f"{icon} *{reason}* • <{report}|`{name}@{version}`> • {eco_label}"
+            f"\n\nEndpoint: <{endpoint}|`{ep_name}`>")
+    return {"type": "section", "text": {"type": "mrkdwn", "text": text}}
+
+payload = {"blocks": [
+    {"type": "header", "text": {"type": "plain_text", "text": f"🛡️ PMG blocked {len(rows)} package(s)"}},
+    *[section(r) for r in rows],
+]}
+json.dump(payload, sys.stdout)
+```
+
+Add ecosystems you use to the `ECOSYSTEM` dict; nothing else needs to change.
+
+## Step 3: Post to Slack
+
+Pipe the query into the formatter and the formatter into `curl`:
+
+```bash
+export SLACK_WEBHOOK_URL='https://hooks.slack.com/services/...'
+
+safedep query exec -o json --sql-file blocks.sql --limit 10 \
+  | python3 format.py \
+  | curl -sS -X POST -H 'Content-Type: application/json' \
+      --data @- "$SLACK_WEBHOOK_URL"
+```
+
+If there are no matching events, `format.py` exits with empty stdout and
+`curl` sends nothing. On a successful post, Slack replies with `ok`.
+
+<Note>
+Slack caps a message at 50 blocks, so keep `--limit` around 10. See Slack's [block limits](https://api.slack.com/reference/block-kit/blocks).
+</Note>
+
+## Step 4: Run it on a schedule
+
+To make this an alerting pipeline, filter to a rolling window and run
+periodically. The window and the schedule interval must match so events
+aren't dropped or duplicated.
+
+Save this as `safedep-alerts.sh` next to `format.py`. It's the same query as
+`blocks.sql`, plus one extra `AND` clause for the time window, an explicit
+`PATH` (schedulers run with a minimal `PATH`), and a skip when the window
+has no events (avoids Slack's `invalid_payload` on empty POSTs).
+
+```bash safedep-alerts.sh
+#!/usr/bin/env bash
+set -euo pipefail
+
+# Schedulers run with a minimal PATH. Add the location of `safedep` and `python3`.
+export PATH="/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin"
+
+cd "$(dirname "$0")"
+
+# macOS / BSD date. On Linux: SINCE=$(date -u -d '5 minutes ago' '+%Y-%m-%dT%H:%M:%SZ')
+SINCE=$(date -u -v-5M '+%Y-%m-%dT%H:%M:%SZ')
+
+PAYLOAD=$(safedep query exec -o json --limit 10 --sql "
+  SELECT package_guard_events.package_ecosystem,
+         package_guard_events.package_name,
+         package_guard_events.package_version,
+         package_guard_events.package_action,
+         package_guard_events.timestamp,
+         endpoints.id,
+         endpoints.identifier
+  FROM package_guard_events
+  JOIN endpoints ON endpoints.id = package_guard_events.invocation_id
+  WHERE package_guard_events.package_action IN (
+    'PMG_PACKAGE_ACTION_BLOCKED',
+    'PMG_PACKAGE_ACTION_COOLDOWN_BLOCKED'
+  ) AND package_guard_events.timestamp > '$SINCE'
+  ORDER BY package_guard_events.timestamp DESC
+" | python3 format.py)
+
+[ -n "$PAYLOAD" ] && printf '%s' "$PAYLOAD" | curl -sS -X POST \
+  -H 'Content-Type: application/json' --data @- "$SLACK_WEBHOOK_URL"
+```
+
+Then wire it up with your OS's native scheduler:
+
+<Tabs>
+  <Tab title="macOS (launchd)">
+    On macOS, `cron` can't reach the keychain where `safedep auth login`
+    stores its OAuth token, so scheduled `safedep query exec` calls fail
+    with `not authenticated`. Use a **launchd user agent** instead: it runs
+    in your logged-in user session and inherits keychain access.
+
+    Save this as `~/Library/LaunchAgents/io.safedep.alerts.plist`:
+
+    ```xml io.safedep.alerts.plist highlight={20-20}
+    <?xml version="1.0" encoding="UTF-8"?>
+    <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN"
+      "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+    <plist version="1.0">
+    <dict>
+      <key>Label</key>
+      <string>io.safedep.alerts</string>
+
+      <key>ProgramArguments</key>
+      <array>
+        <string>/Users/you/safedep-alerts/safedep-alerts.sh</string>
+      </array>
+
+      <key>StartInterval</key>
+      <integer>300</integer>
+
+      <key>EnvironmentVariables</key>
+      <dict>
+        <key>SLACK_WEBHOOK_URL</key>
+        <string>PASTE_YOUR_SLACK_WEBHOOK_URL_HERE</string>
+      </dict>
+
+      <key>StandardOutPath</key>
+      <string>/tmp/safedep-alerts.log</string>
+      <key>StandardErrorPath</key>
+      <string>/tmp/safedep-alerts.log</string>
+
+      <key>RunAtLoad</key>
+      <true/>
+    </dict>
+    </plist>
+    ```
+
+    Load, verify, and tail the log:
+
+    ```bash
+    launchctl load ~/Library/LaunchAgents/io.safedep.alerts.plist
+    launchctl list | grep io.safedep.alerts
+    tail -f /tmp/safedep-alerts.log
+    ```
+
+    `RunAtLoad` fires the job immediately. `StartInterval` is in seconds
+    (`300` = 5 minutes) and must match the `-v-5M` window in the script.
+    
+    To stop it: 
+    ```bash
+    launchctl unload ~/Library/LaunchAgents/io.safedep.alerts.plist
+    ```
+  </Tab>
+  <Tab title="Linux (cron)">
+    On Linux, `cron` works fine for this use case. Install with
+    `crontab -e` and add:
+
+    ```
+    */5 * * * * SLACK_WEBHOOK_URL="https://hooks.slack.com/services/..." /home/you/safedep-alerts/safedep-alerts.sh >> /tmp/safedep-alerts.log 2>&1
+    ```
+
+    Change `date -u -v-5M ...` in the script to
+    `date -u -d '5 minutes ago' ...` (GNU date syntax). Keep the cron
+    interval (`*/5`) and the `SINCE` window in the script aligned.
+
+    If you're on a desktop with `gnome-keyring` / `kwallet` and hit
+    "not authenticated" from cron, either run the script under a
+    systemd user timer (`systemctl --user enable --now safedep-alerts.timer`)
+    or unlock the keyring for the cron session.
+  </Tab>
+</Tabs>
+
+The design is stateless: no cursor file to keep in sync, no drift across
+restarts. If a 5-minute window ever holds more rows than `--limit`, either
+shorten the interval or page through the JSON response.
+
+## Send to other destinations
+
+Only the last two things change: the payload shape (in `format.py`) and the
+URL (in `curl`). Any JSON-accepting HTTP endpoint works.
+
+<CardGroup cols={3}>
+  <Card title="Discord" icon="discord" href="https://docs.discord.com/developers/resources/webhook#execute-webhook">
+    Emit a simple content payload and POST to your channel's webhook URL.
+  </Card>
+  <Card title="Microsoft Teams" icon="microsoft" href="https://learn.microsoft.com/en-us/microsoftteams/platform/webhooks-and-connectors/how-to/add-incoming-webhook">
+    Create a channel Workflow with a webhook trigger and POST an Adaptive
+    Card payload to its URL.
+  </Card>
+  <Card title="PagerDuty" icon="triangle-exclamation" href="https://developer.pagerduty.com/docs/events-api-v2-overview">
+    Emit an Events API v2 payload and POST to the enqueue endpoint.
+  </Card>
+</CardGroup>
+
+## Query other events
+
+Swap `blocks.sql` for any question you can ask SafeDep Cloud:
+
+- **Insecure bypasses:** filter `package_guard_events` on `event_type = 'PMG_EVENT_TYPE_INSECURE_BYPASS'`.
+- **Endpoint activity:** join `endpoints` on `invocation_id` and group by
+  `endpoints.identifier` to see which machines produced the most events.
+- **Malicious packages across projects:** query `component_malicious_packages`
+  with `is_verified = true`.
+
+See the [SafeDep Cloud SQL guide](/reference/sql-query) for the full schema,
+query syntax, and the paging model.
