@@ -1,22 +1,54 @@
 ---
 title: "API Reference"
-description: 'Getting started with SafeDep API'
+description: "SafeDep Cloud API: transport, request headers, OAuth2/OIDC endpoints, and rate limits"
 ---
 
 SafeDep supports a [gRPC](https://grpc.io/) API with
 a [ConnectRPC](https://connectrpc.com/) facade allowing clients to use both
 gRPC over HTTP/2 and JSON over HTTP/1.1 based clients.
 
-Authentication uses [OAuth 2.0](https://oauth.net/2/) or API keys, depending on the plane:
+The canonical API specification lives at [buf.build/safedep/api](https://buf.build/safedep/api), which also publishes generated SDKs for all supported languages.
 
-* Control plane APIs (e.g. creating policy) require OAuth 2.0 authentication.
-* Data plane APIs (e.g. getting policy data) accept API keys.
+## Planes and authentication
 
-Control plane APIs are for management tooling; data plane APIs are for security tools that use or integrate with SafeDep.
+* Control plane APIs (`cloud.safedep.io`, e.g. creating policy) require OAuth 2.0 authentication (JWT).
+* Data plane APIs (`api.safedep.io`, e.g. package insights) accept API keys or JWTs.
+
+Control plane APIs are for management tooling; data plane APIs are for security tools that use or integrate with SafeDep. For tool-level login flows (safedep CLI, vet, CI/CD), see the [authentication guide](/governance/cloud/authentication).
+
+## Request headers
+
+Regardless of transport (gRPC over HTTP/2 or JSON over HTTP/1.1), requests carry the same two headers:
+
+| Header | Value |
+|--------|-------|
+| `Authorization` | Your API key or JWT, sent **as-is** (no `Bearer` prefix) |
+| `X-Tenant-ID` | Your tenant domain (e.g. `your-company.safedep.io`) |
+
+## OAuth2 / OIDC
+
+The SafeDep Cloud Identity Service at `https://auth.safedep.io` provides OAuth2/OIDC authentication for the control plane.
+
+**OpenID configuration endpoint:**
+
+```
+https://auth.safedep.io/.well-known/openid-configuration
+```
+
+Command-line tools authenticate with the OAuth2 Device Code flow. A reference implementation is available in the [vet OAuth2 client](https://github.com/safedep/vet/blob/main/cmd/cloud/login.go).
+
+## Rate limiting
+
+SafeDep Cloud enforces rate limits at the API gateway, measured **per second**, with no hourly quota:
+
+- **Data plane** (`api.safedep.io`): up to **500 requests/second** per API key
+- **Management API**: up to **20 requests/second**
+
+These limits are subject to change.
 
 <CardGroup cols={2}>
   <Card title="Authentication" icon="key" href="/governance/cloud/authentication">
-    API key and OAuth/JWT authentication for the API.
+    API key and OAuth/JWT authentication for the safedep CLI, vet, and CI/CD.
   </Card>
   <Card title="API Hosts" icon="server" href="/reference/endpoints">
     Control plane, data plane, and other SafeDep hosts.
@@ -28,4 +60,3 @@ Control plane APIs are for management tooling; data plane APIs are for security 
     Query your tenant data with SQL.
   </Card>
 </CardGroup>
-
