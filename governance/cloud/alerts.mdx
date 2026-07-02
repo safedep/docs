@@ -13,7 +13,7 @@ alert. The recipe stays the same for every destination:
 
 The rest of this page is a **worked example**: PMG block events, formatted
 as a Slack message, sent to a Slack Incoming Webhook, every 5 minutes.
-Everything below is a stand-in — swap the query, the formatter, or the
+Everything below is a stand-in: swap the query, the formatter, or the
 `curl` target for your own destination.
 
 ## Example: Slack alert for PMG blocks
@@ -78,11 +78,12 @@ Two things to notice:
 - **`package_action` filter.** `PMG_PACKAGE_ACTION_BLOCKED` is a malicious-package
   block. `PMG_PACKAGE_ACTION_COOLDOWN_BLOCKED` is a cooldown-window block
   (packages held back until they age past your cooldown threshold).
-- **Join on `invocation_id`.** Each block event was produced by a PMG
-  invocation on some developer machine or CI runner. Joining `endpoints` on
-  `invocation_id` gives you the endpoint's human-readable name
-  (`endpoints.identifier`) and its ID (`endpoints.id`, used to build the
-  Cloud deep-link).
+- **`JOIN endpoints`.** Each block event was produced by a PMG invocation on
+  some developer machine or CI runner. Joining `endpoints` gives you the
+  endpoint's human-readable name (`endpoints.identifier`) and its ID
+  (`endpoints.id`, used to build the Cloud deep-link). The `ON` clause is a
+  required placeholder: SafeDep Cloud applies the real join from its
+  catalog. See the [SQL reference](/reference/sql-query).
 
 Run it once to see the shape of the data:
 
@@ -106,6 +107,7 @@ Save this as `format.py`:
 #!/usr/bin/env python3
 """Read safedep query exec JSON on stdin, print a Slack payload on stdout."""
 import json, sys
+from urllib.parse import quote
 
 ACTION = {1: ("🔴", "MALICIOUS"), 4: ("🟡", "COOLDOWN")}
 ECOSYSTEM = {
@@ -129,7 +131,7 @@ def section(r):
     eco_enum, eco_label  = ECOSYSTEM[r["package_guard_events.package_ecosystem"]]
     name, version        = r["package_guard_events.package_name"], r["package_guard_events.package_version"]
     ep_id, ep_name       = r["endpoints.id"], r["endpoints.identifier"]
-    report   = f"https://app.safedep.io/community/packages/{eco_enum}/{name}/{version}"
+    report   = f"https://app.safedep.io/community/packages/{eco_enum}/{quote(name, safe='')}/{quote(version, safe='')}"
     endpoint = f"https://app.safedep.io/endpoints/{ep_id}"
     text = (f"{icon} *{reason}* • <{report}|`{name}@{version}`> • {eco_label}"
             f"\n\nEndpoint: <{endpoint}|`{ep_name}`>")
@@ -289,8 +291,12 @@ Then wire it up with your OS's native scheduler:
 </Tabs>
 
 The design is stateless: no cursor file to keep in sync, no drift across
-restarts. If a 5-minute window ever holds more rows than `--limit`, either
-shorten the interval or page through the JSON response.
+restarts.
+
+`--limit 10` is set for Slack's 50-block ceiling. Events beyond the limit in
+a single window are silently dropped. For burstier traffic, raise `--limit`
+(the CLI allows up to 100) and page through the JSON `next_page_token`,
+sending one Slack message per page.
 
 ## Send to other destinations
 
@@ -315,7 +321,7 @@ URL (in `curl`). Any JSON-accepting HTTP endpoint works.
 Swap `blocks.sql` for any question you can ask SafeDep Cloud:
 
 - **Insecure bypasses:** filter `package_guard_events` on `event_type = 'PMG_EVENT_TYPE_INSECURE_BYPASS'`.
-- **Endpoint activity:** join `endpoints` on `invocation_id` and group by
+- **Endpoint activity:** `JOIN endpoints` and group by
   `endpoints.identifier` to see which machines produced the most events.
 - **Malicious packages across projects:** query `component_malicious_packages`
   with `is_verified = true`.
