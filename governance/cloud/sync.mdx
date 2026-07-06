@@ -1,34 +1,45 @@
 ---
 title: Cloud Sync
-description: "Synchronize Vet scan data and policy violations with SafeDep Cloud for centralized analysis, query and reporting"
+description: "How vet, PMG, and vet endpoint scan send data to your SafeDep Cloud tenant, and how to set up each source"
 ---
 
-This page covers syncing `vet scan` results from CI/CD pipelines to SafeDep Cloud using `--report-sync`. To sync AI tool inventory from developer machines or agents, see [Inventory Sync](/governance/cloud/endpoint-hub/inventory).
+Your SafeDep Cloud tenant receives data from more than one tool. Each source syncs through its own path and shows up in a different part of the product:
 
-## Sync Methods
+| Source | What it sends | Where it appears |
+|---|---|---|
+| [`vet scan`](#sync-vet-scan-results) | Packages, vulnerabilities, and policy violations per project | Projects and the [SQL query tables](/reference/sql-query) |
+| [PMG](#sync-package-events-from-pmg) | Package install and usage events from endpoints | [Endpoint Hub › Package Guard](/governance/cloud/endpoint-hub/package-guard) |
+| [`vet endpoint scan`](#sync-ai-tool-inventory) | AI tools, coding agents, MCP servers, and Agent Skills found on endpoints | [Endpoint Hub › Inventory](/governance/cloud/endpoint-hub/inventory) |
+| [GitHub App](/governance/integrations/github) | Pull request scan results from repositories it is installed on | Projects |
 
-<CardGroup cols={2}>
-  <Card title="Vet CLI" icon="terminal">
-    Direct integration using command-line interface
-  </Card>
-  <Card title="vet-action" icon="github">
-    GitHub Actions workflow integration
-  </Card>
-</CardGroup>
+Every source needs SafeDep Cloud credentials: a tenant domain and an API key. New to Cloud? Start with the [quickstart](/governance/cloud/quickstart).
 
-## Using Vet CLI
+This page covers `vet scan` sync in full. PMG and endpoint inventory sync have their own setup guides, summarized below.
+
+## Sync vet scan results
+
+`vet scan --report-sync` uploads scan results to your tenant, grouped by project and version.
 
 ### Prerequisites
 
-Configure `vet` to authenticate with SafeDep Cloud before using `--report-sync`. See the [quickstart guide](/governance/cloud/quickstart) for onboarding and authentication setup.
+vet needs SafeDep Cloud credentials before it can sync. The fastest path is the guided setup, which walks through account, tenant, and credentials in one command:
 
-<Info>
-The `--report-sync` flag enables data synchronization to SafeDep Cloud.
-</Info>
+```bash
+vet cloud quickstart
+```
 
-### Basic Synchronization
+<iframe
+  width="100%"
+  height="315"
+  src="https://www.youtube.com/embed/ykSiP547xuA"
+  title="SafeDep Cloud Quickstart"
+  frameBorder="0"
+  allowFullScreen
+></iframe>
 
-Sync scan results with project identification:
+Already onboarded? See the [authentication guide](/governance/cloud/authentication#vet) to configure vet with an existing tenant and API key.
+
+### Sync a scan
 
 ```bash
 vet scan -M /path/to/package-lock.json --report-sync \
@@ -36,14 +47,10 @@ vet scan -M /path/to/package-lock.json --report-sync \
   --report-sync-project-version my-project-version
 ```
 
-### Parameters
+- `--report-sync-project`: project identifier. Use a consistent convention, like the repository path (`github.com/org/repo`), so names stay unique across teams.
+- `--report-sync-project-version`: project version, typically a branch, tag, or commit
 
-- `--report-sync-project`: Project identifier (typically repository name)
-- `--report-sync-project-version`: Project version (branch, tag, or commit)
-
-### Directory Scanning with Sync
-
-Scan entire repositories and sync results:
+Scan a whole repository the same way:
 
 ```bash
 vet scan -D /path/to/repository \
@@ -52,324 +59,199 @@ vet scan -D /path/to/repository \
   --report-sync-project-version main
 ```
 
-### Multiple Manifest Sync
+<Note>
+The examples use `package-lock.json`, but vet supports many package manifest formats and code analysis.
+</Note>
 
-Sync results from scanning multiple manifest files:
+### Separate environments
 
-```bash
-vet scan -D /path/to/monorepo \
-  --report-sync \
-  --report-sync-project monorepo-backend \
-  --report-sync-project-version v2.1.0
-```
-
-## Advanced Sync Configurations
-
-### Environment-Based Sync
-
-Differentiate between environments using project versions:
-
-<Tabs>
-  <Tab title="Production">
-    ```bash
-    vet scan -D . \
-      --report-sync \
-      --report-sync-project myapp \
-      --report-sync-project-version production
-    ```
-  </Tab>
-  
-  <Tab title="Staging">
-    ```bash
-    vet scan -D . \
-      --report-sync \
-      --report-sync-project myapp \
-      --report-sync-project-version staging
-    ```
-  </Tab>
-  
-  <Tab title="Development">
-    ```bash
-    vet scan -D . \
-      --report-sync \
-      --report-sync-project myapp \
-      --report-sync-project-version feature-branch
-    ```
-  </Tab>
-</Tabs>
-
-### Conditional Sync with Policies
-
-Sync only when policy violations are found:
+The version field also separates environments. Sync the same project as `production`, `staging`, or a feature branch name, then compare them side by side in SafeDep Cloud:
 
 ```bash
 vet scan -D . \
-  --filter-suite security-policy.yml \
+  --report-sync \
+  --report-sync-project myapp \
+  --report-sync-project-version staging
+```
+
+### Enforce policy while syncing
+
+Sync and policy enforcement run in the same scan. Add a policy suite and `--filter-fail` to gate the pipeline while results still sync to your tenant:
+
+```bash
+vet scan -D . \
+  --policy-suite policy.yml \
   --filter-fail \
   --report-sync \
   --report-sync-project critical-app \
   --report-sync-project-version main
 ```
 
-### Batch Processing
+`--policy-suite` takes a v2 policy file (see the [example in the vet repository](https://github.com/safedep/vet/blob/main/samples/policy-v2.yml)); `--filter-fail` exits non-zero on a violation. The older `--filter-suite` format is documented in the [policy reference](/reference/policy-as-code).
 
-Sync multiple projects in a script:
+### Sync from GitHub Actions
 
-```bash
-#!/bin/bash
-for project in project-a project-b project-c; do
-  vet scan -D "/path/to/$project" \
-    --report-sync \
-    --report-sync-project "$project" \
-    --report-sync-project-version "$(git -C /path/to/$project rev-parse --abbrev-ref HEAD)"
-done
-```
-
-## GitHub Actions Integration
-
-### Basic vet-action Configuration
-
-Enable cloud sync in your GitHub workflow:
+[vet-action](https://github.com/safedep/vet-action) syncs automatically when its cloud inputs are set. Add `SAFEDEP_CLOUD_API_KEY` and `SAFEDEP_CLOUD_TENANT_DOMAIN` as [GitHub Actions secrets](https://docs.github.com/en/actions/security-for-github-actions/security-guides/using-secrets-in-github-actions), then enable cloud sync in your workflow:
 
 ```yaml
-name: Security Scan and Sync
-on:
-  push:
-    branches: [ main, develop ]
-  pull_request:
-    branches: [ main ]
-
-jobs:
-  security-scan:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      
-      - name: Run vet with cloud sync
-        uses: safedep/vet-action@v1
-        with:
-          cloud: true
-          cloud-key: ${{ secrets.SAFEDEP_CLOUD_API_KEY }}
-          cloud-tenant: ${{ secrets.SAFEDEP_CLOUD_TENANT_DOMAIN }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+- name: Run vet
+  uses: safedep/vet-action@v1
+  with:
+    cloud: true
+    cloud-key: ${{ secrets.SAFEDEP_CLOUD_API_KEY }}
+    cloud-tenant: ${{ secrets.SAFEDEP_CLOUD_TENANT_DOMAIN }}
 ```
 
-### Advanced GitHub Actions Configuration
+vet-action sets project identification from the repository: the project name is `${{ github.repository }}` and the version is `${{ github.ref_name }}`.
 
-```yaml
-name: Comprehensive Security Analysis
-on:
-  push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
-  schedule:
-    - cron: '0 2 * * 1'  # Weekly scan
+### Sync from other CI systems
 
-jobs:
-  security-analysis:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      
-      - name: Run security scan with sync
-        uses: safedep/vet-action@v1
-        with:
-          cloud: true
-          cloud-key: ${{ secrets.SAFEDEP_CLOUD_API_KEY }}
-          cloud-tenant: ${{ secrets.SAFEDEP_CLOUD_TENANT_DOMAIN }}
-          policy: '.github/vet/policy.yml'
-          paranoid: true
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          
-      - name: Upload scan artifacts
-        uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: security-scan-results
-          path: |
-            *.json
-            *.sarif
-```
+The pattern is the same on any CI system: provide `SAFEDEP_API_KEY` and `SAFEDEP_TENANT_ID` as environment variables and run `vet scan` with the `--report-sync` flags. See [CI/CD & Platform Integrations](/governance/integrations/overview) for the full GitLab and Bitbucket guides.
 
-### Project Identification
+<Tabs>
+  <Tab title="GitLab CI">
+    ```yaml
+    stages:
+      - security
 
-vet-action automatically sets project identification from repository information:
+    security-scan:
+      stage: security
+      image: ghcr.io/safedep/vet:latest
+      script:
+        - vet scan -D . --report-sync --report-sync-project $CI_PROJECT_PATH --report-sync-project-version $CI_COMMIT_REF_NAME
+      variables:
+        SAFEDEP_API_KEY: $SAFEDEP_API_KEY
+        SAFEDEP_TENANT_ID: $SAFEDEP_TENANT_ID
+      only:
+        - main
+        - develop
+        - merge_requests
+    ```
+  </Tab>
 
-- **Project Name**: `${{ github.repository }}` (e.g., `org/repo`)
-- **Project Version**: `${{ github.ref_name }}` (branch or tag name)
+  <Tab title="Jenkins">
+    ```groovy
+    pipeline {
+        agent any
 
-## CI/CD Platform Integration
+        environment {
+            SAFEDEP_API_KEY = credentials('safedep-api-key')
+            SAFEDEP_TENANT_ID = credentials('safedep-tenant-id')
+        }
 
-### GitLab CI
-
-```yaml
-stages:
-  - security
-
-security-scan:
-  stage: security
-  image: ghcr.io/safedep/vet:latest
-  script:
-    - vet scan -D . --report-sync --report-sync-project $CI_PROJECT_PATH --report-sync-project-version $CI_COMMIT_REF_NAME
-  variables:
-    SAFEDEP_API_KEY: $SAFEDEP_API_KEY
-    SAFEDEP_TENANT_ID: $SAFEDEP_TENANT_ID
-  only:
-    - main
-    - develop
-    - merge_requests
-```
-
-### Jenkins Pipeline
-
-```groovy
-pipeline {
-    agent any
-    
-    environment {
-        SAFEDEP_API_KEY = credentials('safedep-api-key')
-        SAFEDEP_TENANT_ID = credentials('safedep-tenant-id')
-    }
-    
-    stages {
-        stage('Security Scan') {
-            steps {
-                sh """
-                    vet scan -D . \
-                      --report-sync \
-                      --report-sync-project ${env.JOB_NAME} \
-                      --report-sync-project-version ${env.BRANCH_NAME}
-                """
+        stages {
+            stage('Security Scan') {
+                steps {
+                    sh """
+                        vet scan -D . \
+                          --report-sync \
+                          --report-sync-project ${env.JOB_NAME} \
+                          --report-sync-project-version ${env.BRANCH_NAME}
+                    """
+                }
             }
         }
     }
-}
-```
+    ```
+  </Tab>
 
-### Azure DevOps
+  <Tab title="Azure DevOps">
+    ```yaml
+    trigger:
+      branches:
+        include:
+          - main
+          - develop
 
-```yaml
-trigger:
-  branches:
-    include:
-      - main
-      - develop
+    variables:
+      - group: safedep-credentials
 
-variables:
-  - group: safedep-credentials
+    jobs:
+    - job: SecurityScan
+      displayName: 'Security Scan and Sync'
+      pool:
+        vmImage: 'ubuntu-latest'
 
-jobs:
-- job: SecurityScan
-  displayName: 'Security Scan and Sync'
-  pool:
-    vmImage: 'ubuntu-latest'
-  
-  steps:
-  - script: |
-      vet scan -D . \
-        --report-sync \
-        --report-sync-project $(Build.Repository.Name) \
-        --report-sync-project-version $(Build.SourceBranchName)
-    displayName: 'Run vet security scan'
-    env:
-      SAFEDEP_API_KEY: $(safedep-api-key)
-      SAFEDEP_TENANT_ID: $(safedep-tenant-id)
-```
+      steps:
+      - script: |
+          vet scan -D . \
+            --report-sync \
+            --report-sync-project $(Build.Repository.Name) \
+            --report-sync-project-version $(Build.SourceBranchName)
+        displayName: 'Run vet security scan'
+        env:
+          SAFEDEP_API_KEY: $(safedep-api-key)
+          SAFEDEP_TENANT_ID: $(safedep-tenant-id)
+    ```
+  </Tab>
+</Tabs>
 
-## Data Synchronization Details
-
-### What Gets Synced
+### What gets synced
 
 <AccordionGroup>
-  <Accordion title="Package Information">
-    - All discovered packages and versions
+  <Accordion title="Package information">
+    - Discovered packages and versions
     - Dependency relationships and metadata
     - Package manifest locations and types
   </Accordion>
-  
-  <Accordion title="Security Findings">
+
+  <Accordion title="Security findings">
     - Vulnerability information and severity levels
     - OpenSSF Scorecard metrics
     - License compliance data
     - Malware analysis results (if enabled)
   </Accordion>
-  
-  <Accordion title="Policy Violations">
+
+  <Accordion title="Policy violations">
     - Policy rule violations and details
-    - Filter expression results
     - Exception applications and status
   </Accordion>
-  
-  <Accordion title="Project Context">
+
+  <Accordion title="Project context">
     - Project identification and versioning
     - Scan timestamps and environment info
     - Git commit information (when available)
   </Accordion>
 </AccordionGroup>
 
-### Sync Frequency
+## Sync package events from PMG
 
-- **On-demand**: Manual scans using the CLI
-- **CI/CD triggered**: Automated scans on code changes
-- **Scheduled**: Regular scans via cron or scheduled workflows
-- **Event-driven**: Scans triggered by specific events
+[PMG](/package-security/pmg/overview) intercepts package manager commands on the endpoint and records each install as an event. With cloud sync enabled, PMG drains its local event log to your tenant automatically after each invocation, and `pmg cloud sync` pushes events immediately.
 
-## Querying Synced Data
+Setup, login, and auto-sync tuning live on the Package Guard page:
 
-Once data is synced to SafeDep Cloud, query it with the `safedep` CLI:
+<Card title="Package Guard" icon="shield" href="/governance/cloud/endpoint-hub/package-guard" horizontal>
+  Enable PMG cloud sync and view package events in Endpoint Hub
+</Card>
 
-```bash
-safedep query exec --sql "
-  SELECT projects.name
-  FROM projects
-  WHERE projects.origin_source = 'SOURCE_GITHUB'
-  ORDER BY projects.name"
-```
+## Sync AI tool inventory
 
-See the [SafeDep Cloud SQL guide](/reference/sql-query) for the full schema, the join model, and worked examples covering vulnerabilities, licenses, malware findings, and endpoint events.
+`vet endpoint scan` discovers AI tooling on a machine (coding agents, MCP servers, CLI tools, IDE extensions, Agent Skills) and delivers the inventory to your tenant when vet has credentials configured.
 
-## Best Practices
+<Card title="Endpoint Inventory" icon="boxes-stacked" href="/governance/cloud/endpoint-hub/inventory" horizontal>
+  Enable inventory sync and browse discovered AI tooling in Endpoint Hub
+</Card>
 
-<AccordionGroup>
-  <Accordion title="Project Naming">
-    Use consistent naming:
-    - Include the organization: `org/project-name`
-    - Use repository URLs for uniqueness across teams
-  </Accordion>
-  
-  <Accordion title="Version Management">
-    Use meaningful version identifiers:
-    - Branch names for development branches
-    - Semantic versions for releases
-    - Environment identifiers (prod, staging, dev)
-  </Accordion>
-  
-  <Accordion title="Sync Strategy">
-    - Sync on every commit to the main branch
-    - Include pull request scans for early detection
-    - Add scheduled scans to catch drift between commits
-  </Accordion>
-</AccordionGroup>
+## Query synced data
+
+Once data lands in your tenant, query it with `safedep query exec` or the web console. The [quickstart](/governance/cloud/quickstart#query-your-data) has a worked example, and the [SQL query guide](/reference/sql-query) covers the full schema, join model, and queries across vulnerabilities, licenses, malware findings, and endpoint events.
 
 ## Troubleshooting
 
 <AccordionGroup>
-  <Accordion title="Sync Failures">
-    - Verify the API key and tenant configuration
+  <Accordion title="Sync failures">
+    - Verify the API key and tenant configuration (`vet auth verify`)
     - Check network connectivity to SafeDep Cloud
     - Ensure project names don't contain invalid characters
   </Accordion>
-  
-  <Accordion title="Missing Data">
+
+  <Accordion title="Missing data">
     - Confirm `--report-sync` and the project flags are set
     - Check that the scan completed successfully
     - Verify the project name and version identifiers match what you expect
   </Accordion>
-  
-  <Accordion title="Authentication Issues">
+
+  <Accordion title="Authentication issues">
     - Verify the API key has sync permissions
     - Check the tenant domain configuration
     - Confirm credentials are set correctly in your CI/CD environment
@@ -378,15 +260,15 @@ See the [SafeDep Cloud SQL guide](/reference/sql-query) for the full schema, the
 
 <CardGroup cols={2}>
   <Card title="Cloud Quickstart" icon="rocket" href="/governance/cloud/quickstart">
-    Get started with SafeDep Cloud authentication and setup
+    Set up the safedep CLI and run your first query
+  </Card>
+  <Card title="Authentication Guide" icon="key" href="/governance/cloud/authentication">
+    SafeDep Cloud authentication methods
+  </Card>
+  <Card title="Endpoint Hub" icon="server" href="/governance/cloud/endpoint-hub/overview">
+    AI tooling and package activity across your endpoints
   </Card>
   <Card title="vet-action Documentation" icon="github" href="https://github.com/safedep/vet-action">
     Complete GitHub Actions integration guide
-  </Card>
-  <Card title="Cloud Queries" icon="search" href="/governance/cloud/quickstart#query-your-data">
-    Learn how to query synced data in SafeDep Cloud
-  </Card>
-  <Card title="Authentication Guide" icon="key" href="/governance/cloud/authentication">
-    Understand SafeDep Cloud authentication methods
   </Card>
 </CardGroup>
