@@ -144,7 +144,7 @@ Don't mix Diátaxis types within a single page.
 - AI Visibility: `governance/ai-governance` *(landing)*, `governance/shadow-ai-detection`
 - CI/CD & Platform Integrations: `governance/integrations/overview` *(landing)*, `governance/integrations/github`, `governance/integrations/github-code-scanning`, `governance/integrations/gitlab`, `governance/integrations/bitbucket`, `governance/integrations/defectdojo`, `governance/terraform-audit`
 - SafeDep Cloud: `governance/cloud/overview` *(landing)*, `governance/cloud/quickstart`, `governance/cloud/authentication`, `governance/cloud/sync`, `governance/cloud/alerts`
-  - Endpoint Hub: `governance/cloud/endpoint-hub/overview` *(landing)*, `governance/cloud/endpoint-hub/inventory`, `governance/cloud/endpoint-hub/inventory-catalog`, `governance/cloud/endpoint-hub/package-guard`
+  - Endpoint Hub: `governance/cloud/endpoint-hub/overview` *(landing)*, `governance/cloud/endpoint-hub/inventory`, `governance/cloud/endpoint-hub/inventory-catalog`, `governance/cloud/endpoint-hub/package-guard`, `governance/cloud/endpoint-hub/mcp-advisor`
   - Policy & Risk: `governance/cloud/malware-analysis`, `governance/cloud/package-exclusions`
 
 **Reference**
@@ -155,7 +155,7 @@ Don't mix Diátaxis types within a single page.
 - Community: `community`
 - Support: `faq`, `governance/cloud/faq`
 
-Total: **57 pages**
+Total: **58 pages**
 
 ---
 
@@ -194,4 +194,4 @@ These are decided or flagged but deliberately out of scope for the IA-revamp PR 
 - **JFrog Xray placement (watch).** `package-security/jfrog-xray` is the lone paid (Professional/Enterprise), registry-level, team-scoped item in a tab that otherwise sells free, no-account, install-time blocking. It reads as out of place not because the tab is thin (thinness is by design until pmg is fully documented) but because of that coherence mismatch. Candidate move: relocate it to the team/Cloud cluster. Structural call for Abhisek, not a "broken" fix.
 - **Visibility & Governance breadth (watch).** Four groups, two nested two levels deep, spanning the whole capability ladder. Accepted risk for now; the natural relief valve is the Threat Intelligence tab above, which will draw intel-consumption use-cases out of V&G.
 - **Reference how-to misfiles (flagged).** `reference/build-your-own-queries` and `reference/insights-api-typescript` are how-tos (goal-phrased, step-by-step) sitting in the Reference tab. Diátaxis says how-tos belong in a solution tab (Visibility & Governance). Needs a landing-group decision before moving (redirects required). Interim: a one-line cross-link to the Insights API was added on `package-security/overview` to serve the "check a package programmatically" use-case.
-- **Endpoint Hub: MCP advisor stream (hold until GA, ~early July 2026, week of 2026-06-29).** Endpoint Hub actually has **three** sources, not the two the docs describe: Inventory (`vet endpoint scan`), Package Guard (PMG), and **Advisor events (SafeDep MCP server)**. Verified in control-tower `services/endpoint_management/list_endpoint_advisor_events.go` (`mcp_tool_call_logs` JOIN `endpoints`, gated by `FEATURE_ENDPOINT_SYNC`). When the advisor feature goes GA: (1) rewrite `governance/cloud/endpoint-hub/overview` "two views" → three (Inventory · Package Guard · Advisor), naming the MCP server as the source; (2) add an Endpoint Hub `<Note>` to `ai-security/mcp-server`. PMG's Endpoint Hub up-link (Package Guard) shipped in this PR; AI Tools Discovery already documents its Inventory sync. Gryph stays local-only (no endpoint link until it gains Cloud sync).
+- **Endpoint Hub: MCP advisor stream (DONE, 2026-07-07).** Endpoint Hub has **three** sources: Inventory (`vet endpoint scan`), Package Guard (PMG), and **Advisor events (SafeDep MCP server)**. Verified in control-tower `services/endpoint_management/list_endpoint_advisor_events.go` (`mcp_tool_call_logs` JOIN `endpoints`, gated by `FEATURE_ENDPOINT_SYNC`) and app.safedep.io endpoint-detail Advisor tab. Shipped: (1) dedicated page `governance/cloud/endpoint-hub/mcp-advisor` (sibling to Package Guard); (2) `governance/cloud/endpoint-hub/overview` rewritten "two views" → three (Inventory · Package Guard · MCP Advisor), naming the MCP server as the source; (3) Endpoint Hub `<Note>` + cross-link added to `ai-security/mcp-server`. Attribution is best-effort via the `X-Endpoint-ID` header the SafeDep CLI injects (`setup mcp install`); manual raw-header setup records at tenant level only. Gryph stays local-only (no endpoint link until it gains Cloud sync).

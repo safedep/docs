@@ -3,7 +3,7 @@ title: "Endpoint Hub"
 description: "Visibility into AI tooling and package activity across your developer machines, CI runners, and agent sandboxes"
 ---
 
-Endpoint Hub gives you visibility into what is running across your **endpoints**: developer machines, CI runners, and agent sandboxes. It brings together two views in SafeDep Cloud: **Inventory** (the AI tooling found on each endpoint) and **Package Guard** (package installs and usage over time). Each view is powered by a SafeDep open source tool that runs locally and syncs activity to the cloud.
+Endpoint Hub gives you visibility into what is running across your **endpoints**: developer machines, CI runners, and agent sandboxes. It brings together three views in SafeDep Cloud: **Inventory** (the AI tooling found on each endpoint), **Package Guard** (package installs and usage over time), and **MCP Advisor** (packages your AI coding agents vetted through the SafeDep MCP server). Each view is powered by a SafeDep tool that reports activity to the cloud.
 
 ## What Endpoint Hub covers
 
@@ -15,9 +15,13 @@ Inventory shows the AI tooling active on each endpoint: coding agents, MCP serve
 
 Package Guard shows package installs and usage across your endpoints as a timeline of events. It runs on [PMG](/package-security/pmg/quickstart), the open-source Package Manager Guard CLI that intercepts package manager commands and syncs the activity to SafeDep Cloud.
 
+### MCP Advisor
+
+MCP Advisor shows the packages your AI coding agents vetted through the [SafeDep MCP server](/ai-security/mcp-server), and the verdict each one received. Every time an agent checks whether a package is safe before using it, SafeDep records the request against the endpoint, so you can see what your agents pulled in and catch anything malicious.
+
 ## How it works
 
-Both views follow the same model: an open source CLI runs on the endpoint and, once SafeDep Cloud credentials are configured, syncs its findings to your tenant. You then browse each endpoint by hostname under **Endpoint Hub** in the [app.safedep.io](https://app.safedep.io) sidebar. Without credentials, both tools still run locally and no data leaves the machine.
+Inventory and Package Guard follow the same model: an open source CLI runs on the endpoint and, once SafeDep Cloud credentials are configured, syncs its findings to your tenant. MCP Advisor is recorded server side by the SafeDep MCP server when an agent checks a package, so there is nothing to sync. You browse each endpoint by hostname under **Endpoint Hub** in the [app.safedep.io](https://app.safedep.io) sidebar. Without SafeDep Cloud credentials, the local tools still run and no data leaves the machine.
 
 ## Get started
 
@@ -27,5 +31,8 @@ Both views follow the same model: an open source CLI runs on the endpoint and, o
   </Card>
   <Card title="Package Guard" icon="shield" href="/governance/cloud/endpoint-hub/package-guard">
     Track package installs and usage across your endpoints
+  </Card>
+  <Card title="MCP Advisor" icon="robot" href="/governance/cloud/endpoint-hub/mcp-advisor">
+    Review packages your AI coding agents vetted through the SafeDep MCP server
   </Card>
 </CardGroup>

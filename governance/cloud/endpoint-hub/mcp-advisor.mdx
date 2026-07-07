@@ -1,0 +1,103 @@
+---
+title: MCP Advisor
+description: "See which packages your AI coding agents vetted through the SafeDep MCP server, and the verdict each one got, per endpoint in SafeDep Cloud"
+---
+
+MCP Advisor shows the packages your AI coding agents checked through the [SafeDep MCP server](/ai-security/mcp-server), along with the verdict each one received. Every time an agent asks the MCP server whether an open-source package is safe before using it, SafeDep records an advisory against the machine that asked, so you can see what your agents pulled in and catch anything malicious or vulnerable.
+
+<Note>
+MCP Advisor is a SafeDep Cloud feature and requires [endpoint sync](/governance/cloud/sync). If you don't see an **Advisor** tab on your endpoint, it may not be enabled for your tenant yet. Reach out to the [SafeDep team](/community) to turn it on.
+</Note>
+
+## How advisories are recorded
+
+You don't set up MCP Advisor separately or run a sync command. It builds on the MCP server you already configured:
+
+<Steps>
+  <Step title="An agent requests a package">
+    Your coding agent (Cursor, Claude Code, Windsurf, and others) asks the SafeDep MCP server to vet an open-source package before using it.
+  </Step>
+  <Step title="The MCP server returns a verdict">
+    SafeDep checks the package against its threat intelligence in real time and returns a verdict such as Safe, Malicious, or Vulnerable.
+  </Step>
+  <Step title="The advisory lands in SafeDep Cloud">
+    SafeDep records the request as an advisory, capturing the package, the agent that asked, the verdict, and the time. No action is required on your side.
+  </Step>
+</Steps>
+
+## Prerequisites
+
+- Configure the [SafeDep MCP server](/ai-security/mcp-server) in your AI coding agent.
+- Have a SafeDep Cloud tenant ID and API key (see the [Cloud quickstart](/governance/cloud/quickstart)).
+
+<Tip>
+Set up the MCP server with the SafeDep CLI (`npx @safedep/cli setup mcp install`) rather than editing config by hand. The CLI tags each request with the machine's endpoint identity, so advisories attribute to the right endpoint. Requests from a manual setup that omits this identity are still recorded for your tenant, but won't show under a specific endpoint.
+</Tip>
+
+## View advisories in SafeDep Cloud
+
+<Steps>
+  <Step title="Open Endpoint Hub">
+    Go to [app.safedep.io](https://app.safedep.io) and select **Endpoint Hub** in the sidebar.
+  </Step>
+  <Step title="Pick an endpoint">
+    Choose the endpoint (by hostname) whose agent activity you want to review.
+  </Step>
+  <Step title="Open the Advisor tab">
+    Select the **Advisor** tab to see that endpoint's advisories.
+  </Step>
+</Steps>
+
+The tab opens with a row of summary cards followed by the full advisory list.
+
+### Summary cards
+
+| Card | What it counts |
+| --- | --- |
+| Advisories | Total advisories recorded for this endpoint |
+| Malicious | Packages flagged as malicious |
+| Suspicious | Packages showing suspicious signals |
+| Vulnerable | Packages with known vulnerabilities |
+| Clean | Packages that came back safe |
+| Last advisory | When the most recent advisory was recorded |
+
+### Advisory list
+
+Each row is one package the agent asked about:
+
+| Column | Description |
+| --- | --- |
+| Package | Package name, version, and ecosystem |
+| Verdict | The security verdict SafeDep returned (see [Verdicts](#verdicts)) |
+| Agent | The AI coding agent that made the request |
+| Analysed | When the advisory was recorded |
+
+Filter the list by verdict or by date range to focus on what matters, such as only Malicious results in the last week. Select any row to open a detail panel with the package, the verdict, the MCP call (agent, tool, and call status), and the source endpoint.
+
+## Verdicts
+
+| Verdict | Meaning |
+| --- | --- |
+| Safe | No known security issues found |
+| Suspicious | Signals suggest the package may be risky |
+| Malicious | Confirmed malicious by SafeDep threat intelligence |
+| Vulnerable | Has one or more known vulnerabilities |
+| Newly registered | Published very recently, a common trait of malicious packages |
+| Unknown | Not enough information to classify the package |
+
+## Related
+
+<CardGroup cols={2}>
+  <Card title="SafeDep MCP Server" icon="robot" href="/ai-security/mcp-server">
+    Configure the MCP server that produces these advisories.
+  </Card>
+  <Card title="Endpoint Hub" icon="server" href="/governance/cloud/endpoint-hub/overview">
+    Browse all the views available for your endpoints.
+  </Card>
+  <Card title="Package Guard" icon="box" href="/governance/cloud/endpoint-hub/package-guard">
+    See package installs captured by PMG on each endpoint.
+  </Card>
+  <Card title="Endpoint" icon="laptop" href="/concepts/endpoint">
+    What an endpoint is and what it reports.
+  </Card>
+</CardGroup>
