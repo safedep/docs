@@ -17,11 +17,11 @@ Package Guard shows package installs and usage across your endpoints as a timeli
 
 ### MCP Advisor
 
-MCP Advisor shows the packages your AI coding agents vetted through the [SafeDep MCP server](/ai-security/mcp-server), and the verdict each one received. Every time an agent checks whether a package is safe before using it, SafeDep records the request against the endpoint, so you can see what your agents pulled in and catch anything malicious.
+MCP Advisor shows the packages your AI coding agents checked through the [SafeDep MCP server](/ai-security/mcp-server) and the verdict each one received. SafeDep records an advisory each time an agent vets a package.
 
 ## How it works
 
-Inventory and Package Guard follow the same model: an open source CLI runs on the endpoint and, once SafeDep Cloud credentials are configured, syncs its findings to your tenant. MCP Advisor is recorded server side by the SafeDep MCP server when an agent checks a package, so there is nothing to sync. You browse each endpoint by hostname under **Endpoint Hub** in the [app.safedep.io](https://app.safedep.io) sidebar. Without SafeDep Cloud credentials, the local tools still run and no data leaves the machine.
+Inventory and Package Guard follow the same model: an open source CLI runs on the endpoint and, once SafeDep Cloud credentials are configured, syncs its findings to your tenant. MCP Advisor needs no sync, since the MCP server records advisories as agents use it. You browse each endpoint under **Endpoint Hub** in the [app.safedep.io](https://app.safedep.io) sidebar. Without SafeDep Cloud credentials, the local tools still run and no data leaves the machine.
 
 ## Get started
 
