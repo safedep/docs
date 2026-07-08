@@ -1,0 +1,67 @@
+---
+title: "Talk to SafeDep"
+description: "Ask your supply chain questions in plain English and let an AI agent answer from your SafeDep Cloud tenant using the safedep CLI."
+---
+
+Install the SafeDep skill and your AI coding agent can answer questions about your tenant in plain English. Ask "which projects have critical vulnerabilities?" and the agent translates it into a [SafeDep Cloud SQL](/reference/sql-query) query, runs it through the `safedep` CLI, and hands back the result. You skip the SQL and the schema lookup.
+
+<iframe
+  width="100%"
+  height="315"
+  src="https://www.youtube.com/embed/-AVog8VLWes"
+  title="Talk to SafeDep"
+  frameBorder="0"
+  allowFullScreen
+></iframe>
+
+## Prerequisites
+
+- A [SafeDep Cloud tenant](/governance/cloud/quickstart) with data synced from your tools. The agent can only answer what your tenant holds, so [connect at least one source](/governance/cloud/sync) first.
+- The `safedep` CLI installed and signed in. Run `safedep auth login`, then `safedep auth status` to confirm the tenant. See the [authentication guide](/governance/cloud/authentication).
+- An AI coding agent that supports skills, such as Claude Code.
+
+## Install the skill
+
+<Tabs>
+  <Tab title="Claude Code">
+    ```bash
+    /plugin marketplace add safedep/skills
+    /plugin install safedep-agent-skills@safedep-agent-skills
+    ```
+    Turn on auto-update in Claude Code settings to stay on the current version.
+  </Tab>
+  <Tab title="Any agent">
+    ```bash
+    npx skills add safedep/skills
+    ```
+    Run `npx skills update` to refresh it later.
+  </Tab>
+</Tabs>
+
+## Ask a question
+
+Type your question the way you would ask a teammate:
+
+```text
+How many projects are being monitored?
+```
+
+The agent loads the SafeDep skill, writes a tenant-scoped query, runs `safedep query exec`, and replies with the count. Every answer traces back to a real query, so you can ask the agent to show the SQL it ran.
+
+Questions that map cleanly to your synced data:
+
+| Ask | Reads from |
+|---|---|
+| How many projects are we monitoring? | Projects |
+| Which projects have critical vulnerabilities? | Projects, packages, vulnerabilities |
+| Any malicious packages blocked across dev endpoints last week? | [Package Guard events](/governance/cloud/endpoint-hub/package-guard) |
+| Which developer machines are running PMG? | [Endpoints](/governance/cloud/endpoint-hub/inventory) |
+| Which endpoints have not synced in 30 days? | Endpoints |
+
+## Write your own queries
+
+The skill runs the same query interface you can drive by hand. To see the full table list, join edges, and query rules, read [SafeDep Cloud SQL](/reference/sql-query). When an agent answer looks off, run the query yourself with `safedep query exec` and compare.
+
+<Note>
+Queries are scoped to your authenticated tenant. The agent never sees data outside it, and you never write a tenant filter yourself.
+</Note>
