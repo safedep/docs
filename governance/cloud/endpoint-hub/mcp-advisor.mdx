@@ -1,0 +1,87 @@
+---
+title: MCP Advisor
+description: "Review the packages your AI coding agents checked through the SafeDep MCP server, per endpoint in SafeDep Cloud"
+---
+
+MCP Advisor lists the packages your AI coding agents checked through the [SafeDep MCP server](/ai-security/mcp-server) and the verdict each one got. Once the MCP server is set up, SafeDep records an advisory each time an agent vets a package, with no extra configuration.
+
+<Note>
+MCP Advisor is a SafeDep Cloud feature and requires [endpoint sync](/governance/cloud/sync). If your endpoint has no **Advisor** tab, it is not enabled for your tenant yet. Contact the [SafeDep team](/community) to join early access.
+</Note>
+
+## Prerequisites
+
+- Configure the [SafeDep MCP server](/ai-security/mcp-server) in your AI coding agent.
+- Have a SafeDep Cloud tenant ID and API key (see the [Cloud quickstart](/governance/cloud/quickstart)).
+
+<Tip>
+The SafeDep CLI is the fastest way to configure the MCP server: `npx @safedep/cli setup mcp install`.
+</Tip>
+
+## View advisories
+
+<Steps>
+  <Step title="Open Endpoint Hub">
+    Go to [app.safedep.io](https://app.safedep.io) and select **Endpoint Hub** in the sidebar.
+  </Step>
+  <Step title="Pick an endpoint">
+    Choose the endpoint from the list.
+  </Step>
+  <Step title="Open the Advisor tab">
+    Select the **Advisor** tab to see that endpoint's advisories.
+  </Step>
+</Steps>
+
+The tab shows summary counts, then the advisory list.
+
+### Summary counts
+
+| Card | Counts |
+| --- | --- |
+| Advisories | All advisories for this endpoint |
+| Malicious | Packages flagged as malicious |
+| Suspicious | Packages showing suspicious signals |
+| Vulnerable | Packages with known vulnerabilities |
+| Clean | Packages that came back safe |
+| Last advisory | When the most recent advisory was recorded |
+
+### Advisory list
+
+Each row is one package an agent asked about:
+
+| Column | Description |
+| --- | --- |
+| Package | Name, version, and ecosystem |
+| Verdict | The verdict SafeDep returned (see [Verdicts](#verdicts)) |
+| Agent | The AI coding agent that asked |
+| Analysed | When the advisory was recorded |
+
+Filter by verdict or date range, for example only Malicious results in the last week. Select a row to see the package, the verdict, the MCP call, and the source endpoint.
+
+## Verdicts
+
+| Verdict | Meaning |
+| --- | --- |
+| Safe | No known security issues |
+| Suspicious | Signals suggest the package may be risky |
+| Malicious | Confirmed malicious by SafeDep |
+| Vulnerable | Has one or more known vulnerabilities |
+| Newly registered | Published very recently, a common trait of malicious packages |
+| Unknown | Not enough information to classify it |
+
+## Related
+
+<CardGroup cols={2}>
+  <Card title="SafeDep MCP Server" icon="robot" href="/ai-security/mcp-server">
+    Configure the MCP server that produces these advisories.
+  </Card>
+  <Card title="Endpoint Hub" icon="server" href="/governance/cloud/endpoint-hub/overview">
+    Browse all the views available for your endpoints.
+  </Card>
+  <Card title="Package Guard" icon="box" href="/governance/cloud/endpoint-hub/package-guard">
+    See package installs captured by PMG on each endpoint.
+  </Card>
+  <Card title="Endpoint" icon="laptop" href="/concepts/endpoint">
+    What an endpoint is and what it reports.
+  </Card>
+</CardGroup>

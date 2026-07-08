@@ -136,7 +136,8 @@
                 "pages": [
                   "governance/cloud/endpoint-hub/inventory",
                   "governance/cloud/endpoint-hub/inventory-catalog",
-                  "governance/cloud/endpoint-hub/package-guard"
+                  "governance/cloud/endpoint-hub/package-guard",
+                  "governance/cloud/endpoint-hub/mcp-advisor"
                 ]
               },
               {
