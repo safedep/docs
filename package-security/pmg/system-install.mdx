@@ -1,0 +1,172 @@
+---
+title: "PMG in Docker and Shared VMs"
+description: "Install PMG system-wide on Linux so Docker images, CI runners, and shared VMs block malicious packages for every user account."
+---
+
+Use a system-wide install when one machine or image should protect every user account: shared VMs, CI runners, and golden Docker images. It installs PATH shims for all users and an authoritative config under `/etc`, so any user's `npm install` or `pip install` is checked before it runs.
+
+<Info>
+  For a single developer machine, use the per-user setup in the [Quickstart](/package-security/pmg/quickstart) instead. Per-user and system-wide installs can coexist.
+</Info>
+
+## Requirements
+
+- **Linux and root.** System install is Linux-only and must run as root.
+- **PMG in a system path.** Every user's shim runs PMG by absolute path, so the binary must live in a root-owned system path such as `/usr/local/bin`, executable and reachable by all users.
+
+## What gets created
+
+| Item                  | Path                          |
+| --------------------- | ----------------------------- |
+| Configuration         | `/etc/safedep/pmg/config.yml` |
+| Package-manager shims | `/usr/local/lib/pmg/bin`      |
+| Shell PATH snippet    | `/etc/profile.d/pmg.sh`       |
+
+<Note>
+  System install uses PATH shims only. It does not create the `~/.pmg.rc` alias layer that per-user setup installs.
+</Note>
+
+## Docker images
+
+PMG must be installed inside the image: PMG on the Docker host cannot see installs that run during `docker build`.
+
+Compared to a Linux VM, a Dockerfile needs two adjustments:
+
+1. **No `sudo`.** `RUN` steps execute as root. If your base image switches to a non-root `USER`, add `USER root` before the install step and switch back after.
+2. **Set `PATH` with `ENV`.** `RUN` steps do not source `/etc/profile.d`, so add the shim directory to `PATH` explicitly.
+
+```dockerfile
+FROM node:22-bookworm
+
+RUN curl -fsSL https://raw.githubusercontent.com/safedep/pmg/main/install.sh | sh \
+ && pmg setup install --system
+
+# Required: profile.d is not sourced during docker build
+ENV PATH="/usr/local/lib/pmg/bin:$PATH"
+
+# Optional: switch to a non-root user; the PATH above still applies
+RUN mkdir -p /app && chown node:node /app
+WORKDIR /app
+USER node
+COPY --chown=node:node package*.json ./
+RUN npm ci
+```
+
+Every `RUN npm install` or `RUN pip install` after the `ENV PATH` line now goes through PMG, and the running container inherits the protection, for any `USER`. Derived images inherit it too.
+
+<Warning>
+  If a later stage sets `ENV PATH` again, keep `/usr/local/lib/pmg/bin` ahead of the real `npm`/`pip` directories. Dropping it, or ordering it behind the toolchain, turns interception off without any error.
+</Warning>
+
+## Linux VMs
+
+1. **Place PMG in a system path.**
+
+   Not installed yet? The install script places it in `/usr/local/bin`, prompting for sudo for the copy:
+
+   ```bash
+   curl -fsSL https://raw.githubusercontent.com/safedep/pmg/main/install.sh | sh
+   ```
+
+   Already installed in a user location? Copy it over:
+
+   ```bash
+   sudo install -m 755 "$(which pmg)" /usr/local/bin/pmg
+   ```
+
+   *PMG rejects a binary in a user location (`~/.local/bin`, `~/go/bin`), since any single user could modify it. The install script also picks `~/.local/bin` when that is on your `PATH`; if it did, use the copy command above.*
+
+2. **Install system-wide:**
+
+   ```bash
+   sudo pmg setup install --system
+   ```
+
+3. **Activate the PATH.** The install writes `/etc/profile.d/pmg.sh`, which prepends the shim directory for login shells. New login sessions pick it up; for an already-open shell:
+
+   ```bash
+   source /etc/profile.d/pmg.sh
+   ```
+
+<Tip>
+  On a multi-user host where you do not trust every member of the directory's group, tighten the install directory: `sudo chmod g-w /usr/local/bin`. Debian and Ubuntu ship it group-writable for the `staff` group (empty by default).
+</Tip>
+
+## Verify
+
+Works for a VM shell and inside a container (`docker run --rm -it <image> sh`):
+
+```bash
+pmg setup doctor  # validates config, shims, PATH, and binary integrity
+```
+
+Then prove the protection end to end with a known test package. PMG must block it:
+
+```bash
+npm install --no-cache --prefer-online safedep-test-pkg@0.1.3
+```
+
+## Configuration
+
+The system config file is authoritative for every user. PMG ignores a per-user `config.yml` while `/etc/safedep/pmg/config.yml` exists.
+
+`pmg config set` and `pmg config edit` are disabled under a system config. Edit the file as root, or redeploy it through your image or configuration management.
+
+<Note>
+  Runtime data (event logs, cloud-sync state, cache) stays per user under `~/.config/safedep/pmg` and `~/.cache/safedep/pmg`. The invoking user must be able to write their own config directory. Relocate it with `PMG_CONFIG_DIR` / `PMG_CACHE_DIR` if needed.
+</Note>
+
+## Certificates
+
+System install does not set up a MITM certificate authority. For npm and pip on Linux, PMG's default ephemeral CA and environment-variable injection are sufficient. To install a persistent CA into the OS trust store, run `pmg setup cert install --system` as your normal user.
+
+## Uninstall
+
+```bash
+sudo pmg setup remove --system                 # remove shims and profile snippet
+sudo pmg setup remove --system --config-file   # also remove /etc/safedep/pmg/config.yml
+```
+
+This leaves the PMG binary in place. To remove it too, run `sudo rm /usr/local/bin/pmg`, or uninstall it through your package manager if you installed it that way.
+
+## Troubleshooting
+
+Try running `pmg setup doctor` first: it detects each of these states and prints the matching fix.
+
+<AccordionGroup>
+  <Accordion title="npm or pip resolves outside the shim directory">
+    Version managers like nvm, pyenv, volta, and asdf prepend their own bin directories from rc files that run after `/etc/profile.d`, putting the real `npm`/`pip` ahead of the shims.
+
+    - Keep `/usr/local/lib/pmg/bin` first in a durable `ENV PATH` or login PATH
+    - Or call `pmg npm` / `pmg pip` directly
+  </Accordion>
+
+  <Accordion title="pip inside a virtualenv bypasses PMG">
+    After `source .venv/bin/activate`, bare `pip` uses the venv binary and skips the shims. Call `pmg pip` inside the venv.
+  </Accordion>
+
+  <Accordion title="Every pmg command fails with permission denied on the event log">
+    Another account created or owns your config directory. Check the path in the error message.
+
+    If the path is **inside your own home**, a root run created it as root. This happens with `su` without `-` (prefer `sudo` or `su -`) and with images that set `ENV HOME` before dropping root. Restore ownership:
+
+    ```bash
+    sudo chown -R $(id -un) ~/.config/safedep
+    ```
+
+    If the path is **inside another user's home**, your environment leaked that user's `HOME` or `XDG_CONFIG_HOME` (common with `sudo -u` on CI runners). Fix the environment; do not `chown` another user's directory, that breaks PMG for them.
+
+    ```bash
+    export XDG_CONFIG_HOME="$HOME/.config"
+    ```
+  </Accordion>
+</AccordionGroup>
+
+<CardGroup cols={2}>
+  <Card title="System Install Reference" icon="github" href="https://github.com/safedep/pmg/blob/main/docs/system-install.md">
+    Full reference in the PMG repo: binary validation rules, user data directories, and limitations.
+  </Card>
+  <Card title="PMG" icon="box" href="/package-security/pmg/overview">
+    How PMG blocks malicious packages at install time.
+  </Card>
+</CardGroup>
