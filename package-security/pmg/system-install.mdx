@@ -48,8 +48,8 @@ ENV PATH="/usr/local/lib/pmg/bin:$PATH"
 RUN mkdir -p /app && chown node:node /app
 WORKDIR /app
 USER node
-COPY --chown=node:node package*.json ./
-RUN npm ci
+
+RUN npm i safedep-test-pkg@0.1.3
 ```
 
 Every `RUN npm install` or `RUN pip install` after the `ENV PATH` line now goes through PMG, and the running container inherits the protection, for any `USER`. Derived images inherit it too.
@@ -115,6 +115,113 @@ The system config file is authoritative for every user. PMG ignores a per-user `
 <Note>
   Runtime data (event logs, cloud-sync state, cache) stays per user under `~/.config/safedep/pmg` and `~/.cache/safedep/pmg`. The invoking user must be able to write their own config directory. Relocate it with `PMG_CONFIG_DIR` / `PMG_CACHE_DIR` if needed.
 </Note>
+
+## Cloud sync
+
+Cloud sync reports install events to your SafeDep Cloud tenant, where they appear in [Package Guard](/governance/cloud/endpoint-hub/package-guard). To set it up, enable cloud sync and provide your tenant ID and API key from [SafeDep Cloud](/governance/cloud/quickstart) through the `SAFEDEP_API_KEY` and `SAFEDEP_TENANT_ID` environment variables.
+
+### In a Docker image
+
+Enable sync and set a stable endpoint name before your install steps:
+
+```dockerfile
+ENV PMG_CLOUD_ENABLED=true
+ENV PMG_CLOUD_ENDPOINT_ID="my-golden-image"
+```
+
+Containers report a generated hostname per run, so without `PMG_CLOUD_ENDPOINT_ID` every run registers as a new endpoint. A stable name is what you will recognize in Endpoint Hub.
+
+The credentials exist only where you run `docker`, as shell exports or CI secrets; they never go in the Dockerfile.
+
+<Warning>
+  Never bake credentials into an image with `ENV SAFEDEP_API_KEY=...`. `ENV` values persist in the image metadata, and anyone who pulls the image can read them.
+</Warning>
+
+**In the running container**, pass them through at start:
+
+```bash
+docker run -e SAFEDEP_API_KEY -e SAFEDEP_TENANT_ID my-image
+```
+
+Compose `environment:` entries and Kubernetes Secret references work the same way. If the container is short-lived, a CI job for example, run `pmg cloud sync` before it exits so buffered events are not destroyed with it.
+
+**During `docker build`**, sync in the same `RUN` step as the install, with the `export` covering both commands: PMG records events for the cloud only when credentials resolve. Mount the credentials as BuildKit secrets, which expose them to that step only (`uid=` makes them readable by the step's non-root user):
+
+```dockerfile
+RUN --mount=type=secret,id=safedep_api_key,uid=1000 \
+    --mount=type=secret,id=safedep_tenant_id,uid=1000 \
+    export SAFEDEP_API_KEY="$(cat /run/secrets/safedep_api_key)" \
+           SAFEDEP_TENANT_ID="$(cat /run/secrets/safedep_tenant_id)" \
+    && npm ci && pmg cloud sync
+```
+
+Each `--secret` reads the variable exported where you run the build:
+
+```bash
+docker build \
+  --secret id=safedep_api_key,env=SAFEDEP_API_KEY \
+  --secret id=safedep_tenant_id,env=SAFEDEP_TENANT_ID .
+```
+
+<Note>
+  A blocked package fails its `RUN` step: later commands never run, including any sync at the end of the Dockerfile, and Docker discards the failed step's changes. Syncing per step uploads every event up to the block; the block itself shows in the build output.
+</Note>
+
+<Accordion title="Complete Dockerfile with cloud sync">
+  ```dockerfile
+  FROM node:22-bookworm
+
+  RUN curl -fsSL https://raw.githubusercontent.com/safedep/pmg/main/install.sh | sh \
+   && pmg setup install --system
+
+  # Before the install steps: shim PATH, sync enabled, stable endpoint name
+  ENV PATH="/usr/local/lib/pmg/bin:$PATH"
+  ENV PMG_CLOUD_ENABLED=true
+  ENV PMG_CLOUD_ENDPOINT_ID="my-golden-image"
+
+  RUN mkdir -p /app && chown node:node /app
+  WORKDIR /app
+  USER node
+  COPY --chown=node:node package*.json ./
+
+  # uid matches the USER above so it can read the secrets
+  RUN --mount=type=secret,id=safedep_api_key,uid=1000 \
+      --mount=type=secret,id=safedep_tenant_id,uid=1000 \
+      export SAFEDEP_API_KEY="$(cat /run/secrets/safedep_api_key)" \
+             SAFEDEP_TENANT_ID="$(cat /run/secrets/safedep_tenant_id)" \
+   && npm ci && pmg cloud sync
+  ```
+
+  Build it with the credentials exported in your shell:
+
+  ```bash
+  docker build \
+    --secret id=safedep_api_key,env=SAFEDEP_API_KEY \
+    --secret id=safedep_tenant_id,env=SAFEDEP_TENANT_ID \
+    -t my-image .
+  ```
+</Accordion>
+
+### On a shared VM
+
+Enable sync in `/etc/safedep/pmg/config.yml` as root:
+
+```yaml
+cloud:
+  enabled: true
+```
+
+Then put the credential values in a root-owned snippet such as `/etc/profile.d/safedep-cloud.sh`, so every login shell exports them:
+
+```bash
+# /etc/profile.d/safedep-cloud.sh
+export SAFEDEP_API_KEY="<your-api-key>"
+export SAFEDEP_TENANT_ID="<your-tenant-id>"
+```
+
+Users who should sync with their own key can set the same variables in their own shell profile instead. One shared key does not blur the picture: every synced event records which OS user ran the install. It does mean every user on the host can read the key.
+
+Auto-sync cadence, manual sync, and viewing events are covered in [Package Guard](/governance/cloud/endpoint-hub/package-guard); the full set of cloud keys is in the [PMG configuration reference](https://github.com/safedep/pmg/blob/main/docs/config.md).
 
 ## Certificates
 
