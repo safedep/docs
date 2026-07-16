@@ -30,6 +30,8 @@ Use a system-wide install when one machine or image should protect every user ac
 
 PMG must be installed inside the image: PMG on the Docker host cannot see installs that run during `docker build`.
 
+The easiest path is to copy the PMG binary from the [published PMG container image](https://github.com/safedep/pmg/pkgs/container/pmg) into your application image.
+
 Compared to a Linux VM, a Dockerfile needs two adjustments:
 
 1. **No `sudo`.** `RUN` steps execute as root. If your base image switches to a non-root `USER`, add `USER root` before the install step and switch back after.
@@ -151,6 +153,10 @@ docker run -e SAFEDEP_API_KEY -e SAFEDEP_TENANT_ID my-image
 ```
 
 Compose `environment:` entries and Kubernetes Secret references work the same way. If the container is short-lived, a CI job for example, run `pmg cloud sync` before it exits so buffered events are not destroyed with it.
+
+<Note>
+  For reproducible builds, pin PMG to a release tag from the [published PMG container image](https://github.com/safedep/pmg/pkgs/container/pmg).
+</Note>
 
 **During `docker build`**, install steps need no credentials: PMG buffers each event locally. Deliver the buffer in one final `RUN` step, with the credentials mounted as BuildKit secrets. Mount them directly as environment variables so PMG can use its standard `SAFEDEP_API_KEY` and `SAFEDEP_TENANT_ID` credential resolver:
 
