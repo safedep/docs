@@ -36,10 +36,13 @@ Compared to a Linux VM, a Dockerfile needs two adjustments:
 2. **Set `PATH` with `ENV`.** `RUN` steps do not source `/etc/profile.d`, so add the shim directory to `PATH` explicitly.
 
 ```dockerfile
+FROM ghcr.io/safedep/pmg:latest AS pmg
+
 FROM node:22-bookworm
 
-RUN curl -fsSL https://raw.githubusercontent.com/safedep/pmg/main/install.sh | sh \
- && pmg setup install --system
+COPY --from=pmg /usr/local/bin/pmg /usr/local/bin/pmg
+
+RUN pmg setup install --system
 
 # Required: profile.d is not sourced during docker build
 ENV PATH="/usr/local/lib/pmg/bin:$PATH"
@@ -53,6 +56,10 @@ RUN npm i safedep-test-pkg@0.1.3
 ```
 
 Every `RUN npm install` or `RUN pip install` after the `ENV PATH` line now goes through PMG, and the running container inherits the protection, for any `USER`. Derived images inherit it too.
+
+<Note>
+  If your build environment cannot pull from GHCR, install PMG with `curl -fsSL https://raw.githubusercontent.com/safedep/pmg/main/install.sh | sh` before running `pmg setup install --system`.
+</Note>
 
 <Warning>
   If a later stage sets `ENV PATH` again, keep `/usr/local/lib/pmg/bin` ahead of the real `npm`/`pip` directories. Dropping it, or ordering it behind the toolchain, turns interception off without any error.
@@ -145,16 +152,14 @@ docker run -e SAFEDEP_API_KEY -e SAFEDEP_TENANT_ID my-image
 
 Compose `environment:` entries and Kubernetes Secret references work the same way. If the container is short-lived, a CI job for example, run `pmg cloud sync` before it exits so buffered events are not destroyed with it.
 
-**During `docker build`**, install steps need no credentials: PMG buffers each event locally. Deliver the buffer in one final `RUN` step, with the credentials mounted as BuildKit secrets, which expose them to that step only (`uid=` makes them readable by the step's non-root user):
+**During `docker build`**, install steps need no credentials: PMG buffers each event locally. Deliver the buffer in one final `RUN` step, with the credentials mounted as BuildKit secrets. Mount them directly as environment variables so PMG can use its standard `SAFEDEP_API_KEY` and `SAFEDEP_TENANT_ID` credential resolver:
 
 ```dockerfile
 RUN npm ci
 
-RUN --mount=type=secret,id=safedep_api_key,uid=1000 \
-    --mount=type=secret,id=safedep_tenant_id,uid=1000 \
-    export SAFEDEP_API_KEY="$(cat /run/secrets/safedep_api_key)" \
-           SAFEDEP_TENANT_ID="$(cat /run/secrets/safedep_tenant_id)" \
-    && pmg cloud sync
+RUN --mount=type=secret,id=safedep_api_key,env=SAFEDEP_API_KEY,required=true \
+    --mount=type=secret,id=safedep_tenant_id,env=SAFEDEP_TENANT_ID,required=true \
+    pmg cloud sync
 ```
 
 Each `--secret` reads the variable exported where you run the build:
@@ -171,10 +176,13 @@ docker build \
 
 <Accordion title="Complete Dockerfile with cloud sync">
   ```dockerfile
+  FROM ghcr.io/safedep/pmg:latest AS pmg
+
   FROM node:22-bookworm
 
-  RUN curl -fsSL https://raw.githubusercontent.com/safedep/pmg/main/install.sh | sh \
-   && pmg setup install --system
+  COPY --from=pmg /usr/local/bin/pmg /usr/local/bin/pmg
+
+  RUN pmg setup install --system
 
   # Before the install steps: shim PATH, sync enabled, stable endpoint name
   ENV PATH="/usr/local/lib/pmg/bin:$PATH"
@@ -189,12 +197,10 @@ docker build \
   # No credentials needed: events buffer locally
   RUN npm ci
 
-  # Final step delivers the buffer; uid matches the USER above
-  RUN --mount=type=secret,id=safedep_api_key,uid=1000 \
-      --mount=type=secret,id=safedep_tenant_id,uid=1000 \
-      export SAFEDEP_API_KEY="$(cat /run/secrets/safedep_api_key)" \
-             SAFEDEP_TENANT_ID="$(cat /run/secrets/safedep_tenant_id)" \
-   && pmg cloud sync
+  # Final step delivers the buffer
+  RUN --mount=type=secret,id=safedep_api_key,env=SAFEDEP_API_KEY,required=true \
+      --mount=type=secret,id=safedep_tenant_id,env=SAFEDEP_TENANT_ID,required=true \
+      pmg cloud sync
   ```
 
   Build it with the credentials exported in your shell:
