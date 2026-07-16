@@ -145,14 +145,16 @@ docker run -e SAFEDEP_API_KEY -e SAFEDEP_TENANT_ID my-image
 
 Compose `environment:` entries and Kubernetes Secret references work the same way. If the container is short-lived, a CI job for example, run `pmg cloud sync` before it exits so buffered events are not destroyed with it.
 
-**During `docker build`**, sync in the same `RUN` step as the install, with the `export` covering both commands: PMG records events for the cloud only when credentials resolve. Mount the credentials as BuildKit secrets, which expose them to that step only (`uid=` makes them readable by the step's non-root user):
+**During `docker build`**, install steps need no credentials: PMG buffers each event locally. Deliver the buffer in one final `RUN` step, with the credentials mounted as BuildKit secrets, which expose them to that step only (`uid=` makes them readable by the step's non-root user):
 
 ```dockerfile
+RUN npm ci
+
 RUN --mount=type=secret,id=safedep_api_key,uid=1000 \
     --mount=type=secret,id=safedep_tenant_id,uid=1000 \
     export SAFEDEP_API_KEY="$(cat /run/secrets/safedep_api_key)" \
            SAFEDEP_TENANT_ID="$(cat /run/secrets/safedep_tenant_id)" \
-    && npm ci && pmg cloud sync
+    && pmg cloud sync
 ```
 
 Each `--secret` reads the variable exported where you run the build:
@@ -164,7 +166,7 @@ docker build \
 ```
 
 <Note>
-  A blocked package fails its `RUN` step: later commands never run, including any sync at the end of the Dockerfile, and Docker discards the failed step's changes. Syncing per step uploads every event up to the block; the block itself shows in the build output.
+  A blocked package fails its `RUN` step: later steps never run, including the final sync, so a failed build uploads nothing. The block itself shows in the build output.
 </Note>
 
 <Accordion title="Complete Dockerfile with cloud sync">
@@ -184,12 +186,15 @@ docker build \
   USER node
   COPY --chown=node:node package*.json ./
 
-  # uid matches the USER above so it can read the secrets
+  # No credentials needed: events buffer locally
+  RUN npm ci
+
+  # Final step delivers the buffer; uid matches the USER above
   RUN --mount=type=secret,id=safedep_api_key,uid=1000 \
       --mount=type=secret,id=safedep_tenant_id,uid=1000 \
       export SAFEDEP_API_KEY="$(cat /run/secrets/safedep_api_key)" \
              SAFEDEP_TENANT_ID="$(cat /run/secrets/safedep_tenant_id)" \
-   && npm ci && pmg cloud sync
+   && pmg cloud sync
   ```
 
   Build it with the credentials exported in your shell:
@@ -220,6 +225,8 @@ export SAFEDEP_TENANT_ID="<your-tenant-id>"
 ```
 
 Users who should sync with their own key can set the same variables in their own shell profile instead. One shared key does not blur the picture: every synced event records which OS user ran the install. It does mean every user on the host can read the key.
+
+Installs that ran before the credentials were in place are not lost: PMG buffers those events per user and delivers them on the next sync that finds credentials.
 
 Auto-sync cadence, manual sync, and viewing events are covered in [Package Guard](/governance/cloud/endpoint-hub/package-guard); the full set of cloud keys is in the [PMG configuration reference](https://github.com/safedep/pmg/blob/main/docs/config.md).
 
