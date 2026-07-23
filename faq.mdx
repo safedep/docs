@@ -118,9 +118,10 @@ Common causes:
   </Accordion>
   
   <Accordion title="Malware analysis">
-    If using `--malware`, adjust the timeout:
+    Malware detection with `--malware-query` is a fast lookup against SafeDep's
+    known malicious packages database and adds negligible overhead:
     ```bash
-    vet scan -D . --malware --malware-analysis-timeout 5m
+    vet scan -D . --malware-query
     ```
   </Accordion>
   
