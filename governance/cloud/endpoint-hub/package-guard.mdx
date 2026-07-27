@@ -40,10 +40,8 @@ Package Guard shows package installs and usage across your endpoints. It runs on
   </Step>
 
   <Step title="Enable cloud sync in the PMG config">
-    Open the config file from the path shown above (run `pmg setup info` to verify) and enable cloud sync:
-    ```yaml
-    cloud:
-      enabled: true
+    ```bash
+    pmg config set cloud.enabled true
     ```
   </Step>
 
