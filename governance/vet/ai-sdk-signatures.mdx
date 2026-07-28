@@ -1,0 +1,133 @@
+---
+title: Write custom AI SDK signatures
+description: "Teach vet to identify an AI SDK it does not detect yet by authoring a call-pattern signature and rebuilding from source."
+---
+
+`vet` identifies AI SDKs by matching function calls in your code against signatures: small YAML files that describe the call patterns of a library. If your codebase uses an AI SDK that `vet` does not recognize, you can add a signature so it appears in your [AI BOM](/governance/vet/ai-bom) and query results.
+
+Signatures are embedded into the `vet` binary at build time, so a custom signature means building `vet` from source. Contribute it upstream to ship it in released binaries for everyone.
+
+<Warning>
+Code analysis in `vet` is experimental. Signature format and directory layout may change.
+</Warning>
+
+## Prerequisites
+
+- Go toolchain (matching the version in the vet repo's `go.mod`)
+- A local clone of [`github.com/safedep/vet`](https://github.com/safedep/vet)
+- Source code that calls the SDK, to test against
+
+## Anatomy of a signature
+
+Signatures live under `signatures/<vendor>/<product>/<service>.yaml`. Each entry defines what to detect and how to categorize it:
+
+```yaml
+version: 0.1
+
+signatures:
+  - id: mistral.client
+    description: "Mistral AI client"
+    vendor: "Mistral AI"
+    product: "Mistral AI API"
+    service: "AI client"
+    tags: [ai, text, llm]
+    languages:
+      python:
+        match: any
+        conditions:
+          - type: call
+            value: "mistralai.Mistral"
+```
+
+| Field | Purpose |
+|-------|---------|
+| `id` | Unique identifier, `<vendor>.<product>.<service>` convention. Duplicate IDs fail validation. |
+| `description`, `vendor`, `product`, `service` | Categorization. `vendor` becomes the component publisher; `product` and `service` form the component name in the BOM. |
+| `tags` | Classification labels. Include `ai` so the component carries the `ai` property in the CycloneDX BOM. |
+| `languages.<lang>.match` | `any` matches when one condition matches; `all` requires every condition. |
+| `languages.<lang>.conditions` | Call patterns to match. `type` is always `call`; `value` supports the `*` wildcard. |
+
+<Note>
+Only a fixed set of tags become CycloneDX properties: `ai`, `cryptography`, `encryption`, `hash`, `ml`, `iaas`, `paas`, `saas`. For AI SDK identification, always include `ai`. Other tags (like `text` or `llm`) are kept for querying but do not emit a property.
+</Note>
+
+## Author and test a signature
+
+<Steps>
+  <Step title="Identify the call to match">
+    The `value` is the fully qualified call as the analyzer resolves it, which differs by language:
+
+    - **Python**: the dotted import path, e.g. `mistralai.Mistral` or a wildcard like `langchain_community.agents.*`
+    - **Go**: the module import path plus the symbol, e.g. `github.com/openai/openai-go/NewClient`
+    - **Java**: the fully qualified class or method, e.g. `com.openai.client.okhttp.OpenAIOkHttpClient.builder`
+
+    Detection is call-graph based, so match the constructor or entry point the SDK is actually invoked through, not the import alone. Use `*` to cover a family of calls (`mistralai.*`).
+  </Step>
+
+  <Step title="Create the signature file">
+    Add your YAML under the matching path. For a new vendor:
+
+    ```bash
+    mkdir -p signatures/mistral/ai
+    # write the signature above to signatures/mistral/ai/mistral.yaml
+    ```
+
+    To extend an existing vendor (for example a new OpenAI capability), add another entry to the relevant file under `signatures/openai/` instead of creating a new directory.
+  </Step>
+
+  <Step title="Register a new vendor directory">
+    Signatures are pulled in through a `//go:embed` directive. If you added a **new** top-level vendor directory, append it in `signatures/loader.go`:
+
+    ```go
+    //go:embed lang openai anthropic langchain crewai google microsoft cryptography github mistral
+    var embeddedSignatureFS embed.FS
+    ```
+
+    Adding a file under an existing vendor directory needs no change here.
+  </Step>
+
+  <Step title="Validate">
+    Validation checks that every signature is well-formed and that no two share an `id`. Run it from the repo root:
+
+    ```bash
+    go run . code validate
+    ```
+
+    A successful run prints `All N signatures valid`.
+  </Step>
+
+  <Step title="Build and test against real code">
+    Build the binary and run a scan over code that uses the SDK, then confirm the match:
+
+    ```bash
+    go build -o vet .
+    ./vet code scan --db code.db --app ./path/to/app --lang python
+    ./vet code query --db code.db --tag ai
+    ```
+
+    Your signature `id`, the file, the line, and the matched call appear in the results. Generate the [AI BOM](/governance/vet/ai-bom) to see it as a component:
+
+    ```bash
+    ./vet scan -D ./path/to/app --code code.db --report-cdx ai-bom.json
+    ```
+  </Step>
+</Steps>
+
+## Contribute the signature upstream
+
+A custom signature only lives in your local build until it is merged. To ship it in released `vet` binaries, open a pull request against [`safedep/vet`](https://github.com/safedep/vet) with your signature file (and the `loader.go` change if you added a vendor). See the repository's contribution guide for signature conventions.
+
+<CardGroup cols={2}>
+  <Card title="Generate an AI BOM with vet" icon="robot" href="/governance/vet/ai-bom">
+    Produce the AI BOM your signature feeds into.
+  </Card>
+  <Card title="Signatures in the vet repo" icon="github" href="https://github.com/safedep/vet/tree/main/signatures">
+    Browse the existing AI SDK signatures for reference.
+  </Card>
+  <Card title="Code Analysis" icon="magnifying-glass" href="/governance/vet/code-analysis">
+    How vet builds call graphs from source.
+  </Card>
+  <Card title="Shadow AI in Code" icon="eye" href="/governance/shadow-ai-detection">
+    Surface unauthorized AI usage with the same signatures.
+  </Card>
+</CardGroup>
