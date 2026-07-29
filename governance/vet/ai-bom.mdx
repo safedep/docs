@@ -3,7 +3,7 @@ title: Generate an AI BOM with vet
 description: "Produce a CycloneDX AI Bill of Materials from source code with vet, with file and line evidence for every detected AI SDK call."
 ---
 
-Your dependency manifest lists the AI packages someone installed. Your code decides which ones run. `vet` reads the code, finds the AI and LLM SDK calls in it, and writes them into a [CycloneDX](/concepts/sbom) AI Bill of Materials (AI BOM), with the file and line for every detection.
+A dependency manifest lists the AI packages your project declares. It does not show whether the code calls them, or where. `vet` reads the source, finds the AI and LLM SDK calls in it, and writes them into a [CycloneDX](/concepts/sbom) AI Bill of Materials (AI BOM), with the file and line for every call site it detected.
 
 Detection covers OpenAI, Anthropic, Google Gemini, xAI Grok, Mistral, AWS Bedrock, Hugging Face, LangChain, LangGraph, CrewAI, LlamaIndex, Vercel AI SDK, Spring AI, and the Model Context Protocol SDKs, among others, across five languages: Go, Python, JavaScript, TypeScript, and Java. Browse the full signature set in the [vet repository](https://github.com/safedep/vet/tree/main/signatures). If your codebase uses an SDK that `vet` does not recognize, [write a custom signature](/governance/vet/ai-sdk-signatures).
 
