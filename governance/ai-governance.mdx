@@ -1,31 +1,17 @@
 ---
 title: AI Governance
-description: "Gain visibility into AI usage across your codebase and developer environments"
+description: "Inventory the AI libraries and SDKs your applications use with an AI BOM generated from source code."
 ---
 
-Developers integrate AI SDKs into application code and adopt AI-powered development tools, often without centralized oversight. This creates blind spots for security and compliance teams.
+AI libraries and SDKs get added to application code without central tracking, leaving security and compliance teams without an inventory of what AI services the code actually calls.
 
-`vet` provides two complementary capabilities to address this:
-
-1. **Shadow AI in Code** detects AI and LLM SDK usage in your source code through static analysis and produces a CycloneDX SBOM with AI component evidence. It answers: *what AI services does your application call?*
-
-2. **AI Tools Discovery** scans developer machines and project repositories to inventory AI coding agents, MCP servers, CLI tools, and IDE extensions. It answers: *what AI tools are developers using to write code?*
-
-Together, these give security teams a complete picture of AI usage across both the software supply chain and the development environment.
-
-For a product-level overview of the outcome these capabilities deliver, see the [Shadow AI solution page](https://safedep.io/shadow-ai/).
+An **AI BOM** (AI Bill of Materials) answers that question. `vet` analyzes your source code, detects the AI and LLM SDKs it calls, and produces a [CycloneDX](/concepts/sbom) BOM with file-level and line-level evidence.
 
 <CardGroup cols={2}>
-  <Card title="Shadow AI in Code" icon="code" href="/governance/shadow-ai-detection">
-    Detect AI SDK usage in source code and generate AI-enriched SBOMs
-  </Card>
-  <Card title="AI Tools Discovery" icon="magnifying-glass" href="/ai-security/ai-tools-discovery">
-    Discover AI coding agents, MCP servers, and IDE extensions on developer machines
-  </Card>
-  <Card title="Generate an AI BOM" icon="robot" href="/governance/vet/ai-bom">
+  <Card title="Generate an AI BOM with vet" icon="robot" href="/governance/vet/ai-bom">
     Produce a CycloneDX AI Bill of Materials from your source code
   </Card>
-  <Card title="Custom AI SDK signatures" icon="fingerprint" href="/governance/vet/ai-sdk-signatures">
+  <Card title="Write custom AI SDK signatures" icon="fingerprint" href="/governance/vet/ai-sdk-signatures">
     Teach vet to detect an AI SDK it does not recognize yet
   </Card>
 </CardGroup>

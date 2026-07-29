@@ -5,7 +5,7 @@ description: "Produce a CycloneDX AI Bill of Materials from your source code wit
 
 An AI Bill of Materials (AI BOM) inventories the AI and LLM services your application actually uses, based on the calls in your source code rather than the packages you declared. `vet` builds one by scanning source code, matching function calls against embedded AI SDK signatures, and writing the result into a [CycloneDX](/concepts/sbom) BOM.
 
-This guide covers producing the AI BOM and reading its output. To extend detection to an SDK `vet` does not yet recognize, see [Write custom AI SDK signatures](/governance/vet/ai-sdk-signatures).
+`vet` ships signatures for common AI SDKs, including OpenAI, Anthropic, LangChain, CrewAI, GitHub Copilot, and Azure OpenAI across Python, Java, and Go. Browse the full set in the [vet repository](https://github.com/safedep/vet/tree/main/signatures). This guide covers producing the AI BOM and reading its output. To extend detection to an SDK `vet` does not yet recognize, see [Write custom AI SDK signatures](/governance/vet/ai-sdk-signatures).
 
 <Warning>
 Code analysis in `vet` is experimental and may introduce breaking changes.
@@ -138,8 +138,8 @@ Generate the AI BOM on each build and keep it as an artifact:
   <Card title="Write custom AI SDK signatures" icon="fingerprint" href="/governance/vet/ai-sdk-signatures">
     Detect an AI SDK that vet does not recognize yet.
   </Card>
-  <Card title="Shadow AI in Code" icon="eye" href="/governance/shadow-ai-detection">
-    Use the same analysis to surface unauthorized AI usage.
+  <Card title="CycloneDX SBOM" icon="file-code" href="/governance/cyclonedx-sbom">
+    Generate a standard CycloneDX SBOM with vet.
   </Card>
   <Card title="What is an SBOM?" icon="lightbulb" href="/concepts/sbom">
     How CycloneDX BOMs and xBOMs relate.

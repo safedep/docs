@@ -100,11 +100,10 @@
             ]
           },
           {
-            "group": "AI Visibility",
+            "group": "AI Governance",
             "icon": "robot",
             "root": "governance/ai-governance",
             "pages": [
-              "governance/shadow-ai-detection",
               "governance/vet/ai-bom",
               "governance/vet/ai-sdk-signatures"
             ]
@@ -272,12 +271,16 @@
       "destination": "/governance/ai-governance"
     },
     {
+      "source": "/governance/shadow-ai-detection",
+      "destination": "/governance/vet/ai-bom"
+    },
+    {
       "source": "/vet/guides/shadow-ai-detection",
-      "destination": "/governance/shadow-ai-detection"
+      "destination": "/governance/vet/ai-bom"
     },
     {
       "source": "/ai-security/shadow-ai-detection",
-      "destination": "/governance/shadow-ai-detection"
+      "destination": "/governance/vet/ai-bom"
     },
     {
       "source": "/vet/guides/ai-tools-discovery",
