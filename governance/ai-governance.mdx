@@ -3,9 +3,9 @@ title: AI Governance
 description: "Inventory the AI libraries and SDKs your applications use with an AI BOM generated from source code."
 ---
 
-AI libraries and SDKs get added to application code without central tracking, leaving security and compliance teams without an inventory of what AI services the code actually calls.
+Developers add AI libraries, SDKs, and agent frameworks to application code without central tracking. Security and compliance teams end up with no inventory of the AI services the code actually calls.
 
-An **AI BOM** (AI Bill of Materials) answers that question. `vet` analyzes your source code, detects the AI and LLM SDKs it calls, and produces a [CycloneDX](/concepts/sbom) BOM with file-level and line-level evidence.
+An **AI BOM** (AI Bill of Materials) closes that gap. `vet` analyzes your source code, detects calls to known AI SDKs, and writes each detection into a [CycloneDX](/concepts/sbom) BOM with file and line evidence.
 
 <CardGroup cols={2}>
   <Card title="Generate an AI BOM with vet" icon="robot" href="/governance/vet/ai-bom">

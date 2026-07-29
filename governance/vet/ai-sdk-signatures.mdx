@@ -3,7 +3,7 @@ title: Write custom AI SDK signatures
 description: "Teach vet to identify an AI SDK it does not detect yet by authoring a call-pattern signature and rebuilding from source."
 ---
 
-`vet` identifies AI SDKs by matching the calls in your code against signatures: small YAML files that describe how a library is invoked. If your codebase uses an AI SDK that `vet` does not recognize, add a signature and it appears in your [AI BOM](/governance/vet/ai-bom) and query results like any built-in detection.
+`vet` identifies AI SDKs by matching the calls in your code against signatures: small YAML files that describe how a library is invoked. Signatures drive every xBOM detection that `vet` writes into its CycloneDX output. If your codebase uses an AI SDK that `vet` does not recognize, add a signature and it appears in your [AI BOM](/governance/vet/ai-bom) and query results like any built-in detection.
 
 Signatures compile into the `vet` binary, so a custom signature means building `vet` from source. Contribute it upstream to ship it in released binaries for everyone.
 
@@ -125,7 +125,7 @@ Matching is exact and keeps the quote characters from the source, so list both q
     Your signature `id`, the file, the line, and the matched call appear in the results. Generate the [AI BOM](/governance/vet/ai-bom) to see it as a component:
 
     ```bash
-    ./vet scan -D ./path/to/app --code code.db --report-cdx ai-bom.json
+    ./vet scan -D ./path/to/app --code code.db --report-cdx xbom.json
     ```
   </Step>
 </Steps>
