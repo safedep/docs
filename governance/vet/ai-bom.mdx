@@ -1,11 +1,11 @@
 ---
 title: Generate an AI BOM with vet
-description: "Produce a CycloneDX AI Bill of Materials from your source code with vet, listing the AI and LLM SDKs your application actually calls."
+description: "Produce a CycloneDX AI Bill of Materials from source code with vet, with file and line evidence for every detected AI SDK call."
 ---
 
-An AI Bill of Materials (AI BOM) inventories the AI and LLM services your application actually uses, based on the calls in your source code rather than the packages you declared. `vet` builds one by scanning source code, matching function calls against embedded AI SDK signatures, and writing the result into a [CycloneDX](/concepts/sbom) BOM.
+Your dependency manifest lists the AI packages someone installed. Your code decides which ones run. `vet` reads the code, finds the AI and LLM SDK calls in it, and writes them into a [CycloneDX](/concepts/sbom) AI Bill of Materials (AI BOM), with the file and line for every detection.
 
-`vet` ships signatures for common AI SDKs, including OpenAI, Anthropic, LangChain, CrewAI, GitHub Copilot, and Azure OpenAI across Python, Java, and Go. Browse the full set in the [vet repository](https://github.com/safedep/vet/tree/main/signatures). This guide covers producing the AI BOM and reading its output. To extend detection to an SDK `vet` does not yet recognize, see [Write custom AI SDK signatures](/governance/vet/ai-sdk-signatures).
+Detection covers OpenAI, Anthropic, Google Gemini, xAI Grok, Mistral, AWS Bedrock, Hugging Face, LangChain, LangGraph, CrewAI, LlamaIndex, Vercel AI SDK, Spring AI, and the Model Context Protocol SDKs, among others, across five languages: Go, Python, JavaScript, TypeScript, and Java. Browse the full signature set in the [vet repository](https://github.com/safedep/vet/tree/main/signatures). If your codebase uses an SDK that `vet` does not recognize, [write a custom signature](/governance/vet/ai-sdk-signatures).
 
 <Warning>
 Code analysis in `vet` is experimental and may introduce breaking changes.
@@ -19,8 +19,8 @@ Code analysis in `vet` is experimental and may introduce breaking changes.
 ## Generate the AI BOM
 
 <Steps>
-  <Step title="Analyze source code">
-    Parse your source and store call-graph matches in a SQLite database. Use `--app` for your application directories and `--import-dir` for vendored or third-party dependencies.
+  <Step title="Scan the source code">
+    The first pass parses your source files and records every AI SDK call in a local SQLite database. Point `--app` at your own code. If you keep vendored or third-party source in the repo, point `--import-dir` at it so `vet` can attribute those calls to the right package.
 
     ```bash
     vet code scan --db code.db \
@@ -28,27 +28,28 @@ Code analysis in `vet` is experimental and may introduce breaking changes.
       --import-dir ./vendor
     ```
 
-    Restrict languages with `--lang` (for example `--lang python`); omit it to scan every supported language. Skip test or generated code with `--exclude`, which takes a regular expression:
+    Skip test and generated code with `--exclude` (a regular expression), and restrict languages with `--lang` when you want a faster scan:
 
     ```bash
     vet code scan --db code.db \
       --app ./src \
+      --lang python \
       --exclude ".*test.*" --exclude ".*__pycache__.*"
     ```
   </Step>
 
-  <Step title="Produce the CycloneDX AI BOM">
-    Run `vet scan` with the code database and write a CycloneDX report. The code analysis enriches the SBOM with AI component evidence.
+  <Step title="Write the CycloneDX AI BOM">
+    The second pass runs a normal `vet` scan, enriches it with the recorded code analysis, and writes the BOM:
 
     ```bash
     vet scan -D ./src --code code.db --report-cdx ai-bom.json
     ```
 
-    `ai-bom.json` is a standard CycloneDX document. AI components carry an `ai` property so downstream tooling can filter them.
+    `ai-bom.json` is a standard CycloneDX document. Every AI component in it carries an `ai` property, so downstream tooling can filter on it.
   </Step>
 
-  <Step title="Inspect matches before or without a BOM">
-    To review what was detected directly from the database, query the matches tagged `ai`:
+  <Step title="Inspect detections directly (optional)">
+    You can review what `vet` found without generating a BOM. Query the database for matches tagged `ai`:
 
     ```bash
     vet code query --db code.db --tag ai
@@ -66,11 +67,11 @@ Code analysis in `vet` is experimental and may introduce breaking changes.
 
 ## Read the AI BOM
 
-Where an AI SDK call shows up in the BOM depends on which directory it was found in.
+A detection lands in one of two places in the BOM, depending on where `vet` found the call.
 
-### Application-level components
+### Calls in your own code
 
-AI calls in your own code (the `--app` directories) become standalone components with an `xbom:` bom-ref. The name is built from the signature's product and service, the publisher is the vendor, and the `ai` property marks it as an AI component:
+AI SDK calls in `--app` directories become standalone components with an `xbom:` bom-ref. The signature's vendor becomes the publisher, and the `ai` property marks the component:
 
 ```json
 {
@@ -89,11 +90,11 @@ AI calls in your own code (the `--app` directories) become standalone components
 }
 ```
 
-This is the primary output when you scan first-party code. Detection is call-graph based, so an SDK that is imported but never called does not produce a component.
+This is the output you will read most often. Detection follows calls, so an SDK that is imported but never called produces no component.
 
-### Package-level components
+### Calls inside dependencies
 
-When AI signatures match inside dependency source scanned through `--import-dir`, the evidence attaches to the corresponding declared package instead of a standalone component. That package gains `source-code-analysis` identity evidence, the call locations, and the `ai` property:
+When a signature matches inside dependency source scanned through `--import-dir`, the evidence attaches to the declared package instead. The package gains `source-code-analysis` identity evidence, the call locations, and the `ai` property:
 
 ```json
 {
@@ -112,15 +113,17 @@ When AI signatures match inside dependency source scanned through `--import-dir`
 }
 ```
 
-Packages that are used in code but scanned without `--import-dir` still appear in the BOM and are tagged `used-in-code` in the scan summary; the AI evidence for them shows up as the application-level components above.
+### Filter AI components
 
-### Filter AI components from the BOM
-
-The `ai` property lets you extract AI components programmatically. For example, with `jq`:
+The `ai` property makes extraction a one-liner. With `jq`:
 
 ```bash
 jq '.components[] | select(.properties[]? | .name == "ai" and .value == "true") | .name' ai-bom.json
 ```
+
+<Note>
+Two behaviors to keep in mind when you read results. Providers that applications reach through the OpenAI-compatible mode of the `openai` SDK (DeepSeek and Moonshot document this as their official path) appear as OpenAI usage, because the code calls the `openai` SDK. TypeScript needs no separate handling: JavaScript signatures cover it.
+</Note>
 
 ## Run it in CI
 
@@ -131,7 +134,7 @@ Generate the AI BOM on each build and keep it as an artifact:
   run: vet code scan --app ./src --db code.db
 
 - name: Generate AI BOM
-  run: vet scan -D . --code code.db --report-cdx ai-bom.json
+  run: vet scan -D ./src --code code.db --report-cdx ai-bom.json
 ```
 
 <CardGroup cols={2}>

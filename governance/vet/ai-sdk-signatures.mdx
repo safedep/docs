@@ -3,9 +3,9 @@ title: Write custom AI SDK signatures
 description: "Teach vet to identify an AI SDK it does not detect yet by authoring a call-pattern signature and rebuilding from source."
 ---
 
-`vet` identifies AI SDKs by matching function calls in your code against signatures: small YAML files that describe the call patterns of a library. If your codebase uses an AI SDK that `vet` does not recognize, you can add a signature so it appears in your [AI BOM](/governance/vet/ai-bom) and query results.
+`vet` identifies AI SDKs by matching the calls in your code against signatures: small YAML files that describe how a library is invoked. If your codebase uses an AI SDK that `vet` does not recognize, add a signature and it appears in your [AI BOM](/governance/vet/ai-bom) and query results like any built-in detection.
 
-Signatures are embedded into the `vet` binary at build time, so a custom signature means building `vet` from source. Contribute it upstream to ship it in released binaries for everyone.
+Signatures compile into the `vet` binary, so a custom signature means building `vet` from source. Contribute it upstream to ship it in released binaries for everyone.
 
 <Warning>
 Code analysis in `vet` is experimental. Signature format and directory layout may change.
@@ -19,24 +19,26 @@ Code analysis in `vet` is experimental. Signature format and directory layout ma
 
 ## Anatomy of a signature
 
-Signatures live under `signatures/<vendor>/<product>/<service>.yaml`. Each entry defines what to detect and how to categorize it:
+Signatures live under `signatures/<vendor>/<product>/<service>.yaml`. This example detects the Replicate Python SDK, which `vet` does not ship a signature for:
 
 ```yaml
 version: 0.1
 
 signatures:
-  - id: mistral.client
-    description: "Mistral AI client"
-    vendor: "Mistral AI"
-    product: "Mistral AI API"
-    service: "AI client"
-    tags: [ai, text, llm]
+  - id: replicate.client
+    description: "Replicate model API client"
+    vendor: "Replicate"
+    product: "Replicate API"
+    service: "AI model client"
+    tags: [ai, ml]
     languages:
       python:
         match: any
         conditions:
           - type: call
-            value: "mistralai.Mistral"
+            value: "replicate.run"
+          - type: call
+            value: "replicate.Client"
 ```
 
 | Field | Purpose |
@@ -45,41 +47,56 @@ signatures:
 | `description`, `vendor`, `product`, `service` | Categorization. `vendor` becomes the component publisher; `product` and `service` form the component name in the BOM. |
 | `tags` | Classification labels. Include `ai` so the component carries the `ai` property in the CycloneDX BOM. |
 | `languages.<lang>.match` | `any` matches when one condition matches; `all` requires every condition. |
-| `languages.<lang>.conditions` | Call patterns to match. `type` is always `call`; `value` supports the `*` wildcard. |
+| `languages.<lang>.conditions` | Call patterns to match, one per condition. |
 
 <Note>
-Only a fixed set of tags become CycloneDX properties: `ai`, `cryptography`, `encryption`, `hash`, `ml`, `iaas`, `paas`, `saas`. For AI SDK identification, always include `ai`. Other tags (like `text` or `llm`) are kept for querying but do not emit a property.
+Only a fixed set of tags become CycloneDX properties: `ai`, `cryptography`, `encryption`, `hash`, `ml`, `iaas`, `paas`, `saas`. For AI SDK identification, always include `ai`. Other tags (like `text` or `llm`) remain queryable but do not emit a property.
 </Note>
 
-## Author and test a signature
+## Write the call patterns
+
+The `value` of a condition is the fully qualified call as the analyzer resolves it. The form differs by language, and JavaScript has its own separator rules:
+
+- **Python**: the dotted import path, such as `replicate.run`, or a trailing wildcard such as `replicate.*`.
+- **JavaScript and TypeScript**: join the package and the imported symbol with a slash: `openai/OpenAI`, `@google/genai/GoogleGenAI`. Wildcards use a slash too: `@google/genai/*`. Dot forms like `openai.OpenAI` never match. To catch a default import (`import Groq from "groq-sdk"` followed by `new Groq()`), add the bare package name `groq-sdk` as its own condition. Write conditions under `javascript`; they cover TypeScript automatically.
+- **Java**: the fully qualified class or method, such as `com.openai.client.okhttp.OpenAIOkHttpClient.builder`, or a wildcard such as `com.google.genai.*`.
+- **Go**: the module import path plus the symbol, such as `github.com/openai/openai-go/NewClient`.
+
+Detection follows calls, so match the constructor or entry point the SDK is invoked through, not the import alone.
+
+### Match a specific argument value
+
+A condition can require a literal argument at a position. `vet` uses this to tell AWS Bedrock apart from every other `boto3.client(...)` call:
+
+```yaml
+- type: call
+  value: "boto3.client"
+  args:
+    - index: 0
+      values: ['"bedrock-runtime"', "'bedrock-runtime'"]
+```
+
+Matching is exact and keeps the quote characters from the source, so list both quote styles.
+
+## Author and test the signature
 
 <Steps>
-  <Step title="Identify the call to match">
-    The `value` is the fully qualified call as the analyzer resolves it, which differs by language:
-
-    - **Python**: the dotted import path, e.g. `mistralai.Mistral` or a wildcard like `langchain_community.agents.*`
-    - **Go**: the module import path plus the symbol, e.g. `github.com/openai/openai-go/NewClient`
-    - **Java**: the fully qualified class or method, e.g. `com.openai.client.okhttp.OpenAIOkHttpClient.builder`
-
-    Detection is call-graph based, so match the constructor or entry point the SDK is actually invoked through, not the import alone. Use `*` to cover a family of calls (`mistralai.*`).
-  </Step>
-
   <Step title="Create the signature file">
     Add your YAML under the matching path. For a new vendor:
 
     ```bash
-    mkdir -p signatures/mistral/ai
-    # write the signature above to signatures/mistral/ai/mistral.yaml
+    mkdir -p signatures/replicate/api
+    # write the signature to signatures/replicate/api/client.yaml
     ```
 
-    To extend an existing vendor (for example a new OpenAI capability), add another entry to the relevant file under `signatures/openai/` instead of creating a new directory.
+    To extend an existing vendor, add an entry to the relevant file under that vendor's directory instead of creating a new one.
   </Step>
 
   <Step title="Register a new vendor directory">
-    Signatures are pulled in through a `//go:embed` directive. If you added a **new** top-level vendor directory, append it in `signatures/loader.go`:
+    Signatures load through a `//go:embed` directive in `signatures/loader.go`. If you created a **new** top-level vendor directory, append its name to the existing list:
 
     ```go
-    //go:embed lang openai anthropic langchain crewai google microsoft cryptography github mistral
+    //go:embed lang openai anthropic ... replicate
     var embeddedSignatureFS embed.FS
     ```
 
@@ -96,12 +113,12 @@ Only a fixed set of tags become CycloneDX properties: `ai`, `cryptography`, `enc
     A successful run prints `All N signatures valid`.
   </Step>
 
-  <Step title="Build and test against real code">
-    Build the binary and run a scan over code that uses the SDK, then confirm the match:
+  <Step title="Build and test">
+    Your test target only needs source files. The scanner parses code without resolving imports, so a minimal file that imports the SDK and calls it at the top level is enough; you never need to install the SDK. For JavaScript, keep the client construction at the top level of the file: the analyzer does not resolve constructor calls inside function bodies.
 
     ```bash
     go build -o vet .
-    ./vet code scan --db code.db --app ./path/to/app --lang python
+    ./vet code scan --db code.db --app ./path/to/app
     ./vet code query --db code.db --tag ai
     ```
 
