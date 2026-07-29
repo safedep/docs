@@ -1,9 +1,9 @@
 ---
 title: Generate an AI BOM with vet
-description: "Produce a CycloneDX AI Bill of Materials from source code with vet, with file and line evidence for every detected AI SDK call."
+description: "Generate a CycloneDX AI Bill of Materials with vet by scanning source code for AI and LLM SDK calls, with file and line evidence."
 ---
 
-A dependency manifest lists the AI packages your project declares. It does not show whether the code calls them, or where. `vet` reads the source, finds the AI and LLM SDK calls in it, and writes them into a [CycloneDX](/concepts/sbom) AI Bill of Materials (AI BOM), with the file and line for every call site it detected.
+A dependency manifest lists the AI packages your project declares. It does not show whether the code calls them, or where. `vet` reads the source, matches it against call patterns for known AI and LLM SDKs, and writes every detection into a [CycloneDX](/concepts/sbom) AI Bill of Materials (AI BOM), with the file and line of each call site.
 
 Detection covers OpenAI, Anthropic, Google Gemini, xAI Grok, Mistral, AWS Bedrock, Hugging Face, LangChain, LangGraph, CrewAI, LlamaIndex, Vercel AI SDK, Spring AI, and the Model Context Protocol SDKs, among others, across five languages: Go, Python, JavaScript, TypeScript, and Java. Browse the full signature set in the [vet repository](https://github.com/safedep/vet/tree/main/signatures). If your codebase uses an SDK that `vet` does not recognize, [write a custom signature](/governance/vet/ai-sdk-signatures).
 
@@ -20,12 +20,10 @@ Code analysis in `vet` is experimental and may introduce breaking changes.
 
 <Steps>
   <Step title="Scan the source code">
-    The first pass parses your source files and records every AI SDK call in a local SQLite database. Point `--app` at your own code. If you keep vendored or third-party source in the repo, point `--import-dir` at it so `vet` can attribute those calls to the right package.
+    The first pass parses your source files, matches them against the embedded signatures, and stores the results in a local SQLite database. Point `--app` at your own code:
 
     ```bash
-    vet code scan --db code.db \
-      --app ./src \
-      --import-dir ./vendor
+    vet code scan --db code.db --app ./src
     ```
 
     Skip test and generated code with `--exclude` (a regular expression), and restrict languages with `--lang` when you want a faster scan:
@@ -67,11 +65,7 @@ Code analysis in `vet` is experimental and may introduce breaking changes.
 
 ## Read the AI BOM
 
-A detection lands in one of two places in the BOM, depending on where `vet` found the call.
-
-### Calls in your own code
-
-AI SDK calls in `--app` directories become standalone components with an `xbom:` bom-ref. The signature's vendor becomes the publisher, and the `ai` property marks the component:
+AI SDK calls detected in your code appear as standalone components with an `xbom:` bom-ref. The signature's vendor becomes the publisher, the `ai` property marks the component, and each occurrence records where the call sits in your source. This component comes from scanning a file whose line 3 constructs an Anthropic client:
 
 ```json
 {
@@ -81,7 +75,11 @@ AI SDK calls in `--app` directories become standalone components with an `xbom:`
   "publisher": "Anthropic",
   "evidence": {
     "occurrences": [
-      { "location": "src/app.py", "line": 15, "additionalContext": "anthropic.Anthropic" }
+      {
+        "location": "src/app.py",
+        "line": 3,
+        "additionalContext": "anthropic//Anthropic"
+      }
     ]
   },
   "properties": [
@@ -90,28 +88,9 @@ AI SDK calls in `--app` directories become standalone components with an `xbom:`
 }
 ```
 
-This is the output you will read most often. Detection follows calls, so an SDK that is imported but never called produces no component.
+`additionalContext` shows the matched call in the analyzer's namespace notation, with `//` separating the module path from the symbol. Detection follows calls, so an SDK that is imported but never called produces no component.
 
-### Calls inside dependencies
-
-When a signature matches inside dependency source scanned through `--import-dir`, the evidence attaches to the declared package instead. The package gains `source-code-analysis` identity evidence, the call locations, and the `ai` property:
-
-```json
-{
-  "bom-ref": "pkg:pypi/openai@1.51.0",
-  "evidence": {
-    "identity": [
-      { "methods": [{ "technique": "source-code-analysis", "confidence": 1.0 }] }
-    ],
-    "occurrences": [
-      { "location": "vendor/openai/resources/responses.py", "line": 42, "additionalContext": "openai.OpenAI" }
-    ]
-  },
-  "properties": [
-    { "name": "ai", "value": "true" }
-  ]
-}
-```
+If you scan vendored dependency source through `--import-dir`, `vet` attempts to attach those detections to the corresponding declared package instead of a standalone component. This correlation is experimental and can miss; treat the `xbom:` components from your own code as the dependable output.
 
 ### Filter AI components
 
