@@ -3,15 +3,17 @@ title: Generate an AI BOM with vet
 description: "Build an AI Bill of Materials from source code with vet's xBOM engine: AI SDK detections in CycloneDX with file and line evidence."
 ---
 
-`vet` detects the AI libraries, SDKs, and agent frameworks your application actually calls. It analyzes source code and matches every call site against signatures for known AI SDKs. Each match is recorded with file and line evidence and written as an extended Bill of Materials (xBOM) into `vet`'s [CycloneDX](/concepts/sbom) output. The AI components in that document, each marked with an `ai` property, are your AI BOM. Because the inventory comes from call sites, it shows what the code calls, not just what the manifests declare.
+`vet` finds the AI libraries, SDKs, and agent frameworks your application actually calls. It scans source code, matches call sites against signatures for known AI SDKs, and writes each match into its [CycloneDX](/concepts/sbom) output as an extended Bill of Materials (xBOM). The AI components, each marked with an `ai` property and file and line evidence, are your AI BOM.
 
-Signature coverage tracks the AI ecosystem in current use. Providers include OpenAI, Anthropic, Google Gemini, xAI Grok, Mistral, Cohere, Groq, Ollama, AWS Bedrock, and Hugging Face. Frameworks and agent SDKs include LangChain, LangGraph, LlamaIndex, CrewAI, Vercel AI SDK, OpenAI Agents SDK, Claude Agent SDK, Pydantic AI, Spring AI, Semantic Kernel, and the Model Context Protocol (MCP) SDKs. The analyzer parses Python, JavaScript, TypeScript, Java, and Go. Coverage for each SDK follows the languages that the SDK supports. Browse the full signature set in the [vet repository](https://github.com/safedep/vet/tree/main/signatures). If your codebase uses an SDK that `vet` does not recognize, [write a custom signature](/governance/vet/ai-sdk-signatures).
+Because the inventory comes from call sites, it shows what the code calls, not just what the manifests declare.
 
-AI is one category in the xBOM. The same scan also detects cryptographic operations, cloud integrations, and network, filesystem, and process capabilities. This guide covers the AI components; the full detection scope is documented in the [vet xBOM documentation](https://github.com/safedep/vet/blob/main/docs/xbom.md).
+Coverage tracks the AI ecosystem in current use:
 
-<Warning>
-Code analysis in `vet` is experimental and may introduce breaking changes.
-</Warning>
+- **Model providers:** OpenAI, Anthropic, Google Gemini, xAI Grok, Mistral, Cohere, Groq, Ollama, AWS Bedrock, Hugging Face, and more
+- **Frameworks and agent SDKs:** LangChain, LangGraph, LlamaIndex, CrewAI, Vercel AI SDK, OpenAI Agents SDK, Claude Agent SDK, Pydantic AI, Spring AI, Semantic Kernel, and the Model Context Protocol (MCP) SDKs
+- **Languages:** Python, JavaScript, TypeScript, Java, and Go. Each SDK is covered in the languages it supports.
+
+Browse the [full signature set](https://github.com/safedep/vet/tree/main/signatures), or [write a custom signature](/governance/vet/ai-sdk-signatures) for an SDK `vet` does not recognize yet. AI is one xBOM category: the same scan also detects cryptographic, cloud, network, filesystem, and process usage (see the [vet xBOM documentation](https://github.com/safedep/vet/blob/main/docs/xbom.md)).
 
 ## Prerequisites
 
@@ -103,7 +105,7 @@ jq '.components[] | select(.properties[]? | .name == "ai" and .value == "true") 
 ```
 
 <Note>
-Two behaviors affect how you read results. Providers that applications reach through the OpenAI-compatible mode of the `openai` SDK (DeepSeek and Moonshot document this as their official path) appear as OpenAI usage, because the code calls the `openai` SDK. TypeScript needs no separate handling: JavaScript signatures cover it.
+Providers reached through the OpenAI-compatible mode of the `openai` SDK (DeepSeek and Moonshot document this as their official path) appear as OpenAI usage, because the code calls the `openai` SDK.
 </Note>
 
 ## Run it in CI

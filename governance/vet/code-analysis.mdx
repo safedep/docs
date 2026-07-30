@@ -3,10 +3,6 @@ title: Code Analysis
 description: "Analyze code and dependency usage patterns with Vet's code analysis features"
 ---
 
-<Warning>
-**EXPERIMENTAL**: This feature is experimental and may introduce breaking changes.
-</Warning>
-
 `vet` uses the [code](https://github.com/safedep/code/) analysis framework built on [tree-sitter](https://tree-sitter.github.io/tree-sitter/) parsers. The framework supports multiple languages and source repositories (local and remote), and writes findings to a SQLite database that `vet scan` uses to enrich manifest analysis.
 
 ## Build a Code Analysis Database
@@ -114,10 +110,6 @@ vet code scan --app ./dist --db ./analysis/prod-code.db
 ## Limitations
 
 <AccordionGroup>
-  <Accordion title="Experimental Status">
-    This feature is experimental and may have breaking changes. Test before using in production.
-  </Accordion>
-  
   <Accordion title="Performance Impact">
     Code analysis adds processing time to scans. Weigh the accuracy benefit against the speed cost for your use case.
   </Accordion>
