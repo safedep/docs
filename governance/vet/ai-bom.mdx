@@ -94,7 +94,7 @@ AI SDK calls detected in your code appear as standalone components with an `xbom
 
 `additionalContext` shows the matched call in the analyzer's namespace notation, with `//` separating the module path from the symbol. Detection follows calls, so an SDK that is imported but never called produces no component.
 
-If you scan vendored dependency source through `--import-dir`, `vet` attempts to attach those detections to the corresponding declared package instead of a standalone component. This correlation is experimental and can miss; treat the `xbom:` components from your own code as the dependable output.
+If you scan vendored dependency source through `--import-dir`, `vet` attempts to attach those detections to the corresponding declared package instead of a standalone component. More AI SDKs and libraries are added to `vet` xBOM coverage over time.
 
 ### Filter the AI components
 
