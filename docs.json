@@ -104,7 +104,8 @@
             "icon": "robot",
             "root": "governance/ai-governance",
             "pages": [
-              "governance/shadow-ai-detection"
+              "governance/shadow-ai-detection",
+              "governance/vet/ai-bom"
             ]
           },
           {
