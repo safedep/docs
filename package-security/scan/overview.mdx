@@ -1,9 +1,9 @@
 ---
 title: On-Demand Package Scanning
-description: "Run a fresh malware analysis of any package, IDE extension, or GitHub repository before you use it."
+description: "Run an on-demand malware analysis of any package, IDE extension, or GitHub repository before you use it."
 ---
 
-On-demand package scanning submits a software component to SafeDep Cloud for a fresh malware analysis and returns a verdict with evidence. You name an exact version of a package, an IDE extension, or a GitHub repository; SafeDep analyzes it and tells you whether it is safe to use.
+On-demand package scanning submits a software component to SafeDep Cloud for malware analysis and returns a verdict with evidence. You name an exact version of a package, an IDE extension, or a GitHub repository. SafeDep analyzes it and tells you whether it is safe to use.
 
 It is an independent SafeDep Cloud feature, used from the `safedep` CLI or the SafeDep API. It is not coupled to Vet or PMG.
 
@@ -13,7 +13,7 @@ SafeDep answers "is this component malicious?" in two distinct ways. Knowing whi
 
 |  | Fast path: known-malicious lookup | Slow path: on-demand scan |
 |---|---|---|
-| What it checks | SafeDep's database of already-analyzed, known malicious packages | The exact component you name, analyzed fresh |
+| What it checks | SafeDep's database of already-analyzed, known malicious packages | The exact component you name, analyzed on demand |
 | Answers in | Milliseconds | Minutes |
 | Cost | Free | Metered, from your plan's scan allowance |
 | Built into | [Vet](/governance/vet/overview), [PMG](/package-security/pmg/overview), the [SafeDep MCP server](/ai-security/mcp-server) | The `safedep` CLI and the SafeDep API |

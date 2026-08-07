@@ -5,9 +5,13 @@ description: "How SafeDep Cloud seat allowances and usage-based on-demand billin
 
 Paid SafeDep Cloud plans include a monthly usage allowance for metered features. This page explains how the allowance is counted, what happens when you reach it, and how to opt in to usage-based billing beyond it.
 
+<Note>
+The commands on this page use the `safedep` CLI. New to it? See [SafeDep CLI Tools](/get-started/cli-tools) for what it is and how to install it.
+</Note>
+
 ## How allowances work
 
-A metered feature's monthly allowance is a per-seat amount multiplied by your subscription's seats, pooled across the whole tenant. Any member can consume from the shared pool; there is no per-user split. The allowance resets each billing period.
+A metered feature's monthly allowance is a per-seat amount multiplied by your subscription's seats, pooled across the whole tenant. Any member can consume from the shared pool. There is no per-user split. The allowance resets each billing period.
 
 [On-demand package scans](/package-security/scan/overview) are metered this way today. Per-seat amounts and unit prices are listed on the [pricing page](https://safedep.io/pricing).
 
@@ -48,7 +52,7 @@ The `--accept-terms` flag records your acceptance of the on-demand billing [term
 
 ## The spending cap
 
-On-demand billing has a monthly spending cap that bounds how much overage can be billed in a period. When the cap is reached, further over-allowance requests are denied until the period resets, so a runaway automation cannot create an unbounded bill. The default cap is listed on the [pricing page](https://safedep.io/pricing); contact [support](mailto:support@safedep.io) to adjust it.
+On-demand billing has a monthly spending cap that bounds how much overage can be billed in a period. When the cap is reached, further over-allowance requests are denied until the period resets, so a runaway automation cannot create an unbounded bill. The default cap is listed on the [pricing page](https://safedep.io/pricing). Contact [support](mailto:support@safedep.io) to adjust it.
 
 ## Disable on-demand billing
 

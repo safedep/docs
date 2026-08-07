@@ -9,11 +9,11 @@ On-demand scanning is built to be driven by automation: platform teams wiring pr
 
 `safedep package scan` calls a control-plane API that authenticates with your signed-in session, established by `safedep auth login`. **API keys do not submit scans.** This is a deliberate design decision, not a missing feature.
 
-The reasoning: every scan draws down your plan's allowance, and with [on-demand billing](/governance/cloud/usage-billing) enabled it can create real charges. SafeDep treats operations that spend your money as control-plane operations, which require the stronger trust of a signed-in session. API keys are data-plane credentials: long-lived, distributed to tools and CI environments, and fine for reading curated threat intel. A leaked API key can read intel; it cannot spend your scan budget.
+The reasoning: every scan draws down your plan's allowance, and with [on-demand billing](/governance/cloud/usage-billing) enabled it can create real charges. SafeDep treats operations that spend your money as control-plane operations, which require the stronger trust of a signed-in session. API keys are data-plane credentials: long-lived, distributed to tools and CI environments, and fine for reading curated threat intel. A leaked API key can read intel, but it cannot spend your scan budget.
 
 What this means in practice:
 
-- **Automation on a workstation works.** Scripts and AI agents running where a human has signed in (a developer machine, an agent sandbox with the CLI configured) submit scans normally. The CLI refreshes the session silently; re-run `safedep auth login` when the refresh eventually expires.
+- **Automation on a workstation works.** Scripts and AI agents running where a human has signed in (a developer machine, an agent sandbox with the CLI configured) submit scans normally. The CLI refreshes the session silently. Re-run `safedep auth login` when the refresh eventually expires.
 - **Headless CI cannot submit scans today.** There is no non-interactive credential for scan submission. If your pipeline needs an inline malicious-package gate, use the free fast-path lookup with [Vet](/governance/cloud/malware-analysis), which works with an API key or no account at all.
 
 ## Machine-readable output
@@ -69,15 +69,15 @@ safedep package scan show --scan-id "$scan_id" -o json   # full report, once com
 
 ## Retries are free
 
-Submitting the same ecosystem, name, and version again returns the existing scan instead of creating a new one. Retrying after a network failure or a CLI timeout is safe and does not draw down your allowance twice. `--rescan` opts out of this and forces a fresh analysis, which counts against the allowance.
+Submitting the same ecosystem, name, and version again returns the existing scan instead of creating a new one. Retrying after a network failure or a CLI timeout is safe and does not draw down your allowance twice. `--rescan` opts out of this and forces a new analysis, which counts against the allowance.
 
-A CLI timeout does not fail the scan. `scan run` waits up to 5 minutes by default (`--timeout` adjusts this); if it times out, the scan keeps running server-side, and the error message includes the `scan get` command to resume polling.
+A CLI timeout does not fail the scan. `scan run` waits up to 5 minutes by default (`--timeout` adjusts this). If it times out, the scan keeps running server-side, and the error message includes the `scan get` command to resume polling.
 
 ## Direct API access
 
 The CLI is a thin client over `PackageScanService` (`SubmitScan`, `GetScan`, `ListScans`, `GetScanReport`) in `safedep.services.malysis.v1`, published at [buf.build/safedep/api](https://buf.build/safedep/api). The service is ConnectRPC, so it also speaks plain HTTP/JSON: POST to `https://cloud.safedep.io/safedep.services.malysis.v1.PackageScanService/<Method>`.
 
-Direct API access uses the same authentication model as the CLI: an `authorization` header carrying the access token from your OAuth2 session (an API key does not work), and an `x-tenant-id` header carrying your tenant domain. The CLI does not print its session token today; for most integrations, drive the CLI or use a [generated SDK](https://buf.build/safedep/api/sdks) with your own OAuth2 session.
+Direct API access uses the same authentication model as the CLI: an `authorization` header carrying the access token from your OAuth2 session (an API key does not work), and an `x-tenant-id` header carrying your tenant domain. The CLI does not print its session token today. For most integrations, drive the CLI or use a [generated SDK](https://buf.build/safedep/api/sdks) with your own OAuth2 session.
 
 <Tabs>
   <Tab title="curl">
