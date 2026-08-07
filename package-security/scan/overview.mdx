@@ -1,0 +1,104 @@
+---
+title: On-Demand Package Scanning
+description: "Run an on-demand malware analysis of any package, IDE extension, or GitHub repository before you use it."
+---
+
+On-demand package scanning submits a software component to SafeDep Cloud for malware analysis and returns a verdict with evidence. You name an exact version of a package, an IDE extension, or a GitHub repository. SafeDep analyzes it and tells you whether it is safe to use.
+
+It is an independent SafeDep Cloud feature, used from the `safedep` CLI or the SafeDep API. It is not coupled to Vet or PMG.
+
+## Fast path and slow path
+
+SafeDep answers "is this component malicious?" through two paths built on the same scanning infrastructure.
+
+The **fast path** is automatic. SafeDep continuously scans packages from public registries and records verdicts in its known malicious packages database. SafeDep tools query that database to protect the SDLC at each stage: [PMG](/package-security/pmg/overview) at install time, [Vet](/governance/vet/overview) in CI, the [SafeDep MCP server](/ai-security/mcp-server) in AI agent sessions. It is free, answers in milliseconds, and needs no action from you.
+
+The **slow path** is on-demand scanning: the same scanning infrastructure, made available to you on demand. Use it where continuous scanning does not reach. That means components that are not registry packages, such as an MCP server or AI agent skill adopted from a GitHub repository, or an IDE extension, and packages that are not covered by SafeDep's continuous scanning.
+
+|  | Fast path: known-malicious lookup | Slow path: on-demand scan |
+|---|---|---|
+| What it checks | SafeDep's database of already-analyzed, known malicious packages | The exact component you name, analyzed on demand |
+| Answers in | Milliseconds | Minutes |
+| Cost | Free | Metered, from your plan's scan allowance |
+| Used through | [Vet](/governance/vet/overview), [PMG](/package-security/pmg/overview), the [SafeDep MCP server](/ai-security/mcp-server), automatically | The `safedep` CLI and the SafeDep API, when you ask |
+
+## How a scan works
+
+Every scan runs SafeDep's malware analysis pipeline against the exact component you name:
+
+- **Static analysis** examines the component's code and metadata for malicious behavior signals: install-time hooks, obfuscation, network and filesystem access, credential theft patterns, and more.
+- **AI agent triage** investigates those signals. Static analysis alone flags suspicious-looking code in many legitimate packages, so an AI agent examines each signal in context to separate real threats from benign code.
+
+<Tip>
+Triage works because the agent draws on SafeDep's code context for open source software: baselines and memories built from continuously analyzing packages across ecosystems. Because SafeDep knows what normal looks like for OSS code, triage rejects false alarms that a signature-only scanner would surface and digs into behavior that is genuinely out of place.
+</Tip>
+
+The result is a verdict backed by evidence you can inspect, not a bare score. See [What a scan produces](#what-a-scan-produces).
+
+## What you can scan
+
+<CardGroup cols={3}>
+  <Card title="npm" icon="node-js">
+    JavaScript and TypeScript packages
+  </Card>
+  <Card title="PyPI" icon="python">
+    Python packages
+  </Card>
+  <Card title="Go Modules" icon="golang">
+    Go modules
+  </Card>
+  <Card title="RubyGems" icon="gem">
+    Ruby gems
+  </Card>
+  <Card title="Cargo" icon="rust">
+    Rust crates
+  </Card>
+  <Card title="VS Code Extensions" icon="puzzle-piece">
+    Visual Studio Code extensions
+  </Card>
+  <Card title="Open VSX Extensions" icon="puzzle-piece">
+    Extensions from the Open VSX registry
+  </Card>
+  <Card title="GitHub Actions" icon="github">
+    Actions used in your workflows
+  </Card>
+  <Card title="GitHub Repositories" icon="code-branch">
+    Any repository, at a tag, branch, or commit
+  </Card>
+</CardGroup>
+
+A GitHub repository target covers anything distributed as a repository rather than through a package registry: a library you found on GitHub, an AI agent skill, a project template. This makes on-demand scanning usable as a pre-use check for components that no registry-based tool can see.
+
+## What a scan produces
+
+A completed scan carries a verdict: `malware`, `benign`, or `inconclusive`, with a confidence score. When the verdict is `malware`, the full report explains why: a summary, file-level evidence (file, line, observed behavior), project-level evidence, indicators of compromise, and warnings.
+
+A scan that cannot run, for example because the named version does not exist in the registry, ends as `failed` with a reason. Failure is an operational outcome, not a verdict.
+
+For how SafeDep decides what is malicious, see [Malicious Package](/concepts/malicious-package).
+
+## Availability
+
+<Note>
+On-demand package scanning requires a SafeDep Cloud **Professional** or **Enterprise** plan. Paid plans include a monthly scan allowance per seat, pooled across your tenant. Beyond the allowance, you can opt in to [usage-based on-demand billing](/governance/cloud/usage-billing). The free trial includes one seat's allowance. See [pricing](https://safedep.io/pricing).
+</Note>
+
+Current limits, stated plainly:
+
+- Scanning is available from the CLI and the API. There is no web dashboard for on-demand scans yet.
+- Submitting a scan requires a signed-in session. API keys do not submit scans. See [Scanning from CI and AI Agents](/package-security/scan/automation) for the reasoning.
+- A scan typically completes in a few minutes. The CLI waits up to 5 minutes by default.
+
+## Get started
+
+<CardGroup cols={1}>
+  <Card title="Package Scan Quickstart" icon="rocket" href="/package-security/scan/quickstart">
+    Install the CLI, sign in, and run your first scan.
+  </Card>
+  <Card title="Scanning from CI and AI Agents" icon="robot" href="/package-security/scan/automation">
+    Authentication model, JSON output, verdict gating, polling, and retry semantics for automation.
+  </Card>
+  <Card title="Usage & On-Demand Billing" icon="coins" href="/governance/cloud/usage-billing">
+    How allowances are counted and how to enable usage-based billing beyond them.
+  </Card>
+</CardGroup>

@@ -13,7 +13,7 @@ Six tabs — three solution tabs at the core, plus supporting tabs.
 | Tab | Purpose | Groups |
 |---|---|---|
 | **Get Started** | What is SafeDep, vocabulary, entry points | Introduction · Core Concepts |
-| **Package Security** | Block malicious packages at install time — on dev machines and in CI/CD | Install-Time Package Blocking · CI/CD Package Blocking |
+| **Package Security** | Block malicious packages at install time — on dev machines and in CI/CD — and scan any component on demand before use | Install-Time Package Blocking · On-Demand Package Scanning · CI/CD Package Blocking |
 | **AI Agent Security** | Discover, audit, and control what AI agents access and run | AI Agent Observability · AI Coding Protection |
 | **Visibility & Governance** | Scan repos, SBOMs, and CI/CD for supply-chain risk; manage policy and org-wide cloud visibility | Repository Scanning · Bill of Materials · CI/CD & Platform Integrations · SafeDep Cloud (nests Endpoint Hub, Policy & Risk, Authentication) |
 | **Reference** | Exact syntax, flags, API specs — no explanation | Query & Policy · API & Automation |
@@ -56,6 +56,7 @@ Every structural decision derives from these rules. Full rationale in `docs-ia-p
 | Defines a concept/term used across docs | Get Started | Core Concepts |
 | Onboards a new user / routes entry points | Get Started | Introduction (product quickstarts co-locate with their product) |
 | Covers malicious package blocking (install-time or CI/CD) | Package Security | pmg / CI/CD Package Blocking |
+| Covers evaluating a package/extension/repo before use (on-demand scanning) | Package Security | On-Demand Package Scanning |
 | Covers AI agent discovery, audit, or control | AI Agent Security | AI Agent Observability / AI Coding Protection |
 | Covers scanning repos, SBOMs, or CI/CD for supply-chain risk | Visibility & Governance | Repository Scanning / Bill of Materials / CI/CD |
 | Covers cloud policy, endpoint inventory, or org-wide access | Visibility & Governance | SafeDep Cloud / Endpoint Hub / Policy & Risk |
@@ -133,7 +134,8 @@ Don't mix Diátaxis types within a single page.
 
 **Package Security** *(tab landing: `package-security/overview`)*
 - Install-Time Package Blocking: `package-security/pmg/overview` *(landing)*, `package-security/pmg/quickstart`, `package-security/pmg/system-install`
-- CI/CD Package Blocking: `package-security/jfrog-xray`
+- On-Demand Package Scanning: `package-security/scan/overview` *(landing)*, `package-security/scan/quickstart`, `package-security/scan/automation`
+- CI/CD Package Blocking: `package-security/pmg/github-actions`, `package-security/jfrog-xray`
 
 **AI Agent Security** *(tab landing: `ai-security/overview`)* — flat list, scoped to securing AI coding *agents*. The "AI as a software component" pages (Shadow AI in Code, AI Governance) moved to Visibility & Governance, since AI SDKs in your app are a supply-chain concern, not agent security. Order is discover → observe → augment.
 - `ai-security/ai-tools-discovery`, `ai-security/gryph-overview`, `ai-security/mcp-server`
@@ -141,9 +143,9 @@ Don't mix Diátaxis types within a single page.
 **Visibility & Governance** *(tab landing: `governance/overview`)*
 - Repository Scanning: `governance/vet/overview` *(landing)*, `governance/vet/quickstart`, `governance/vet/dependency-inventory`, `governance/vet/dependency-usage`, `governance/vet/code-analysis`
 - Bill of Materials: `governance/xbom/overview` *(landing)*, `governance/xbom/quickstart`, `governance/cyclonedx-sbom`
-- AI Visibility: `governance/ai-governance` *(landing)*, `governance/shadow-ai-detection`
+- AI Visibility: `governance/ai-governance` *(landing)*, `governance/shadow-ai-detection`, `governance/vet/ai-bom`
 - CI/CD & Platform Integrations: `governance/integrations/overview` *(landing)*, `governance/integrations/github`, `governance/integrations/github-code-scanning`, `governance/integrations/gitlab`, `governance/integrations/bitbucket`, `governance/integrations/defectdojo`, `governance/terraform-audit`
-- SafeDep Cloud: `governance/cloud/overview` *(landing)*, `governance/cloud/quickstart`, `governance/cloud/authentication`, `governance/cloud/sync`, `governance/cloud/alerts`
+- SafeDep Cloud: `governance/cloud/overview` *(landing)*, `governance/cloud/quickstart`, `governance/cloud/authentication`, `governance/cloud/usage-billing`, `governance/cloud/sync`, `governance/cloud/talk-to-safedep`, `governance/cloud/alerts`
   - Endpoint Hub: `governance/cloud/endpoint-hub/overview` *(landing)*, `governance/cloud/endpoint-hub/inventory`, `governance/cloud/endpoint-hub/inventory-catalog`, `governance/cloud/endpoint-hub/package-guard`, `governance/cloud/endpoint-hub/mcp-advisor`
   - Policy & Risk: `governance/cloud/malware-analysis`, `governance/cloud/package-exclusions`
 
@@ -155,7 +157,7 @@ Don't mix Diátaxis types within a single page.
 - Community: `community`
 - Support: `faq`, `governance/cloud/faq`
 
-Total: **58 pages**
+Total: **67 pages**
 
 ---
 

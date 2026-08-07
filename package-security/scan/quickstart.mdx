@@ -1,0 +1,107 @@
+---
+title: Package Scan Quickstart
+description: "Install the safedep CLI, sign in to SafeDep Cloud, and run your first on-demand package scan."
+---
+
+In this guide you install the `safedep` CLI, sign in to SafeDep Cloud, activate a plan, and scan your first package. Setup takes a few minutes. Each scan takes a few minutes more.
+
+For what on-demand scanning is and when to use it, see the [overview](/package-security/scan/overview).
+
+<Steps>
+  <Step title="Install the safedep CLI">
+    <Tabs>
+      <Tab title="Homebrew">
+        ```bash
+        brew install --cask safedep/tap/cli
+        ```
+      </Tab>
+      <Tab title="npm">
+        ```bash
+        npm install -g @safedep/cli
+        ```
+      </Tab>
+    </Tabs>
+
+    Verify with `safedep version`.
+  </Step>
+
+  <Step title="Sign in to SafeDep Cloud">
+    ```bash
+    safedep auth login
+    ```
+
+    This opens a browser-based device login. If you are new to SafeDep, it also sets up your account. The CLI keeps your session refreshed after this one sign-in.
+  </Step>
+
+  <Step title="Check your plan">
+    ```bash
+    safedep subscription status
+    ```
+
+    On-demand scanning needs a Professional or Enterprise plan. If you do not have one yet, activate the free trial:
+
+    ```bash
+    safedep subscription trial enable
+    ```
+
+    The command asks for basic billing profile details the first time. No payment method is needed for the trial. The trial includes one seat's monthly scan allowance.
+  </Step>
+
+  <Step title="Scan a package">
+    ```bash
+    safedep package scan run pkg:npm/express@4.18.2
+    ```
+
+    The CLI submits the scan and waits, showing status as the analysis progresses. When the scan completes you get a verdict panel: `benign`, `malware`, or `inconclusive`, with a confidence score. On a `malware` verdict the full evidence report is printed inline.
+
+    The target can be a purl (as above), a GitHub URL, or an explicit triple:
+
+    ```bash
+    safedep package scan run --ecosystem pypi --name requests --version 2.32.3
+    ```
+  </Step>
+
+  <Step title="Scan something that is not a registry package">
+    On-demand scanning also covers components no registry-based tool can check. Scan a GitHub repository at a tag, branch, or commit:
+
+    ```bash
+    safedep package scan run https://github.com/safedep/vet/tree/v1.18.1
+    ```
+
+    Or a VS Code extension, named as `publisher.extension`:
+
+    ```bash
+    safedep package scan run --ecosystem vscode --name esbenp.prettier-vscode --version 9.9.0
+    ```
+  </Step>
+
+  <Step title="Review your scans">
+    List the tenant's scans, newest first:
+
+    ```bash
+    safedep package scan list
+    ```
+
+    Fetch the full report of a completed scan, by package or by scan id:
+
+    ```bash
+    safedep package scan show pkg:npm/express@4.18.2
+    safedep package scan show --scan-id <scan-id> --save report.json
+    ```
+  </Step>
+</Steps>
+
+<Info>
+Re-running `scan run` for the same package version returns the existing scan instead of starting (and counting) a new one. Use `--rescan` to force a new analysis.
+</Info>
+
+## Next steps
+
+<CardGroup cols={2}>
+  <Card title="Scanning from CI and AI Agents" icon="robot" href="/package-security/scan/automation">
+    JSON output, verdict gating, polling, and the authentication model for automation.
+  </Card>
+  <Card title="Usage & On-Demand Billing" icon="coins" href="/governance/cloud/usage-billing">
+    Check your scan allowance and enable usage-based billing beyond it.
+  </Card>
+</CardGroup>

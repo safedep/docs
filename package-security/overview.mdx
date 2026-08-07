@@ -3,7 +3,7 @@ title: Package Security
 description: "Block malicious open-source packages before they reach your code, on developer machines and in CI/CD."
 ---
 
-Stop malicious open-source packages before they reach your code. SafeDep blocks known-bad packages wherever they enter: a developer's install, your CI/CD pipeline, or your artifact registry.
+Stop malicious open-source packages before they reach your code. SafeDep blocks known-bad packages wherever they enter: a developer's install, your CI/CD pipeline, or your artifact registry. And when a component is not in the known-bad database yet, you can scan it on demand before adopting it.
 
 <CardGroup cols={2}>
   <Card title="Block at install time" icon="box" href="/package-security/pmg/overview">
@@ -14,6 +14,9 @@ Stop malicious open-source packages before they reach your code. SafeDep blocks 
   </Card>
   <Card title="Block in JFrog Xray" icon="shield-halved" href="/package-security/jfrog-xray">
     Stop malicious packages in your JFrog artifact registry with SafeDep.
+  </Card>
+  <Card title="Scan a package on demand" icon="microscope" href="/package-security/scan/overview">
+    Run an on-demand malware analysis of any package, IDE extension, or GitHub repository before you use it.
   </Card>
 </CardGroup>
 

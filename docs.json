@@ -55,6 +55,15 @@
             ]
           },
           {
+            "group": "On-Demand Package Scanning",
+            "icon": "microscope",
+            "root": "package-security/scan/overview",
+            "pages": [
+              "package-security/scan/quickstart",
+              "package-security/scan/automation"
+            ]
+          },
+          {
             "group": "CI/CD Package Blocking",
             "icon": "shield-check",
             "pages": [
@@ -128,6 +137,7 @@
             "pages": [
               "governance/cloud/quickstart",
               "governance/cloud/authentication",
+              "governance/cloud/usage-billing",
               "governance/cloud/sync",
               "governance/cloud/talk-to-safedep",
               "governance/cloud/alerts",
