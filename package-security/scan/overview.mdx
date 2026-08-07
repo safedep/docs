@@ -9,17 +9,18 @@ It is an independent SafeDep Cloud feature, used from the `safedep` CLI or the S
 
 ## Fast path and slow path
 
-SafeDep answers "is this component malicious?" in two distinct ways. Knowing which one you need saves time and money.
+SafeDep answers "is this component malicious?" through two paths built on the same scanning infrastructure.
+
+The **fast path** is automatic. SafeDep continuously scans packages from public registries and records verdicts in its known malicious packages database. SafeDep tools query that database to protect the SDLC at each stage: [PMG](/package-security/pmg/overview) at install time, [Vet](/governance/vet/overview) in CI, the [SafeDep MCP server](/ai-security/mcp-server) in AI agent sessions. It is free, answers in milliseconds, and needs no action from you.
+
+The **slow path** is on-demand scanning: the same scanning infrastructure, made available to you on demand. Use it where continuous scanning does not reach. That means components that are not registry packages, such as an MCP server or AI agent skill adopted from a GitHub repository, or an IDE extension, and packages that are not covered by SafeDep's continuous scanning.
 
 |  | Fast path: known-malicious lookup | Slow path: on-demand scan |
 |---|---|---|
 | What it checks | SafeDep's database of already-analyzed, known malicious packages | The exact component you name, analyzed on demand |
 | Answers in | Milliseconds | Minutes |
 | Cost | Free | Metered, from your plan's scan allowance |
-| Built into | [Vet](/governance/vet/overview), [PMG](/package-security/pmg/overview), the [SafeDep MCP server](/ai-security/mcp-server) | The `safedep` CLI and the SafeDep API |
-| Best for | Inline gates: package installs, CI checks, agent tool calls | Pre-adoption review of a specific version, components not in the database, non-registry components |
-
-Use the fast path everywhere it fits: it is free and instant. Reach for an on-demand scan when the component is not in the database yet, when you need a verdict for the exact version you are about to adopt, or when the component is not an OSS registry package at all.
+| Used through | [Vet](/governance/vet/overview), [PMG](/package-security/pmg/overview), the [SafeDep MCP server](/ai-security/mcp-server), automatically | The `safedep` CLI and the SafeDep API, when you ask |
 
 ## How a scan works
 
