@@ -75,7 +75,55 @@ A CLI timeout does not fail the scan. `scan run` waits up to 5 minutes by defaul
 
 ## Direct API access
 
-The CLI is a thin client over `PackageScanService` (`SubmitScan`, `GetScan`, `ListScans`, `GetScanReport`) in `safedep.services.malysis.v1`, published at [buf.build/safedep/api](https://buf.build/safedep/api). Direct API integration uses the same authentication model as the CLI. See the [API introduction](/reference/api-introduction).
+The CLI is a thin client over `PackageScanService` (`SubmitScan`, `GetScan`, `ListScans`, `GetScanReport`) in `safedep.services.malysis.v1`, published at [buf.build/safedep/api](https://buf.build/safedep/api). The service is ConnectRPC, so it also speaks plain HTTP/JSON: POST to `https://cloud.safedep.io/safedep.services.malysis.v1.PackageScanService/<Method>`.
+
+Direct API access uses the same authentication model as the CLI: an `authorization` header carrying the access token from your OAuth2 session (an API key does not work), and an `x-tenant-id` header carrying your tenant domain. The CLI does not print its session token today; for most integrations, drive the CLI or use a [generated SDK](https://buf.build/safedep/api/sdks) with your own OAuth2 session.
+
+<Tabs>
+  <Tab title="curl">
+    ```bash
+    # Submit a scan
+    curl https://cloud.safedep.io/safedep.services.malysis.v1.PackageScanService/SubmitScan \
+      -H "authorization: $SAFEDEP_ACCESS_TOKEN" \
+      -H "x-tenant-id: your-company.safedep.io" \
+      --json '{"target":{"package_version":{"package":{"ecosystem":"ECOSYSTEM_NPM","name":"express"},"version":"4.18.2"}}}'
+
+    # Poll the scan by id
+    curl https://cloud.safedep.io/safedep.services.malysis.v1.PackageScanService/GetScan \
+      -H "authorization: $SAFEDEP_ACCESS_TOKEN" \
+      -H "x-tenant-id: your-company.safedep.io" \
+      --json '{"scan_id":"<scan-id>"}'
+    ```
+  </Tab>
+  <Tab title="Python">
+    ```python
+    import requests
+
+    BASE = "https://cloud.safedep.io/safedep.services.malysis.v1.PackageScanService"
+    HEADERS = {
+        "authorization": ACCESS_TOKEN,          # OAuth2 session access token
+        "x-tenant-id": "your-company.safedep.io",
+    }
+
+    submit = requests.post(f"{BASE}/SubmitScan", headers=HEADERS, json={
+        "target": {
+            "package_version": {
+                "package": {"ecosystem": "ECOSYSTEM_NPM", "name": "express"},
+                "version": "4.18.2",
+            }
+        }
+    })
+    submit.raise_for_status()
+    scan_id = submit.json()["scanId"]
+
+    scan = requests.post(f"{BASE}/GetScan", headers=HEADERS, json={"scan_id": scan_id})
+    scan.raise_for_status()
+    print(scan.json())
+    ```
+  </Tab>
+</Tabs>
+
+See the [API introduction](/reference/api-introduction) for transport details and rate limits.
 
 <CardGroup cols={2}>
   <Card title="Usage & On-Demand Billing" icon="coins" href="/governance/cloud/usage-billing">

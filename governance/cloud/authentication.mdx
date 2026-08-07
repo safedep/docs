@@ -5,8 +5,8 @@ description: "How SafeDep Cloud authentication works and how to authenticate the
 
 Every tool that talks to SafeDep Cloud authenticates with two values: a **tenant domain** (for example `your-company.safedep.io`) and a credential. The credential type depends on which API plane the tool calls:
 
-- **Data plane** (`api.safedep.io`): package insights, scanning, and sync. Authenticates with an **API key**.
-- **Control plane** (`cloud.safedep.io`): tenant, policy, and management operations, including SQL queries. Authenticates with a **JWT** from an OAuth2 login.
+- **Data plane** (`api.safedep.io`): package insights, known-malicious package queries, and sync. Authenticates with an **API key**.
+- **Control plane** (`cloud.safedep.io`): tenant, policy, and management operations, including SQL queries and [on-demand package scans](/package-security/scan/overview). Authenticates with a **JWT** from an OAuth2 login.
 
 Generate API keys at [app.safedep.io/settings/api-keys](https://app.safedep.io/settings/api-keys). For request headers, OAuth2/OIDC endpoints, and rate limits, see the [API reference](/reference/api-introduction). For the full hostname list, see the [endpoints reference](/reference/endpoints).
 
@@ -26,6 +26,10 @@ safedep auth login --api-key --tenant your-company.safedep.io
 ```
 
 The key is read from `--api-key-value`, stdin (with `--from-stdin`), the `SAFEDEP_API_KEY` environment variable, or an interactive prompt, in that order. Work with multiple tenants using `--profile` and `safedep auth profile list`. See the [CLI command reference](https://github.com/safedep/cli/tree/main/docs/cmd) for all flags.
+
+<Note>
+API-key login covers data-plane commands only. [On-demand package scanning](/package-security/scan/overview) is a control-plane operation: it requires the OAuth2 device-flow session, and an API key cannot submit scans, by design. See [Scanning from CI and AI Agents](/package-security/scan/automation) for the reasoning and what this means for automation.
+</Note>
 
 ## vet
 
