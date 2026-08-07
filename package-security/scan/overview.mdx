@@ -27,7 +27,11 @@ The **slow path** is on-demand scanning: the same scanning infrastructure, made 
 Every scan runs SafeDep's malware analysis pipeline against the exact component you name:
 
 - **Static analysis** examines the component's code and metadata for malicious behavior signals: install-time hooks, obfuscation, network and filesystem access, credential theft patterns, and more.
-- **AI agent triage** investigates those signals. Static analysis alone flags suspicious-looking code in many legitimate packages, so an AI agent examines each signal in context to separate real threats from benign code. The agent draws on SafeDep's code context for open source software: baselines and memories built from continuously analyzing packages across ecosystems. Because SafeDep knows what normal looks like for OSS code, triage rejects false alarms that a signature-only scanner would surface and digs into behavior that is genuinely out of place.
+- **AI agent triage** investigates those signals. Static analysis alone flags suspicious-looking code in many legitimate packages, so an AI agent examines each signal in context to separate real threats from benign code.
+
+<Tip>
+Triage works because the agent draws on SafeDep's code context for open source software: baselines and memories built from continuously analyzing packages across ecosystems. Because SafeDep knows what normal looks like for OSS code, triage rejects false alarms that a signature-only scanner would surface and digs into behavior that is genuinely out of place.
+</Tip>
 
 The result is a verdict backed by evidence you can inspect, not a bare score. See [What a scan produces](#what-a-scan-produces).
 
