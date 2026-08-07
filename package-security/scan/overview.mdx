@@ -1,0 +1,90 @@
+---
+title: On-Demand Package Scanning
+description: "Run a fresh malware analysis of any package, IDE extension, or GitHub repository before you use it."
+---
+
+On-demand package scanning submits a software component to SafeDep Cloud for a fresh malware analysis and returns a verdict with evidence. You name an exact version of a package, an IDE extension, or a GitHub repository; SafeDep analyzes it and tells you whether it is safe to use.
+
+It is an independent SafeDep Cloud feature, used from the `safedep` CLI or the SafeDep API. It is not coupled to Vet or PMG.
+
+## Fast path and slow path
+
+SafeDep answers "is this component malicious?" in two distinct ways. Knowing which one you need saves time and money.
+
+|  | Fast path: known-malicious lookup | Slow path: on-demand scan |
+|---|---|---|
+| What it checks | SafeDep's database of already-analyzed, known malicious packages | The exact component you name, analyzed fresh |
+| Answers in | Milliseconds | Minutes |
+| Cost | Free | Metered, from your plan's scan allowance |
+| Built into | [Vet](/governance/vet/overview), [PMG](/package-security/pmg/overview), the [SafeDep MCP server](/ai-security/mcp-server) | The `safedep` CLI and the SafeDep API |
+| Best for | Inline gates: package installs, CI checks, agent tool calls | Pre-adoption review of a specific version, components not in the database, non-registry components |
+
+Use the fast path everywhere it fits: it is free and instant. Reach for an on-demand scan when the component is not in the database yet, when you need a verdict for the exact version you are about to adopt, or when the component is not an OSS registry package at all.
+
+## What you can scan
+
+<CardGroup cols={3}>
+  <Card title="npm" icon="node-js">
+    JavaScript and TypeScript packages
+  </Card>
+  <Card title="PyPI" icon="python">
+    Python packages
+  </Card>
+  <Card title="Go Modules" icon="golang">
+    Go modules
+  </Card>
+  <Card title="RubyGems" icon="gem">
+    Ruby gems
+  </Card>
+  <Card title="Cargo" icon="rust">
+    Rust crates
+  </Card>
+  <Card title="VS Code Extensions" icon="puzzle-piece">
+    Visual Studio Code extensions
+  </Card>
+  <Card title="Open VSX Extensions" icon="puzzle-piece">
+    Extensions from the Open VSX registry
+  </Card>
+  <Card title="GitHub Actions" icon="github">
+    Actions used in your workflows
+  </Card>
+  <Card title="GitHub Repositories" icon="code-branch">
+    Any repository, at a tag, branch, or commit
+  </Card>
+</CardGroup>
+
+A GitHub repository target covers anything distributed as a repository rather than through a package registry: a library you found on GitHub, an AI agent skill, a project template. This makes on-demand scanning usable as a pre-use check for components that no registry-based tool can see.
+
+## What a scan produces
+
+A completed scan carries a verdict: `malware`, `benign`, or `inconclusive`, with a confidence score. When the verdict is `malware`, the full report explains why: a summary, file-level evidence (file, line, observed behavior), project-level evidence, indicators of compromise, and warnings.
+
+A scan that cannot run, for example because the named version does not exist in the registry, ends as `failed` with a reason. Failure is an operational outcome, not a verdict.
+
+For how SafeDep decides what is malicious, see [Malicious Package](/concepts/malicious-package).
+
+## Availability
+
+<Note>
+On-demand package scanning requires a SafeDep Cloud **Professional** or **Enterprise** plan. Paid plans include a monthly scan allowance per seat, pooled across your tenant. Beyond the allowance, you can opt in to [usage-based on-demand billing](/governance/cloud/usage-billing). The free 30-day trial includes one seat's allowance. See [pricing](https://safedep.io/pricing).
+</Note>
+
+Current limits, stated plainly:
+
+- Scanning is available from the CLI and the API. There is no web dashboard for on-demand scans yet.
+- Submitting a scan requires a signed-in session. API keys do not submit scans. See [Scanning from CI and AI Agents](/package-security/scan/automation) for the reasoning.
+- A scan typically completes in a few minutes. The CLI waits up to 5 minutes by default.
+
+## Get started
+
+<CardGroup cols={1}>
+  <Card title="Package Scan Quickstart" icon="rocket" href="/package-security/scan/quickstart">
+    Install the CLI, sign in, and run your first scan.
+  </Card>
+  <Card title="Scanning from CI and AI Agents" icon="robot" href="/package-security/scan/automation">
+    Authentication model, JSON output, verdict gating, polling, and retry semantics for automation.
+  </Card>
+  <Card title="Usage & On-Demand Billing" icon="coins" href="/governance/cloud/usage-billing">
+    How allowances are counted and how to enable usage-based billing beyond them.
+  </Card>
+</CardGroup>

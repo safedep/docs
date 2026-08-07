@@ -1,0 +1,76 @@
+---
+title: Usage & On-Demand Billing
+description: "How SafeDep Cloud seat allowances and usage-based on-demand billing work, and the CLI commands to inspect and manage them."
+---
+
+Paid SafeDep Cloud plans include a monthly usage allowance for metered features. This page explains how the allowance is counted, what happens when you reach it, and how to opt in to usage-based billing beyond it.
+
+## How allowances work
+
+A metered feature's monthly allowance is a per-seat amount multiplied by your subscription's seats, pooled across the whole tenant. Any member can consume from the shared pool; there is no per-user split. The allowance resets each billing period.
+
+[On-demand package scans](/package-security/scan/overview) are metered this way today. Per-seat amounts and unit prices are listed on the [pricing page](https://safedep.io/pricing).
+
+## Check your usage
+
+```bash
+safedep subscription ondemand status
+```
+
+The output shows, per metered feature:
+
+- **Included limit and consumed**: the pooled allowance for the current period and how much of it is used.
+- **Period end**: when the allowance resets.
+- **Overage**: units consumed beyond the allowance this period, and their billed value, when on-demand billing is enabled.
+
+It also shows the account-level state: whether on-demand billing is enabled, whether a payment method is on file, and the payment posture.
+
+## What happens at the allowance limit
+
+- **On-demand billing disabled** (the default): requests beyond the allowance are denied until the period resets or you add seats.
+- **On-demand billing enabled**: usage beyond the allowance is billed per unit, up to a monthly spending cap.
+
+## Enable on-demand billing
+
+Prerequisites: an active paid subscription with a payment method on file. Add a payment method through the billing portal if needed:
+
+```bash
+safedep subscription portal open
+```
+
+Then opt in:
+
+```bash
+safedep subscription ondemand enable --accept-terms
+```
+
+The `--accept-terms` flag records your acceptance of the on-demand billing [terms](https://safedep.io/terms/), including the terms version, for the tenant account. Without the flag, the command prints the terms location and makes no change.
+
+## The spending cap
+
+On-demand billing has a monthly spending cap that bounds how much overage can be billed in a period. When the cap is reached, further over-allowance requests are denied until the period resets, so a runaway automation cannot create an unbounded bill. The default cap is listed on the [pricing page](https://safedep.io/pricing); contact [support](mailto:support@safedep.io) to adjust it.
+
+## Disable on-demand billing
+
+```bash
+safedep subscription ondemand disable
+```
+
+Overage billing stops and the included allowance limits apply again. Usage already billed in the current period remains payable.
+
+## Invoices and payment methods
+
+The billing portal handles payment methods, invoices, and billing history:
+
+```bash
+safedep subscription portal open
+```
+
+<CardGroup cols={2}>
+  <Card title="On-Demand Package Scanning" icon="microscope" href="/package-security/scan/overview">
+    The metered feature this page's allowances apply to.
+  </Card>
+  <Card title="Pricing" icon="tag" href="https://safedep.io/pricing">
+    Plans, per-seat allowances, and unit prices.
+  </Card>
+</CardGroup>

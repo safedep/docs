@@ -14,7 +14,7 @@ This repository contains documentation for SafeDep, built using Mintlify documen
 The documentation is organized into **6 tabs** — three solution tabs at the core, plus supporting tabs:
 
 1. **Get Started** — "What is SafeDep?" primer, quickstarts, core concepts
-2. **Package Security** — block malicious packages at install time and in CI/CD (pmg)
+2. **Package Security** — block malicious packages at install time and in CI/CD, and scan any package, extension, or repo on demand before use (pmg, safedep CLI)
 3. **AI Agent Security** — discover, audit, and control what AI agents access and run (MCP, Gryph, vet AI discovery)
 4. **Visibility & Governance** — scan repos/SBOMs/CI/CD for risk; manage policy and cloud visibility (vet, xBom, SafeDep Cloud, Endpoint Hub, Endpoint Sync)
 5. **Reference** — exact syntax/APIs (vet query & policy, API & automation)
@@ -45,6 +45,7 @@ Every placement decision derives from these rules. Full rationale and page map: 
 | Defines a concept/term used across docs | Get Started | Core Concepts |
 | Onboards a new user / routes entry points | Get Started | Introduction (product quickstarts co-locate with their product) |
 | Covers malicious package blocking (install-time or CI/CD) | Package Security | pmg / CI/CD Package Blocking |
+| Covers evaluating a package/extension/repo before use (on-demand scanning) | Package Security | On-Demand Package Scanning |
 | Covers AI agent discovery, audit, or control | AI Agent Security | AI Agent Observability / AI Coding Protection |
 | Covers scanning repos, SBOMs, CI/CD for risk | Visibility & Governance | Repository Scanning / Bill of Materials / CI/CD |
 | Covers cloud policy, endpoint inventory, access | Visibility & Governance | SafeDep Cloud / Endpoint Hub / Policy & Risk |
