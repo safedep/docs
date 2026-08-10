@@ -129,7 +129,7 @@ Don't mix Diátaxis types within a single page.
 *Human-readable mirror of `docs.json`. Source of truth is `docs.json`.* Re-synced after the Phase 2 path migration, the Phase 3 sidebar restructure, and the net-new pages landed. A group's clickable landing (Mintlify `root`) is marked *(landing)*.
 
 **Get Started**
-- Introduction: `introduction`, `get-started/cli-tools`, `get-started/safedep-skill`
+- Introduction: `introduction`, `get-started/choose-your-path`, `get-started/cli-tools`, `get-started/safedep-skill`
 - Core Concepts: `concepts/malicious-package`, `concepts/vulnerability`, `concepts/policy`, `concepts/cel`, `concepts/sbom`, `concepts/tenant`, `concepts/endpoint`
 
 **Package Security** *(tab landing: `package-security/overview`)*
@@ -157,7 +157,7 @@ Don't mix Diátaxis types within a single page.
 - Community: `community`
 - Support: `faq`, `governance/cloud/faq`
 
-Total: **69 pages**
+Total: **70 pages**
 
 ---
 
@@ -165,7 +165,6 @@ Total: **69 pages**
 
 | New page | Destination |
 |---|---|
-| `get-started/choose-your-path` | Get Started › Introduction |
 | `concepts/malicious-package` | Get Started › Core Concepts |
 | `concepts/vulnerability` | Get Started › Core Concepts |
 | `concepts/policy` | Get Started › Core Concepts |
