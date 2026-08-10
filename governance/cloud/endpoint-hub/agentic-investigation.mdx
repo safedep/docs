@@ -25,7 +25,7 @@ The agent works in a loop:
 2. It writes a query and runs it with `safedep query exec`.
 3. If the server rejects the query, the error says why. The agent corrects the query and retries.
 
-Every query is scoped to your authenticated tenant. The agent reads data; it cannot change it. Each answer traces back to a real query, so you can ask the agent to show the SQL it ran.
+Every query is scoped to your authenticated tenant. The agent reads data; it cannot change it. Each answer traces back to a real query, so you can ask the agent to show the SQL it ran. The query language has no relative dates, so for questions like "in the last 30 days" the agent computes the cutoff timestamp from today's date. The example queries below show literal timestamps for the same reason.
 
 For the query language, the full table list, and the query rules, see [SafeDep Cloud SQL](/reference/sql-query).
 
@@ -61,16 +61,20 @@ Each row is one decision on one endpoint. `PMG_PACKAGE_ACTION_BLOCKED` means PMG
 What did PMG block across our endpoints this month? Group it by endpoint.
 ```
 
-The agent filters `package_guard_events` on the blocked actions and joins to `endpoints`:
+The agent filters `package_guard_events` on both block actions, bounds the time range to the month, and joins to `endpoints`:
 
 ```sql
 SELECT endpoints.identifier, package_guard_events.package_name,
-       package_guard_events.package_ecosystem, package_guard_events.timestamp
+       package_guard_events.package_ecosystem, package_guard_events.package_action,
+       package_guard_events.timestamp
 FROM package_guard_events
 JOIN endpoints ON endpoints.id = package_guard_events.invocation_id
-WHERE package_guard_events.package_action = 'PMG_PACKAGE_ACTION_BLOCKED'
+WHERE package_guard_events.package_action IN ('PMG_PACKAGE_ACTION_BLOCKED', 'PMG_PACKAGE_ACTION_COOLDOWN_BLOCKED')
+  AND package_guard_events.timestamp >= '2026-08-01T00:00:00Z'
 ORDER BY package_guard_events.timestamp DESC
 ```
+
+`PMG_PACKAGE_ACTION_BLOCKED` is a block on a known malicious package. `PMG_PACKAGE_ACTION_COOLDOWN_BLOCKED` is a block on a package too new to trust under the cooldown policy. Both stopped an install.
 
 A block on one endpoint is often the first visible event of a campaign. Follow up with the exposure playbook above for the same package across the fleet.
 
@@ -89,6 +93,7 @@ SELECT endpoints.identifier, package_guard_events.package_name,
 FROM package_guard_events
 JOIN endpoints ON endpoints.id = package_guard_events.invocation_id
 WHERE package_guard_events.event_type = 'PMG_EVENT_TYPE_INSECURE_BYPASS'
+  AND package_guard_events.timestamp >= '2026-07-27T00:00:00Z'
 ORDER BY package_guard_events.timestamp DESC
 ```
 
@@ -109,7 +114,7 @@ WHERE endpoints.last_sync_at < '2026-07-11T00:00:00Z'
 ORDER BY endpoints.last_sync_at ASC
 ```
 
-The query language has no relative dates, so the agent computes the cutoff timestamp from today's date.
+An endpoint can stop reporting for good reasons, such as a decommissioned laptop. Confirm before you treat it as an incident.
 
 ### Get a current verdict on a suspect package
 

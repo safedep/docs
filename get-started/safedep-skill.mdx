@@ -3,9 +3,7 @@ title: "Install the SafeDep Skill"
 description: "Add the SafeDep Agent Skill to Claude Code or any skills-capable AI coding agent."
 ---
 
-The [SafeDep skill](https://github.com/safedep/skills) makes your AI coding agent fluent in SafeDep. With the skill installed, the agent answers SafeDep questions from the official docs instead of memory, picks the right tool for the job, and runs [SafeDep Cloud SQL](/reference/sql-query) queries through the `safedep` CLI.
-
-The skill carries no product knowledge of its own. It routes the agent to these docs, which are published in agent-readable form (`llms.txt` and Markdown endpoints). Update the skill rarely; the knowledge stays current because the docs do.
+The [SafeDep skill](https://github.com/safedep/skills) makes your AI coding agent fluent in SafeDep. With the skill installed, the agent answers SafeDep questions from the official sources instead of memory, picks the right SafeDep tool for the task, and helps you install, configure, and use it. Answers stay current because the agent reads the live documentation, not its training data.
 
 ## Install
 
@@ -51,16 +49,15 @@ What does SafeDep PMG do?
 
 The agent should load the skill, fetch the answer from docs.safedep.io, and cite the page it used.
 
-## Sign in for cloud queries
+## Set up the safedep CLI
 
-The skill answers product questions without an account. Questions about *your* data, such as "what did PMG block this week", need the `safedep` CLI signed in to your [SafeDep Cloud tenant](/governance/cloud/quickstart):
+The skill answers product questions without an account. Questions about *your* data, such as "what did PMG block this week", run through the [safedep CLI](https://github.com/safedep/cli) against your [SafeDep Cloud tenant](/governance/cloud/quickstart). The skill tells the agent to check for the CLI and your sign-in state, and to hand a step back to you when it needs a human:
 
-```bash
-safedep auth login
-safedep auth status
-```
+1. Install the CLI. Follow the [CLI repository](https://github.com/safedep/cli#install) instructions.
+2. Sign in with `safedep auth login`. Sign-in opens a browser, so the agent asks you to run it.
+3. Confirm the tenant with `safedep auth status`.
 
-Sign-in opens a browser, so the agent asks you to run it. See [Authentication](/governance/cloud/authentication).
+See [Authentication](/governance/cloud/authentication).
 
 <CardGroup cols={2}>
   <Card title="Talk to SafeDep" icon="comments" href="/governance/cloud/talk-to-safedep">
