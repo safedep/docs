@@ -124,6 +124,8 @@ These four rules prevent the mistakes that recur most. They are not optional.
 
 4. **`broken-links` and an em-dash grep do not prove correctness.** They pass whether or not a command is real, an in-page link resolves, or content was silently dropped. Verify commands against source, anchors against the target page's headings, and (after any trim) that no procedural content was lost. When editing in bulk, read the diff.
 
+5. **`introduction.mdx` mirrors the current positioning.** These docs are the source of truth that AI agents (including the SafeDep skill) consume. When SafeDep's positioning changes on safedep.io, update `introduction.mdx` and the tab overview intros in the same wave; stale positioning here means agents answer with stale positioning.
+
 ## Documentation Writing Guidelines
 
 All content must follow the **[Diátaxis framework](https://diataxis.fr/)** principles. Before creating or editing content:
