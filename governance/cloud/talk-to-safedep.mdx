@@ -22,21 +22,7 @@ Install the SafeDep skill and your AI coding agent can answer questions about yo
 
 ## Install the skill
 
-<Tabs>
-  <Tab title="Claude Code">
-    ```bash
-    /plugin marketplace add safedep/skills
-    /plugin install safedep-agent-skills@safedep-agent-skills
-    ```
-    Turn on auto-update in Claude Code settings to stay on the current version.
-  </Tab>
-  <Tab title="Any agent">
-    ```bash
-    npx skills add safedep/skills
-    ```
-    Run `npx skills update` to refresh it later.
-  </Tab>
-</Tabs>
+Install the SafeDep skill in your agent. See [Install the SafeDep Skill](/get-started/safedep-skill) for Claude Code, Cursor, and other agents.
 
 ## Ask a question
 
@@ -65,3 +51,9 @@ The skill runs the same query interface you can drive by hand. To see the full t
 <Note>
 Queries are scoped to your authenticated tenant. The agent never sees data outside it, and you never write a tenant filter yourself.
 </Note>
+
+<CardGroup cols={1}>
+  <Card title="Agentic Endpoint Investigation" icon="magnifying-glass" href="/governance/cloud/endpoint-hub/agentic-investigation">
+    Investigation playbooks for developer endpoints: exposure checks, block reviews, bypass audits.
+  </Card>
+</CardGroup>

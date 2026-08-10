@@ -1,0 +1,72 @@
+---
+title: "Install the SafeDep Skill"
+description: "Add the SafeDep Agent Skill to Claude Code or any skills-capable AI coding agent."
+---
+
+The [SafeDep skill](https://github.com/safedep/skills) makes your AI coding agent fluent in SafeDep. With the skill installed, the agent answers SafeDep questions from the official docs instead of memory, picks the right tool for the job, and runs [SafeDep Cloud SQL](/reference/sql-query) queries through the `safedep` CLI.
+
+The skill carries no product knowledge of its own. It routes the agent to these docs, which are published in agent-readable form (`llms.txt` and Markdown endpoints). Update the skill rarely; the knowledge stays current because the docs do.
+
+## Install
+
+<Tabs>
+  <Tab title="Claude Code">
+    Add the marketplace, then install the plugin:
+
+    ```bash
+    /plugin marketplace add safedep/skills
+    /plugin install safedep-agent-skills@safedep-agent-skills
+    ```
+
+    Turn on auto-update in Claude Code settings to stay on the current version.
+  </Tab>
+  <Tab title="Any agent">
+    Works with any agent that supports Agent Skills:
+
+    ```bash
+    npx skills add safedep/skills
+    ```
+
+    Run `npx skills update` to refresh it later.
+  </Tab>
+  <Tab title="Cursor">
+    Copy the skill into your project:
+
+    ```bash
+    git clone https://github.com/safedep/skills.git
+    cp -r skills/skills/safedep .cursor/skills/
+    ```
+
+    Cursor discovers skills from `.cursor/skills/` on startup.
+  </Tab>
+</Tabs>
+
+## Verify
+
+Ask your agent a SafeDep question:
+
+```text
+What does SafeDep PMG do?
+```
+
+The agent should load the skill, fetch the answer from docs.safedep.io, and cite the page it used.
+
+## Sign in for cloud queries
+
+The skill answers product questions without an account. Questions about *your* data, such as "what did PMG block this week", need the `safedep` CLI signed in to your [SafeDep Cloud tenant](/governance/cloud/quickstart):
+
+```bash
+safedep auth login
+safedep auth status
+```
+
+Sign-in opens a browser, so the agent asks you to run it. See [Authentication](/governance/cloud/authentication).
+
+<CardGroup cols={2}>
+  <Card title="Talk to SafeDep" icon="comments" href="/governance/cloud/talk-to-safedep">
+    Ask your supply chain questions in plain English.
+  </Card>
+  <Card title="Agentic Endpoint Investigation" icon="magnifying-glass" href="/governance/cloud/endpoint-hub/agentic-investigation">
+    Investigate package activity across your endpoints with an agent.
+  </Card>
+</CardGroup>
