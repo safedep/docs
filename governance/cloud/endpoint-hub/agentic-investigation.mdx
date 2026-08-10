@@ -113,14 +113,21 @@ The query language has no relative dates, so the agent computes the cutoff times
 
 ### Get a current verdict on a suspect package
 
-Package Guard events record the decision PMG made at install time. Verdicts change: a package that passed last month may be known malware today. To judge a package during an investigation, get a fresh verdict with [on-demand package scanning](/package-security/scan/overview):
+Package Guard events record the decision PMG made at install time. Verdicts change: a package that passed last month may be known malware today. To judge a package during an investigation, get a current verdict. Two paths exist, and the agent should take the fast one first:
 
 ```text
-An endpoint installed left-pad-utils 2.1.0 from npm last week. Scan it
-and tell me if it is safe.
+An endpoint installed left-pad-utils 2.1.0 from npm last week. Is it safe?
+Check the known malicious packages database first. Run a full scan only if
+I ask for a deep dive.
 ```
 
-The agent runs:
+The fast path checks SafeDep's [known malicious packages database](/governance/cloud/malware-analysis). It is free and answers in milliseconds:
+
+```bash
+vet scan --purl pkg:npm/left-pad-utils@2.1.0 --malware-query
+```
+
+The slow path is an [on-demand package scan](/package-security/scan/overview): a full malware analysis of the exact version. It takes minutes and draws down your plan's scan allowance. Use it when the database has no verdict and the package deserves a deep dive:
 
 ```bash
 safedep package scan run "pkg:npm/left-pad-utils@2.1.0" -o json
