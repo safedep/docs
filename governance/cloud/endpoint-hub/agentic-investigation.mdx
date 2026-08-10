@@ -1,0 +1,188 @@
+---
+title: "Agentic Endpoint Investigation"
+description: "Investigate package activity and AI tooling across your developer endpoints with an AI coding agent and the safedep CLI."
+---
+
+Your endpoints report their activity to [Endpoint Hub](/governance/cloud/endpoint-hub/overview): every package install [PMG](/package-security/pmg/overview) allowed or blocked, and the AI tooling `vet` discovered. When something needs investigation, you do not write queries yourself. You ask your AI coding agent. The agent turns your question into a tenant-scoped [SafeDep Cloud SQL](/reference/sql-query) query, runs it with the `safedep` CLI, and reports what it found.
+
+This guide gives you investigation playbooks: the question to ask, what the agent runs, and how to verify the answer.
+
+## Before you start
+
+- Endpoints that sync data to your tenant. Set up [Package Guard sync](/governance/cloud/endpoint-hub/package-guard) for package events, and optionally [Inventory](/governance/cloud/endpoint-hub/inventory) for AI tooling.
+- The `safedep` CLI, signed in with `safedep auth login`. See [Authentication](/governance/cloud/authentication).
+- An AI coding agent with the [SafeDep skill](/get-started/safedep-skill) installed.
+
+<Note>
+The agent cannot sign in for you. Sign-in opens a browser and needs a human. If the agent reports an authentication error, run `safedep auth login` yourself, confirm with `safedep auth status`, and tell the agent to continue.
+</Note>
+
+## How the agent investigates
+
+The agent works in a loop:
+
+1. It discovers the queryable tables with `safedep query schema get`. The schema describes the tables, their columns, the allowed joins, and the query rules.
+2. It writes a query and runs it with `safedep query exec`.
+3. If the server rejects the query, the error says why. The agent corrects the query and retries.
+
+Every query is scoped to your authenticated tenant. The agent reads data; it cannot change it. Each answer traces back to a real query, so you can ask the agent to show the SQL it ran. The query language has no relative dates, so for questions like "in the last 30 days" the agent computes the cutoff timestamp from today's date. The example queries below show literal timestamps for the same reason.
+
+For the query language, the full table list, and the query rules, see [SafeDep Cloud SQL](/reference/sql-query).
+
+## Playbooks
+
+### Check exposure to a compromised package
+
+A package you use was compromised upstream. Find out if any endpoint installed it.
+
+```text
+The npm package eslint-config-prettier was compromised. Was it installed
+on any of our endpoints in the last 30 days? Which versions, and was it
+blocked or allowed?
+```
+
+The agent runs a query like:
+
+```sql
+SELECT endpoints.identifier, package_guard_events.package_version,
+       package_guard_events.package_action, package_guard_events.timestamp
+FROM package_guard_events
+JOIN endpoints ON endpoints.id = package_guard_events.invocation_id
+WHERE package_guard_events.package_name = 'eslint-config-prettier'
+  AND package_guard_events.timestamp >= '2026-07-11T00:00:00Z'
+ORDER BY package_guard_events.timestamp DESC
+```
+
+Each row is one decision on one endpoint. `PMG_PACKAGE_ACTION_BLOCKED` means PMG stopped the install. `PMG_PACKAGE_ACTION_CONFIRMED` means a person approved it after a warning. An allowed install of a compromised version is your incident to respond to.
+
+### Review what was blocked, and where
+
+```text
+What did PMG block across our endpoints this month? Group it by endpoint.
+```
+
+The agent filters `package_guard_events` on both block actions, bounds the time range to the month, and joins to `endpoints`:
+
+```sql
+SELECT endpoints.identifier, package_guard_events.package_name,
+       package_guard_events.package_ecosystem, package_guard_events.package_action,
+       package_guard_events.timestamp
+FROM package_guard_events
+JOIN endpoints ON endpoints.id = package_guard_events.invocation_id
+WHERE package_guard_events.package_action IN ('PMG_PACKAGE_ACTION_BLOCKED', 'PMG_PACKAGE_ACTION_COOLDOWN_BLOCKED')
+  AND package_guard_events.timestamp >= '2026-08-01T00:00:00Z'
+ORDER BY package_guard_events.timestamp DESC
+```
+
+`PMG_PACKAGE_ACTION_BLOCKED` is a block on a known malicious package. `PMG_PACKAGE_ACTION_COOLDOWN_BLOCKED` is a block on a package too new to trust under the cooldown policy. Both stopped an install.
+
+A block on one endpoint is often the first visible event of a campaign. Follow up with the exposure playbook above for the same package across the fleet.
+
+### Audit protection bypasses
+
+PMG records when a person bypasses protection. Review these regularly.
+
+```text
+Did anyone bypass PMG protection in the last two weeks? Show the endpoint,
+the package, and when it happened.
+```
+
+```sql
+SELECT endpoints.identifier, package_guard_events.package_name,
+       package_guard_events.timestamp
+FROM package_guard_events
+JOIN endpoints ON endpoints.id = package_guard_events.invocation_id
+WHERE package_guard_events.event_type = 'PMG_EVENT_TYPE_INSECURE_BYPASS'
+  AND package_guard_events.timestamp >= '2026-07-27T00:00:00Z'
+ORDER BY package_guard_events.timestamp DESC
+```
+
+The related `PMG_EVENT_TYPE_SANDBOX_OVERRIDE` event records sandbox policy overrides. Ask the agent to check both.
+
+### Find endpoints that stopped reporting
+
+An endpoint that stopped syncing is a blind spot: it still installs packages, and you no longer see them.
+
+```text
+Which endpoints have not synced in the last 30 days?
+```
+
+```sql
+SELECT endpoints.identifier, endpoints.endpoint_type, endpoints.last_sync_at
+FROM endpoints
+WHERE endpoints.last_sync_at < '2026-07-11T00:00:00Z'
+ORDER BY endpoints.last_sync_at ASC
+```
+
+An endpoint can stop reporting for good reasons, such as a decommissioned laptop. Confirm before you treat it as an incident.
+
+### Get a current verdict on a suspect package
+
+Package Guard events record the decision PMG made at install time. Verdicts change: a package that passed last month may be known malware today. To judge a package during an investigation, get a current verdict. Two paths exist, and the agent should take the fast one first:
+
+```text
+An endpoint installed left-pad-utils 2.1.0 from npm last week. Is it safe?
+Check the known malicious packages database first. Run a full scan only if
+I ask for a deep dive.
+```
+
+The fast path checks SafeDep's [known malicious packages database](/governance/cloud/malware-analysis). It is free and answers in milliseconds:
+
+```bash
+vet scan --purl pkg:npm/left-pad-utils@2.1.0 --malware-query
+```
+
+The slow path is an [on-demand package scan](/package-security/scan/overview): a full malware analysis of the exact version. It takes minutes and draws down your plan's scan allowance. Use it when the database has no verdict and the package deserves a deep dive:
+
+```bash
+safedep package scan run "pkg:npm/left-pad-utils@2.1.0" -o json
+```
+
+The scan returns `malware`, `benign`, or `inconclusive`, with evidence. Treat `inconclusive` as needs-review. See [Scanning from CI and AI Agents](/package-security/scan/automation) for the scan contract.
+
+### See what AI tooling runs on an endpoint
+
+If your endpoints also run [Inventory](/governance/cloud/endpoint-hub/inventory) scans, the same loop answers questions about AI tooling:
+
+```text
+Which MCP servers were observed on our endpoints, and on which machines?
+```
+
+```sql
+SELECT inventory_events.item_identity, endpoints.identifier
+FROM inventory_events
+JOIN endpoints ON endpoints.id = inventory_events.app
+WHERE inventory_events.item_kind = 'INVENTORY_ITEM_KIND_MCP_SERVER'
+ORDER BY inventory_events.item_identity
+```
+
+Other item kinds cover coding agents, IDE extensions, and Agent Skills.
+
+## Ask narrow questions
+
+Results return one page at a time, up to 100 rows. Do not ask the agent to dump a table and search the output. Ask a narrow question, and let the agent filter server-side: a package name, a time range, one endpoint, one event type. When you need totals, ask for counts; the agent aggregates with `GROUP BY` instead of paging through rows.
+
+## Verify the answer
+
+Every agent answer maps to a query you can run yourself:
+
+1. Ask the agent to show the SQL it ran.
+2. Run it: `safedep query exec --sql "<statement>"`.
+3. Compare the result with the agent's summary.
+
+If the agent's answer looks wrong, the query is the first place to look. A missing time bound or a wrong enum value changes the result silently.
+
+<CardGroup cols={2}>
+  <Card title="SafeDep Cloud SQL" icon="database" href="/reference/sql-query">
+    The query language, full table list, and query rules.
+  </Card>
+  <Card title="Install the SafeDep Skill" icon="puzzle-piece" href="/get-started/safedep-skill">
+    Set up your AI coding agent for SafeDep.
+  </Card>
+  <Card title="Package Guard" icon="shield" href="/governance/cloud/endpoint-hub/package-guard">
+    Sync package events from your endpoints.
+  </Card>
+  <Card title="Talk to SafeDep" icon="comments" href="/governance/cloud/talk-to-safedep">
+    Ask your tenant questions in plain English.
+  </Card>
+</CardGroup>

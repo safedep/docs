@@ -22,7 +22,8 @@
             "icon": "book-open",
             "pages": [
               "introduction",
-              "get-started/cli-tools"
+              "get-started/cli-tools",
+              "get-started/safedep-skill"
             ]
           },
           {
@@ -150,7 +151,8 @@
                   "governance/cloud/endpoint-hub/inventory",
                   "governance/cloud/endpoint-hub/inventory-catalog",
                   "governance/cloud/endpoint-hub/package-guard",
-                  "governance/cloud/endpoint-hub/mcp-advisor"
+                  "governance/cloud/endpoint-hub/mcp-advisor",
+                  "governance/cloud/endpoint-hub/agentic-investigation"
                 ]
               },
               {

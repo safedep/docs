@@ -1,0 +1,93 @@
+---
+title: "Install the SafeDep Skill"
+description: "Add the SafeDep Agent Skill to Claude Code or any skills-capable AI coding agent."
+---
+
+The [SafeDep skill](https://github.com/safedep/skills) makes your AI coding agent fluent in SafeDep. With the skill installed, the agent answers SafeDep questions from the official sources instead of memory, picks the right SafeDep tool for the task, and helps you install, configure, and use it. Answers stay current because the agent reads the live documentation, not its training data.
+
+## Install
+
+<Tabs>
+  <Tab title="Claude Code">
+    Add the marketplace, then install the plugin:
+
+    ```bash
+    /plugin marketplace add safedep/skills
+    /plugin install safedep-agent-skills@safedep-agent-skills
+    ```
+
+    Turn on auto-update in Claude Code settings to stay on the current version.
+  </Tab>
+  <Tab title="Any agent">
+    Works with any agent that supports Agent Skills:
+
+    ```bash
+    npx skills add safedep/skills
+    ```
+
+    Run `npx skills update` to refresh it later.
+  </Tab>
+  <Tab title="Cursor">
+    Copy the skill into your project:
+
+    ```bash
+    git clone https://github.com/safedep/skills.git
+    cp -r skills/skills/safedep .cursor/skills/
+    ```
+
+    Cursor discovers skills from `.cursor/skills/` on startup.
+  </Tab>
+</Tabs>
+
+## Verify
+
+Ask your agent a SafeDep question:
+
+```text
+What does SafeDep PMG do?
+```
+
+The agent should load the skill, fetch the answer from docs.safedep.io, and cite the page it used.
+
+## Set up the safedep CLI
+
+The skill answers product questions without an account. Questions about *your* data, such as "what did PMG block this week", run through the [safedep CLI](https://github.com/safedep/cli) against your [SafeDep Cloud tenant](/governance/cloud/quickstart). The skill tells the agent to check for the CLI and your sign-in state, and to hand a step back to you when it needs a human:
+
+<Steps>
+  <Step title="Install the CLI">
+    The [CLI repository](https://github.com/safedep/cli#install) lists more options.
+
+    <CodeGroup>
+    ```bash Homebrew
+    brew install safedep/tap/cli
+    ```
+
+    ```bash npm
+    npm install -g @safedep/cli
+    ```
+    </CodeGroup>
+  </Step>
+  <Step title="Sign in">
+    Sign-in opens a browser, so the agent asks you to run it.
+
+    ```bash
+    safedep auth login
+    ```
+  </Step>
+  <Step title="Confirm the tenant">
+    ```bash
+    safedep auth status
+    ```
+  </Step>
+</Steps>
+
+See [Authentication](/governance/cloud/authentication).
+
+<CardGroup cols={2}>
+  <Card title="Talk to SafeDep" icon="comments" href="/governance/cloud/talk-to-safedep">
+    Ask your supply chain questions in plain English.
+  </Card>
+  <Card title="Agentic Endpoint Investigation" icon="magnifying-glass" href="/governance/cloud/endpoint-hub/agentic-investigation">
+    Investigate package activity across your endpoints with an agent.
+  </Card>
+</CardGroup>
