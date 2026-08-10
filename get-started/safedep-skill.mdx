@@ -53,16 +53,33 @@ The agent should load the skill, fetch the answer from docs.safedep.io, and cite
 
 The skill answers product questions without an account. Questions about *your* data, such as "what did PMG block this week", run through the [safedep CLI](https://github.com/safedep/cli) against your [SafeDep Cloud tenant](/governance/cloud/quickstart). The skill tells the agent to check for the CLI and your sign-in state, and to hand a step back to you when it needs a human:
 
-1. Install the CLI with Homebrew or npm. The [CLI repository](https://github.com/safedep/cli#install) lists more options.
+<Steps>
+  <Step title="Install the CLI">
+    The [CLI repository](https://github.com/safedep/cli#install) lists more options.
 
-   ```bash
-   brew install safedep/tap/cli
-   # or
-   npm install -g @safedep/cli
-   ```
+    <CodeGroup>
+    ```bash Homebrew
+    brew install safedep/tap/cli
+    ```
 
-2. Sign in with `safedep auth login`. Sign-in opens a browser, so the agent asks you to run it.
-3. Confirm the tenant with `safedep auth status`.
+    ```bash npm
+    npm install -g @safedep/cli
+    ```
+    </CodeGroup>
+  </Step>
+  <Step title="Sign in">
+    Sign-in opens a browser, so the agent asks you to run it.
+
+    ```bash
+    safedep auth login
+    ```
+  </Step>
+  <Step title="Confirm the tenant">
+    ```bash
+    safedep auth status
+    ```
+  </Step>
+</Steps>
 
 See [Authentication](/governance/cloud/authentication).
 
