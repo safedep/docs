@@ -10,7 +10,7 @@ This guide gives you investigation playbooks: the question to ask, what the agen
 ## Before you start
 
 - Endpoints that sync data to your tenant. Set up [Package Guard sync](/governance/cloud/endpoint-hub/package-guard) for package events, and optionally [Inventory](/governance/cloud/endpoint-hub/inventory) for AI tooling.
-- The `safedep` CLI, signed in with `safedep auth login`. See [Authentication](/governance/cloud/authentication).
+- The `safedep` CLI, signed in with `safedep auth login`. See [Install the safedep CLI](/governance/cloud/quickstart#install-the-safedep-cli) and [Authentication](/governance/cloud/authentication).
 - An AI coding agent with the [SafeDep skill](/get-started/safedep-skill) installed.
 
 <Note>
@@ -25,7 +25,7 @@ The agent works in a loop:
 2. It writes a query and runs it with `safedep query exec`.
 3. If the server rejects the query, the error says why. The agent corrects the query and retries.
 
-Every query is scoped to your authenticated tenant. The agent reads data; it cannot change it. Each answer traces back to a real query, so you can ask the agent to show the SQL it ran. The query language has no relative dates, so for questions like "in the last 30 days" the agent computes the cutoff timestamp from today's date. The example queries below show literal timestamps for the same reason.
+Every query is scoped to your authenticated tenant. The agent reads data; it cannot change it. Each answer traces back to a real query, so you can ask the agent to show the SQL it ran. The query language has no relative dates, so for questions like "in the last 30 days" the agent computes the cutoff timestamp from today's date. The playbooks below include the SQL the agent runs, collapsed by default since you do not need it to investigate. Expand it when you want to see or verify the details.
 
 For the query language, the full table list, and the query rules, see [SafeDep Cloud SQL](/reference/sql-query).
 
@@ -41,8 +41,9 @@ on any of our endpoints in the last 30 days? Which versions, and was it
 blocked or allowed?
 ```
 
-The agent runs a query like:
+The agent runs a query like this:
 
+<Accordion title="Show the SQL the agent runs">
 ```sql
 SELECT endpoints.identifier, package_guard_events.package_version,
        package_guard_events.package_action, package_guard_events.timestamp
@@ -52,6 +53,7 @@ WHERE package_guard_events.package_name = 'eslint-config-prettier'
   AND package_guard_events.timestamp >= '2026-07-11T00:00:00Z'
 ORDER BY package_guard_events.timestamp DESC
 ```
+</Accordion>
 
 Each row is one decision on one endpoint. `PMG_PACKAGE_ACTION_BLOCKED` means PMG stopped the install. `PMG_PACKAGE_ACTION_CONFIRMED` means a person approved it after a warning. An allowed install of a compromised version is your incident to respond to.
 
@@ -63,6 +65,7 @@ What did PMG block across our endpoints this month? Group it by endpoint.
 
 The agent filters `package_guard_events` on both block actions, bounds the time range to the month, and joins to `endpoints`:
 
+<Accordion title="Show the SQL the agent runs">
 ```sql
 SELECT endpoints.identifier, package_guard_events.package_name,
        package_guard_events.package_ecosystem, package_guard_events.package_action,
@@ -73,6 +76,7 @@ WHERE package_guard_events.package_action IN ('PMG_PACKAGE_ACTION_BLOCKED', 'PMG
   AND package_guard_events.timestamp >= '2026-08-01T00:00:00Z'
 ORDER BY package_guard_events.timestamp DESC
 ```
+</Accordion>
 
 `PMG_PACKAGE_ACTION_BLOCKED` is a block on a known malicious package. `PMG_PACKAGE_ACTION_COOLDOWN_BLOCKED` is a block on a package too new to trust under the cooldown policy. Both stopped an install.
 
@@ -87,6 +91,7 @@ Did anyone bypass PMG protection in the last two weeks? Show the endpoint,
 the package, and when it happened.
 ```
 
+<Accordion title="Show the SQL the agent runs">
 ```sql
 SELECT endpoints.identifier, package_guard_events.package_name,
        package_guard_events.timestamp
@@ -96,6 +101,7 @@ WHERE package_guard_events.event_type = 'PMG_EVENT_TYPE_INSECURE_BYPASS'
   AND package_guard_events.timestamp >= '2026-07-27T00:00:00Z'
 ORDER BY package_guard_events.timestamp DESC
 ```
+</Accordion>
 
 The related `PMG_EVENT_TYPE_SANDBOX_OVERRIDE` event records sandbox policy overrides. Ask the agent to check both.
 
@@ -107,12 +113,14 @@ An endpoint that stopped syncing is a blind spot: it still installs packages, an
 Which endpoints have not synced in the last 30 days?
 ```
 
+<Accordion title="Show the SQL the agent runs">
 ```sql
 SELECT endpoints.identifier, endpoints.endpoint_type, endpoints.last_sync_at
 FROM endpoints
 WHERE endpoints.last_sync_at < '2026-07-11T00:00:00Z'
 ORDER BY endpoints.last_sync_at ASC
 ```
+</Accordion>
 
 An endpoint can stop reporting for good reasons, such as a decommissioned laptop. Confirm before you treat it as an incident.
 
@@ -148,6 +156,7 @@ If your endpoints also run [Inventory](/governance/cloud/endpoint-hub/inventory)
 Which MCP servers were observed on our endpoints, and on which machines?
 ```
 
+<Accordion title="Show the SQL the agent runs">
 ```sql
 SELECT inventory_events.item_identity, endpoints.identifier
 FROM inventory_events
@@ -155,6 +164,7 @@ JOIN endpoints ON endpoints.id = inventory_events.app
 WHERE inventory_events.item_kind = 'INVENTORY_ITEM_KIND_MCP_SERVER'
 ORDER BY inventory_events.item_identity
 ```
+</Accordion>
 
 Other item kinds cover coding agents, IDE extensions, and Agent Skills.
 
