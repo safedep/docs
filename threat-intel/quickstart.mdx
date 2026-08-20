@@ -1,9 +1,9 @@
 ---
 title: "Quickstart"
-description: "Set your credentials and run your first Threat Intel Feed query with curl in a few minutes."
+description: "Set your credentials and run your first Threat Intel Feed query with curl."
 ---
 
-This guide takes you from zero to your first response. It uses plain JSON over HTTP with `curl`. You do not need generated code.
+This quickstart uses plain JSON over HTTP with `curl`. You do not need generated code.
 
 ## Before you begin
 
@@ -110,7 +110,7 @@ curl -sS "$TI/ListPackageReports" \
   -d '{"pagination":{"pageSize":5,"sortOrder":"SORT_ORDER_DESCENDING","pageToken":"<nextPageToken>"}}'
 ```
 
-Repeat until `nextPageToken` comes back empty. That is the full read loop.
+Repeat until `nextPageToken` comes back empty.
 </Step>
 </Steps>
 
