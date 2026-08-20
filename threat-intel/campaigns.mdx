@@ -6,7 +6,7 @@ description: "List campaigns, fetch one campaign's details, and page through its
 A **campaign** groups related reports that share an actor, a technique, or one coordinated intent. It has its own indicators, counts, and optional actor names. See the full shape in the [schema reference](/threat-intel/schema#campaign).
 
 <Note>
-The feed serves only **active** campaigns. It never lists an archived or withdrawn campaign. A direct fetch of one returns `not_found`. The feed also drops it from every report's campaign links.
+The feed serves only **active** campaigns. Once SafeDep archives or withdraws a campaign, it drops out of the feed.
 </Note>
 
 The usual flow has three steps. Use `ListCampaigns` to discover. Use `GetCampaign` for the details. Use `GetCampaignPackageReports` for the paged members.

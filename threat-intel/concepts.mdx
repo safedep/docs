@@ -7,9 +7,9 @@ The feed uses a small set of entities. When you know them, the rest of the API i
 
 ## Report
 
-A **package report** is one malicious package. It has a stable `reportId` that never changes. The `reportId` is the permanent identity of the threat. SafeDep never deletes a report. Verification, new indicators, and withdrawal are all updates to the same `reportId`.
+A **package report** is the feed's record of one malicious package. It carries the verdict, the affected versions, the indicators, and any campaign the package belongs to. A group of related packages is a [campaign](#campaign), not a report.
 
-A report is about exactly one package. The package `versions` field lists the malicious versions. A group of related packages is a [campaign](#campaign), not a report.
+Each report has a permanent `reportId`. SafeDep updates the same report as it learns more, for example a verdict upgrade, new indicators, or a withdrawal, and never deletes it. So you can track one threat over time by its `reportId`.
 
 ## Verdict and confidence
 
@@ -34,9 +34,9 @@ Today, indicators travel inside each report (`iocs`) and each campaign. A direct
 
 ## Campaign
 
-A **campaign** is a named group of related reports. The reports share an actor, a technique, or one coordinated intent. A campaign has its own indicators, counts, and optional actor names. SafeDep researchers curate the campaigns.
+A **campaign** is a named group of related reports that share an actor, a technique, or one coordinated intent. SafeDep researchers curate campaigns, each with its own indicators, counts, and actor attribution.
 
-The feed serves only **active** campaigns. It never lists an archived or withdrawn campaign. A direct fetch of one returns `not_found`. The feed also drops it from every report's campaign links.
+The feed serves only **active** campaigns. Once a campaign is archived or withdrawn, it drops out of the feed.
 
 ## Change feed and cursor
 
