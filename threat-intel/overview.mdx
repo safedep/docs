@@ -1,0 +1,44 @@
+---
+title: "Threat Intel Feed"
+description: "A feed of malicious open-source packages, served as an incremental API stream of reports and campaigns."
+---
+
+The SafeDep Threat Intel Feed is a stream of malicious open-source packages. SafeDep builds the feed from its malware analysis and serves it over an API. Each report names one malicious package. A report gives a verdict, its indicators, and the campaign it belongs to. You pull the feed once, then keep a local copy in sync with a cursor.
+
+<Note>
+The Threat Intel Feed is a paid add-on. To enable it, [talk to a human](https://calendly.com/abhisek-safedep/30min).
+</Note>
+
+## What the feed serves
+
+<CardGroup cols={2}>
+  <Card title="Package reports" icon="box" href="/threat-intel/package-reports">
+    One malicious package each, with verdict, confidence, affected versions, indicators, and campaign links.
+  </Card>
+  <Card title="Campaigns" icon="diagram-project" href="/threat-intel/campaigns">
+    Named groups of related reports that share an actor, technique, or coordinated intent.
+  </Card>
+</CardGroup>
+
+## How it is delivered
+
+The feed is a [ConnectRPC](https://connectrpc.com) service on the SafeDep Cloud data plane at `https://api.safedep.io`. You can call it as plain JSON over HTTP, as gRPC, or as gRPC-Web. All three use one URL. Any HTTP client works, and you do not need generated code to start.
+
+The feed is built for incremental pulls. A report comes back only when it changes, for example a new verdict, new indicators, or a withdrawal. You keep a local mirror, then pull only what changed since your last run.
+
+## Where to go next
+
+<CardGroup cols={2}>
+  <Card title="Quickstart" icon="rocket" href="/threat-intel/quickstart">
+    Set your credentials and run your first query in a few minutes.
+  </Card>
+  <Card title="Concepts" icon="lightbulb" href="/threat-intel/concepts">
+    Reports, verdicts, campaigns, indicators, and how the change feed works.
+  </Card>
+  <Card title="Pagination & sync" icon="database" href="/threat-intel/pagination">
+    Keep a local mirror current with the incremental cursor.
+  </Card>
+  <Card title="Schema reference" icon="table-list" href="/threat-intel/schema">
+    Every message and enum on the wire.
+  </Card>
+</CardGroup>

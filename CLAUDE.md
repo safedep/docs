@@ -11,14 +11,15 @@ This repository contains documentation for SafeDep, built using Mintlify documen
 > **Canonical IA:** `docs-ia.md` (mirrored to Notion). This section is the condensed
 > operational copy — keep it in sync with `docs-ia.md` when the structure changes.
 
-The documentation is organized into **6 tabs** — three solution tabs at the core, plus supporting tabs:
+The documentation is organized into **7 tabs** — solution tabs at the core, plus supporting tabs:
 
 1. **Get Started** — "What is SafeDep?" primer, quickstarts, core concepts
 2. **Package Security** — block malicious packages at install time and in CI/CD, and scan any package, extension, or repo on demand before use (pmg, safedep CLI)
 3. **AI Agent Security** — discover, audit, and control what AI agents access and run (MCP, Gryph, vet AI discovery)
 4. **Visibility & Governance** — scan repos/SBOMs/CI/CD for risk; manage policy and cloud visibility (vet, xBom, SafeDep Cloud, Endpoint Hub, Endpoint Sync)
-5. **Reference** — exact syntax/APIs (vet query & policy, API & automation)
-6. **Community & Support** — community resources and FAQ
+5. **Threat Intel** — consume the malicious-package feed as an API: reports and campaigns (ThreatIntelService). Subscription-gated (`FEATURE_THREAT_INTEL_FEED`)
+6. **Reference** — exact syntax/APIs (vet query & policy, API & automation)
+7. **Community & Support** — community resources and FAQ
 
 > **Status:** the IA migration is complete. The 6-tab structure is live in `docs.json`, and all pages have moved to solution-aligned paths (`get-started/`, `concepts/`, `package-security/`, `ai-security/`, `governance/`, `reference/`). Old paths (`vet/`, `pmg/`, `cloud/`, `apps/`, `scan/`, `xbom/`, `api-reference/`) are **redirects** in `docs.json` `redirects[]`, not live files. When you add or move a page, add its redirect there too.
 
@@ -29,7 +30,7 @@ Every placement decision derives from these rules. Full rationale and page map: 
 - **R1 — One primary entry point.** New visitors meet a clear "What is SafeDep?" primer, not a tool catalog.
 - **R2 — Capability ladder, not persona gate.** The journey runs: individual dev → team → org-wide governance. Navigation doesn't pin users to a tier. Features requiring SafeDep Cloud are marked with a `<Note>` callout — no structural separation.
 - **R3 — Organize by solution, not by tool.** Tabs name the security outcome SafeDep delivers. Grammar test: "SafeDep solves ___" must complete naturally with the tab name.
-- **R4 — Concepts are first-class, atomic, linkable.** Each concept gets one dedicated page under Get Started › Core Concepts (`concepts/`). The seven that exist: `malicious-package`, `vulnerability`, `policy`, `cel`, `sbom`, `tenant`, `endpoint`. **Malicious-package *protection* is a solution (the Package Security tab), not a concept** — the concept is the malicious package itself, and `concepts/malicious-package` carries the user-facing detection story (how SafeDep classifies a package as malicious). Malysis/Malbase are **not** concept pages — they are internal infrastructure (R6). The Malysis *pipeline* is never a product tab; a productized Threat Intelligence offering gets its planned fourth solution tab (`docs-ia.md` §8) — the rule protects pipeline vs product.
+- **R4 — Concepts are first-class, atomic, linkable.** Each concept gets one dedicated page under Get Started › Core Concepts (`concepts/`). The seven that exist: `malicious-package`, `vulnerability`, `policy`, `cel`, `sbom`, `tenant`, `endpoint`. **Malicious-package *protection* is a solution (the Package Security tab), not a concept** — the concept is the malicious package itself, and `concepts/malicious-package` carries the user-facing detection story (how SafeDep classifies a package as malicious). Malysis/Malbase are **not** concept pages — they are internal infrastructure (R6). The Malysis *pipeline* is never a product tab; a productized Threat Intelligence offering gets its own solution tab (shipped as the **Threat Intel** tab, `threat-intel/`; see `docs-ia.md` §8) — the rule protects pipeline vs product.
 - **R5 — Progressive disclosure.** Tab depth is unlimited; groups handle it. A tab splits only when it covers fundamentally different security outcomes. The Reference tab is the only place for exhaustive lookup content.
 - **R6 — docs.safedep.io is the guide layer.** Product-level technical reference (CLI flags, type definitions) lives in individual product repos. This site covers concepts, how-tos, and integration guides.
 - **R7 — AI-agent consumability is first-class.** One concept per atomic page, predictable headings, stable URLs.
@@ -49,6 +50,7 @@ Every placement decision derives from these rules. Full rationale and page map: 
 | Covers AI agent discovery, audit, or control | AI Agent Security | AI Agent Observability / AI Coding Protection |
 | Covers scanning repos, SBOMs, CI/CD for risk | Visibility & Governance | Repository Scanning / Bill of Materials / CI/CD |
 | Covers cloud policy, endpoint inventory, access | Visibility & Governance | SafeDep Cloud / Endpoint Hub / Policy & Risk |
+| Covers consuming the malicious-package feed (reports, campaigns, feed API) | Threat Intel | Getting Started / Consuming the Feed / Reference |
 | Is pure lookup (syntax, flags, API) | Reference | vet Query & Policy / API & Automation |
 | Is community/support | Community & Support | Community / Support |
 
@@ -87,6 +89,7 @@ All documentation follows the **Diátaxis framework** with four content types:
 ├── package-security/      # Package Security tab content (incl. pmg/)
 ├── ai-security/           # AI Agent Security tab content
 ├── governance/            # Visibility & Governance tab content (vet/, xbom/, cloud/, integrations/)
+├── threat-intel/          # Threat Intel tab content (feed API guide; subscription-gated)
 ├── reference/             # Reference tab content
 ├── community.mdx, faq.mdx # Community & Support tab
 │
@@ -95,7 +98,7 @@ All documentation follows the **Diátaxis framework** with four content types:
 └── snippets/              # Reusable MDX content blocks
 ```
 
-**Path convention:** every page lives under its solution-aligned prefix (`get-started/`, `concepts/`, `package-security/`, `ai-security/`, `governance/`, `reference/`). The old tool-shaped paths (`vet/`, `pmg/`, `cloud/`, `apps/`, `scan/`, `xbom/`, `api-reference/`) no longer hold files — they exist only as `redirects[]` entries in `docs.json`. **When you move or rename a page, add a `{ "source": "/old", "destination": "/new" }` redirect** and update internal links, then run broken-links.
+**Path convention:** every page lives under its solution-aligned prefix (`get-started/`, `concepts/`, `package-security/`, `ai-security/`, `governance/`, `threat-intel/`, `reference/`). The old tool-shaped paths (`vet/`, `pmg/`, `cloud/`, `apps/`, `scan/`, `xbom/`, `api-reference/`) no longer hold files — they exist only as `redirects[]` entries in `docs.json`. **When you move or rename a page, add a `{ "source": "/old", "destination": "/new" }` redirect** and update internal links, then run broken-links.
 
 ## Common Development Commands
 

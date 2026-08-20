@@ -1,0 +1,80 @@
+---
+title: "Pagination & sync"
+description: "Cursor pagination for every list RPC, and the incremental-pull pattern that keeps a local mirror of the Threat Intel Feed in sync."
+---
+
+Every list RPC uses the same cursor pagination. You reuse that cursor to keep a local mirror current.
+
+## Cursor pagination
+
+Pass a `pagination` object in the request:
+
+| Field | Type | Meaning |
+|---|---|---|
+| `pageSize` | int | Rows per page. Capped at 100 for reports and campaigns. |
+| `pageToken` | string | The `nextPageToken` from the previous response. Omit for the first page. |
+| `sortOrder` | enum | `SORT_ORDER_ASCENDING` (default) or `SORT_ORDER_DESCENDING`. |
+
+The response carries the cursor for the next page:
+
+| Field | Type | Meaning |
+|---|---|---|
+| `nextPageToken` | string | Cursor for the next page. Empty when there are no more rows. |
+
+Repeat until `nextPageToken` is empty. Pass it back as `pageToken` each time:
+
+```bash
+curl -sS "$TI/ListPackageReports" \
+  -H "Content-Type: application/json" \
+  -H "Authorization: $SAFEDEP_API_KEY" \
+  -H "X-Tenant-ID: $SAFEDEP_TENANT_ID" \
+  -d '{"pagination":{"pageSize":100}}'
+
+# ... read nextPageToken, then:
+curl -sS "$TI/ListPackageReports" \
+  -H "Content-Type: application/json" \
+  -H "Authorization: $SAFEDEP_API_KEY" \
+  -H "X-Tenant-ID: $SAFEDEP_TENANT_ID" \
+  -d '{"pagination":{"pageSize":100,"pageToken":"<nextPageToken>"}}'
+```
+
+## Ordering
+
+A composite change cursor sets the order. You choose the direction:
+
+- **Reports** use the order `(updatedAt, reportId)`. Ascending (oldest change first) is the default, and incremental pulls need it. For newest-first browsing, pass `SORT_ORDER_DESCENDING`.
+- **Campaigns** use the order `(lastActivityAt, campaignId)`, with the same directions.
+
+## Incremental pull: keep a mirror in sync
+
+A record comes back when it changes, each on its own cursor. A report comes back when its verdict, indicators, or campaign links change. A campaign comes back when it changes. The cursor moves only on a real change. So you get a record again only on a real change, never on a no-op refresh.
+
+To pull only what changed since your last sync:
+
+<Steps>
+<Step title="Keep the default ascending order">
+Ascending order goes from the oldest change to the newest. This gives you a durable watermark.
+</Step>
+<Step title="Track your high-water mark">
+Store the highest `updatedAt` (for reports) or `lastActivityAt` (for campaigns) you have ingested.
+</Step>
+<Step title="Pass it as the since filter on the next run">
+`since` is a strict greater-than. You never re-fetch a row at that exact timestamp.
+
+```bash
+curl -sS "$TI/ListPackageReports" \
+  -H "Content-Type: application/json" \
+  -H "Authorization: $SAFEDEP_API_KEY" \
+  -H "X-Tenant-ID: $SAFEDEP_TENANT_ID" \
+  -d '{"pagination":{"pageSize":100},"filters":{"since":"<last-updatedAt>"}}'
+```
+</Step>
+</Steps>
+
+This gives you an at-least-once change stream. Process a report again each time it comes back, keyed by `reportId`, and upsert it into your store. A withdrawal is a change, so retractions arrive through the same loop. When you see `withdrawn: true`, retire the record on your side.
+
+<Tip>
+Use `since` to start or restart a pull from a known watermark. Use `pageToken` to continue within one run. A full backfill is the first run with no `since`.
+</Tip>
+
+See [Recipes](/threat-intel/recipes) for a complete mirror-and-sync script.

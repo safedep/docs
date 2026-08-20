@@ -1,0 +1,127 @@
+---
+title: "Schema reference"
+description: "Every message and enum the Threat Intel Feed serves on the wire, with field types and notes."
+---
+
+JSON field names are lowerCamelCase. Enum values are their string names. The API omits empty and default-valued fields from responses. The canonical machine-readable schema is at [buf.build/safedep/api](https://buf.build/safedep/api). See [SDKs](/threat-intel/sdks).
+
+## Messages
+
+### PackageReport
+
+| Field | Type | Notes |
+|---|---|---|
+| `reportId` | string | Permanent report id. Stable for the life of the threat. |
+| `verdict` | [`ThreatVerdict`](#threatverdict) | Suspicious or malicious. |
+| `confidence` | [`ThreatConfidence`](#threatconfidence) | Automated or human-verified. |
+| `title` | string | Short human-readable title. |
+| `summary` | string | Reasoning from the analyst note. May be AI-generated. |
+| `ecosystem` | [`Ecosystem`](#ecosystem) | Ecosystem of the affected package. |
+| `publishedAt` | timestamp | When the report was first published to the feed. |
+| `updatedAt` | timestamp | The change-feed cursor. Moves only on a real change. |
+| `verifiedAt` | timestamp | Set only for a human-verified malicious report. |
+| `withdrawn` | bool | `true` if retracted. Omitted when `false`. |
+| `package` | [`ReportPackage`](#reportpackage) | The affected package. |
+| `iocs` | [`IndicatorOfCompromise`](#indicatorofcompromise)[] | Indicators for this report. |
+| `campaigns` | [`CampaignReference`](#campaignreference)[] | Campaigns this report belongs to. |
+
+### ReportPackage
+
+| Field | Type | Notes |
+|---|---|---|
+| `purl` | string | Package URL, the stable package identifier. |
+| `name` | string | Package name within the ecosystem. |
+| `versions` | string[] | Affected versions. Empty means all versions. |
+
+### IndicatorOfCompromise
+
+| Field | Type | Notes |
+|---|---|---|
+| `type` | [`IndicatorType`](#indicatortype) | Kind of indicator. |
+| `value` | string | The value (domain, hash, address, and so on). |
+| `note` | string | Optional free-form context. |
+
+### CampaignReference
+
+A report's lightweight link to a campaign. Fetch the full campaign with [`GetCampaign`](/threat-intel/campaigns#getcampaign).
+
+| Field | Type | Notes |
+|---|---|---|
+| `campaignId` | string | The campaign id. |
+| `name` | string | Campaign display name. |
+
+### Campaign
+
+| Field | Type | Notes |
+|---|---|---|
+| `campaignId` | string | Campaign id. |
+| `name` | string | Campaign display name. |
+| `summary` | string | Description. May be AI-generated. |
+| `status` | [`CampaignStatus`](#campaignstatus) | Served campaigns are always `CAMPAIGN_STATUS_ACTIVE`. |
+| `packageCount` | uint32 | Distinct affected packages across the campaign's members. A server-computed aggregate, not the report count. |
+| `iocCount` | uint32 | The count of the campaign's own indicators (the size of `iocs`). |
+| `lastActivityAt` | timestamp | The change-feed cursor for campaigns. |
+| `createdAt` | timestamp | When the campaign was created. |
+| `updatedAt` | timestamp | When the campaign row was last written. |
+| `aliases` | string[] | Alternate names. |
+| `actors` | [`ThreatActor`](#threatactor)[] | Attributed actors. Empty when attribution is unknown. |
+| `relatedCampaignIds` | string[] | Ids of related campaigns, resolved via `GetCampaign`. |
+| `iocs` | [`IndicatorOfCompromise`](#indicatorofcompromise)[] | The campaign's own indicators. |
+
+### ThreatActor
+
+| Field | Type | Notes |
+|---|---|---|
+| `actorId` | string | Stable grouping key. Correlate campaigns by `actorId`, not by name. |
+| `name` | string | Primary name the actor is tracked under. |
+| `aliases` | string[] | Other names the actor is known by. |
+
+## Enums
+
+In JSON an enum is its string name. `*_UNSPECIFIED` is the zero value; the feed never returns it on a real record, and a filter set to it is rejected.
+
+### ThreatVerdict
+
+`THREAT_VERDICT_UNSPECIFIED`, `THREAT_VERDICT_SUSPICIOUS`, `THREAT_VERDICT_MALICIOUS`.
+
+### ThreatConfidence
+
+`THREAT_CONFIDENCE_UNSPECIFIED`, `THREAT_CONFIDENCE_AUTOMATED`, `THREAT_CONFIDENCE_HUMAN_VERIFIED`.
+
+### CampaignStatus
+
+`CAMPAIGN_STATUS_UNSPECIFIED`, `CAMPAIGN_STATUS_ACTIVE`, `CAMPAIGN_STATUS_ARCHIVED`, `CAMPAIGN_STATUS_WITHDRAWN`. The API serves only active campaigns.
+
+### IndicatorType
+
+| Value | Meaning |
+|---|---|
+| `INDICATOR_TYPE_C2_DOMAIN` | Command-and-control domain |
+| `INDICATOR_TYPE_C2_URL` | Command-and-control URL |
+| `INDICATOR_TYPE_C2_IPV4` | Command-and-control IPv4 |
+| `INDICATOR_TYPE_C2_IPV6` | Command-and-control IPv6 |
+| `INDICATOR_TYPE_DNS_EXFIL_DOMAIN` | DNS exfiltration domain |
+| `INDICATOR_TYPE_FILE_SHA256` | File SHA-256 |
+| `INDICATOR_TYPE_PAYLOAD_SHA256` | Payload SHA-256 |
+| `INDICATOR_TYPE_BINARY_SHA256` | Binary SHA-256 |
+| `INDICATOR_TYPE_BTC_ADDRESS` | Bitcoin address |
+| `INDICATOR_TYPE_ETH_ADDRESS` | Ethereum address |
+| `INDICATOR_TYPE_MAINTAINER_EMAIL` | Maintainer email |
+| `INDICATOR_TYPE_MAINTAINER_HANDLE` | Maintainer handle |
+| `INDICATOR_TYPE_NPM_USER` | npm user |
+| `INDICATOR_TYPE_PYPI_USER` | PyPI user |
+| `INDICATOR_TYPE_UPLOAD_TOOL` | Upload tool signature |
+| `INDICATOR_TYPE_REGISTRAR_SIGNATURE` | Registrar signature |
+| `INDICATOR_TYPE_EMBEDDED_CREDENTIAL` | Embedded credential |
+| `INDICATOR_TYPE_PERSISTENCE_ARTIFACT` | Persistence artifact |
+| `INDICATOR_TYPE_OBFUSCATION_MARKER` | Obfuscation marker |
+
+### Ecosystem
+
+Used by `PackageReport.ecosystem` and the ecosystem filter:
+
+`ECOSYSTEM_MAVEN`, `ECOSYSTEM_NPM`, `ECOSYSTEM_PYPI`, `ECOSYSTEM_RUBYGEMS`, `ECOSYSTEM_NUGET`, `ECOSYSTEM_CARGO`, `ECOSYSTEM_GO`, `ECOSYSTEM_GITHUB_ACTIONS`, `ECOSYSTEM_PACKAGIST`, `ECOSYSTEM_TERRAFORM`, `ECOSYSTEM_TERRAFORM_MODULE`, `ECOSYSTEM_TERRAFORM_PROVIDER`, `ECOSYSTEM_VSCODE`, `ECOSYSTEM_GITHUB_REPOSITORY`, `ECOSYSTEM_OPENVSX`, `ECOSYSTEM_HOMEBREW`, `ECOSYSTEM_GITLAB_REPOSITORY`, `ECOSYSTEM_BITBUCKET_REPOSITORY`.
+
+### SortOrder
+
+`SORT_ORDER_UNSPECIFIED` (treated as ascending), `SORT_ORDER_ASCENDING`, `SORT_ORDER_DESCENDING`.

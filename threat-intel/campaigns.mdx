@@ -1,0 +1,87 @@
+---
+title: "Campaigns"
+description: "List campaigns, fetch one campaign's details, and page through its member package reports. Only active campaigns are served."
+---
+
+A **campaign** groups related reports that share an actor, a technique, or one coordinated intent. It has its own indicators, counts, and optional actor names. See the full shape in the [schema reference](/threat-intel/schema#campaign).
+
+<Note>
+The feed serves only **active** campaigns. It never lists an archived or withdrawn campaign. A direct fetch of one returns `not_found`. The feed also drops it from every report's campaign links.
+</Note>
+
+The usual flow has three steps. Use `ListCampaigns` to discover. Use `GetCampaign` for the details. Use `GetCampaignPackageReports` for the paged members.
+
+## ListCampaigns
+
+A paginated list of active campaigns. Each one has a member count (`packageCount`), an indicator count (`iocCount`), and its own indicators.
+
+**Request:** `pagination`, and optional `filters.since` (a strict greater-than on `lastActivityAt`, for incremental pull). **Response:** `campaigns` (an array of [`Campaign`](/threat-intel/schema#campaign)) and `pagination`.
+
+```bash
+curl -sS "$TI/ListCampaigns" \
+  -H "Content-Type: application/json" \
+  -H "Authorization: $SAFEDEP_API_KEY" \
+  -H "X-Tenant-ID: $SAFEDEP_TENANT_ID" \
+  -d '{"pagination":{"pageSize":20}}'
+
+# incremental pull of campaign changes since a watermark
+curl -sS "$TI/ListCampaigns" \
+  -H "Content-Type: application/json" \
+  -H "Authorization: $SAFEDEP_API_KEY" \
+  -H "X-Tenant-ID: $SAFEDEP_TENANT_ID" \
+  -d '{"pagination":{"pageSize":50},"filters":{"since":"2026-08-01T00:00:00Z"}}'
+```
+
+```json
+{
+  "campaigns": [
+    {
+      "campaignId": "01JZ8QC0N2W5R8T3Y6U9I1O4P7",
+      "name": "npm crypto-stealer wave",
+      "summary": "Coordinated typosquats dropping a crypto stealer.",
+      "status": "CAMPAIGN_STATUS_ACTIVE",
+      "packageCount": 42,
+      "iocCount": 3,
+      "lastActivityAt": "2026-08-13T06:20:00Z",
+      "createdAt": "2026-08-01T00:00:00Z",
+      "updatedAt": "2026-08-13T06:20:00Z",
+      "aliases": ["cryptowave"],
+      "actors": [{"actorId": "act_01H9Z8F2Q7", "name": "npm-stealer-crew", "aliases": ["cryptowave-crew"]}],
+      "iocs": [{"type": "INDICATOR_TYPE_C2_DOMAIN", "value": "exfil.example.com"}]
+    }
+  ],
+  "pagination": {"nextPageToken": ""}
+}
+```
+
+## GetCampaign
+
+Fetch one active campaign's details. `packageCount` is the member count. The member reports come from `GetCampaignPackageReports`.
+
+**Request:** `campaignId` (string). **Response:** `campaign` (a [`Campaign`](/threat-intel/schema#campaign)). A hidden or unknown id returns `not_found`.
+
+```bash
+curl -sS "$TI/GetCampaign" \
+  -H "Content-Type: application/json" \
+  -H "Authorization: $SAFEDEP_API_KEY" \
+  -H "X-Tenant-ID: $SAFEDEP_TENANT_ID" \
+  -d '{"campaignId":"01JZ8QC0N2W5R8T3Y6U9I1O4P7"}'
+```
+
+## GetCampaignPackageReports
+
+The paginated member reports of one campaign. They use the same cursor and shape as `ListPackageReports`.
+
+**Request:** `campaignId` (string) and `pagination`. **Response:** `packageReports` (an array of [`PackageReport`](/threat-intel/schema#packagereport)) and `pagination`. A hidden or unknown campaign returns `not_found` rather than an empty page.
+
+```bash
+curl -sS "$TI/GetCampaignPackageReports" \
+  -H "Content-Type: application/json" \
+  -H "Authorization: $SAFEDEP_API_KEY" \
+  -H "X-Tenant-ID: $SAFEDEP_TENANT_ID" \
+  -d '{"campaignId":"01JZ8QC0N2W5R8T3Y6U9I1O4P7","pagination":{"pageSize":50}}'
+```
+
+<Tip>
+`packageCount` counts the distinct affected packages across the campaign's members. The server computes it, and it is not the number of reports. Use `GetCampaignPackageReports` to walk the member reports.
+</Tip>

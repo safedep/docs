@@ -1,0 +1,67 @@
+---
+title: "Recipes"
+description: "Working scripts for the Threat Intel Feed: mirror the whole feed, keep it current, poll for new malicious packages, and expand a campaign."
+---
+
+Copy-paste recipes that combine the RPCs. Each one uses the environment variables from [Connecting](/threat-intel/connecting#set-up-your-shell).
+
+## Mirror the whole feed, then keep it current
+
+First, backfill: page ascending from the start until you reach the end. Then switch to incremental pulls, keyed off the highest `updatedAt` you stored.
+
+```bash
+# 1. Full backfill: page ascending until nextPageToken is empty.
+token=""
+while :; do
+  body=$(jq -nc --arg t "$token" \
+    '{pagination: ({pageSize: 100} + (if ($t|length) > 0 then {pageToken: $t} else {} end))}')
+  resp=$(curl -sS "$TI/ListPackageReports" \
+    -H "Content-Type: application/json" \
+    -H "Authorization: $SAFEDEP_API_KEY" \
+    -H "X-Tenant-ID: $SAFEDEP_TENANT_ID" \
+    -d "$body")
+  echo "$resp" | jq -c '.packageReports[]'        # store each report by reportId
+  token=$(echo "$resp" | jq -r '.pagination.nextPageToken // ""')
+  [ -z "$token" ] && break
+done
+
+# 2. Incremental: on later runs, pass filters.since = max(updatedAt) you stored.
+```
+
+Upsert each report by `reportId`. A withdrawal moves `updatedAt`, so retractions arrive through the same loop. When you see `withdrawn: true`, retire the record on your side.
+
+## Poll for new malicious npm packages
+
+Keep the last `updatedAt` you saw. Then pull only verified-malicious npm reports that changed after it:
+
+```bash
+curl -sS "$TI/ListPackageReports" \
+  -H "Content-Type: application/json" \
+  -H "Authorization: $SAFEDEP_API_KEY" \
+  -H "X-Tenant-ID: $SAFEDEP_TENANT_ID" \
+  -d '{"pagination":{"pageSize":100},"filters":{"since":"<last-updatedAt>","ecosystem":"ECOSYSTEM_NPM","verdict":"THREAT_VERDICT_MALICIOUS"}}'
+```
+
+Run it on a schedule. Move your watermark to the largest `updatedAt` in each batch.
+
+## Expand a campaign into its member packages
+
+```bash
+cid=01JZ8QC0N2W5R8T3Y6U9I1O4P7
+
+curl -sS "$TI/GetCampaign" \
+  -H "Content-Type: application/json" \
+  -H "Authorization: $SAFEDEP_API_KEY" \
+  -H "X-Tenant-ID: $SAFEDEP_TENANT_ID" \
+  -d "{\"campaignId\":\"$cid\"}"
+
+curl -sS "$TI/GetCampaignPackageReports" \
+  -H "Content-Type: application/json" \
+  -H "Authorization: $SAFEDEP_API_KEY" \
+  -H "X-Tenant-ID: $SAFEDEP_TENANT_ID" \
+  -d "{\"campaignId\":\"$cid\",\"pagination\":{\"pageSize\":100}}"
+```
+
+<Tip>
+After the backfill, the steady state is always the same: `ListPackageReports` with `filters.since` set to your high-water mark. See [Pagination & sync](/threat-intel/pagination).
+</Tip>

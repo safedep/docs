@@ -1,0 +1,69 @@
+---
+title: "Connecting"
+description: "Transport, base URL, request headers, authentication, and JSON conventions for the Threat Intel Feed API."
+---
+
+The feed is a [ConnectRPC](https://connectrpc.com) service. You can call it three ways over one URL: the **Connect protocol** (a plain HTTP POST with a JSON body), **gRPC**, or **gRPC-Web**. This page uses the Connect protocol with JSON, because any HTTP client can send it. For typed stubs in your language, see [SDKs](/threat-intel/sdks).
+
+## Base URL
+
+The service lives on the SafeDep Cloud data plane:
+
+```
+https://api.safedep.io
+```
+
+## One path per RPC
+
+Each method is its own URL under the fully qualified service name:
+
+```
+https://api.safedep.io/safedep.services.threatintel.v1.ThreatIntelService/<Method>
+```
+
+For example, `.../ThreatIntelService/ListPackageReports`.
+
+## Every request is a POST
+
+| Item | Value |
+|---|---|
+| Method | `POST` |
+| `Content-Type` | `application/json` |
+| `Authorization` | Your API key, sent **as-is**. No `Bearer` prefix. |
+| `X-Tenant-ID` | Your tenant domain, for example `your-company.safedep.io`. |
+| Body | The request message as JSON. Use `{}` for an empty message. |
+
+Both headers are required on every call. For authentication and authorization failures like `unauthenticated` and `permission_denied`, see [Errors & limits](/threat-intel/errors).
+
+<Note>
+These are the same data-plane conventions used across SafeDep. For the shared header contract, OAuth endpoints, and rate limits, see the [API reference](/reference/api-introduction) and the [authentication guide](/governance/cloud/authentication).
+</Note>
+
+## JSON conventions
+
+- Field names are lowerCamelCase (`pageSize`, `reportId`, `publishedAt`).
+- Enum values are their string names (`ECOSYSTEM_NPM`, `THREAT_VERDICT_MALICIOUS`).
+- Timestamps are RFC 3339 UTC strings (`2026-08-01T00:00:00Z`).
+- The API omits empty and default-valued fields from responses. Treat a missing `withdrawn` as `false`, and a missing `iocs` as no indicators.
+
+## Set up your shell
+
+Set these once, then reuse them in every `curl`:
+
+```bash
+export SAFEDEP_API_KEY="<your-api-key>"
+export SAFEDEP_TENANT_ID="your-company.safedep.io"
+
+# Base URL of the service. Append the method name to it.
+export TI="https://api.safedep.io/safedep.services.threatintel.v1.ThreatIntelService"
+```
+
+Each call is a plain `curl`:
+
+```bash
+curl -sS "$TI/ListPackageReports" \
+  -H "Content-Type: application/json" \
+  -H "Authorization: $SAFEDEP_API_KEY" \
+  -H "X-Tenant-ID: $SAFEDEP_TENANT_ID" \
+  -d '{"pagination":{"pageSize":5}}'
+```

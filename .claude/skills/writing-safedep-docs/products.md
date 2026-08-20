@@ -77,6 +77,18 @@
 
 ---
 
+## Threat Intel Feed
+
+- **One-liner:** A subscription feed of malicious open-source packages, delivered as an incremental API stream of reports and campaigns.
+- **What it is:** The productized, user-facing surface of SafeDep's malware intelligence (Malysis). A ConnectRPC service, `safedep.services.threatintel.v1.ThreatIntelService`, on the data plane (`api.safedep.io`). Gated on the `FEATURE_THREAT_INTEL_FEED` entitlement (a paid add-on, `BILLING_ADD_ON_THREAT_INTEL_FEED`); no free/anonymous tier. This is the *product*, not the pipeline (R4): the Malysis pipeline underneath still never gets a tab.
+- **Docs home:** **Threat Intel** tab (`threat-intel/`), landing at `threat-intel/overview`. Placed after Visibility & Governance.
+- **Documented RPCs:** `ListPackageReports`, `GetPackageReport`, `ListCampaigns`, `GetCampaign`, `GetCampaignPackageReports`. **Implemented in the deployed service but intentionally NOT documented (not GA/polished as of 2026-08-20):** `ListSnapshots`, `GetSnapshotDownloadUrl` — do not add snapshot docs back without a GA signal from the team. **Not available at all** (return `unimplemented`): `ListIndicators`, `LookupIndicator`. The live/unimplemented split is set in `control-tower/microservices/threatintel/handler.go` (the deployed contract); handler wiring is the source of truth for what a customer can call, not the `api/` repo's local `threat_intel.proto`.
+- **Key facts (verified 2026-08-20):** page caps 100 (reports, campaigns); reports cursor `(updated_at, report_id)`, campaigns `(last_activity_at, external_id)`; only **active** campaigns are served (`ScopeAvailableCampaigns`); ecosystem/verdict filters **fail closed** on an unusable value; ecosystem filter accepts any `Ecosystem` enum value except `UNSPECIFIED` (18 values on `main`, including `GITLAB_REPOSITORY` = 17 and `BITBUCKET_REPOSITORY` = 18). `ThreatActor` = `actorId` + `name` + `aliases`; `Campaign` has its own `iocs` (field 13) and `iocCount` is the size of that field, not a member aggregate. Headers: `Authorization` (key as-is, no `Bearer`) + `X-Tenant-ID`.
+- **Stale-checkout trap (cost 2 doc errors here):** the sibling `api/` checkout was on a feature branch **27 commits behind `origin/main`**, so its threatintel protos were old. It made me wrongly delete `ECOSYSTEM_GITLAB_REPOSITORY`/`BITBUCKET_REPOSITORY` and `ThreatActor.actor_id` (both present on `main`), and initially muddied `GetCampaignPackageReports` (which `main` and the deployed handler both have). **Always `git fetch` and diff against `origin/main`** (or read the generated code control-tower builds against) before asserting a proto field exists or not. Do not trust the local working tree.
+- **Where to read up-to-date facts:** protos at `api/proto/safedep/services/threatintel/v1/` and `api/proto/safedep/messages/threatintel/v1/`; implementation and the deployed RPC set at `control-tower/microservices/threatintel/` (`handler.go`, `services/`). Because the buf module may not be visible to every account, the docs restate the full contract in `threat-intel/schema` (a deliberate deviation from the usual "link to buf.build, don't restate" rule).
+
+---
+
 ## Malysis (the intelligence layer — never a product tab)
 
 - **One-liner:** SafeDep's threat intelligence layer — the malware detection / signal pipeline that powers vet, pmg, MCP, etc.
@@ -85,7 +97,7 @@
   - The user-facing detection story in the concept page `concepts/malicious-package` (the names "Malysis" and "Malbase" are internal and stay out of user docs). Note: "malicious package *protection*" is a solution (the Package Security tab), not a concept; the concept page is `concepts/malicious-package` (the malicious package itself) alongside `concepts/vulnerability`.
   - The signal source mentioned in product overviews (e.g. "pmg checks packages against SafeDep's malicious-package intelligence").
 - **Why this matters:** treating the Malysis pipeline as a product tab is the textbook R3/R4 violation. If you find yourself writing "Malysis › setup" or "Malysis › API," stop — that content belongs under the specific product that uses it.
-- **Planned exception — Threat Intelligence productization:** a user-facing TI *product* is expected to ship and gets its own fourth solution tab (scope and rules: `docs-ia.md` §8). The R4 distinction holds — the pipeline never gets a tab; the productized offering does. Until that product ships, nothing changes.
+- **Shipped exception — the Threat Intel tab:** the user-facing TI *product* shipped as the **Threat Intel** tab (`threat-intel/`; see the Threat Intel Feed card above and `docs-ia.md` §8). The R4 distinction holds — the Malysis pipeline never gets a tab; the productized feed does. "Malysis" and "Malbase" stay out of user docs even in the Threat Intel tab.
 
 ---
 

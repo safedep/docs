@@ -1,0 +1,132 @@
+---
+title: "Quickstart"
+description: "Set your credentials and run your first Threat Intel Feed query with curl in a few minutes."
+---
+
+This guide takes you from zero to your first response. It uses plain JSON over HTTP with `curl`. You do not need generated code.
+
+## Before you begin
+
+You need three things. SafeDep gives you all three:
+
+| You need | What it is |
+|---|---|
+| The SafeDep Threat Intel add-on | Enabled on your tenant. |
+| An API key | Your data-plane key, created at [app.safedep.io/settings/api-keys](https://app.safedep.io/settings/api-keys). |
+| Your tenant domain | For example `your-company.safedep.io`. |
+
+<Note>
+For how API keys and tenant domains work, see the [authentication guide](/governance/cloud/authentication).
+</Note>
+
+## Run your first query
+
+<Steps>
+<Step title="Set your credentials">
+```bash
+export SAFEDEP_API_KEY="<your-api-key>"
+export SAFEDEP_TENANT_ID="your-company.safedep.io"
+
+# Base URL of the service. Append the method name to it.
+export TI="https://api.safedep.io/safedep.services.threatintel.v1.ThreatIntelService"
+```
+
+Put the API key in `Authorization` **as-is, with no `Bearer` prefix**. Put your tenant domain in `X-Tenant-ID`.
+</Step>
+
+<Step title="List the five most recent reports">
+```bash
+curl -sS "$TI/ListPackageReports" \
+  -H "Content-Type: application/json" \
+  -H "Authorization: $SAFEDEP_API_KEY" \
+  -H "X-Tenant-ID: $SAFEDEP_TENANT_ID" \
+  -d '{"pagination":{"pageSize":5,"sortOrder":"SORT_ORDER_DESCENDING"}}'
+```
+</Step>
+
+<Step title="Read the response">
+You get an array of reports and a pagination cursor:
+
+```json
+{
+  "packageReports": [
+    {
+      "reportId": "01JZ8Q9V6K3S2M7C1B0A4E5F6G",
+      "verdict": "THREAT_VERDICT_MALICIOUS",
+      "confidence": "THREAT_CONFIDENCE_HUMAN_VERIFIED",
+      "title": "Credential stealer in npm package express-logger-pro",
+      "summary": "Package exfiltrates environment variables to a remote host on install.",
+      "ecosystem": "ECOSYSTEM_NPM",
+      "publishedAt": "2026-08-12T09:14:02Z",
+      "updatedAt": "2026-08-12T10:01:44Z",
+      "verifiedAt": "2026-08-12T10:01:44Z",
+      "package": {
+        "purl": "pkg:npm/express-logger-pro@9.9.9",
+        "name": "express-logger-pro",
+        "versions": ["9.9.9"]
+      },
+      "iocs": [
+        {"type": "INDICATOR_TYPE_C2_DOMAIN", "value": "exfil.example.com"},
+        {"type": "INDICATOR_TYPE_FILE_SHA256", "value": "3b1f0c9a...c2a9"}
+      ],
+      "campaigns": [
+        {"campaignId": "01JZ8QC0N2W5R8T3Y6U9I1O4P7", "name": "npm crypto-stealer wave"}
+      ]
+    }
+  ],
+  "pagination": {"nextPageToken": "eyJhdCI6IjIwMjYtMDgtMTJ..."}
+}
+```
+
+A report that is only suspected omits `verifiedAt`:
+
+```json
+{
+  "reportId": "01JZ8QB4H7X2K9M0C3B1A5E6F8",
+  "verdict": "THREAT_VERDICT_SUSPICIOUS",
+  "confidence": "THREAT_CONFIDENCE_AUTOMATED",
+  "title": "Suspected malicious package quick-utils-x",
+  "summary": "Install script fetches and runs a remote payload.",
+  "ecosystem": "ECOSYSTEM_PYPI",
+  "publishedAt": "2026-08-12T11:02:10Z",
+  "updatedAt": "2026-08-12T11:02:10Z",
+  "package": {"purl": "pkg:pypi/quick-utils-x@0.0.7", "name": "quick-utils-x", "versions": ["0.0.7"]}
+}
+```
+
+<Tip>
+The API omits empty and default fields. A suspicious report has no `verifiedAt`. A non-withdrawn report has no `withdrawn` field, so treat a missing `withdrawn` as `false`. A report with no indicators has no `iocs`.
+</Tip>
+</Step>
+
+<Step title="Get the next page">
+Pass the `nextPageToken` back as `pageToken`:
+
+```bash
+curl -sS "$TI/ListPackageReports" \
+  -H "Content-Type: application/json" \
+  -H "Authorization: $SAFEDEP_API_KEY" \
+  -H "X-Tenant-ID: $SAFEDEP_TENANT_ID" \
+  -d '{"pagination":{"pageSize":5,"sortOrder":"SORT_ORDER_DESCENDING","pageToken":"<nextPageToken>"}}'
+```
+
+Repeat until `nextPageToken` comes back empty. That is the full read loop.
+</Step>
+</Steps>
+
+## Next steps
+
+<CardGroup cols={2}>
+  <Card title="Pagination & sync" icon="database" href="/threat-intel/pagination">
+    Turn this loop into a local mirror that stays current.
+  </Card>
+  <Card title="Package reports" icon="box" href="/threat-intel/package-reports">
+    Filter by ecosystem, verdict, and time, and fetch a single report.
+  </Card>
+  <Card title="Recipes" icon="list-check" href="/threat-intel/recipes">
+    Mirror the feed, poll for new malicious packages, expand a campaign.
+  </Card>
+  <Card title="Connecting" icon="plug" href="/threat-intel/connecting">
+    Transport, headers, and JSON conventions in full.
+  </Card>
+</CardGroup>
