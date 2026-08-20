@@ -10,7 +10,7 @@ The Connect protocol returns a non-2xx HTTP status and a JSON body `{"code": "..
 | Code | HTTP | When |
 |---|---|---|
 | `unauthenticated` | 401 | Missing or bad API key, or missing tenant. |
-| `permission_denied` | 403 | Your tenant does not have the SafeDep Threat Intel add-on. |
+| `permission_denied` | 403 | Your account does not have Threat Intel Feed access. |
 | `not_found` | 404 | Unknown report id, or a hidden or unknown campaign. |
 | `invalid_argument` | 400 | Unknown `ecosystem` or `verdict` filter value, or a missing required id. |
 | `resource_exhausted` | 429 | Rate limit exceeded. Back off and retry. |
@@ -20,7 +20,7 @@ The Connect protocol returns a non-2xx HTTP status and a JSON body `{"code": "..
 Example error body:
 
 ```json
-{"code": "permission_denied", "message": "tenant is not entitled to the SafeDep Threat Intel add-on"}
+{"code": "permission_denied", "message": "not authorized for the Threat Intel Feed"}
 ```
 
 ## Rate limits
@@ -38,7 +38,7 @@ The feed runs on the SafeDep Cloud data plane. The data plane has a per-second r
 | Symptom | Likely cause |
 |---|---|
 | `401 unauthenticated` | Missing or mistyped API key, or missing `X-Tenant-ID`. The key goes in `Authorization` with no `Bearer` prefix. |
-| `403 permission_denied` | Your tenant does not have the SafeDep Threat Intel add-on. [Talk to a human](https://calendly.com/abhisek-safedep/30min) to enable it. |
+| `403 permission_denied` | Your account does not have Threat Intel Feed access. [Talk to a human](https://calendly.com/abhisek-safedep/30min) to enable it. |
 | `400 invalid_argument` on a filter | An `ecosystem`, `verdict`, or `period` value the API does not know. Use the exact enum names from the [schema reference](/threat-intel/schema). |
 | Empty `packageReports` with a `since` filter | `since` is a strict greater-than; nothing changed after that time. |
 | `429 resource_exhausted` | Rate limit. Back off and retry. |
