@@ -83,5 +83,5 @@ curl -sS "$TI/GetCampaignPackageReports" \
 ```
 
 <Tip>
-`packageCount` counts the distinct affected packages across the campaign's members. The server computes it, and it is not the number of reports. Use `GetCampaignPackageReports` to walk the member reports.
+`packageCount` is the number of member reports in the campaign, so it matches the total that `GetCampaignPackageReports` returns across all pages. `GetCampaign` gives you the count; `GetCampaignPackageReports` gives you the reports themselves.
 </Tip>

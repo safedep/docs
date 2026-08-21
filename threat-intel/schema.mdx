@@ -58,7 +58,7 @@ A report's lightweight link to a campaign. Fetch the full campaign with [`GetCam
 | `name` | string | Campaign display name. |
 | `summary` | string | Description. May be AI-generated. |
 | `status` | [`CampaignStatus`](#campaignstatus) | Served campaigns are always `CAMPAIGN_STATUS_ACTIVE`. |
-| `packageCount` | uint32 | Distinct affected packages across the campaign's members. A server-computed aggregate, not the report count. |
+| `packageCount` | uint32 | Number of member reports in the campaign. Equals the total returned by `GetCampaignPackageReports`. Server-computed. |
 | `iocCount` | uint32 | The count of the campaign's own indicators (the size of `iocs`). |
 | `lastActivityAt` | timestamp | The change-feed cursor for campaigns. |
 | `createdAt` | timestamp | When the campaign was created. |
