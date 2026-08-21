@@ -3,7 +3,7 @@ title: "Pagination & sync"
 description: "Cursor pagination for every list RPC, and the incremental-pull pattern that keeps a local mirror of the Threat Intel Feed in sync."
 ---
 
-Every list RPC uses the same cursor pagination. You reuse that cursor to keep a local mirror current.
+Every list RPC uses the same cursor pagination, plus a `since` filter for incremental sync. Use `pageSize` and `pageToken` to page through results, `sortOrder` to pick the direction, and `since` to fetch only what changed after a timestamp.
 
 ## Cursor pagination
 
@@ -14,6 +14,13 @@ Pass a `pagination` object in the request:
 | `pageSize` | int | Rows per page. Capped at 100 for reports and campaigns. |
 | `pageToken` | string | The `nextPageToken` from the previous response. Omit for the first page. |
 | `sortOrder` | enum | `SORT_ORDER_ASCENDING` (default) or `SORT_ORDER_DESCENDING`. |
+
+Quick uses:
+
+- `pageSize`: `"pageSize": 100` for a bulk backfill; a smaller value for interactive browsing.
+- `sortOrder`: `"sortOrder": "SORT_ORDER_DESCENDING"` to see the newest reports first. Keep the default ascending for sync.
+- `pageToken`: pass the previous response's `nextPageToken` to get the next page.
+- `since` (a filter, not part of `pagination`): `"filters": {"since": "2026-08-01T00:00:00Z"}` to fetch only what changed after that time.
 
 The response carries the cursor for the next page:
 
@@ -71,7 +78,7 @@ curl -sS "$TI/ListPackageReports" \
 </Step>
 </Steps>
 
-This gives you an at-least-once change stream. Process a report again each time it comes back, keyed by `reportId`, and upsert it into your store. A withdrawal is a change, so retractions arrive through the same loop. When you see `withdrawn: true`, retire the record on your side.
+You may see the same report more than once. Store reports by `reportId` and upsert, so a repeat just overwrites. A withdrawal is a change too: when `withdrawn: true` arrives, remove that report on your side.
 
 <Tip>
 Use `since` to start or restart a pull from a known watermark. Use `pageToken` to continue within one run. A full backfill is the first run with no `since`.

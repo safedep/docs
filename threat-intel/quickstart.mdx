@@ -3,7 +3,7 @@ title: "Quickstart"
 description: "Set your credentials and run your first Threat Intel Feed query with curl."
 ---
 
-This quickstart uses plain JSON over HTTP with `curl`. You do not need generated code.
+This quickstart uses plain JSON over HTTP with `curl`.
 
 ## Before you begin
 
@@ -15,10 +15,6 @@ You need three things. SafeDep gives you all three:
 | An API key | Your data-plane key, created at [app.safedep.io/settings/api-keys](https://app.safedep.io/settings/api-keys). |
 | Your tenant domain | For example `your-company.safedep.io`. |
 
-<Note>
-For how API keys and tenant domains work, see the [authentication guide](/governance/cloud/authentication).
-</Note>
-
 ## Run your first query
 
 <Steps>
@@ -27,7 +23,7 @@ For how API keys and tenant domains work, see the [authentication guide](/govern
 export SAFEDEP_API_KEY="<your-api-key>"
 export SAFEDEP_TENANT_ID="your-company.safedep.io"
 
-# Base URL of the service. Append the method name to it.
+# Base URL of the service.
 export TI="https://api.safedep.io/safedep.services.threatintel.v1.ThreatIntelService"
 ```
 

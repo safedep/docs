@@ -7,10 +7,6 @@ You do not need generated code to call the feed. The Connect protocol is plain J
 
 SafeDep publishes the canonical schema at [buf.build/safedep/api](https://buf.build/safedep/api). The registry also generates SDKs for supported languages.
 
-<Note>
-You do not need registry access to integrate. This guide restates the full wire contract in the [schema reference](/threat-intel/schema).
-</Note>
-
 The relevant protobuf packages are:
 
 | Package | Holds |
@@ -72,29 +68,17 @@ func main() {
 
 ## TypeScript
 
-Generate a client for [Connect-ES](https://connectrpc.com/docs/web/getting-started) with a `buf.gen.yaml`:
-
-```yaml
-version: v2
-plugins:
-  - remote: buf.build/bufbuild/es
-    out: gen/ts
-  - remote: buf.build/connectrpc/es
-    out: gen/ts
-```
+Install the prebuilt SDK from the Buf npm registry ([bufbuild/es](https://buf.build/gen/doc/typescript/safedep/api/bufbuild/es)), plus a Connect transport:
 
 ```bash
-buf generate buf.build/safedep/api \
-  --path safedep/services/threatintel/v1 \
-  --path safedep/messages/threatintel/v1 \
-  --path safedep/messages/package/v1 \
-  --path safedep/messages/controltower/v1
+npm config set @buf:registry https://buf.build/gen/npm/v1/
+npm install @buf/safedep_api.bufbuild_es @connectrpc/connect @connectrpc/connect-web
 ```
 
 ```ts
 import { createClient } from "@connectrpc/connect";
 import { createConnectTransport } from "@connectrpc/connect-web";
-import { ThreatIntelService } from "./gen/ts/safedep/services/threatintel/v1/threat_intel_pb";
+import { ThreatIntelService } from "@buf/safedep_api.bufbuild_es/safedep/services/threatintel/v1/threat_intel_pb";
 
 const transport = createConnectTransport({
   baseUrl: "https://api.safedep.io",
@@ -112,4 +96,4 @@ const res = await client.listPackageReports({ pagination: { pageSize: 5 } });
 for (const r of res.packageReports) console.log(r.reportId, r.verdict, r.title);
 ```
 
-For other languages, write a `buf.gen.yaml` with that language's protobuf and Connect (or gRPC) plugins. Then run the same `buf generate`.
+For other languages, see the [buf.build SDK docs for `safedep/api`](https://buf.build/safedep/api/sdks/main%3Aprotobuf).

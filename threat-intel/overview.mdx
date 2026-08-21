@@ -16,7 +16,7 @@ The Threat Intel Feed is a paid add-on. To enable it, [talk to a human](https://
     One malicious package each, with verdict, confidence, affected versions, indicators, and campaign links.
   </Card>
   <Card title="Campaigns" icon="diagram-project" href="/threat-intel/campaigns">
-    Named groups of related reports that share an actor, technique, or coordinated intent.
+    Named groups of related reports that share an actor, indicators, technique.
   </Card>
 </CardGroup>
 
@@ -24,7 +24,7 @@ The Threat Intel Feed is a paid add-on. To enable it, [talk to a human](https://
 
 The feed is a [ConnectRPC](https://connectrpc.com) service on the SafeDep Cloud data plane at `https://api.safedep.io`. You can call it as plain JSON over HTTP, as gRPC, or as gRPC-Web. All three use one URL. Any HTTP client works, and you do not need generated code to start.
 
-The feed is built for incremental pulls. A report comes back only when it changes, for example a new verdict, new indicators, or a withdrawal. You keep a local mirror, then pull only what changed since your last run.
+The feed is built for incremental pulls. A report comes back only when it changes, for example a new verdict, new indicators, or a withdrawal. You fetch changes incrementally with a cursor and a timestamp.
 
 ## Where to go next
 
