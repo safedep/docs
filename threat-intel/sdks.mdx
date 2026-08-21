@@ -78,7 +78,7 @@ npm install @buf/safedep_api.bufbuild_es @connectrpc/connect @connectrpc/connect
 ```ts
 import { createClient } from "@connectrpc/connect";
 import { createConnectTransport } from "@connectrpc/connect-web";
-import { ThreatIntelService } from "@buf/safedep_api.bufbuild_es/safedep/services/threatintel/v1/threat_intel_pb";
+import { ThreatIntelService } from "@buf/safedep_api.bufbuild_es/safedep/services/threatintel/v1/threat_intel_pb.js";
 
 const transport = createConnectTransport({
   baseUrl: "https://api.safedep.io",
