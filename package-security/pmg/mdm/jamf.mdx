@@ -3,9 +3,7 @@ title: "Jamf"
 description: "Deploy PMG to macOS devices with a Jamf script payload or package."
 ---
 
-Deploy PMG with a Jamf policy that runs the [multi-file MDM scripts](https://github.com/safedep/pmg/tree/main/scripts/mdm) as root. Jamf can ship more than one file, so use the canonical scripts plus `lib_macos.sh`, not the standalone variants.
-
-Shared behavior (machine vs user state, globally managed config, cloud sync, limits) is on [Deploy PMG with MDM](/package-security/pmg/mdm/overview).
+Deploy PMG with a Jamf policy that runs the [multi-file MDM scripts](https://github.com/safedep/pmg/tree/main/scripts/mdm) as root. Ship `lib_macos.sh` with the install or uninstall script.
 
 ## Install
 
@@ -22,10 +20,6 @@ Shared behavior (machine vs user state, globally managed config, cloud sync, lim
    Drop the two environment variables if you are not enabling cloud sync. Renumber `$4` and `$5` if your parameter slots differ.
 4. Assign the policy to a computer group and run it.
 
-<Note>
-  Cloud credentials sync installs to [Package Guard](/governance/cloud/endpoint-hub/package-guard). The installer stores them in the active GUI user's Keychain. Local blocking works without an account.
-</Note>
-
 ## Uninstall
 
 Create a second policy with `lib_macos.sh` and `pmg_uninstall_macos.sh`:
@@ -36,15 +30,13 @@ cd "$(dirname "$0")"
 ./pmg_uninstall_macos.sh
 ```
 
-Assign it to the same computer group. Do not run install and uninstall policies on the same devices at the same time.
-
-Set `PMG_KEEP_GLOBAL_CONFIG=1` in the uninstall environment if you want to keep `/Library/Application Support/safedep/pmg/config.yml`.
+Assign it to the same computer group.
 
 <CardGroup cols={2}>
-  <Card title="Deploy PMG with MDM" icon="laptop" href="/package-security/pmg/mdm/overview">
-    Script shapes, globally managed config, and limits that apply to every MDM.
+  <Card title="Other MDMs" icon="laptop" href="/package-security/pmg/mdm/overview">
+    JumpCloud, Intune, and the script layout.
   </Card>
   <Card title="MDM scripts README" icon="github" href="https://github.com/safedep/pmg/blob/main/scripts/mdm/README.md">
-    Source of truth in the PMG repo. Scripts and supported MDMs land there first.
+    Source of truth in the PMG repo.
   </Card>
 </CardGroup>

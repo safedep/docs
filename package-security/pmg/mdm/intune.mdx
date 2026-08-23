@@ -3,17 +3,24 @@ title: "Intune"
 description: "Deploy PMG to macOS devices with a single-script Microsoft Intune shell-script policy."
 ---
 
-Microsoft Intune accepts only one shell script per policy. Use the standalone scripts in [`scripts/mdm/standalone/`](https://github.com/safedep/pmg/tree/main/scripts/mdm/standalone), not the multi-file scripts. Do not upload `lib_macos.sh` separately.
+Intune accepts one shell script per policy. Use the [standalone scripts](https://github.com/safedep/pmg/tree/main/scripts/mdm/standalone).
 
-Shared behavior (machine vs user state, globally managed config, cloud sync, limits) is on [Deploy PMG with MDM](/package-security/pmg/mdm/overview).
+The committed standalone scripts have no tenant config and no cloud credentials. Generate a new installer if you need either.
 
-The committed standalone scripts contain no tenant config and no cloud credentials. They stay under Intune's 1 MB script-size limit. Generate a new installer if you need either.
+## Install
 
-## Generate an installer (optional)
+Follow [Microsoft's procedure for macOS shell scripts](https://learn.microsoft.com/en-us/intune/device-management/tools/run-shell-scripts-macos).
 
-Clone [pmg](https://github.com/safedep/pmg) and run the generator from `scripts/mdm/`.
+1. Upload `pmg_setup_install_macos_standalone.sh`. Set **Run script as signed-in user** to **No**.
+2. Assign the policy to a device group.
 
-**Managed config only:**
+## Uninstall
+
+Upload `pmg_uninstall_macos_standalone.sh` with the same **Run script as signed-in user** setting. Do not assign the install and uninstall policies at the same time.
+
+## Config or cloud credentials
+
+Clone [pmg](https://github.com/safedep/pmg) and run the generator from `scripts/mdm/`:
 
 ```sh
 ./generate_standalone_scripts.sh \
@@ -21,7 +28,7 @@ Clone [pmg](https://github.com/safedep/pmg) and run the generator from `scripts/
   --output-dir /path/to/pmg-intune
 ```
 
-**Cloud credentials** (Intune has no script parameters, so the generator embeds them):
+Intune has no script parameters, so embed cloud credentials at generate time:
 
 ```sh
 SAFEDEP_API_KEY=... SAFEDEP_TENANT_ID=... \
@@ -30,41 +37,17 @@ SAFEDEP_API_KEY=... SAFEDEP_TENANT_ID=... \
   --output-dir /path/to/pmg-intune
 ```
 
-Add `--config /path/to/config.yml` to the same command when you also want a managed config. Set `cloud.enabled: true` in that file.
-
-The uninstaller never contains the embedded config or credentials. The credential installer is mode `0700`.
+Add `--config /path/to/config.yml` to that command when you also want a managed config. Set `cloud.enabled: true` in the file.
 
 <Warning>
-  Base64 is not encryption. Anyone who can read the uploaded installer in Intune (Intune admins, device admins) can recover the credentials. Use a scoped, revocable API key. Do not commit the generated artifacts.
+  Base64 is not encryption. Anyone who can read the uploaded installer in Intune can recover the credentials. Use a scoped, revocable API key. Do not commit the generated artifacts.
 </Warning>
 
-## Create the policies
-
-Follow [Microsoft's procedure for macOS shell scripts](https://learn.microsoft.com/en-us/intune/device-management/tools/run-shell-scripts-macos).
-
-<Steps>
-  <Step title="Create the install policy">
-    Upload `pmg_setup_install_macos_standalone.sh`. Set **Run script as signed-in user** to **No**.
-  </Step>
-  <Step title="Create the uninstall policy">
-    Upload `pmg_uninstall_macos_standalone.sh`. Use the same **Run script as signed-in user** setting.
-  </Step>
-  <Step title="Assign to a device group">
-    Assign each policy to the device group. Do not assign both policies at the same time.
-  </Step>
-</Steps>
-
-<Note>
-  Only the active GUI user can receive Keychain credentials during a run. Use a recurring install frequency to cover later users. A missing GUI session or a cloud login failure is a nonfatal skip, so neither causes a nonzero exit that Intune would retry.
-</Note>
-
-Cloud credentials sync installs to [Package Guard](/governance/cloud/endpoint-hub/package-guard). Local blocking works without an account.
-
 <CardGroup cols={2}>
-  <Card title="Deploy PMG with MDM" icon="laptop" href="/package-security/pmg/mdm/overview">
-    Script shapes, globally managed config, and limits that apply to every MDM.
+  <Card title="Other MDMs" icon="laptop" href="/package-security/pmg/mdm/overview">
+    Jamf, JumpCloud, and the script layout.
   </Card>
   <Card title="MDM scripts README" icon="github" href="https://github.com/safedep/pmg/blob/main/scripts/mdm/README.md">
-    Source of truth in the PMG repo, including standalone scripts and the generator.
+    Source of truth in the PMG repo.
   </Card>
 </CardGroup>
