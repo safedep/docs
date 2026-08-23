@@ -3,13 +3,13 @@ title: "Deploy PMG with MDM"
 description: "Install PMG on macOS fleets through Jamf, JumpCloud, Intune, or any MDM that can run a shell script as root."
 ---
 
-Install or remove PMG on macOS devices through your MDM so package installs go through PMG.
+Install or remove PMG on macOS fleets through your MDM. The scripts install the `pmg` binary on the machine, then configure each local user so `npm install` and `pip install` go through PMG.
 
 <Note>
   The [MDM scripts README](https://github.com/safedep/pmg/blob/main/scripts/mdm/README.md) in the PMG repo is the source of truth. Scripts and supported MDMs land there first.
 </Note>
 
-macOS only. For Linux images and shared VMs, use [system install](/package-security/pmg/system-install).
+The scripts are macOS only and should run as root (the usual MDM default). For Linux images and shared VMs, use [system install](/package-security/pmg/system-install).
 
 ## Supported MDMs
 
@@ -29,10 +29,18 @@ Mosyle, Kandji, and other MDMs that run a shell script as root on macOS use the 
 
 ## Scripts
 
-- **Multi-file** (Jamf, JumpCloud): deploy `lib_macos.sh` with `pmg_setup_install_macos.sh` or `pmg_uninstall_macos.sh`.
+- **Multi-file** (Jamf, JumpCloud): deploy `lib_macos.sh` with `pmg_setup_install_macos.sh` or `pmg_uninstall_macos.sh`. The entry scripts source `lib_macos.sh` at runtime and fail without it.
 - **Standalone** (Intune): use the scripts in [`standalone/`](https://github.com/safedep/pmg/tree/main/scripts/mdm/standalone).
 
-Optional `config.yml` and cloud credentials are covered in the [README](https://github.com/safedep/pmg/blob/main/scripts/mdm/README.md).
+Do not assign an install policy and an uninstall policy to the same devices at the same time.
+
+## Config and cloud sync
+
+Add a `config.yml` next to the scripts (or embed it when you generate a standalone installer) to set a machine-wide config. While that file is present, PMG ignores each user's own config. See [Globally Managed Configuration](https://github.com/safedep/pmg/blob/main/docs/config.md#globally-managed-configuration) for lockdown and override behavior.
+
+<Note>
+  Pass `SAFEDEP_API_KEY` and `SAFEDEP_TENANT_ID` to sync installs to [Package Guard](/governance/cloud/endpoint-hub/package-guard). Local blocking works without an account. Credentials are stored for the logged-in user, so use a recurring policy to cover people who sign in later.
+</Note>
 
 <CardGroup cols={2}>
   <Card title="MDM scripts README" icon="github" href="https://github.com/safedep/pmg/blob/main/scripts/mdm/README.md">

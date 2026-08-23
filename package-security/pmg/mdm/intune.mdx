@@ -3,7 +3,7 @@ title: "Intune"
 description: "Deploy PMG to macOS devices with a single-script Microsoft Intune shell-script policy."
 ---
 
-Intune accepts one shell script per policy. Use the [standalone scripts](https://github.com/safedep/pmg/tree/main/scripts/mdm/standalone).
+Intune accepts one shell script per policy. Use the [standalone scripts](https://github.com/safedep/pmg/tree/main/scripts/mdm/standalone). They stay under Intune's 1 MB script-size limit.
 
 The committed standalone scripts have no tenant config and no cloud credentials. Generate a new installer if you need either.
 
@@ -13,6 +13,8 @@ Follow [Microsoft's procedure for macOS shell scripts](https://learn.microsoft.c
 
 1. Upload `pmg_setup_install_macos_standalone.sh`. Set **Run script as signed-in user** to **No**.
 2. Assign the policy to a device group.
+
+Use a recurring install frequency if you want later sign-ins to receive cloud credentials. Only the logged-in user can receive them during a run.
 
 ## Uninstall
 
@@ -28,7 +30,7 @@ Clone [pmg](https://github.com/safedep/pmg) and run the generator from `scripts/
   --output-dir /path/to/pmg-intune
 ```
 
-Intune has no script parameters, so embed cloud credentials at generate time:
+Intune has no script parameters, so embed cloud credentials at generate time if you want installs to sync to [Package Guard](/governance/cloud/endpoint-hub/package-guard):
 
 ```sh
 SAFEDEP_API_KEY=... SAFEDEP_TENANT_ID=... \
@@ -37,7 +39,7 @@ SAFEDEP_API_KEY=... SAFEDEP_TENANT_ID=... \
   --output-dir /path/to/pmg-intune
 ```
 
-Add `--config /path/to/config.yml` to that command when you also want a managed config. Set `cloud.enabled: true` in the file.
+Add `--config /path/to/config.yml` to that command when you also want a machine-wide config. Set `cloud.enabled: true` in the file.
 
 <Warning>
   Base64 is not encryption. Anyone who can read the uploaded installer in Intune can recover the credentials. Use a scoped, revocable API key. Do not commit the generated artifacts.

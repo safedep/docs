@@ -7,7 +7,7 @@ Deploy PMG with a Jamf policy that runs the [multi-file MDM scripts](https://git
 
 ## Install
 
-1. Download `lib_macos.sh` and `pmg_setup_install_macos.sh` from [`scripts/mdm/`](https://github.com/safedep/pmg/tree/main/scripts/mdm). Add a sibling `config.yml` if you want a globally managed config.
+1. Download `lib_macos.sh` and `pmg_setup_install_macos.sh` from [`scripts/mdm/`](https://github.com/safedep/pmg/tree/main/scripts/mdm). Add a sibling `config.yml` if you want a machine-wide config.
 2. Upload the folder as a script payload, or as a package that drops the files together at a fixed path.
 3. Create a policy that runs as root and invokes the installer. Jamf script parameters `$4` and `$5` carry the optional Cloud credentials:
 
@@ -20,6 +20,10 @@ Deploy PMG with a Jamf policy that runs the [multi-file MDM scripts](https://git
    Drop the two environment variables if you are not enabling cloud sync. Renumber `$4` and `$5` if your parameter slots differ.
 4. Assign the policy to a computer group and run it.
 
+<Note>
+  Cloud credentials sync installs to [Package Guard](/governance/cloud/endpoint-hub/package-guard). Skip `$4` and `$5` if you only want local blocking.
+</Note>
+
 ## Uninstall
 
 Create a second policy with `lib_macos.sh` and `pmg_uninstall_macos.sh`:
@@ -30,7 +34,7 @@ cd "$(dirname "$0")"
 ./pmg_uninstall_macos.sh
 ```
 
-Assign it to the same computer group.
+Assign it to the same computer group. Do not run the install and uninstall policies on the same devices at the same time.
 
 <CardGroup cols={2}>
   <Card title="Other MDMs" icon="laptop" href="/package-security/pmg/mdm/overview">
