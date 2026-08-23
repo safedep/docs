@@ -1,0 +1,50 @@
+---
+title: "Jamf"
+description: "Deploy PMG to macOS devices with a Jamf script payload or package."
+---
+
+Deploy PMG with a Jamf policy that runs the [multi-file MDM scripts](https://github.com/safedep/pmg/tree/main/scripts/mdm) as root. Jamf can ship more than one file, so use the canonical scripts plus `lib_macos.sh`, not the standalone variants.
+
+Shared behavior (machine vs user state, globally managed config, cloud sync, limits) is on [Deploy PMG with MDM](/package-security/pmg/mdm/overview).
+
+## Install
+
+1. Download `lib_macos.sh` and `pmg_setup_install_macos.sh` from [`scripts/mdm/`](https://github.com/safedep/pmg/tree/main/scripts/mdm). Add a sibling `config.yml` if you want a globally managed config.
+2. Upload the folder as a script payload, or as a package that drops the files together at a fixed path.
+3. Create a policy that runs as root and invokes the installer. Jamf script parameters `$4` and `$5` carry the optional Cloud credentials:
+
+   ```sh
+   #!/bin/sh
+   cd "$(dirname "$0")"
+   SAFEDEP_API_KEY="$4" SAFEDEP_TENANT_ID="$5" ./pmg_setup_install_macos.sh
+   ```
+
+   Drop the two environment variables if you are not enabling cloud sync. Renumber `$4` and `$5` if your parameter slots differ.
+4. Assign the policy to a computer group and run it.
+
+<Note>
+  Cloud credentials sync installs to [Package Guard](/governance/cloud/endpoint-hub/package-guard). The installer stores them in the active GUI user's Keychain. Local blocking works without an account.
+</Note>
+
+## Uninstall
+
+Create a second policy with `lib_macos.sh` and `pmg_uninstall_macos.sh`:
+
+```sh
+#!/bin/sh
+cd "$(dirname "$0")"
+./pmg_uninstall_macos.sh
+```
+
+Assign it to the same computer group. Do not run install and uninstall policies on the same devices at the same time.
+
+Set `PMG_KEEP_GLOBAL_CONFIG=1` in the uninstall environment if you want to keep `/Library/Application Support/safedep/pmg/config.yml`.
+
+<CardGroup cols={2}>
+  <Card title="Deploy PMG with MDM" icon="laptop" href="/package-security/pmg/mdm/overview">
+    Script shapes, globally managed config, and limits that apply to every MDM.
+  </Card>
+  <Card title="MDM scripts README" icon="github" href="https://github.com/safedep/pmg/blob/main/scripts/mdm/README.md">
+    Source of truth in the PMG repo. Scripts and supported MDMs land there first.
+  </Card>
+</CardGroup>

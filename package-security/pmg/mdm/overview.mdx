@@ -1,0 +1,79 @@
+---
+title: "Deploy PMG with MDM"
+description: "Install PMG on macOS fleets through Jamf, JumpCloud, Intune, or any MDM that can run a shell script as root."
+---
+
+Use the [PMG MDM scripts](https://github.com/safedep/pmg/tree/main/scripts/mdm) to install or remove PMG on macOS devices through your MDM. The scripts install the binary for the machine, then configure every local user so `npm install` and `pip install` go through PMG.
+
+The scripts are macOS only. For Linux images and shared VMs, use [system install](/package-security/pmg/system-install).
+
+<Note>
+  The [MDM scripts README](https://github.com/safedep/pmg/blob/main/scripts/mdm/README.md) in the PMG repo is the source of truth. Scripts, supported MDMs, and behavior land there first. Use it when this page and the repo disagree.
+</Note>
+
+## Supported MDMs
+
+<CardGroup cols={3}>
+  <Card title="Jamf" icon="apple" href="/package-security/pmg/mdm/jamf">
+    Upload the multi-file scripts and pass cloud credentials as script parameters.
+  </Card>
+  <Card title="JumpCloud" icon="cloud" href="/package-security/pmg/mdm/jumpcloud">
+    Run a Command as root and attach the scripts as Command files.
+  </Card>
+  <Card title="Intune" icon="microsoft" href="/package-security/pmg/mdm/intune">
+    Upload a single standalone script per policy. Generate one if you need config or credentials.
+  </Card>
+</CardGroup>
+
+Mosyle, Kandji, and other MDMs that can run a shell script as root on macOS use the same scripts. Follow [Jamf](/package-security/pmg/mdm/jamf) or [JumpCloud](/package-security/pmg/mdm/jumpcloud) if your MDM can ship more than one file. Follow [Intune](/package-security/pmg/mdm/intune) if it accepts only one script per policy.
+
+## Which scripts to use
+
+Two deployment shapes:
+
+- **Multi-file:** ship `lib_macos.sh` next to `pmg_setup_install_macos.sh` and `pmg_uninstall_macos.sh`. Jamf and JumpCloud use this.
+- **Single-file:** use the standalone scripts in [`standalone/`](https://github.com/safedep/pmg/tree/main/scripts/mdm/standalone) when the MDM accepts only one script per policy. Intune uses this. Generate a new installer if you need a managed config or embedded cloud credentials.
+
+Do not upload `lib_macos.sh` separately with a standalone script.
+
+## What the scripts do
+
+PMG writes two kinds of state:
+
+- **Machine:** the `pmg` binary in `/usr/local/bin` or Homebrew. Needs root.
+- **User:** config, aliases, and shims under `~/Library/Application Support/safedep/pmg`. Cache under `~/Library/Caches/safedep/pmg`. Cloud credentials in the login Keychain, which needs the user's GUI session.
+
+Run the policy as root (the usual MDM default). The script installs the binary once, then configures every local human account (UID ≥ 500 with a home under `/Users`).
+
+The installer uses Homebrew when it is present. Otherwise it downloads the GitHub release tarball and checks the SHA-256. Homebrew cannot run as root, so brew commands run as the Homebrew owner.
+
+## Globally managed config
+
+Add a `config.yml` next to the scripts, or embed it when you generate a standalone installer. The installer copies it to `/Library/Application Support/safedep/pmg/config.yml`. While that file exists, PMG ignores every user's own config.
+
+The file can be partial. Keys you omit fall back to PMG defaults, not to user values. Set `global_lockdown: true` if users must not override it with `PMG_*` environment variables or CLI flags.
+
+See [Globally Managed Configuration](https://github.com/safedep/pmg/blob/main/docs/config.md#globally-managed-configuration) in the PMG repo.
+
+## Cloud sync
+
+<Note>
+  Pass `SAFEDEP_API_KEY` and `SAFEDEP_TENANT_ID` so the installer stores credentials for the active GUI user and syncs installs to [Package Guard](/governance/cloud/endpoint-hub/package-guard). Local blocking works without an account.
+</Note>
+
+A missing GUI session or a failed cloud login is a nonfatal skip. Use a recurring policy so later users get credentials when they log in.
+
+## Limits
+
+- The scripts do not install PMG's MITM CA into the macOS trust store. `pmg setup cert install` needs interactive approval in the user's GUI session. Users run that themselves when a tool ignores the proxy CA environment variables (Go on macOS is one example).
+- Keychain writes reach only the active GUI user. Inactive users' credentials stay until they run `pmg cloud logout`.
+- The scripts exit on platforms other than macOS.
+
+<CardGroup cols={2}>
+  <Card title="MDM scripts README" icon="github" href="https://github.com/safedep/pmg/blob/main/scripts/mdm/README.md">
+    Source of truth in the PMG repo. Scripts and supported MDMs land there first.
+  </Card>
+  <Card title="PMG" icon="box" href="/package-security/pmg/overview">
+    How PMG blocks malicious packages at install time.
+  </Card>
+</CardGroup>
