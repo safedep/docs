@@ -1,0 +1,43 @@
+---
+title: "Intune"
+description: "Deploy PMG to macOS devices with a single-script Microsoft Intune shell-script policy."
+---
+
+Intune accepts one shell script per policy, and it has no script parameters. Generate a [standalone installer](https://github.com/safedep/pmg/tree/main/scripts/mdm/standalone) with your SafeDep Cloud credentials embedded, then upload that file.
+
+You need a SafeDep Cloud API key and tenant ID from [app.safedep.io/settings/api-keys](https://app.safedep.io/settings/api-keys). Installs sync to [Package Guard](/governance/cloud/endpoint-hub/package-guard).
+
+## Install
+
+1. Clone [pmg](https://github.com/safedep/pmg) and generate the installer from `scripts/mdm/`:
+
+   ```sh
+   SAFEDEP_API_KEY=... SAFEDEP_TENANT_ID=... \
+     ./generate_standalone_scripts.sh \
+     --embed-cloud-credentials \
+     --output-dir /path/to/pmg-intune
+   ```
+
+   You can optionally add `--config /path/to/config.yml` to package a machine-wide config. Set `cloud.enabled: true` in that file.
+
+<Warning>
+  Base64 is not encryption. Anyone who can read the uploaded installer in Intune can recover the credentials. Use a scoped, revocable API key. Do not commit the generated artifacts.
+</Warning>
+
+2. Follow [Microsoft's procedure for macOS shell scripts](https://learn.microsoft.com/en-us/intune/device-management/tools/run-shell-scripts-macos). Upload the generated `pmg_setup_install_macos_standalone.sh`. Set **Run script as signed-in user** to **No**.
+3. Assign the policy to a device group. Use a recurring install frequency so later sign-ins receive Cloud credentials. Only the logged-in user can receive them during a run.
+
+The generated script stays under Intune's 1 MB size limit.
+
+## Uninstall
+
+Upload `pmg_uninstall_macos_standalone.sh` from the same output directory, with the same **Run script as signed-in user** setting. Do not assign the install and uninstall policies at the same time.
+
+<CardGroup cols={2}>
+  <Card title="Other MDMs" icon="laptop" href="/package-security/pmg/mdm/overview">
+    Jamf, JumpCloud, and the script layout.
+  </Card>
+  <Card title="MDM scripts README" icon="github" href="https://github.com/safedep/pmg/blob/main/scripts/mdm/README.md">
+    Source of truth in the PMG repo.
+  </Card>
+</CardGroup>

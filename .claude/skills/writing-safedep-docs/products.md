@@ -23,7 +23,7 @@
 - **One-liner (from README):** Block malicious npm and pip packages before they install. Defense in depth for the package managers you already use.
 - **What it is:** A wrapper / proxy around `npm` and `pip` (and similar) that intercepts installs and blocks known-malicious packages at the dev machine, before code touches disk.
 - **Public repo:** `github.com/safedep/pmg`
-- **Docs home:** **Package Security › Install-Time Package Blocking** (`package-security/pmg/`). R8 landing at `package-security/pmg/overview`.
+- **Docs home:** **Package Security › Install-Time Package Blocking** (`package-security/pmg/`). R8 landing at `package-security/pmg/overview`. Fleet MDM how-tos live under **Package Security › MDM** (`package-security/pmg/mdm/`).
 - **Key concepts surfaced:** Malysis (intelligence used to decide block/allow), Package Manager interception, Truststore.
 - **Where to read up-to-date facts:** `README.md`, `CLAUDE.md`, `AGENTS.md` in the pmg repo; `cmd/` for command surface; `packagemanager/` and `extractor/` for what's supported.
 - **Note:** `pmg` and `vet-action` together are the two halves of Package Security — local-machine vs CI/CD. Both block malicious packages; they differ only in *where*.

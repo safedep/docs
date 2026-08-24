@@ -1,0 +1,48 @@
+---
+title: "Deploy PMG with MDM"
+description: "Install PMG on macOS fleets through Jamf, JumpCloud, Intune, or any MDM that can run a shell script as root."
+---
+
+Install or remove PMG on macOS fleets through your MDM. The scripts install the `pmg` binary on the machine, then configure each local user so `npm install` and `pip install` go through PMG.
+
+<Note>
+  The [MDM scripts README](https://github.com/safedep/pmg/blob/main/scripts/mdm/README.md) in the PMG repo is the source of truth. Scripts and supported MDMs land there first.
+</Note>
+
+The scripts are macOS only and should run as root (the usual MDM default). For Linux images and shared VMs, use [system install](/package-security/pmg/system-install).
+
+MDM deploys enable [SafeDep Cloud](/governance/cloud/quickstart) sync so installs show up in [Package Guard](/governance/cloud/endpoint-hub/package-guard). You need an API key and tenant ID from [app.safedep.io/settings/api-keys](https://app.safedep.io/settings/api-keys). Credentials are stored for the logged-in user, so use a recurring policy to cover people who sign in later.
+
+## Supported MDMs
+
+<CardGroup cols={3}>
+  <Card title="Jamf" icon="apple" href="/package-security/pmg/mdm/jamf">
+    Multi-file scripts. Pass Cloud credentials as script parameters.
+  </Card>
+  <Card title="JumpCloud" icon="cloud" href="/package-security/pmg/mdm/jumpcloud">
+    Multi-file scripts, attached to a Command that runs as root.
+  </Card>
+  <Card title="Intune" icon="microsoft" href="/package-security/pmg/mdm/intune">
+    Generate a standalone installer with Cloud credentials, then upload it.
+  </Card>
+</CardGroup>
+
+Mosyle, Kandji, and other MDMs that run a shell script as root on macOS use the same scripts. Follow [Jamf](/package-security/pmg/mdm/jamf) or [JumpCloud](/package-security/pmg/mdm/jumpcloud) when your MDM can ship more than one file. Follow [Intune](/package-security/pmg/mdm/intune) when it accepts one script per policy.
+
+## Scripts
+
+- **Multi-file** (Jamf, JumpCloud): deploy `lib_macos.sh` with `pmg_setup_install_macos.sh` or `pmg_uninstall_macos.sh`. The entry scripts source `lib_macos.sh` at runtime and fail without it.
+- **Standalone** (Intune): generate an installer with Cloud credentials embedded, then upload that one script.
+
+Do not assign an install policy and an uninstall policy to the same devices at the same time.
+
+You can optionally ship a `config.yml` next to the scripts (or pass `--config` when generating a standalone installer) for a machine-wide config. If you do, set `cloud.enabled: true` in it. A global config blocks the installer from flipping that flag. See [Globally Managed Configuration](https://github.com/safedep/pmg/blob/main/docs/config.md#globally-managed-configuration).
+
+<CardGroup cols={2}>
+  <Card title="MDM scripts README" icon="github" href="https://github.com/safedep/pmg/blob/main/scripts/mdm/README.md">
+    Source of truth in the PMG repo.
+  </Card>
+  <Card title="PMG" icon="box" href="/package-security/pmg/overview">
+    How PMG blocks malicious packages at install time.
+  </Card>
+</CardGroup>

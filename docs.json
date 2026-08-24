@@ -57,6 +57,16 @@
             ]
           },
           {
+            "group": "MDM",
+            "icon": "laptop",
+            "root": "package-security/pmg/mdm/overview",
+            "pages": [
+              "package-security/pmg/mdm/jamf",
+              "package-security/pmg/mdm/jumpcloud",
+              "package-security/pmg/mdm/intune"
+            ]
+          },
+          {
             "group": "On-Demand Package Scanning",
             "icon": "microscope",
             "root": "package-security/scan/overview",

@@ -42,7 +42,7 @@ You may not work around these without updating `docs-ia.md` first.
 |---|---|
 | Defines a concept used across docs | Get Started › Core Concepts |
 | Onboards a new user | Get Started › Introduction / Quickstarts |
-| Covers malicious package blocking (local OR CI/CD) | Package Security |
+| Covers malicious package blocking (local OR CI/CD, including MDM fleet deploy) | Package Security |
 | Covers AI agent discovery, audit, or control | AI Agent Security |
 | Covers scanning repos / SBOMs / CI/CD for risk | Visibility & Governance |
 | Covers cloud policy, endpoint inventory, org access | Visibility & Governance |
