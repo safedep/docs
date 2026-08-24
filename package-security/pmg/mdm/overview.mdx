@@ -36,7 +36,7 @@ Mosyle, Kandji, and other MDMs that run a shell script as root on macOS use the 
 
 Do not assign an install policy and an uninstall policy to the same devices at the same time.
 
-You can optionally ship a `config.yml` next to the scripts (or pass `--config` when generating a standalone installer) for a machine-wide config. If you do, set `cloud.enabled: true` in it; a global config blocks the installer from flipping that flag. See [Globally Managed Configuration](https://github.com/safedep/pmg/blob/main/docs/config.md#globally-managed-configuration).
+You can optionally ship a `config.yml` next to the scripts (or pass `--config` when generating a standalone installer) for a machine-wide config. If you do, set `cloud.enabled: true` in it. A global config blocks the installer from flipping that flag. See [Globally Managed Configuration](https://github.com/safedep/pmg/blob/main/docs/config.md#globally-managed-configuration).
 
 <CardGroup cols={2}>
   <Card title="MDM scripts README" icon="github" href="https://github.com/safedep/pmg/blob/main/scripts/mdm/README.md">
