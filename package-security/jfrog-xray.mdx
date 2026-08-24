@@ -4,7 +4,7 @@ description: "Stream SafeDep malware intelligence to JFrog Xray"
 ---
 
 <Warning>
-  The JFrog Xray Integration is available on **SafeDep Professional and Enterprise** plans only. [Upgrade your plan](https://safedep.io/pricing) to access this feature.
+  The JFrog Xray Integration is available with the **Threat Intel Feed Add-On**. [See pricing](https://safedep.io/pricing/) to access this feature.
 </Warning>
 
 The JFrog Xray integration runs as a daemon. It polls SafeDep for verified malicious packages
@@ -24,13 +24,10 @@ those packages for every developer on that instance.
 <Steps>
   <Step title="Authenticate with SafeDep">
     ```bash
-    # Option 1: OAuth device flow
-    safedep auth login
-
-    # Option 2: API key login (--api-key is a flag; pass the value with --api-key-value)
+    # Option 1: API key login (--api-key is a flag; pass the value with --api-key-value)
     safedep auth login --tenant your-tenant.safedep.io --api-key --api-key-value YOUR_API_KEY
 
-    # Option 3: Environment variables (read directly by safedep; no login command needed)
+    # Option 2: Environment variables (read directly by safedep; no login command needed)
     export SAFEDEP_TENANT_ID=your-tenant.safedep.io
     export SAFEDEP_API_KEY=YOUR_API_KEY
     ```
