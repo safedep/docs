@@ -1,0 +1,44 @@
+---
+title: "Jamf"
+description: "Deploy PMG to macOS devices with a Jamf script payload or package."
+---
+
+Deploy PMG with a Jamf policy that runs the [multi-file MDM scripts](https://github.com/safedep/pmg/tree/main/scripts/mdm) as root. Ship `lib_macos.sh` with the install or uninstall script.
+
+You need a SafeDep Cloud API key and tenant ID from [app.safedep.io/settings/api-keys](https://app.safedep.io/settings/api-keys). Installs sync to [Package Guard](/governance/cloud/endpoint-hub/package-guard).
+
+## Install
+
+1. Download `lib_macos.sh` and `pmg_setup_install_macos.sh` from [`scripts/mdm/`](https://github.com/safedep/pmg/tree/main/scripts/mdm). You can optionally add a sibling `config.yml` for a machine-wide config. If you do, set `cloud.enabled: true` in it. A global config blocks the installer from flipping that flag.
+2. Upload the folder as a script payload, or as a package that drops the files together at a fixed path.
+3. Create a policy that runs as root and invokes the installer. Pass the Cloud credentials as Jamf script parameters `$4` and `$5`:
+
+   ```sh
+   #!/bin/sh
+   cd "$(dirname "$0")"
+   SAFEDEP_API_KEY="$4" SAFEDEP_TENANT_ID="$5" ./pmg_setup_install_macos.sh
+   ```
+
+   Renumber `$4` and `$5` if your parameter slots differ.
+4. Assign the policy to a computer group and run it.
+
+## Uninstall
+
+Create a second policy with `lib_macos.sh` and `pmg_uninstall_macos.sh`:
+
+```sh
+#!/bin/sh
+cd "$(dirname "$0")"
+./pmg_uninstall_macos.sh
+```
+
+Assign it to the same computer group. Do not run the install and uninstall policies on the same devices at the same time.
+
+<CardGroup cols={2}>
+  <Card title="Other MDMs" icon="laptop" href="/package-security/pmg/mdm/overview">
+    JumpCloud, Intune, and the script layout.
+  </Card>
+  <Card title="MDM scripts README" icon="github" href="https://github.com/safedep/pmg/blob/main/scripts/mdm/README.md">
+    Source of truth in the PMG repo.
+  </Card>
+</CardGroup>

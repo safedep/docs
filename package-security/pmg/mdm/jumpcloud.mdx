@@ -1,0 +1,68 @@
+---
+title: "JumpCloud"
+description: "Deploy PMG to macOS devices with a JumpCloud Command that runs as root."
+---
+
+Deploy PMG with a JumpCloud Command that runs as root. Use the [multi-file MDM scripts](https://github.com/safedep/pmg/tree/main/scripts/mdm) and ship `lib_macos.sh` with the install or uninstall script.
+
+You need a SafeDep Cloud API key and tenant ID from [app.safedep.io/settings/api-keys](https://app.safedep.io/settings/api-keys). Installs sync to [Package Guard](/governance/cloud/endpoint-hub/package-guard).
+
+## Install
+
+<Steps>
+  <Step title="Create a Command">
+    In the JumpCloud Admin Console, create a Command and set **Run As** to `root`.
+  </Step>
+  <Step title="Attach the scripts">
+    Upload `lib_macos.sh` and `pmg_setup_install_macos.sh` from [`scripts/mdm/`](https://github.com/safedep/pmg/tree/main/scripts/mdm). You can optionally upload `config.yml` for a machine-wide config. If you do, set `cloud.enabled: true` in it. Set the **File Destination** to `/tmp/pmg-mdm/` for each file.
+  </Step>
+  <Step title="Set the timeout">
+    Set **Timeout After** to at least 900 seconds so a slow download is not killed mid-run.
+  </Step>
+  <Step title="Add Cloud variables">
+    Define the Command Variables `safedep_api_key` and `safedep_tenant_id`. Mark the API key as a Secret variable.
+  </Step>
+  <Step title="Set the Command body">
+    ```sh
+    #!/bin/sh
+    set -eu
+    cd /tmp/pmg-mdm
+    chmod +x pmg_setup_install_macos.sh
+    SAFEDEP_API_KEY={{safedep_api_key}} SAFEDEP_TENANT_ID={{safedep_tenant_id}} ./pmg_setup_install_macos.sh
+    cd / && rm -rf /tmp/pmg-mdm
+    ```
+  </Step>
+  <Step title="Assign and run">
+    Assign the Command to a device group and run it.
+  </Step>
+</Steps>
+
+## Uninstall
+
+<Steps>
+  <Step title="Create a second Command">
+    Set **Run As** to `root`. Upload `lib_macos.sh` and `pmg_uninstall_macos.sh` with **File Destination** `/tmp/pmg-mdm/`.
+  </Step>
+  <Step title="Set the Command body">
+    ```sh
+    #!/bin/sh
+    set -eu
+    cd /tmp/pmg-mdm
+    chmod +x pmg_uninstall_macos.sh
+    ./pmg_uninstall_macos.sh
+    cd / && rm -rf /tmp/pmg-mdm
+    ```
+  </Step>
+  <Step title="Assign and run">
+    Assign the Command to the same device group and run it. Do not run the install and uninstall Commands on the same devices at the same time.
+  </Step>
+</Steps>
+
+<CardGroup cols={2}>
+  <Card title="Other MDMs" icon="laptop" href="/package-security/pmg/mdm/overview">
+    Jamf, Intune, and the script layout.
+  </Card>
+  <Card title="MDM scripts README" icon="github" href="https://github.com/safedep/pmg/blob/main/scripts/mdm/README.md">
+    Source of truth in the PMG repo.
+  </Card>
+</CardGroup>

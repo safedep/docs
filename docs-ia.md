@@ -13,7 +13,7 @@ Seven tabs — solution tabs at the core, plus supporting tabs.
 | Tab | Purpose | Groups |
 |---|---|---|
 | **Get Started** | What is SafeDep, vocabulary, entry points | Introduction · Core Concepts |
-| **Package Security** | Block malicious packages at install time — on dev machines and in CI/CD — and scan any component on demand before use | Install-Time Package Blocking · On-Demand Package Scanning · CI/CD Package Blocking |
+| **Package Security** | Block malicious packages at install time — on dev machines and in CI/CD — and scan any component on demand before use | Install-Time Package Blocking · MDM · On-Demand Package Scanning · CI/CD Package Blocking |
 | **AI Agent Security** | Discover, audit, and control what AI agents access and run | AI Agent Observability · AI Coding Protection |
 | **Visibility & Governance** | Scan repos, SBOMs, and CI/CD for supply-chain risk; manage policy and org-wide cloud visibility | Repository Scanning · Bill of Materials · CI/CD & Platform Integrations · SafeDep Cloud (nests Endpoint Hub, Policy & Risk, Authentication) |
 | **Threat Intel** | Consume the malicious-package feed as an API: reports and campaigns. Subscription-gated (`FEATURE_THREAT_INTEL_FEED`) | Getting Started · Consuming the Feed · Reference |
@@ -56,7 +56,7 @@ Every structural decision derives from these rules. Full rationale in `docs-ia-p
 |---|---|---|
 | Defines a concept/term used across docs | Get Started | Core Concepts |
 | Onboards a new user / routes entry points | Get Started | Introduction (product quickstarts co-locate with their product) |
-| Covers malicious package blocking (install-time or CI/CD) | Package Security | pmg / CI/CD Package Blocking |
+| Covers malicious package blocking (install-time or CI/CD) | Package Security | pmg / MDM / CI/CD Package Blocking |
 | Covers evaluating a package/extension/repo before use (on-demand scanning) | Package Security | On-Demand Package Scanning |
 | Covers AI agent discovery, audit, or control | AI Agent Security | AI Agent Observability / AI Coding Protection |
 | Covers scanning repos, SBOMs, or CI/CD for supply-chain risk | Visibility & Governance | Repository Scanning / Bill of Materials / CI/CD |
@@ -137,6 +137,7 @@ Don't mix Diátaxis types within a single page.
 
 **Package Security** *(tab landing: `package-security/overview`)*
 - Install-Time Package Blocking: `package-security/pmg/overview` *(landing)*, `package-security/pmg/quickstart`, `package-security/pmg/system-install`
+- MDM: `package-security/pmg/mdm/overview` *(landing)*, `package-security/pmg/mdm/jamf`, `package-security/pmg/mdm/jumpcloud`, `package-security/pmg/mdm/intune`
 - On-Demand Package Scanning: `package-security/scan/overview` *(landing)*, `package-security/scan/quickstart`, `package-security/scan/automation`
 - CI/CD Package Blocking: `package-security/pmg/github-actions`, `package-security/jfrog-xray`
 
