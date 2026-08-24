@@ -15,18 +15,6 @@ MDM deploys enable [SafeDep Cloud](/governance/cloud/quickstart) sync so install
 
 ## Supported MDMs
 
-<CardGroup cols={3}>
-  <Card title="Jamf" icon="apple" href="/package-security/pmg/mdm/jamf">
-    Multi-file scripts. Pass Cloud credentials as script parameters.
-  </Card>
-  <Card title="JumpCloud" icon="cloud" href="/package-security/pmg/mdm/jumpcloud">
-    Multi-file scripts, attached to a Command that runs as root.
-  </Card>
-  <Card title="Intune" icon="microsoft" href="/package-security/pmg/mdm/intune">
-    Generate a standalone installer with Cloud credentials, then upload it.
-  </Card>
-</CardGroup>
-
 Mosyle, Kandji, and other MDMs that run a shell script as root on macOS use the same scripts. Follow [Jamf](/package-security/pmg/mdm/jamf) or [JumpCloud](/package-security/pmg/mdm/jumpcloud) when your MDM can ship more than one file. Follow [Intune](/package-security/pmg/mdm/intune) when it accepts one script per policy.
 
 ## Scripts
@@ -40,11 +28,16 @@ The MITM CA trust step (`pmg setup cert install`) cannot run through MDM. Adding
 
 You can optionally ship a `config.yml` next to the scripts (or pass `--config` when generating a standalone installer) for a machine-wide config. If you do, set `cloud.enabled: true` in it. A global config prevents the installer from changing that flag. See [Globally Managed Configuration](https://github.com/safedep/pmg/blob/main/docs/config.md#globally-managed-configuration).
 
-<CardGroup cols={2}>
-  <Card title="MDM scripts README" icon="github" href="https://github.com/safedep/pmg/blob/main/scripts/mdm/README.md">
-    Source of truth in the PMG repo.
+## Next steps
+
+<CardGroup cols={3}>
+  <Card title="Jamf" icon="apple" href="/package-security/pmg/mdm/jamf">
+    Multi-file scripts. Pass Cloud credentials as script parameters.
   </Card>
-  <Card title="PMG" icon="box" href="/package-security/pmg/overview">
-    How PMG blocks malicious packages at install time.
+  <Card title="JumpCloud" icon="cloud" href="/package-security/pmg/mdm/jumpcloud">
+    Multi-file scripts, attached to a Command that runs as root.
+  </Card>
+  <Card title="Intune" icon="microsoft" href="/package-security/pmg/mdm/intune">
+    Generate a standalone installer with Cloud credentials, then upload it.
   </Card>
 </CardGroup>
