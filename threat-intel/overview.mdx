@@ -3,7 +3,7 @@ title: "Threat Intel Feed"
 description: "A feed of malicious open-source packages, served as an incremental API stream of reports and campaigns."
 ---
 
-The SafeDep Threat Intel Feed is a stream of malicious open-source packages. SafeDep builds the feed from its malware analysis and serves it over an API. Each report names one malicious package. A report gives a verdict, its indicators, and the campaign it belongs to.
+The SafeDep Threat Intel Feed is a stream of malicious open-source packages. SafeDep builds the feed from its malware analysis and serves it over an API. Each report names one malicious package and gives a verdict, its indicators, and the campaign it belongs to.
 
 <Note>
 The Threat Intel Feed is a paid add-on. To enable it, [talk to a human](https://calendly.com/abhisek-safedep/30min).
@@ -16,7 +16,7 @@ The Threat Intel Feed is a paid add-on. To enable it, [talk to a human](https://
     One malicious package each, with verdict, confidence, affected versions, indicators, and campaign links.
   </Card>
   <Card title="Campaigns" icon="diagram-project" href="/threat-intel/campaigns">
-    Named groups of related reports that share an actor, indicators, technique.
+    Named groups of related reports that share an actor, a technique, or one coordinated intent.
   </Card>
 </CardGroup>
 
@@ -24,7 +24,7 @@ The Threat Intel Feed is a paid add-on. To enable it, [talk to a human](https://
 
 The feed is a [ConnectRPC](https://connectrpc.com) service on the SafeDep Cloud data plane at `https://api.safedep.io`. You can call it as plain JSON over HTTP, as gRPC, or as gRPC-Web. All three use one URL. Any HTTP client works, and you do not need generated code to start.
 
-The feed is built for incremental pulls. A report comes back only when it changes, for example a new verdict, new indicators, or a withdrawal. You fetch changes incrementally with a cursor and a timestamp.
+The feed is built for incremental pulls: the list endpoints re-serve a record whenever it changes (a new verdict, new indicators, or a withdrawal). You fetch changes with a cursor and a timestamp.
 
 ## Where to go next
 

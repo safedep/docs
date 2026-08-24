@@ -30,7 +30,7 @@ The feed runs on the SafeDep Cloud data plane. The data plane has a per-second r
 ## Versioning and compatibility
 
 - The service name carries its version: `safedep.services.threatintel.v1.ThreatIntelService`. A breaking change ships as a new version. `v1` stays stable.
-- Enums are **additive**. New values (a new `IndicatorType`, a new `Ecosystem`) can appear at any time. Treat an unknown enum value as a value you do not know yet. Decode it as the raw string. Do not fail.
+- Enums are **additive**. New values (a new `IndicatorType`, a new `Ecosystem`) can appear at any time. Decode unknown enum values as their raw string instead of failing.
 - A response can gain new fields over time. Ignore any field you do not know.
 
 ## Troubleshooting
@@ -39,7 +39,7 @@ The feed runs on the SafeDep Cloud data plane. The data plane has a per-second r
 |---|---|
 | `401 unauthenticated` | Missing or mistyped API key, or missing `X-Tenant-ID`. The key goes in `Authorization` with no `Bearer` prefix. |
 | `403 permission_denied` | Your account does not have Threat Intel Feed access. [Talk to a human](https://calendly.com/abhisek-safedep/30min) to enable it. |
-| `400 invalid_argument` on a filter | An `ecosystem`, `verdict`, or `period` value the API does not know. Use the exact enum names from the [schema reference](/threat-intel/schema). |
+| `400 invalid_argument` on a filter | An `ecosystem` or `verdict` value the API does not know. Use the exact enum names from the [schema reference](/threat-intel/schema). |
 | Empty `packageReports` with a `since` filter | `since` is a strict greater-than; nothing changed after that time. |
 | `429 resource_exhausted` | Rate limit. Back off and retry. |
 | A field you expected is missing | The API omits empty and default fields, for example no `verifiedAt` on a suspicious report. |
