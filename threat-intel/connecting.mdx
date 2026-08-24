@@ -44,7 +44,7 @@ These are the same data-plane conventions used across SafeDep. For the shared he
 - Field names are lowerCamelCase (`pageSize`, `reportId`, `publishedAt`).
 - Enum values are their string names (`ECOSYSTEM_NPM`, `THREAT_VERDICT_MALICIOUS`).
 - Timestamps are RFC 3339 UTC strings (`2026-08-01T00:00:00Z`).
-- The API omits empty and default-valued fields from responses. Treat a missing `withdrawn` as `false`, and a missing `iocs` as no indicators.
+- A missing `withdrawn` means `false`, and a missing `iocs` means no indicators.
 
 ## Set up your shell
 

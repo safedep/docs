@@ -5,7 +5,7 @@ description: "Error codes, rate limits, versioning and forward-compatibility, an
 
 ## Error codes
 
-The Connect protocol returns a non-2xx HTTP status and a JSON body `{"code": "...", "message": "..."}`.
+Errors come back as a non-2xx HTTP status with a JSON body `{"code": "...", "message": "..."}`.
 
 | Code | HTTP | When |
 |---|---|---|
@@ -13,7 +13,7 @@ The Connect protocol returns a non-2xx HTTP status and a JSON body `{"code": "..
 | `permission_denied` | 403 | Your account does not have Threat Intel Feed access. |
 | `not_found` | 404 | Unknown report id, or a hidden or unknown campaign. |
 | `invalid_argument` | 400 | Unknown `ecosystem` or `verdict` filter value, or a missing required id. |
-| `resource_exhausted` | 429 | Rate limit exceeded. Back off and retry. |
+| `resource_exhausted` | 429 | Rate limit exceeded. Retry after a short wait. |
 | `unimplemented` | 501 | An RPC not available yet (`ListIndicators`, `LookupIndicator`). |
 | `internal` | 500 | An unexpected server-side failure. Retry, and contact SafeDep if it persists. |
 
@@ -25,7 +25,7 @@ Example error body:
 
 ## Rate limits
 
-The feed runs on the SafeDep Cloud data plane. The data plane has a per-second rate limit and no hourly quota: up to **500 requests per second per API key**. When you exceed the limit, the API returns `resource_exhausted` (HTTP 429). Back off and retry. These limits can change. See the [API reference](/reference/api-introduction#rate-limiting).
+The feed runs on the SafeDep Cloud data plane. The data plane has a per-second rate limit and no hourly quota: up to **500 requests per second per API key**. When you exceed the limit, the API returns `resource_exhausted` (HTTP 429). Retry after a short wait. These limits can change. See the [API reference](/reference/api-introduction#rate-limiting).
 
 ## Versioning and compatibility
 
@@ -41,5 +41,5 @@ The feed runs on the SafeDep Cloud data plane. The data plane has a per-second r
 | `403 permission_denied` | Your account does not have Threat Intel Feed access. [Talk to a human](https://calendly.com/abhisek-safedep/30min) to enable it. |
 | `400 invalid_argument` on a filter | An `ecosystem` or `verdict` value the API does not know. Use the exact enum names from the [schema reference](/threat-intel/schema). |
 | Empty `packageReports` with a `since` filter | `since` is a strict greater-than; nothing changed after that time. |
-| `429 resource_exhausted` | Rate limit. Back off and retry. |
+| `429 resource_exhausted` | Rate limit. Retry after a short wait. |
 | A field you expected is missing | The API omits empty and default fields, for example no `verifiedAt` on a suspicious report. |
