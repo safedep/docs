@@ -16,6 +16,19 @@ The relevant protobuf packages are:
 | `safedep.messages.package.v1` | The `Ecosystem` enum. |
 | `safedep.messages.controltower.v1` | `PaginationRequest` and `PaginationResponse`. |
 
+## Get an SDK for your language
+
+buf.build generates a typed SDK from the SafeDep schema for any language it supports. Pick yours on the [buf.build SDK page](https://buf.build/safedep/api/sdks/main%3Aprotobuf), then follow the same pattern as the Go and TypeScript examples below.
+
+<CardGroup cols={3}>
+  <Card title="Go" icon="golang" href="https://buf.build/safedep/api/sdks/main%3Aprotobuf" />
+  <Card title="TypeScript" icon="js" href="https://buf.build/safedep/api/sdks/main%3Aprotobuf" />
+  <Card title="Python" icon="python" href="https://buf.build/safedep/api/sdks/main%3Aprotobuf" />
+  <Card title="Java" icon="java" href="https://buf.build/safedep/api/sdks/main%3Aprotobuf" />
+  <Card title="Rust" icon="rust" href="https://buf.build/safedep/api/sdks/main%3Aprotobuf" />
+  <Card title="More languages" icon="ellipsis" href="https://buf.build/safedep/api/sdks/main%3Aprotobuf" />
+</CardGroup>
+
 ## Go
 
 SafeDep publishes prebuilt modules on the [Buf](https://buf.build) Go proxy, so you can import them without running codegen:
@@ -95,5 +108,3 @@ const client = createClient(ThreatIntelService, transport);
 const res = await client.listPackageReports({ pagination: { pageSize: 5 } });
 for (const r of res.packageReports) console.log(r.reportId, r.verdict, r.title);
 ```
-
-For other languages, see the [buf.build SDK docs for `safedep/api`](https://buf.build/safedep/api/sdks/main%3Aprotobuf).
