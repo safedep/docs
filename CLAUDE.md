@@ -128,6 +128,19 @@ These four rules prevent the mistakes that recur most. They are not optional.
 
 ## Documentation Writing Guidelines
 
+### Plain language (ASD-STE100)
+
+All prose must follow **[ASD-STE100 Simplified Technical English](https://www.asd-ste100.org/)** rules. These docs serve human readers and AI agents; STE makes sentences unambiguous for both.
+
+- **Short sentences.** One instruction per sentence. One sentence per numbered step. Keep most sentences under 25 words.
+- **Active voice, imperative mood for procedures.** "Run the script as root", not "the script should be run as root".
+- **Present tense.** "PMG blocks the package", not "PMG will block".
+- **One word, one meaning.** Use the same verb for the same action everywhere (install, run, set, remove). Do not use metaphorical or figurative verbs for technical actions (avoid "land", "flip", "drop", "spin up").
+- **Simple approved words.** Prefer: use (not utilize), set (not configure unless a config file), start (not initiate), stop (not terminate), before (not prior to), if (not in the event of).
+- **No hedging or filler.** Cut "basically", "simply", "just", "it is worth noting".
+- **Noun consistency.** Use product and object names exactly as they appear in the product (PMG, SafeDep Cloud, Package Guard). Do not vary them for style.
+- **Descriptive linking.** Link text names the destination ("MDM scripts README"), never "click here" or "this page".
+
 All content must follow the **[Diátaxis framework](https://diataxis.fr/)** principles. Before creating or editing content:
 
 1. **Identify the content type** - Determine which quadrant your content belongs to:
