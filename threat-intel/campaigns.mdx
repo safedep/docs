@@ -3,7 +3,7 @@ title: "Campaigns"
 description: "List campaigns, fetch one campaign's details, and page through its member package reports. Only active campaigns are served."
 ---
 
-A **campaign** groups related reports that share an actor, a technique, or one coordinated intent. It has its own indicators, counts, and optional actor names. See the full shape in the [schema reference](/threat-intel/schema#campaign).
+A **campaign** groups related reports that share an actor, a technique, or one coordinated intent. It has its own indicators, counts, and optional actor names. See the full shape in the [schema reference](/threat-intel/schema).
 
 <Note>
 The feed serves only **active** campaigns. Once SafeDep archives or withdraws a campaign, it drops out of the feed.
@@ -15,7 +15,7 @@ The usual flow has three steps. Use `ListCampaigns` to discover. Use `GetCampaig
 
 A paginated list of active campaigns. Each one has a member count (`packageCount`), an indicator count (`iocCount`), and its own indicators.
 
-**Request:** `pagination`, and optional `filters.since` (a strict greater-than on `lastActivityAt`, for incremental pull). **Response:** `campaigns` (an array of [`Campaign`](/threat-intel/schema#campaign)) and `pagination`.
+**Request:** `pagination`, and optional `filters.since` (a strict greater-than on `lastActivityAt`, for incremental pull). **Response:** `campaigns` (an array of [`Campaign`](/threat-intel/schema)) and `pagination`.
 
 ```bash
 curl -sS "$TI/ListCampaigns" \
@@ -58,7 +58,7 @@ curl -sS "$TI/ListCampaigns" \
 
 Fetch one active campaign's details. `packageCount` is the member count. The member reports come from `GetCampaignPackageReports`.
 
-**Request:** `campaignId` (string). **Response:** `campaign` (a [`Campaign`](/threat-intel/schema#campaign)). A hidden or unknown id returns `not_found`.
+**Request:** `campaignId` (string). **Response:** `campaign` (a [`Campaign`](/threat-intel/schema)). A hidden or unknown id returns `not_found`.
 
 ```bash
 curl -sS "$TI/GetCampaign" \
@@ -72,7 +72,7 @@ curl -sS "$TI/GetCampaign" \
 
 The paginated member reports of one campaign. They use the same cursor and shape as `ListPackageReports`.
 
-**Request:** `campaignId` (string) and `pagination`. **Response:** `packageReports` (an array of [`PackageReport`](/threat-intel/schema#packagereport)) and `pagination`. A hidden or unknown campaign returns `not_found` rather than an empty page.
+**Request:** `campaignId` (string) and `pagination`. **Response:** `packageReports` (an array of [`PackageReport`](/threat-intel/schema)) and `pagination`. A hidden or unknown campaign returns `not_found` rather than an empty page.
 
 ```bash
 curl -sS "$TI/GetCampaignPackageReports" \

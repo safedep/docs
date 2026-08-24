@@ -3,7 +3,7 @@ title: "Package reports"
 description: "List and fetch malicious package reports, with filters by ecosystem, verdict, time, and withdrawal."
 ---
 
-A **package report** is one malicious package with its verdict, affected versions, indicators, and campaign links. See the full shape in the [schema reference](/threat-intel/schema#packagereport).
+A **package report** is one malicious package with its verdict, affected versions, indicators, and campaign links. See the full shape in the [schema reference](/threat-intel/schema).
 
 ## ListPackageReports
 
@@ -15,7 +15,7 @@ A paginated feed of reports. The default order is ascending (oldest change first
 |---|---|---|
 | `pagination` | object | See [Pagination & sync](/threat-intel/pagination). |
 | `filters.since` | timestamp | Only reports with `updatedAt` strictly after this. |
-| `filters.ecosystem` | enum | One [`Ecosystem`](/threat-intel/schema#ecosystem) value. |
+| `filters.ecosystem` | enum | One [`Ecosystem`](/threat-intel/schema) value. |
 | `filters.verdict` | enum | `THREAT_VERDICT_SUSPICIOUS` or `THREAT_VERDICT_MALICIOUS`. |
 | `filters.withdrawn` | bool | Omit to include withdrawn reports (default); `false` excludes them; `true` returns only them. |
 
@@ -25,7 +25,7 @@ All filters combine with AND. The feed includes withdrawn reports by default, so
 The `ecosystem` and `verdict` filters **fail closed**. An unknown or unspecified value is an `invalid_argument` error, not a dropped filter. Use the exact enum names from the [schema reference](/threat-intel/schema).
 </Warning>
 
-**Response:** `packageReports` (an array of [`PackageReport`](/threat-intel/schema#packagereport)) and `pagination`.
+**Response:** `packageReports` (an array of [`PackageReport`](/threat-intel/schema)) and `pagination`.
 
 ```bash
 # first page, 5 reports, newest first
@@ -61,7 +61,7 @@ curl -sS "$TI/ListPackageReports" \
 
 Fetch one report by its permanent id, with its package, indicators, and campaign links.
 
-**Request:** `reportId` (string). **Response:** `packageReport` (a [`PackageReport`](/threat-intel/schema#packagereport)). An unknown id returns `not_found`.
+**Request:** `reportId` (string). **Response:** `packageReport` (a [`PackageReport`](/threat-intel/schema)). An unknown id returns `not_found`.
 
 ```bash
 curl -sS "$TI/GetPackageReport" \

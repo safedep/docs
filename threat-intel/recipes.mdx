@@ -7,7 +7,7 @@ Copy-paste recipes that combine the RPCs. Each one uses the environment variable
 
 ## Mirror the whole feed, then keep it current
 
-First, backfill: page ascending from the start until you reach the end. Then switch to incremental pulls, keyed off the highest `updatedAt` you stored.
+This keeps a full local copy of the feed and keeps it current. Two phases: first backfill every report by paging from the start, then on each later run pull only what changed since the newest `updatedAt` you stored.
 
 ```bash
 # 1. Full backfill: page ascending until nextPageToken is empty.
