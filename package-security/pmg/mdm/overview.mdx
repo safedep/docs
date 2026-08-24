@@ -11,17 +11,19 @@ Install or remove PMG on macOS fleets through your MDM. The scripts install the 
 
 The scripts are macOS only and should run as root (the usual MDM default). For Linux images and shared VMs, use [system install](/package-security/pmg/system-install).
 
+MDM deploys enable [SafeDep Cloud](/governance/cloud/quickstart) sync so installs show up in [Package Guard](/governance/cloud/endpoint-hub/package-guard). You need an API key and tenant ID from [app.safedep.io/settings/api-keys](https://app.safedep.io/settings/api-keys). Credentials are stored for the logged-in user, so use a recurring policy to cover people who sign in later.
+
 ## Supported MDMs
 
 <CardGroup cols={3}>
   <Card title="Jamf" icon="apple" href="/package-security/pmg/mdm/jamf">
-    Multi-file scripts. Pass cloud credentials as script parameters.
+    Multi-file scripts. Pass Cloud credentials as script parameters.
   </Card>
   <Card title="JumpCloud" icon="cloud" href="/package-security/pmg/mdm/jumpcloud">
     Multi-file scripts, attached to a Command that runs as root.
   </Card>
   <Card title="Intune" icon="microsoft" href="/package-security/pmg/mdm/intune">
-    One standalone script per policy.
+    Generate a standalone installer with Cloud credentials, then upload it.
   </Card>
 </CardGroup>
 
@@ -30,17 +32,11 @@ Mosyle, Kandji, and other MDMs that run a shell script as root on macOS use the 
 ## Scripts
 
 - **Multi-file** (Jamf, JumpCloud): deploy `lib_macos.sh` with `pmg_setup_install_macos.sh` or `pmg_uninstall_macos.sh`. The entry scripts source `lib_macos.sh` at runtime and fail without it.
-- **Standalone** (Intune): use the scripts in [`standalone/`](https://github.com/safedep/pmg/tree/main/scripts/mdm/standalone).
+- **Standalone** (Intune): generate an installer with Cloud credentials embedded, then upload that one script.
 
 Do not assign an install policy and an uninstall policy to the same devices at the same time.
 
-## Config and cloud sync
-
-Add a `config.yml` next to the scripts (or embed it when you generate a standalone installer) to set a machine-wide config. While that file is present, PMG ignores each user's own config. See [Globally Managed Configuration](https://github.com/safedep/pmg/blob/main/docs/config.md#globally-managed-configuration) for lockdown and override behavior.
-
-<Note>
-  Pass `SAFEDEP_API_KEY` and `SAFEDEP_TENANT_ID` to sync installs to [Package Guard](/governance/cloud/endpoint-hub/package-guard). Local blocking works without an account. Credentials are stored for the logged-in user, so use a recurring policy to cover people who sign in later.
-</Note>
+You can optionally ship a `config.yml` next to the scripts (or pass `--config` when generating a standalone installer) for a machine-wide config. See [Globally Managed Configuration](https://github.com/safedep/pmg/blob/main/docs/config.md#globally-managed-configuration).
 
 <CardGroup cols={2}>
   <Card title="MDM scripts README" icon="github" href="https://github.com/safedep/pmg/blob/main/scripts/mdm/README.md">

@@ -5,11 +5,13 @@ description: "Deploy PMG to macOS devices with a Jamf script payload or package.
 
 Deploy PMG with a Jamf policy that runs the [multi-file MDM scripts](https://github.com/safedep/pmg/tree/main/scripts/mdm) as root. Ship `lib_macos.sh` with the install or uninstall script.
 
+You need a SafeDep Cloud API key and tenant ID from [app.safedep.io/settings/api-keys](https://app.safedep.io/settings/api-keys). Installs sync to [Package Guard](/governance/cloud/endpoint-hub/package-guard).
+
 ## Install
 
-1. Download `lib_macos.sh` and `pmg_setup_install_macos.sh` from [`scripts/mdm/`](https://github.com/safedep/pmg/tree/main/scripts/mdm). Add a sibling `config.yml` if you want a machine-wide config.
+1. Download `lib_macos.sh` and `pmg_setup_install_macos.sh` from [`scripts/mdm/`](https://github.com/safedep/pmg/tree/main/scripts/mdm). You can optionally add a sibling `config.yml` for a machine-wide config.
 2. Upload the folder as a script payload, or as a package that drops the files together at a fixed path.
-3. Create a policy that runs as root and invokes the installer. Jamf script parameters `$4` and `$5` carry the optional Cloud credentials:
+3. Create a policy that runs as root and invokes the installer. Pass the Cloud credentials as Jamf script parameters `$4` and `$5`:
 
    ```sh
    #!/bin/sh
@@ -17,12 +19,8 @@ Deploy PMG with a Jamf policy that runs the [multi-file MDM scripts](https://git
    SAFEDEP_API_KEY="$4" SAFEDEP_TENANT_ID="$5" ./pmg_setup_install_macos.sh
    ```
 
-   Drop the two environment variables if you are not enabling cloud sync. Renumber `$4` and `$5` if your parameter slots differ.
+   Renumber `$4` and `$5` if your parameter slots differ.
 4. Assign the policy to a computer group and run it.
-
-<Note>
-  Cloud credentials sync installs to [Package Guard](/governance/cloud/endpoint-hub/package-guard). Skip `$4` and `$5` if you only want local blocking.
-</Note>
 
 ## Uninstall
 
