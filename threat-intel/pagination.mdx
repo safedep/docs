@@ -1,0 +1,87 @@
+---
+title: "Pagination & sync"
+description: "Cursor pagination for every list RPC, and the incremental-pull pattern that keeps a local mirror of the Threat Intel Feed in sync."
+---
+
+Every list RPC uses the same cursor pagination, plus a `since` filter for incremental sync. Use `pageSize` and `pageToken` to page through results, `sortOrder` to pick the direction, and `since` to fetch only what changed after a timestamp.
+
+## Cursor pagination
+
+Pass a `pagination` object in the request:
+
+| Field | Type | Meaning |
+|---|---|---|
+| `pageSize` | int | Rows per page. Capped at 100 for reports and campaigns. |
+| `pageToken` | string | The `nextPageToken` from the previous response. Omit for the first page. |
+| `sortOrder` | enum | `SORT_ORDER_ASCENDING` (default) or `SORT_ORDER_DESCENDING`. |
+
+Quick uses:
+
+- `pageSize`: `"pageSize": 100` for a bulk backfill; a smaller value for interactive browsing.
+- `sortOrder`: `"sortOrder": "SORT_ORDER_DESCENDING"` to see the newest reports first. Keep the default ascending for sync.
+- `pageToken`: pass the previous response's `nextPageToken` to get the next page.
+- `since` (a filter, not part of `pagination`): `"filters": {"since": "2026-08-01T00:00:00Z"}` to fetch only what changed after that time.
+
+The response carries the cursor for the next page:
+
+| Field | Type | Meaning |
+|---|---|---|
+| `nextPageToken` | string | Cursor for the next page. Empty when there are no more rows. |
+
+Repeat until `nextPageToken` is empty. Pass it back as `pageToken` each time:
+
+```bash
+curl -sS "$TI/ListPackageReports" \
+  -H "Content-Type: application/json" \
+  -H "Authorization: $SAFEDEP_API_KEY" \
+  -H "X-Tenant-ID: $SAFEDEP_TENANT_ID" \
+  -d '{"pagination":{"pageSize":100}}'
+
+# ... read nextPageToken, then:
+curl -sS "$TI/ListPackageReports" \
+  -H "Content-Type: application/json" \
+  -H "Authorization: $SAFEDEP_API_KEY" \
+  -H "X-Tenant-ID: $SAFEDEP_TENANT_ID" \
+  -d '{"pagination":{"pageSize":100,"pageToken":"<nextPageToken>"}}'
+```
+
+## Ordering
+
+A composite change cursor sets the order. You choose the direction:
+
+- **Reports** use the order `(updatedAt, reportId)`. Ascending (oldest change first) is the default, and incremental pulls need it. For newest-first browsing, pass `SORT_ORDER_DESCENDING`.
+- **Campaigns** use the order `(lastActivityAt, campaignId)`, with the same directions.
+
+## Incremental pull: keep a mirror in sync
+
+A report re-surfaces when its verdict, indicators, or campaign links change; a campaign re-surfaces when it changes. The cursor moves only on a real change, never on a no-op refresh.
+
+To pull only what changed since your last sync:
+
+<Steps>
+<Step title="Keep the default ascending order">
+Ascending order goes from the oldest change to the newest. This gives you a durable watermark.
+</Step>
+<Step title="Track your high-water mark">
+Store the highest `updatedAt` (for reports) or `lastActivityAt` (for campaigns) you have ingested.
+</Step>
+<Step title="Pass it as the since filter on the next run">
+`since` is a strict greater-than. You never re-fetch a row at that exact timestamp.
+
+```bash
+curl -sS "$TI/ListPackageReports" \
+  -H "Content-Type: application/json" \
+  -H "Authorization: $SAFEDEP_API_KEY" \
+  -H "X-Tenant-ID: $SAFEDEP_TENANT_ID" \
+  -d '{"pagination":{"pageSize":100},"filters":{"since":"<last-updatedAt>"}}'
+```
+</Step>
+</Steps>
+
+You may see the same report more than once. Store reports by `reportId` and upsert, so a repeat just overwrites. A withdrawal is a change too: when `withdrawn: true` arrives, remove that report on your side.
+
+<Tip>
+Use `since` to start or restart a pull from a known watermark. Use `pageToken` to continue within one run. A full backfill is the first run with no `since`.
+</Tip>
+
+See [Recipes](/threat-intel/recipes) for a complete mirror-and-sync script.

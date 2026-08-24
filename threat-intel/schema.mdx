@@ -1,0 +1,26 @@
+---
+title: "Schema reference"
+description: "JSON wire conventions for the Threat Intel Feed, and where the authoritative message and enum definitions live."
+---
+
+## JSON conventions
+
+- Field names are lowerCamelCase (`pageSize`, `reportId`, `publishedAt`).
+- Enum values are their string names (`ECOSYSTEM_NPM`, `THREAT_VERDICT_MALICIOUS`).
+- Timestamps are RFC 3339 UTC strings (`2026-08-01T00:00:00Z`).
+- The API omits empty and default-valued fields from responses. Treat a missing `withdrawn` as `false`, and a missing `iocs` as no indicators.
+
+## Messages and enums
+
+The authoritative, always-current definitions of every message, field, and enum live in the SafeDep schema on Buf: [buf.build/safedep/api](https://buf.build/safedep/api). Read them there rather than a hand-copied table, which drifts as the API evolves. The relevant packages:
+
+| Package | Holds |
+|---|---|
+| `safedep.services.threatintel.v1` | `ThreatIntelService` and every request and response message. |
+| `safedep.messages.threatintel.v1` | `PackageReport`, `Campaign`, `IndicatorOfCompromise`, `ThreatActor`, and the threat enums (`ThreatVerdict`, `ThreatConfidence`, `CampaignStatus`, `IndicatorType`). |
+| `safedep.messages.package.v1` | The `Ecosystem` enum. |
+| `safedep.messages.controltower.v1` | `PaginationRequest` and `PaginationResponse`. |
+
+To get typed messages and enums for your language, see [SDKs](/threat-intel/sdks).
+
+Enums are additive: a new `IndicatorType` or `Ecosystem` value can appear at any time. Decode an unknown value as its raw string rather than failing. See [Versioning and compatibility](/threat-intel/errors#versioning-and-compatibility).

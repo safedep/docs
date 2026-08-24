@@ -1,0 +1,46 @@
+---
+title: "Concepts"
+description: "The Threat Intel Feed data model: reports, verdicts, confidence, withdrawal, indicators, campaigns, and the change cursor."
+---
+
+## Report
+
+A **package report** is the feed's record of one malicious package. It carries the verdict, the affected versions, the indicators, and any campaign the package belongs to. A group of related packages is a [campaign](#campaign), not a report.
+
+Each report has a permanent `reportId`. SafeDep updates the same report as it learns more (a verdict upgrade, new indicators, or a withdrawal) and never deletes it, so its `reportId` tracks one threat over time.
+
+## Verdict and confidence
+
+The **verdict** is what SafeDep believes about the package. The **confidence** is who decided it.
+
+| Verdict | Confidence | Meaning |
+|---|---|---|
+| `THREAT_VERDICT_SUSPICIOUS` | `THREAT_CONFIDENCE_AUTOMATED` | Automated analysis concluded the package is malware, not yet confirmed by a human. |
+| `THREAT_VERDICT_MALICIOUS` | `THREAT_CONFIDENCE_HUMAN_VERIFIED` | A human reviewer verified the malware conclusion. `verifiedAt` is set. |
+
+A suspicious report can become malicious later. This is a change, so the report comes back on the [change feed](#change-feed-and-cursor).
+
+## Withdrawn
+
+SafeDep can retract a report, for example a false positive or a report dropped after review. The field `withdrawn: true` marks it. SafeDep does not delete a withdrawn report, so you see the retraction and can remove it on your side too.
+
+## Indicator of compromise
+
+An **indicator** (IOC) is a typed observable on a report or a campaign. For example, a command-and-control domain, a file hash, a maintainer handle, or a wallet address. Its identity is the pair `(type, value)`. See the [schema reference](/threat-intel/schema) for the `IndicatorType` values.
+
+Today, indicators travel inside each report (`iocs`) and each campaign. A direct pull of indicators is planned but not available yet.
+
+## Campaign
+
+A **campaign** is a named group of related reports that share an actor, a technique, or one coordinated intent. SafeDep researchers curate campaigns, each with its own indicators, counts, and actor attribution.
+
+The feed serves only **active** campaigns. Once a campaign is archived or withdrawn, it drops out of the feed.
+
+## Change feed and cursor
+
+Reports and campaigns come back when they change. A change cursor orders them. This is how you keep a local mirror in sync.
+
+- A **report** comes back when its verdict, indicators, or campaign links change. Its cursor is `(updatedAt, reportId)`. `updatedAt` moves only on a real change, never on a no-op refresh.
+- A **campaign** comes back when it changes, for example when a member report is added or removed. Its cursor is `(lastActivityAt, campaignId)`.
+
+Keep the default ascending order and store the highest cursor value you have seen; that is your at-least-once change stream. Process a report again each time it returns, keyed by `reportId`. See [Pagination & sync](/threat-intel/pagination).

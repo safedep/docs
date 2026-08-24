@@ -1,0 +1,44 @@
+---
+title: "Errors & limits"
+description: "Error codes, rate limits, versioning and forward-compatibility, and troubleshooting for the Threat Intel Feed API."
+---
+
+## Error codes
+
+Errors come back as a non-2xx HTTP status with a JSON body `{"code": "...", "message": "..."}`.
+
+| Code | HTTP | When |
+|---|---|---|
+| `unauthenticated` | 401 | Missing or bad API key, or missing tenant. |
+| `permission_denied` | 403 | Your account does not have Threat Intel Feed access. |
+| `not_found` | 404 | Unknown report id, or a hidden or unknown campaign. |
+| `invalid_argument` | 400 | Unknown `ecosystem` or `verdict` filter value, or a missing required id. |
+| `resource_exhausted` | 429 | Rate limit exceeded. Retry after a short wait. |
+| `unimplemented` | 501 | An RPC not available yet (`ListIndicators`, `LookupIndicator`). |
+| `internal` | 500 | An unexpected server-side failure. Retry, and contact SafeDep if it persists. |
+
+Example error body:
+
+```json
+{"code": "permission_denied", "message": "not authorized for the Threat Intel Feed"}
+```
+
+## Rate limits
+
+The feed runs on the SafeDep Cloud data plane. The data plane has a per-second rate limit and no hourly quota: up to **500 requests per second per API key**. When you exceed the limit, the API returns `resource_exhausted` (HTTP 429). Retry after a short wait. These limits can change. See the [API reference](/reference/api-introduction#rate-limiting).
+
+## Versioning and compatibility
+
+- The service name carries its version: `safedep.services.threatintel.v1.ThreatIntelService`. A breaking change ships as a new version. `v1` stays stable.
+- Enums are **additive**. New values (a new `IndicatorType`, a new `Ecosystem`) can appear at any time. Decode unknown enum values as their raw string instead of failing.
+
+## Troubleshooting
+
+| Symptom | Likely cause |
+|---|---|
+| `401 unauthenticated` | Missing or mistyped API key, or missing `X-Tenant-ID`. The key goes in `Authorization` as-is, with no `Bearer` prefix. |
+| `403 permission_denied` | Your account does not have Threat Intel Feed access. [Talk to a human](https://calendly.com/abhisek-safedep/30min) to enable it. |
+| `400 invalid_argument` on a filter | An `ecosystem` or `verdict` value the API does not know. Use the exact enum names from the [schema reference](/threat-intel/schema). |
+| Empty `packageReports` with a `since` filter | `since` is a strict greater-than; nothing changed after that time. |
+| `429 resource_exhausted` | Rate limit. Retry after a short wait. |
+| A field you expected is missing | The API omits empty and default fields, for example no `verifiedAt` on a suspicious report. |

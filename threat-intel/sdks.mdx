@@ -1,0 +1,110 @@
+---
+title: "SDKs"
+description: "Generate a typed Threat Intel Feed client from the SafeDep protobuf schema, with Go and TypeScript examples."
+---
+
+You do not need generated code to call the feed. The Connect protocol is plain JSON over HTTP, as the `curl` examples show. Generate an SDK when you want typed messages and a client stub.
+
+SafeDep publishes the canonical schema at [buf.build/safedep/api](https://buf.build/safedep/api). The registry also generates SDKs for supported languages.
+
+The relevant protobuf packages are:
+
+| Package | Holds |
+|---|---|
+| `safedep.services.threatintel.v1` | `ThreatIntelService` and every request/response message. |
+| `safedep.messages.threatintel.v1` | `PackageReport`, `Campaign`, `IndicatorOfCompromise`, `ThreatActor`, and the enums. |
+| `safedep.messages.package.v1` | The `Ecosystem` enum. |
+| `safedep.messages.controltower.v1` | `PaginationRequest` and `PaginationResponse`. |
+
+## Get an SDK for your language
+
+buf.build generates a typed SDK from the SafeDep schema for any language it supports. Pick yours on the [buf.build SDK page](https://buf.build/safedep/api/sdks/main%3Aprotobuf), then follow the same pattern as the Go and TypeScript examples below.
+
+<CardGroup cols={3}>
+  <Card title="Go" icon="golang" color="#00ADD8" href="https://buf.build/safedep/api/sdks/main%3Aprotobuf" />
+  <Card title="TypeScript" icon="js" color="#3178C6" href="https://buf.build/safedep/api/sdks/main%3Aprotobuf" />
+  <Card title="Python" icon="python" color="#3776AB" href="https://buf.build/safedep/api/sdks/main%3Aprotobuf" />
+  <Card title="Java" icon="java" color="#E76F00" href="https://buf.build/safedep/api/sdks/main%3Aprotobuf" />
+  <Card title="Rust" icon="rust" color="#CE422B" href="https://buf.build/safedep/api/sdks/main%3Aprotobuf" />
+  <Card title="More languages" icon="ellipsis" href="https://buf.build/safedep/api/sdks/main%3Aprotobuf" />
+</CardGroup>
+
+## Go
+
+SafeDep publishes prebuilt modules on the [Buf](https://buf.build) Go proxy, so you can import them without running codegen:
+
+```go
+package main
+
+import (
+	"context"
+	"fmt"
+	"net/http"
+
+	"connectrpc.com/connect"
+	threatintelv1connect "buf.build/gen/go/safedep/api/connectrpc/go/safedep/services/threatintel/v1/threatintelv1connect"
+	threatintelv1 "buf.build/gen/go/safedep/api/protocolbuffers/go/safedep/services/threatintel/v1"
+	controltowerv1 "buf.build/gen/go/safedep/api/protocolbuffers/go/safedep/messages/controltower/v1"
+)
+
+// auth adds the API key and tenant to every call.
+func auth(key, tenant string) connect.UnaryInterceptorFunc {
+	return func(next connect.UnaryFunc) connect.UnaryFunc {
+		return func(ctx context.Context, req connect.AnyRequest) (connect.AnyResponse, error) {
+			req.Header().Set("Authorization", key)
+			req.Header().Set("X-Tenant-ID", tenant)
+			return next(ctx, req)
+		}
+	}
+}
+
+func main() {
+	client := threatintelv1connect.NewThreatIntelServiceClient(
+		http.DefaultClient,
+		"https://api.safedep.io",
+		connect.WithInterceptors(auth("<api-key>", "your-company.safedep.io")),
+	)
+
+	req := connect.NewRequest(&threatintelv1.ListPackageReportsRequest{
+		Pagination: &controltowerv1.PaginationRequest{PageSize: 5},
+	})
+
+	resp, err := client.ListPackageReports(context.Background(), req)
+	if err != nil {
+		panic(err)
+	}
+	for _, r := range resp.Msg.GetPackageReports() {
+		fmt.Printf("%s %s %s\n", r.GetReportId(), r.GetVerdict(), r.GetTitle())
+	}
+}
+```
+
+## TypeScript
+
+Install the prebuilt SDK from the Buf npm registry ([bufbuild/es](https://buf.build/gen/doc/typescript/safedep/api/bufbuild/es)), plus a Connect transport:
+
+```bash
+npm config set @buf:registry https://buf.build/gen/npm/v1/
+npm install @buf/safedep_api.bufbuild_es @connectrpc/connect @connectrpc/connect-web
+```
+
+```ts
+import { createClient } from "@connectrpc/connect";
+import { createConnectTransport } from "@connectrpc/connect-web";
+import { ThreatIntelService } from "@buf/safedep_api.bufbuild_es/safedep/services/threatintel/v1/threat_intel_pb.js";
+
+const transport = createConnectTransport({
+  baseUrl: "https://api.safedep.io",
+  interceptors: [
+    (next) => (req) => {
+      req.header.set("Authorization", "<api-key>");
+      req.header.set("X-Tenant-ID", "your-company.safedep.io");
+      return next(req);
+    },
+  ],
+});
+
+const client = createClient(ThreatIntelService, transport);
+const res = await client.listPackageReports({ pagination: { pageSize: 5 } });
+for (const r of res.packageReports) console.log(r.reportId, r.verdict, r.title);
+```

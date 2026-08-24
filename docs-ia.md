@@ -8,7 +8,7 @@
 
 ## 1. The structure
 
-Six tabs — three solution tabs at the core, plus supporting tabs.
+Seven tabs — solution tabs at the core, plus supporting tabs.
 
 | Tab | Purpose | Groups |
 |---|---|---|
@@ -16,6 +16,7 @@ Six tabs — three solution tabs at the core, plus supporting tabs.
 | **Package Security** | Block malicious packages at install time — on dev machines and in CI/CD — and scan any component on demand before use | Install-Time Package Blocking · MDM · On-Demand Package Scanning · CI/CD Package Blocking |
 | **AI Agent Security** | Discover, audit, and control what AI agents access and run | AI Agent Observability · AI Coding Protection |
 | **Visibility & Governance** | Scan repos, SBOMs, and CI/CD for supply-chain risk; manage policy and org-wide cloud visibility | Repository Scanning · Bill of Materials · CI/CD & Platform Integrations · SafeDep Cloud (nests Endpoint Hub, Policy & Risk, Authentication) |
+| **Threat Intel** | Consume the malicious-package feed as an API: reports and campaigns. Subscription-gated (`FEATURE_THREAT_INTEL_FEED`) | Getting Started · Consuming the Feed · Reference |
 | **Reference** | Exact syntax, flags, API specs — no explanation | Query & Policy · API & Automation |
 | **Community & Support** | Community resources, FAQ | Community · Support |
 
@@ -60,6 +61,7 @@ Every structural decision derives from these rules. Full rationale in `docs-ia-p
 | Covers AI agent discovery, audit, or control | AI Agent Security | AI Agent Observability / AI Coding Protection |
 | Covers scanning repos, SBOMs, or CI/CD for supply-chain risk | Visibility & Governance | Repository Scanning / Bill of Materials / CI/CD |
 | Covers cloud policy, endpoint inventory, or org-wide access | Visibility & Governance | SafeDep Cloud / Endpoint Hub / Policy & Risk |
+| Covers consuming the malicious-package feed (reports, campaigns, feed API) | Threat Intel | Getting Started / Consuming the Feed / Reference |
 | Is pure lookup (syntax, flags, API) | Reference | vet Query & Policy / API & Automation |
 | Is community/support | Community & Support | Community / Support |
 
@@ -82,6 +84,7 @@ Legacy paths (`vet/`, `pmg/`, `xbom/`, `cloud/`, `apps/`, `scan/`) are **grandfa
 | `package-security/` | Package Security |
 | `ai-security/` | AI Agent Security |
 | `governance/` | Visibility & Governance |
+| `threat-intel/` | Threat Intel |
 | `reference/` | Reference |
 
 Path renames require a redirect in `docs.json`: `{ "source": "/old", "destination": "/new" }`. Verify with `node_modules/.bin/mintlify broken-links` after every change.
@@ -150,6 +153,11 @@ Don't mix Diátaxis types within a single page.
   - Endpoint Hub: `governance/cloud/endpoint-hub/overview` *(landing)*, `governance/cloud/endpoint-hub/inventory`, `governance/cloud/endpoint-hub/inventory-catalog`, `governance/cloud/endpoint-hub/package-guard`, `governance/cloud/endpoint-hub/mcp-advisor`, `governance/cloud/endpoint-hub/agentic-investigation`
   - Policy & Risk: `governance/cloud/malware-analysis`, `governance/cloud/package-exclusions`
 
+**Threat Intel** *(tab landing: `threat-intel/overview`)* — subscription-gated feed API (`FEATURE_THREAT_INTEL_FEED`). Product-level API guide; `threat-intel/schema` links out to the public `buf.build/safedep/api` module for the message/field/enum definitions (R6, don't hand-copy tables that drift). The module is public (a keyless `@buf/safedep_api.bufbuild_es` install resolves), so no in-page restatement is needed.
+- Getting Started: `threat-intel/quickstart`, `threat-intel/concepts`
+- Consuming the Feed: `threat-intel/connecting`, `threat-intel/pagination`, `threat-intel/package-reports`, `threat-intel/campaigns`, `threat-intel/recipes`
+- Reference: `threat-intel/schema`, `threat-intel/errors`, `threat-intel/sdks`
+
 **Reference**
 - Query & Policy: `reference/filtering`, `reference/build-your-own-queries`, `reference/policy-as-code`, `reference/exceptions`, `reference/path-exclusion`
 - API & Automation: `reference/api-introduction`, `reference/endpoints`, `reference/insights-api-typescript`, `reference/sql-query`
@@ -158,7 +166,7 @@ Don't mix Diátaxis types within a single page.
 - Community: `community`
 - Support: `faq`, `governance/cloud/faq`
 
-Total: **74 pages**
+Total: **81 pages**
 
 ---
 
@@ -177,9 +185,13 @@ Total: **74 pages**
 | `governance/tenants-access-control` | Visibility & Governance › Access & Identity |
 | `reference/cli` | Reference — *dry per-command surface; the orientation/"which CLI" map shipped as `get-started/cli-tools`* |
 
-### Planned structural change — Threat Intelligence (fourth solution tab)
+### Threat Intelligence tab — SHIPPED as "Threat Intel" (2026-08-20)
 
-Threat Intelligence is expected to productize. When the product ships, it becomes the **fourth solution tab** — not before (no empty tabs). Scope and rules:
+The productized feed shipped as the **Threat Intel** tab (path prefix `threat-intel/`), placed after Visibility & Governance. It documents the subscription-gated Threat Intel Feed API (`safedep.services.threatintel.v1.ThreatIntelService`, gated on `FEATURE_THREAT_INTEL_FEED`, served on `api.safedep.io`). The label was chosen as "Threat Intel" (shorter nav form of the industry category below) over the mechanism-shaped "Feed". Documented RPCs: package reports and campaigns. Snapshots (`ListSnapshots`, `GetSnapshotDownloadUrl`) are implemented in the deployed service but intentionally left undocumented until GA/polished; the indicator RPCs (`ListIndicators`, `LookupIndicator`) return `unimplemented`. The scope and rules below remain the governing constraints as the tab grows.
+
+**Original planning note (retained for rationale):**
+
+Threat Intelligence is expected to productize. When the product ships, it becomes a new solution tab — not before (no empty tabs). Scope and rules:
 
 - **The tab is the solution, not the product.** It is scoped to SOC intel-consumption use-cases — alert triage, enrichment, threat hunting, SIEM/SOAR feeds. Product pages sit one level deep inside groups, same as every other tab. Scope test: a second intel-adjacent product must fit this tab without renaming it; if it can't, the tab has become a brand tab and violates R3.
 - **Label note (R3):** "Threat Intelligence" is grammatically product-shaped ("SafeDep *provides* TI," not "solves" it), but it is the stable industry category the SOC audience navigates by — the same trade we accepted for "Bill of Materials." Findability wins; the tab's *scope* stays solution-shaped per the test above.

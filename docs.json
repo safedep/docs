@@ -180,6 +180,41 @@
         ]
       },
       {
+        "tab": "Threat Intel",
+        "icon": "satellite-dish",
+        "pages": [
+          "threat-intel/overview",
+          {
+            "group": "Getting Started",
+            "icon": "rocket",
+            "pages": [
+              "threat-intel/quickstart",
+              "threat-intel/concepts"
+            ]
+          },
+          {
+            "group": "Consuming the Feed",
+            "icon": "arrows-rotate",
+            "pages": [
+              "threat-intel/connecting",
+              "threat-intel/pagination",
+              "threat-intel/package-reports",
+              "threat-intel/campaigns",
+              "threat-intel/recipes"
+            ]
+          },
+          {
+            "group": "Reference",
+            "icon": "book",
+            "pages": [
+              "threat-intel/schema",
+              "threat-intel/errors",
+              "threat-intel/sdks"
+            ]
+          }
+        ]
+      },
+      {
         "tab": "Reference",
         "icon": "book",
         "groups": [

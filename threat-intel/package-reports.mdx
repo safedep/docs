@@ -1,0 +1,94 @@
+---
+title: "Package reports"
+description: "List and fetch malicious package reports, with filters by ecosystem, verdict, time, and withdrawal."
+---
+
+A **package report** is one malicious package with its verdict, affected versions, indicators, and campaign links. See the full shape in the [schema reference](/threat-intel/schema).
+
+## ListPackageReports
+
+A paginated feed of reports. The default order is ascending (oldest change first) for incremental pull. For newest-first browsing, pass `SORT_ORDER_DESCENDING`.
+
+**Request fields:**
+
+| Field | Type | Notes |
+|---|---|---|
+| `pagination` | object | See [Pagination & sync](/threat-intel/pagination). |
+| `filters.since` | timestamp | Only reports with `updatedAt` strictly after this. |
+| `filters.ecosystem` | enum | One [`Ecosystem`](/threat-intel/schema) value. |
+| `filters.verdict` | enum | `THREAT_VERDICT_SUSPICIOUS` or `THREAT_VERDICT_MALICIOUS`. |
+| `filters.withdrawn` | bool | Omit to include withdrawn reports (default); `false` excludes them; `true` returns only them. |
+
+All filters combine with AND. The feed includes withdrawn reports by default, so you learn about retractions.
+
+<Warning>
+The `ecosystem` and `verdict` filters **fail closed**. An unknown or unspecified value is an `invalid_argument` error, not a dropped filter. Use the exact enum names from the [schema reference](/threat-intel/schema).
+</Warning>
+
+**Response:** `packageReports` (an array of [`PackageReport`](/threat-intel/schema)) and `pagination`.
+
+```bash
+# first page, 5 reports, newest first
+curl -sS "$TI/ListPackageReports" \
+  -H "Content-Type: application/json" \
+  -H "Authorization: $SAFEDEP_API_KEY" \
+  -H "X-Tenant-ID: $SAFEDEP_TENANT_ID" \
+  -d '{"pagination":{"pageSize":5,"sortOrder":"SORT_ORDER_DESCENDING"}}'
+
+# only verified-malicious npm reports
+curl -sS "$TI/ListPackageReports" \
+  -H "Content-Type: application/json" \
+  -H "Authorization: $SAFEDEP_API_KEY" \
+  -H "X-Tenant-ID: $SAFEDEP_TENANT_ID" \
+  -d '{"pagination":{"pageSize":20,"sortOrder":"SORT_ORDER_DESCENDING"},"filters":{"ecosystem":"ECOSYSTEM_NPM","verdict":"THREAT_VERDICT_MALICIOUS"}}'
+
+# incremental pull: everything changed since a timestamp, oldest first
+curl -sS "$TI/ListPackageReports" \
+  -H "Content-Type: application/json" \
+  -H "Authorization: $SAFEDEP_API_KEY" \
+  -H "X-Tenant-ID: $SAFEDEP_TENANT_ID" \
+  -d '{"pagination":{"pageSize":100},"filters":{"since":"2026-08-01T00:00:00Z"}}'
+
+# exclude withdrawn reports
+curl -sS "$TI/ListPackageReports" \
+  -H "Content-Type: application/json" \
+  -H "Authorization: $SAFEDEP_API_KEY" \
+  -H "X-Tenant-ID: $SAFEDEP_TENANT_ID" \
+  -d '{"pagination":{"pageSize":50},"filters":{"withdrawn":false}}'
+```
+
+## GetPackageReport
+
+Fetch one report by its permanent id, with its package, indicators, and campaign links.
+
+**Request:** `reportId` (string). **Response:** `packageReport` (a [`PackageReport`](/threat-intel/schema)). An unknown id returns `not_found`.
+
+```bash
+curl -sS "$TI/GetPackageReport" \
+  -H "Content-Type: application/json" \
+  -H "Authorization: $SAFEDEP_API_KEY" \
+  -H "X-Tenant-ID: $SAFEDEP_TENANT_ID" \
+  -d '{"reportId":"01JZ8Q9V6K3S2M7C1B0A4E5F6G"}'
+```
+
+```json
+{
+  "packageReport": {
+    "reportId": "01JZ8Q9V6K3S2M7C1B0A4E5F6G",
+    "verdict": "THREAT_VERDICT_MALICIOUS",
+    "confidence": "THREAT_CONFIDENCE_HUMAN_VERIFIED",
+    "title": "Credential stealer in npm package express-logger-pro",
+    "summary": "Package exfiltrates environment variables to a remote host on install.",
+    "ecosystem": "ECOSYSTEM_NPM",
+    "publishedAt": "2026-08-12T09:14:02Z",
+    "updatedAt": "2026-08-12T10:01:44Z",
+    "verifiedAt": "2026-08-12T10:01:44Z",
+    "package": {"purl": "pkg:npm/express-logger-pro@9.9.9", "name": "express-logger-pro", "versions": ["9.9.9"]},
+    "iocs": [
+      {"type": "INDICATOR_TYPE_C2_DOMAIN", "value": "exfil.example.com", "note": "beacon on postinstall"},
+      {"type": "INDICATOR_TYPE_FILE_SHA256", "value": "3b1f0c9a...c2a9"}
+    ],
+    "campaigns": [{"campaignId": "01JZ8QC0N2W5R8T3Y6U9I1O4P7", "name": "npm crypto-stealer wave"}]
+  }
+}
+```
