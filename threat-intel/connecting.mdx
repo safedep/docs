@@ -3,7 +3,7 @@ title: "Connecting"
 description: "Transport, base URL, request headers, authentication, and JSON conventions for the Threat Intel Feed API."
 ---
 
-The feed is a [ConnectRPC](https://connectrpc.com) service. You can call it three ways over one URL: the **Connect protocol** (a plain HTTP POST with a JSON body), **gRPC**, or **gRPC-Web**. This page uses the Connect protocol with JSON, because any HTTP client can send it. For typed stubs in your language, see [SDKs](/threat-intel/sdks).
+The feed is a [ConnectRPC](https://connectrpc.com) service. You can call it three ways over one URL: the [**Connect protocol**](https://connectrpc.com/docs/protocol/), **gRPC**, or **gRPC-Web**. This page uses the Connect protocol with JSON, because any HTTP client can send it. For typed stubs in your language, see [SDKs](/threat-intel/sdks).
 
 ## Base URL
 
@@ -58,7 +58,7 @@ export SAFEDEP_TENANT_ID="your-company.safedep.io"
 export TI="https://api.safedep.io/safedep.services.threatintel.v1.ThreatIntelService"
 ```
 
-Each call is a plain `curl`:
+Verify your setup by listing a few reports. A JSON response means your key and headers work:
 
 ```bash
 curl -sS "$TI/ListPackageReports" \
