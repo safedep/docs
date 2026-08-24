@@ -153,7 +153,7 @@ Don't mix Diátaxis types within a single page.
   - Endpoint Hub: `governance/cloud/endpoint-hub/overview` *(landing)*, `governance/cloud/endpoint-hub/inventory`, `governance/cloud/endpoint-hub/inventory-catalog`, `governance/cloud/endpoint-hub/package-guard`, `governance/cloud/endpoint-hub/mcp-advisor`, `governance/cloud/endpoint-hub/agentic-investigation`
   - Policy & Risk: `governance/cloud/malware-analysis`, `governance/cloud/package-exclusions`
 
-**Threat Intel** *(tab landing: `threat-intel/overview`)* — subscription-gated feed API (`FEATURE_THREAT_INTEL_FEED`). Product-level API guide; the buf schema is restated in `threat-intel/schema` because the module may not be visible to every account (deviation from the usual "link to buf.build" pattern, justified in-page).
+**Threat Intel** *(tab landing: `threat-intel/overview`)* — subscription-gated feed API (`FEATURE_THREAT_INTEL_FEED`). Product-level API guide; `threat-intel/schema` links out to the public `buf.build/safedep/api` module for the message/field/enum definitions (R6, don't hand-copy tables that drift). The module is public (a keyless `@buf/safedep_api.bufbuild_es` install resolves), so no in-page restatement is needed.
 - Getting Started: `threat-intel/quickstart`, `threat-intel/concepts`
 - Consuming the Feed: `threat-intel/connecting`, `threat-intel/pagination`, `threat-intel/package-reports`, `threat-intel/campaigns`, `threat-intel/recipes`
 - Reference: `threat-intel/schema`, `threat-intel/errors`, `threat-intel/sdks`
