@@ -14,7 +14,7 @@ You need a SafeDep Cloud API key and tenant ID from [app.safedep.io/settings/api
     In the JumpCloud Admin Console, create a Command and set **Run As** to `root`.
   </Step>
   <Step title="Attach the scripts">
-    Upload `lib_macos.sh` and `pmg_setup_install_macos.sh` from [`scripts/mdm/`](https://github.com/safedep/pmg/tree/main/scripts/mdm). You can optionally upload `config.yml` for a machine-wide config. Set the **File Destination** to `/tmp/pmg-mdm/` for each file.
+    Upload `lib_macos.sh` and `pmg_setup_install_macos.sh` from [`scripts/mdm/`](https://github.com/safedep/pmg/tree/main/scripts/mdm). You can optionally upload `config.yml` for a machine-wide config; if you do, set `cloud.enabled: true` in it. Set the **File Destination** to `/tmp/pmg-mdm/` for each file.
   </Step>
   <Step title="Set the timeout">
     Set **Timeout After** to at least 900 seconds so a slow download is not killed mid-run.
