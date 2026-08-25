@@ -74,17 +74,17 @@ To preview the feed without JFrog credentials, run it with [`--dry-run`](#dry-ru
     </Info>
 
     ```bash
-    jf npm install <Malicious Ingested package>
+    jf npm install <Malicious Ingested Package>
     ```
 
-    `jf npm install` triggers Xray to index `<Malicious Ingested package>`. If SafeDep has flagged that package as malicious, Xray raises a policy violation and blocks the download.
+    `jf npm install` triggers Xray to index `<Malicious Ingested Package>`. Xray raises a policy violation and blocks the download.
 
     ```text Install Output
       npm ERR! 403 on a server you do not have access to.
       {
         "error": {
           "code": "E403",
-          "summary": "403 Forbidden - GET https://yourcompany.jfrog.io/artifactory/api/npm/npm-virtual/<Malicious Ingested package>",
+          "summary": "403 Forbidden - GET https://yourcompany.jfrog.io/artifactory/api/npm/npm-virtual/<Malicious Ingested Package>",
           "detail": "In most cases, you or one of your dependencies are requesting\na package version that is forbidden by your security policy, or\non a server you do not have access to."
         }
       }
@@ -139,7 +139,7 @@ safedep integration jfrog run
 
 ## Dry run
 
-Use `--dry-run` to test the feed without a JFrog client or connection.
+Use `--dry-run` to test the feed without a JFrog connection.
 
 <Tip>
 `--dry-run` previews the feed and prints each finding as a `Would push:` line, without sending to JFrog. It needs no JFrog credentials, so you can check the feed before you connect an instance.
