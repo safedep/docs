@@ -37,7 +37,7 @@ The feed runs on the SafeDep Cloud data plane. The data plane has a per-second r
 | Symptom | Likely cause |
 |---|---|
 | `401 unauthenticated` | Missing or mistyped API key, or missing `X-Tenant-ID`. The key goes in `Authorization` as-is, with no `Bearer` prefix. |
-| `403 permission_denied` | Your account does not have Threat Intel Feed access. [Talk to a human](https://calendly.com/abhisek-safedep/30min) to enable it. |
+| `403 permission_denied` | Your account does not have Threat Intel Feed access. See the [pricing page](https://safedep.io/pricing/#threat-intel) to enable it. |
 | `400 invalid_argument` on a filter | An `ecosystem` or `verdict` value the API does not know. Use the exact enum names from the [schema reference](/threat-intel/schema). |
 | Empty `packageReports` with a `since` filter | `since` is a strict greater-than; nothing changed after that time. |
 | `429 resource_exhausted` | Rate limit. Retry after a short wait. |
