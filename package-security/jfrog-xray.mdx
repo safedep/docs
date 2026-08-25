@@ -41,8 +41,12 @@ those packages for every developer on that instance.
     # or pass token via environment variable (see Environment Variables below)
     ```
 
-    The daemon polls SafeDep continuously (default: every 60 seconds) and pushes any newly
+    The daemon polls SafeDep continuously (default: every 5 minutes) and pushes any newly
     verified malicious packages to Xray.
+
+    On the first run, the daemon starts from now. It does not pull old reports. To seed history
+    on the first run, pass `--backfill` with a duration. For example, `--backfill 168h` seeds the
+    last 7 days. After the first run, the daemon resumes on its own and ignores `--backfill`.
 
     ```text Output
     i Validating JFrog connectivity
@@ -106,7 +110,8 @@ npm cache clean --force
 |---|---|---|---|
 | `--instance-url` | Yes* | None | JFrog instance base URL. Must use `https://`. |
 | `--instance-access-token` | Yes* | None | JFrog access token scoped to Xray. |
-| `--poll-interval` | No | `60s` | Duration between poll cycles (`30s`, `5m`, `1h`). |
+| `--poll-interval` | No | `5m` | Duration between poll cycles (`30s`, `5m`, `1h`). |
+| `--backfill` | No | `0` | First-run window to seed history (e.g. `24h`, `168h`). `0` starts from now. |
 | `--profile` | No | `"default"` | SafeDep credential profile. |
 
 *Required unless the corresponding environment variable is set.
@@ -119,6 +124,7 @@ For server deployments or CI pipelines, use environment variables to avoid passi
 |---|---|
 | `SAFEDEP_INTEGRATION_JFROG_ARTIFACTORY_URL` | `--instance-url` |
 | `SAFEDEP_INTEGRATION_JFROG_ARTIFACTORY_ACCESS_TOKEN` | `--instance-access-token` |
+| `SAFEDEP_INTEGRATION_JFROG_BACKFILL` | `--backfill` |
 
 **Example: environment variable setup**
 
