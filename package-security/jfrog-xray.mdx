@@ -11,6 +11,10 @@ The JFrog Xray integration runs as a daemon. It polls SafeDep for verified malic
 and pushes them to JFrog Xray as Custom Issues. With a blocking policy in place, Xray blocks
 those packages for every developer on that instance.
 
+<Tip>
+To preview the feed without JFrog credentials, run it with [`--dry-run`](#dry-run) first.
+</Tip>
+
 ## Prerequisites
 
 - SafeDep CLI installed ([install](https://github.com/safedep/cli#safedep-cli))
@@ -151,7 +155,9 @@ safedep integration jfrog cursor remove
 
 A dry-run does everything a real run does, except the final step: it prints each finding instead of sending it to JFrog.
 
-- Dry-run advances the same saved cursor. Run [`cursor remove`](#clear-the-cursor) before the first real run, or that run skips what the preview consumed.
+<Warning>
+Dry-run advances the same saved cursor. Run [`cursor remove`](#clear-the-cursor) before the first real run, or that run skips what the preview consumed.
+</Warning>
 
 ## Manage the feed cursor
 
