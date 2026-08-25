@@ -4,7 +4,7 @@ description: "Stream SafeDep malware intelligence to JFrog Xray"
 ---
 
 <Warning>
-  The JFrog Xray Integration is available with the **Threat Intel Feed Add-On**. [See pricing](https://safedep.io/pricing/) to access this feature.
+  The SafeDep JFrog Xray integration is available with the Threat Intel Feed add-on. To enable the add-on, see the [pricing page](https://safedep.io/pricing/#threat-intel).
 </Warning>
 
 The JFrog Xray integration runs as a daemon. It polls SafeDep for verified malicious packages
@@ -41,18 +41,23 @@ those packages for every developer on that instance.
     # or pass token via environment variable (see Environment Variables below)
     ```
 
-    The daemon polls SafeDep continuously (default: every 60 seconds) and pushes any newly
+    The daemon polls SafeDep continuously (default: every 5 minutes) and pushes any newly
     verified malicious packages to Xray.
+
+    On the first run the daemon starts from the current time and does not pull older reports.
+    To seed history, pass `--backfill` with a duration: `--backfill 168h` covers the last 7 days.
+    Later runs resume from the saved cursor, so `--backfill` is ignored after the first run.
 
     ```text Output
     i Validating JFrog connectivity
     ✓ JFrog connectivity OK (URL + token verified)
-    i Starting JFrog feed poller (interval: 1m0s)
-    ✓ Pushed: @hideliar/9router@0.4.25 (npm)
+    i Starting JFrog Syncing with SafeDep Threat Intel Feed
+    i No saved cursor: starting fresh from now
+    ✓ Pushed: @hideliar/9router (npm) versions: 0.4.25
     i   JFrog: SD-01KR3WJYFTSNZFFS5CFNYVGZFH [201]
-    ✓ Pushed: @sheason/d-pi@0.4.3 (npm)
+    ✓ Pushed: @sheason/d-pi (npm) versions: 0.4.3
     i   JFrog: SD-01KR3XSCZ0WNAEYY6CNMD4CQH3 [201]
-    i Poll cycle complete, next in 1m0s
+    i Feed cycle complete at 2026-08-25T10:15:04Z, next in 5m0s
     ...
     ..
     .
@@ -106,7 +111,8 @@ npm cache clean --force
 |---|---|---|---|
 | `--instance-url` | Yes* | None | JFrog instance base URL. Must use `https://`. |
 | `--instance-access-token` | Yes* | None | JFrog access token scoped to Xray. |
-| `--poll-interval` | No | `60s` | Duration between poll cycles (`30s`, `5m`, `1h`). |
+| `--poll-interval` | No | `5m` | Duration between poll cycles (`30s`, `5m`, `1h`). |
+| `--backfill` | No | `0` | First-run window to seed history (e.g. `24h`, `168h`). `0` starts from now. |
 | `--profile` | No | `"default"` | SafeDep credential profile. |
 
 *Required unless the corresponding environment variable is set.
@@ -119,6 +125,7 @@ For server deployments or CI pipelines, use environment variables to avoid passi
 |---|---|
 | `SAFEDEP_INTEGRATION_JFROG_ARTIFACTORY_URL` | `--instance-url` |
 | `SAFEDEP_INTEGRATION_JFROG_ARTIFACTORY_ACCESS_TOKEN` | `--instance-access-token` |
+| `SAFEDEP_INTEGRATION_JFROG_BACKFILL` | `--backfill` |
 
 **Example: environment variable setup**
 
