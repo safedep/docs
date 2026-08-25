@@ -1,9 +1,9 @@
 ---
 title: "Intune"
-description: "Deploy PMG to macOS devices with a single-script Microsoft Intune shell-script policy."
+description: "Deploy PMG to macOS or Linux devices with a single-script Microsoft Intune shell-script policy."
 ---
 
-Intune accepts one shell script per policy, and it has no script parameters. Generate a [standalone installer](https://github.com/safedep/pmg/tree/main/scripts/mdm/standalone) with your SafeDep Cloud credentials embedded, then upload that file.
+Intune accepts one shell script per policy, and it has no script parameters. Generate a [standalone installer](https://github.com/safedep/pmg/tree/main/scripts/mdm/standalone) for your platform with your SafeDep Cloud credentials embedded, then upload that file.
 
 <Note>
   A [SafeDep subscription](https://safedep.io/pricing) is required to sync PMG events with SafeDep Cloud.
@@ -15,12 +15,24 @@ You need a SafeDep Cloud API key and Tenant ID from [app.safedep.io/settings/api
 
 1. Clone [pmg](https://github.com/safedep/pmg) and generate the installer from `scripts/mdm/`:
 
-   ```sh
-   SAFEDEP_API_KEY=... SAFEDEP_TENANT_ID=... \
-     ./generate_standalone_scripts.sh \
-     --embed-cloud-credentials \
-     --output-dir /path/to/pmg-intune
-   ```
+   <Tabs>
+     <Tab title="macOS">
+       ```sh
+       SAFEDEP_API_KEY=... SAFEDEP_TENANT_ID=... \
+         ./generate_standalone_macos.sh \
+         --embed-cloud-credentials \
+         --output-dir /path/to/pmg-intune
+       ```
+     </Tab>
+     <Tab title="Linux">
+       ```sh
+       SAFEDEP_API_KEY=... SAFEDEP_TENANT_ID=... \
+         ./generate_standalone_linux.sh \
+         --embed-cloud-credentials \
+         --output-dir /path/to/pmg-intune
+       ```
+     </Tab>
+   </Tabs>
 
    You can optionally add `--config /path/to/config.yml` to package a machine-wide config. Set `cloud.enabled: true` in that file.
 
@@ -28,14 +40,30 @@ You need a SafeDep Cloud API key and Tenant ID from [app.safedep.io/settings/api
   Base64 is not encryption. Anyone who can read the uploaded installer in Intune can recover the credentials. Use a scoped, revocable API key. Do not commit the generated artifacts.
 </Warning>
 
-2. Follow [Microsoft's procedure for macOS shell scripts](https://learn.microsoft.com/en-us/intune/device-management/tools/run-shell-scripts-macos). Upload the generated `pmg_setup_install_macos_standalone.sh`. Set **Run script as signed-in user** to **No**.
-3. Assign the policy to a device group. Use a recurring install frequency so later sign-ins receive Cloud credentials. Only the logged-in user can receive them during a run.
+2. Upload the generated installer through Intune, using the procedure for your platform:
+
+   <Tabs>
+     <Tab title="macOS">
+       Follow [Microsoft's procedure for macOS shell scripts](https://learn.microsoft.com/en-us/intune/device-management/tools/run-shell-scripts-macos). Upload `pmg_setup_install_macos_standalone.sh`. Set **Run script as signed-in user** to **No**.
+     </Tab>
+     <Tab title="Linux">
+       In the Intune admin center:
+
+       - Go to **Devices > Manage devices > Scripts and remediations > Platform scripts**.
+       - Select the **Linux** tab and add `pmg_setup_install_linux_standalone.sh`.
+       - Set the execution context to **Root**.
+
+       See [Microsoft's procedure for Linux shell scripts](https://learn.microsoft.com/en-us/intune/intune-service/configuration/custom-settings-linux).
+     </Tab>
+   </Tabs>
+
+3. Assign the policy to a device group. Use a recurring install frequency so later sign-ins receive Cloud credentials. Only a signed-in user can receive them during a run.
 
 The generated script stays under Intune's 1 MB size limit.
 
 ## Uninstall
 
-Upload `pmg_uninstall_macos_standalone.sh` from the same output directory, with the same **Run script as signed-in user** setting. Do not assign the install and uninstall policies at the same time.
+Upload the matching uninstaller from the same output directory (`pmg_uninstall_macos_standalone.sh` or `pmg_uninstall_linux_standalone.sh`), with the same platform settings as install. Do not assign the install and uninstall policies at the same time.
 
 <CardGroup cols={2}>
   <Card title="Other MDMs" icon="laptop" href="/package-security/pmg/mdm/overview">
