@@ -79,8 +79,7 @@
             "group": "CI/CD Package Blocking",
             "icon": "shield-check",
             "pages": [
-              "package-security/pmg/github-actions",
-              "package-security/jfrog-xray"
+              "package-security/pmg/github-actions"
             ]
           }
         ]
@@ -204,6 +203,13 @@
             ]
           },
           {
+            "group": "Integrations",
+            "icon": "plug",
+            "pages": [
+              "threat-intel/integrations/jfrog-xray"
+            ]
+          },
+          {
             "group": "Reference",
             "icon": "book",
             "pages": [
@@ -318,7 +324,11 @@
     },
     {
       "source": "/apps/jfrog/overview",
-      "destination": "/package-security/jfrog-xray"
+      "destination": "/threat-intel/integrations/jfrog-xray"
+    },
+    {
+      "source": "/package-security/jfrog-xray",
+      "destination": "/threat-intel/integrations/jfrog-xray"
     },
     {
       "source": "/vet/guides/ai-governance",
