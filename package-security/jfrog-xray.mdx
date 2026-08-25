@@ -74,23 +74,21 @@ To preview the feed without JFrog credentials, run it with [`--dry-run`](#dry-ru
     </Info>
 
     ```bash
-    jf npm install @sheason/d-pi@0.4.3
+    jf npm install <Malicious Ingested package>
     ```
 
-    `jf npm install` triggers Xray to index `@sheason/d-pi@0.4.3`. If SafeDep has flagged that package as malicious, Xray raises a policy violation and blocks the download.
+    `jf npm install` triggers Xray to index `<Malicious Ingested package>`. If SafeDep has flagged that package as malicious, Xray raises a policy violation and blocks the download.
 
     ```text Install Output
       npm ERR! 403 on a server you do not have access to.
       {
         "error": {
           "code": "E403",
-          "summary": "403 Forbidden - GET https://yourcompany.jfrog.io/artifactory/api/npm/npm-virtual/@sheason/d-pi/-/d-pi-0.4.3.tgz",
+          "summary": "403 Forbidden - GET https://yourcompany.jfrog.io/artifactory/api/npm/npm-virtual/<Malicious Ingested package>",
           "detail": "In most cases, you or one of your dependencies are requesting\na package version that is forbidden by your security policy, or\non a server you do not have access to."
         }
       }
     ```
-
-    ![JFrog Xray Blocking](/images/jfrog-xray-scan-list.png)
 
   </Step>
 </Steps>
