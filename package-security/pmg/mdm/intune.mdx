@@ -47,7 +47,13 @@ You need a SafeDep Cloud API key and Tenant ID from [app.safedep.io/settings/api
        Follow [Microsoft's procedure for macOS shell scripts](https://learn.microsoft.com/en-us/intune/device-management/tools/run-shell-scripts-macos). Upload `pmg_setup_install_macos_standalone.sh`. Set **Run script as signed-in user** to **No**.
      </Tab>
      <Tab title="Linux">
-       In the Intune admin center, go to **Devices > Manage devices > Scripts and remediations > Platform scripts**, select the **Linux** tab, and add `pmg_setup_install_linux_standalone.sh`. Set the execution context to **Root**. See [Microsoft's procedure for Linux shell scripts](https://learn.microsoft.com/en-us/intune/intune-service/configuration/custom-settings-linux).
+       In the Intune admin center:
+
+       - Go to **Devices > Manage devices > Scripts and remediations > Platform scripts**.
+       - Select the **Linux** tab and add `pmg_setup_install_linux_standalone.sh`.
+       - Set the execution context to **Root**.
+
+       See [Microsoft's procedure for Linux shell scripts](https://learn.microsoft.com/en-us/intune/intune-service/configuration/custom-settings-linux).
      </Tab>
    </Tabs>
 

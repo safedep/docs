@@ -24,9 +24,9 @@ Mosyle, Kandji, and other MDMs that run a shell script as root manage macOS only
 
 Do not assign an install policy and an uninstall policy to the same devices at the same time.
 
-The MDM scripts do not install a persistent MITM CA (`pmg setup cert install`). On macOS, trusting a root in the login Keychain needs interactive authorization in the user's GUI session, so this cannot run through MDM; have each user run it in their own session when needed (only for tools that ignore the proxy CA environment variables, such as Go). On Linux, PMG's ephemeral CA with environment-variable injection is usually enough; if a tool needs a persistent CA in the system trust store, run `sudo pmg setup cert install --system` yourself (no GUI session required).
+You can optionally ship a `config.yml` next to the scripts (or pass `--config` when generating a standalone installer) for a machine-wide config. If you do, set `cloud.enabled: true` in it. A global config prevents the installer from changing that flag. See [Globally Managed Configuration](https://github.com/safedep/pmg/blob/main/docs/config.md#globally-managed-configuration).
 
-You can optionally ship a `config.yml` next to the scripts (or pass `--config` when generating a standalone installer) for a machine-wide config, installed to `/Library/Application Support/safedep/pmg/config.yml` on macOS or `/etc/safedep/pmg/config.yml` on Linux. If you do, set `cloud.enabled: true` in it. A global config prevents the installer from changing that flag. See [Globally Managed Configuration](https://github.com/safedep/pmg/blob/main/docs/config.md#globally-managed-configuration).
+The MDM scripts do not install a persistent MITM CA (`pmg setup cert install`). On macOS this needs interactive Keychain authorization, so it cannot run through MDM: have each user run it in their own session when needed. On Linux, PMG's ephemeral CA is usually enough; run `sudo pmg setup cert install --system` yourself only if a tool needs a persistent CA in the system trust store.
 
 ## Next steps
 
