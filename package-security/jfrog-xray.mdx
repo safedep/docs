@@ -44,9 +44,9 @@ those packages for every developer on that instance.
     The daemon polls SafeDep continuously (default: every 5 minutes) and pushes any newly
     verified malicious packages to Xray.
 
-    On the first run, the daemon starts from now. It does not pull old reports. To seed history
-    on the first run, pass `--backfill` with a duration. For example, `--backfill 168h` seeds the
-    last 7 days. After the first run, the daemon resumes on its own and ignores `--backfill`.
+    On the first run the daemon starts from the current time and does not pull older reports.
+    To seed history, pass `--backfill` with a duration: `--backfill 168h` covers the last 7 days.
+    Later runs resume from the saved cursor, so `--backfill` is ignored after the first run.
 
     ```text Output
     i Validating JFrog connectivity
