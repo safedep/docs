@@ -11,6 +11,10 @@ The JFrog Xray integration runs as a daemon. It polls SafeDep for verified malic
 and pushes them to JFrog Xray as Custom Issues. With a blocking policy in place, Xray blocks
 those packages for every developer on that instance.
 
+<Tip>
+To preview the feed without JFrog credentials, run it with [`--dry-run`](#dry-run) first.
+</Tip>
+
 ## Prerequisites
 
 - SafeDep CLI installed ([install](https://github.com/safedep/cli#safedep-cli))
@@ -63,30 +67,28 @@ those packages for every developer on that instance.
     .
     ```
   </Step>
-  <Step title="Verify Blocking">
+  <Step title="Verify Blocking via JFrog">
 
     <Info>
     Assumes a Malicious Package blocking policy and watch configured for the target repository (e.g. `npm-remote`).
     </Info>
 
     ```bash
-    jf npm install @sheason/d-pi@0.4.3
+    jf npm install <Malicious Ingested Package>
     ```
 
-    `jf npm install` triggers Xray to index `@sheason/d-pi@0.4.3`. If SafeDep has flagged that package as malicious, Xray raises a policy violation and blocks the download.
+    `jf npm install` triggers Xray to index `<Malicious Ingested Package>`. Xray raises a policy violation and blocks the download.
 
     ```text Install Output
       npm ERR! 403 on a server you do not have access to.
       {
         "error": {
           "code": "E403",
-          "summary": "403 Forbidden - GET https://yourcompany.jfrog.io/artifactory/api/npm/npm-virtual/@sheason/d-pi/-/d-pi-0.4.3.tgz",
+          "summary": "403 Forbidden - GET https://yourcompany.jfrog.io/artifactory/api/npm/npm-virtual/<Malicious Ingested Package>",
           "detail": "In most cases, you or one of your dependencies are requesting\na package version that is forbidden by your security policy, or\non a server you do not have access to."
         }
       }
     ```
-
-    ![JFrog Xray Blocking](/images/jfrog-xray-scan-list.png)
 
   </Step>
 </Steps>
@@ -113,7 +115,8 @@ npm cache clean --force
 | `--instance-access-token` | Yes* | None | JFrog access token scoped to Xray. |
 | `--poll-interval` | No | `5m` | Duration between poll cycles (`30s`, `5m`, `1h`). |
 | `--backfill` | No | `0` | First-run window to seed history (e.g. `24h`, `168h`). `0` starts from now. |
-| `--profile` | No | `"default"` | SafeDep credential profile. |
+| `--dry-run` | No | `false` | Preview the feed and print what would be pushed, without sending to JFrog. See [Dry run](#dry-run). |
+| `--profile` | No | `"default"` | SafeDep credential profile (inherited from root). |
 
 *Required unless the corresponding environment variable is set.
 
@@ -125,7 +128,6 @@ For server deployments or CI pipelines, use environment variables to avoid passi
 |---|---|
 | `SAFEDEP_INTEGRATION_JFROG_ARTIFACTORY_URL` | `--instance-url` |
 | `SAFEDEP_INTEGRATION_JFROG_ARTIFACTORY_ACCESS_TOKEN` | `--instance-access-token` |
-| `SAFEDEP_INTEGRATION_JFROG_BACKFILL` | `--backfill` |
 
 **Example: environment variable setup**
 
@@ -135,17 +137,42 @@ export SAFEDEP_INTEGRATION_JFROG_ARTIFACTORY_ACCESS_TOKEN=***
 safedep integration jfrog run
 ```
 
-<CardGroup cols={2}>
-  <Card title="Package Security" icon="shield-halved" href="/package-security/overview">
-    Block malicious packages at install time and in CI/CD.
-  </Card>
-  <Card title="PMG" icon="box" href="/package-security/pmg/overview">
-    Block malicious installs on the developer machine.
-  </Card>
-  <Card title="Malicious Package" icon="virus" href="/concepts/malicious-package">
-    How SafeDep detects malicious packages.
-  </Card>
-  <Card title="SafeDep Cloud" icon="cloud" href="/governance/cloud/overview">
-    Centralize policy and visibility across your org.
-  </Card>
-</CardGroup>
+## Dry run
+
+Use `--dry-run` to test the feed without a JFrog connection.
+
+<Tip>
+`--dry-run` previews the feed and prints each finding as a `Would push:` line, without sending to JFrog. It needs no JFrog credentials, so you can check the feed before you connect an instance.
+
+```bash
+# Preview the last 24 hours, then clear the cursor before a real run
+safedep integration jfrog run --dry-run --backfill 24h
+safedep integration jfrog cursor remove
+```
+</Tip>
+
+A dry-run does everything a real run does, except the final step: it prints each finding instead of sending it to JFrog.
+
+<Warning>
+Dry-run advances the same saved cursor. Run [`cursor remove`](#clear-the-cursor) before the first real run, or that run skips what the preview consumed.
+</Warning>
+
+## Manage the feed cursor
+
+The `run` command saves a cursor so it resumes where it stopped. The cursor is per SafeDep profile, so a change affects only the profile you select with `--profile`.
+
+### Move the cursor
+
+Set the cursor to an [RFC3339](https://www.rfc-editor.org/rfc/rfc3339) timestamp. The next run processes reports updated after this time.
+
+```bash
+safedep integration jfrog cursor set 2026-08-01T00:00:00Z
+```
+
+### Clear the cursor
+
+Remove the saved cursor. The next run starts fresh from the current time, or from the `--backfill` window.
+
+```bash
+safedep integration jfrog cursor remove
+```
