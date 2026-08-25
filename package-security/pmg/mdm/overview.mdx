@@ -19,7 +19,7 @@ Mosyle, Kandji, and other MDMs that run a shell script as root manage macOS only
 
 ## Scripts
 
-- **Multi-file** (Jamf, JumpCloud): deploy the shared lib with the install or uninstall script for your platform: `macos/lib_macos.sh` with `macos/pmg_setup_install_macos.sh` or `macos/pmg_uninstall_macos.sh` on macOS, `linux/lib_linux.sh` with `linux/pmg_setup_install_linux.sh` or `linux/pmg_uninstall_linux.sh` on Linux. The entry scripts source the shared lib at runtime and fail without it.
+- **Multi-file** (Jamf, JumpCloud): deploy the shared lib for your platform alongside the install or uninstall script. The entry scripts source the shared lib at runtime and fail without it.
 - **Standalone** (Intune): generate an installer for your platform with Cloud credentials embedded, then upload that one script.
 
 Do not assign an install policy and an uninstall policy to the same devices at the same time.
