@@ -40,7 +40,7 @@ To preview the feed without JFrog credentials, run it with [`--dry-run`](#dry-ru
     ```bash
     safedep integration jfrog run \
       --instance-url https://yourcompany.jfrog.io \
-      --instance-access-token YOUR_JFROG_TOKEN
+      --insecure-instance-access-token "$JFROG_TOKEN"
 
     # or pass token via environment variable (see Environment Variables below)
     ```
@@ -105,6 +105,39 @@ Running `npm cache clean --force` removes the cached copy, but it clears the ent
 npm cache clean --force
 ```
 
+## JSON output
+
+Add `-o json` (or `--output json`) to stream results as JSONL, one event per line. Use it to pipe daemon output to a log processor or CI job.
+
+The daemon emits two event types:
+
+- `package_pushed`: a malicious package was pushed to Xray as a Custom Issue.
+- `package_deleted`: a previously pushed package was withdrawn and removed from Xray.
+
+```bash
+safedep integration jfrog run \
+  --instance-url https://yourcompany.jfrog.io \
+  --insecure-instance-access-token "$JFROG_TOKEN" \
+  -o json
+```
+
+```json JSONL output
+{"event":"package_pushed","report_id":"01KR0EKN...","package":"make-array","ecosystem":"npm","versions":["0.1.2"],"issue_id":"SD-01KR0EKN...","status":201}
+{"event":"package_deleted","report_id":"01KR0G12...","package":"retracted","ecosystem":"pypi","issue_id":"SD-01KR0G12...","status":200}
+```
+
+<Accordion title="Field reference">
+| Field | Description |
+|---|---|
+| `event` | `package_pushed` or `package_deleted`. |
+| `report_id` | SafeDep Threat Intel report identifier. |
+| `package` | Package name. |
+| `ecosystem` | Package ecosystem (`npm`, `pypi`, and others). |
+| `versions` | Affected versions. Present on push events. |
+| `issue_id` | JFrog Xray Custom Issue id. |
+| `status` | HTTP status from JFrog (`201` created, `200` deleted). |
+</Accordion>
+
 ## Configuration
 
 ### CLI Flags
@@ -112,10 +145,11 @@ npm cache clean --force
 | Flag | Required | Default | Description |
 |---|---|---|---|
 | `--instance-url` | Yes* | None | JFrog instance base URL. Must use `https://`. |
-| `--instance-access-token` | Yes* | None | JFrog access token scoped to Xray. |
+| `--insecure-instance-access-token` | Yes* | None | JFrog access token scoped to Xray. Prefer the environment variable; a value passed here can stay in your shell history and the process list. |
 | `--poll-interval` | No | `5m` | Duration between poll cycles (`30s`, `5m`, `1h`). |
 | `--backfill` | No | `0` | First-run window to seed history (e.g. `24h`, `168h`). `0` starts from now. |
 | `--dry-run` | No | `false` | Preview the feed and print what would be pushed, without sending to JFrog. See [Dry run](#dry-run). |
+| `--output`, `-o` | No | plain | Set to `json` to stream results as JSONL. See [JSON output](#json-output). |
 | `--profile` | No | `"default"` | SafeDep credential profile (inherited from root). |
 
 *Required unless the corresponding environment variable is set.
@@ -127,7 +161,7 @@ For server deployments or CI pipelines, use environment variables to avoid passi
 | Variable | Corresponding Flag |
 |---|---|
 | `SAFEDEP_INTEGRATION_JFROG_ARTIFACTORY_URL` | `--instance-url` |
-| `SAFEDEP_INTEGRATION_JFROG_ARTIFACTORY_ACCESS_TOKEN` | `--instance-access-token` |
+| `SAFEDEP_INTEGRATION_JFROG_ARTIFACTORY_ACCESS_TOKEN` | `--insecure-instance-access-token` |
 
 **Example: environment variable setup**
 
