@@ -40,7 +40,7 @@ To preview the feed without JFrog credentials, run it with [`--dry-run`](#dry-ru
     ```bash
     safedep integration jfrog run \
       --instance-url https://yourcompany.jfrog.io \
-      --insecure-instance-access-token "$JFROG_TOKEN"
+      --insecure-instance-access-token YOUR_JFROG_TOKEN
 
     # or pass token via environment variable (see Environment Variables below)
     ```
@@ -117,7 +117,7 @@ The daemon emits two event types:
 ```bash
 safedep integration jfrog run \
   --instance-url https://yourcompany.jfrog.io \
-  --insecure-instance-access-token "$JFROG_TOKEN" \
+  --insecure-instance-access-token YOUR_JFROG_TOKEN \
   -o json
 ```
 
