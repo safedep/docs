@@ -42,6 +42,18 @@ cd "$(dirname "$0")"
 
 Assign it to the same computer group. Do not run the install and uninstall policies on the same devices at the same time.
 
+## Cloud sync only
+
+Create a third policy to catch up users who sign in after the initial install, without reinstalling PMG. Reuse the install script and parameters, and add `--cloud-sync-only`:
+
+```sh
+#!/bin/sh
+cd "$(dirname "$0")"
+SAFEDEP_API_KEY="$4" SAFEDEP_TENANT_ID="$5" ./pmg_setup_install_macos.sh --cloud-sync-only
+```
+
+Assign this policy to the same computer group on a recurring trigger, so users who sign in later get synced automatically.
+
 <CardGroup cols={2}>
   <Card title="Other MDMs" icon="laptop" href="/package-security/pmg/mdm/overview">
     JumpCloud, Intune, and the script layout.
