@@ -19,6 +19,14 @@ Use the [`vet_endpoint_scan.sh`](https://github.com/safedep/vet/blob/main/script
 
 When the MDM runs the script as root, it scans each local user in their own account context. SafeDep Cloud can then attribute the inventory to the correct user, including on shared machines.
 
+To show the inventory in the Endpoint Hub dashboard, create an API key and get your Tenant ID from [SafeDep Cloud settings](https://app.safedep.io/settings/api-keys). Pass both credentials when the MDM runs the script:
+
+```sh
+sudo SAFEDEP_API_KEY=... SAFEDEP_TENANT_ID=... ./vet_endpoint_scan.sh
+```
+
+Cloud sync starts only when both `SAFEDEP_API_KEY` and `SAFEDEP_TENANT_ID` are set. Without them, the script scans locally and the inventory does not appear in [Endpoint Hub](/governance/cloud/endpoint-hub/inventory).
+
 Install `vet` before you deploy the script. Follow the [vet MDM scripts README](https://github.com/safedep/vet/blob/main/scripts/mdm/README.md) for setup and usage.
 
 <CardGroup cols={2}>
