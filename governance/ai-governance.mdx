@@ -13,6 +13,14 @@ Developers integrate AI SDKs into application code and adopt AI-powered developm
 
 Together, these give security teams a complete picture of AI usage across both the software supply chain and the development environment.
 
+## Scan AI tools across a fleet
+
+Use the [`vet_endpoint_scan.sh`](https://github.com/safedep/vet/blob/main/scripts/mdm/vet_endpoint_scan.sh) MDM script to run `vet endpoint scan` across macOS and Linux devices. The script works with Jamf, Mosyle, Kandji, Intune, JumpCloud, and other MDMs that can run a shell script.
+
+When the MDM runs the script as root, it scans each local user in their own account context. SafeDep Cloud can then attribute the inventory to the correct user, including on shared machines.
+
+Install `vet` before you deploy the script. Follow the [vet MDM scripts README](https://github.com/safedep/vet/blob/main/scripts/mdm/README.md) for setup and usage.
+
 <CardGroup cols={2}>
   <Card title="Shadow AI in Code" icon="code" href="/governance/shadow-ai-detection">
     Detect AI SDK usage in source code and generate AI-enriched SBOMs

@@ -85,31 +85,6 @@ The `--kind` flag on `vet endpoint scan` controls which signal types are collect
 
 Discovery makes no network calls. All scanning reads the local filesystem and `$PATH`. Environment variable and header values are never captured; only key names are recorded. CLI arguments matching secret patterns (`--token=`, `--api-key=`, `--password=`, etc.) are redacted. Sync to SafeDep Cloud is a separate step that runs only when credentials are configured.
 
-## Fleet Deployment (MDM)
-
-Use [`vet_endpoint_scan.sh`](https://github.com/safedep/vet/tree/main/scripts/mdm) to run `vet endpoint scan` across a fleet through an MDM (Jamf, Mosyle, Kandji, Intune, JumpCloud, or any MDM that runs a shell script as root). One script covers both Linux and macOS.
-
-<Note>
-  The [MDM script README](https://github.com/safedep/vet/blob/main/scripts/mdm/README.md) in the vet repo is the source of truth.
-</Note>
-
-As root, the typical MDM case, the script scans every local human account. Each scan runs under `sudo -u`, in that user's own context, and `vet` reports the OS username and uid on every event. This lets SafeDep Cloud attribute each user's inventory correctly on a shared machine.
-
-As the logged-in user, the script scans just that user with their full login environment. This mode gives the most complete CLI tool discovery, since it reads the user's own `PATH`.
-
-```sh
-# Every local user, local inventory only:
-sudo ./vet_endpoint_scan.sh
-
-# With cloud sync:
-sudo SAFEDEP_API_KEY=... SAFEDEP_TENANT_ID=... ./vet_endpoint_scan.sh
-
-# Forward flags to vet endpoint scan:
-sudo ./vet_endpoint_scan.sh --silent --kind ai-tool
-```
-
-The script needs `vet` already installed and on `PATH`. It streams cloud credentials to each scan over stdin, never through argv, so they do not leak through `ps` on a shared machine.
-
 <CardGroup cols={2}>
   <Card title="Inventory" icon="cloud" href="/governance/cloud/endpoint-hub/inventory">
     Sync discovered AI tools and skills to SafeDep Cloud's Endpoint Hub

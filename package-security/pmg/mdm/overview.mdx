@@ -11,9 +11,9 @@ Install or remove PMG on macOS and Linux fleets through your MDM. The scripts in
 
 The scripts run as root (the usual MDM default) and support both macOS and Linux fleets. For a single machine or golden image with no MDM agent, such as a shared VM, CI runner, or Docker image, use [system install](/package-security/pmg/system-install) instead.
 
-MDM deploys enable [SafeDep Cloud](/governance/cloud/quickstart) sync. Package events already synced automatically once credentials were configured, but the endpoint itself only appeared in [Endpoint Hub](/governance/cloud/endpoint-hub/overview) once something triggered that first sync. Install now runs `pmg cloud sync` for every target user right after setup, so the machine shows up on the dashboard as soon as PMG is deployed.
+MDM deploys can sync data to [SafeDep Cloud](/governance/cloud/quickstart). After setup, the install script runs `pmg cloud sync` for each target user. This adds the device to [Endpoint Hub](/governance/cloud/endpoint-hub/overview) without waiting for a package manager event.
 
-You need an API key and Tenant ID from [app.safedep.io/settings/api-keys](https://app.safedep.io/settings/api-keys). Credentials are stored per user, in the active session's Keychain (macOS) or keyring (Linux), so a user who signs in after the initial deploy misses that sync. Pass `--cloud-sync-only` to the install script to sync every target user again, without reinstalling PMG.
+You need an API key and Tenant ID from [app.safedep.io/settings/api-keys](https://app.safedep.io/settings/api-keys). To repeat the sync without installing or configuring PMG again, pass `--cloud-sync-only` to the install script. Use this option only for users who already have PMG and cloud sync enabled. Run the normal installer to configure new users.
 
 ## Supported MDMs
 

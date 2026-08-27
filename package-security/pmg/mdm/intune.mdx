@@ -57,9 +57,9 @@ You need a SafeDep Cloud API key and Tenant ID from [app.safedep.io/settings/api
      </Tab>
    </Tabs>
 
-3. Assign the policy to a device group, with a recurring install frequency. Install now runs `pmg cloud sync` for every target user each time, so a user who signs in later gets synced on the next run. Only a signed-in user can receive stored Cloud credentials during that run.
+3. Assign the policy to a device group. Use a recurring install frequency if new users can be added later. Each run configures the target users and runs `pmg cloud sync` for each one.
 
-   Intune scripts take no runtime parameters, so `--cloud-sync-only` is not available here. The recurring install covers the same need.
+   A direct standalone upload in Intune cannot pass `--cloud-sync-only` to the script. Run the normal installer again when you need to sync or configure later users.
 
 The generated script stays under Intune's 1 MB size limit.
 
