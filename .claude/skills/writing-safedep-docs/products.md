@@ -11,7 +11,7 @@
 - **One-liner (from README):** Real-time malicious package detection and software supply chain security.
 - **What it is:** A CLI scanner for open-source dependencies. Detects malicious packages, generates risk reports, runs CEL-based queries and policies, produces SBOMs.
 - **Public repo:** `github.com/safedep/vet`
-- **Docs home:** **Visibility & Governance › Repository Scanning** (`governance/vet/`). vet also powers CI/CD & Platform Integrations (vet-action) and the Reference tab (Query & Policy: `reference/filtering`, `policy-as-code`, `sql-query`). Note: the standalone **xBom** product is a separate repo (`github.com/safedep/xbom`), not part of vet.
+- **Docs home:** **Visibility & Governance › Repository Scanning** (`governance/vet/`). Fleet deployment lives under **Visibility & Governance › MDM** (`governance/vet/mdm/overview`). vet also powers CI/CD & Platform Integrations (vet-action) and the Reference tab (Query & Policy: `reference/filtering`, `policy-as-code`, `sql-query`). Note: the standalone **xBom** product is a separate repo (`github.com/safedep/xbom`), not part of vet.
 - **Key concepts surfaced:** CEL (filtering / queries / policy), Malysis (intelligence backend), Policy-as-Code, SBOM (CycloneDX).
 - **Where to read up-to-date facts:** `README.md`, `docs/` in the vet repo; `cmd/` for command surface; `scan.go` / `query.go` for top-level behavior.
 - **vet-action note:** Lives under the vet repo (`.github/actions/`) and as `safedep/vet-action`. Split per use-case: blocking → Package Security; scanning/SBOM → Visibility & Governance.

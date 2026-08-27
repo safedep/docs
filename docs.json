@@ -111,6 +111,13 @@
             ]
           },
           {
+            "group": "MDM",
+            "icon": "laptop",
+            "pages": [
+              "governance/vet/mdm/overview"
+            ]
+          },
+          {
             "group": "Bill of Materials",
             "icon": "list-check",
             "root": "governance/xbom/overview",
