@@ -16,7 +16,7 @@ The documentation is organized into **7 tabs** — solution tabs at the core, pl
 1. **Get Started** — "What is SafeDep?" primer, quickstarts, core concepts
 2. **Package Security** — block malicious packages at install time and in CI/CD, and scan any package, extension, or repo on demand before use (pmg, safedep CLI)
 3. **AI Agent Security** — discover, audit, and control what AI agents access and run (MCP, Gryph, vet AI discovery)
-4. **Visibility & Governance** — scan repos/SBOMs/CI/CD for risk; manage policy and cloud visibility (vet, xBom, SafeDep Cloud, Endpoint Hub, Endpoint Sync)
+4. **Visibility & Governance**: scan repos/SBOMs/CI/CD for risk; deploy fleet tooling; manage policy and cloud visibility (vet, xBom, SafeDep Cloud, Endpoint Hub, Endpoint Sync)
 5. **Threat Intel** — consume the malicious-package feed as an API: reports and campaigns (ThreatIntelService). Subscription-gated (`FEATURE_THREAT_INTEL_FEED`)
 6. **Reference** — exact syntax/APIs (vet query & policy, API & automation)
 7. **Community & Support** — community resources and FAQ
@@ -49,6 +49,7 @@ Every placement decision derives from these rules. Full rationale and page map: 
 | Covers evaluating a package/extension/repo before use (on-demand scanning) | Package Security | On-Demand Package Scanning |
 | Covers AI agent discovery, audit, or control | AI Agent Security | AI Agent Observability / AI Coding Protection |
 | Covers scanning repos, SBOMs, CI/CD for risk | Visibility & Governance | Repository Scanning / Bill of Materials / CI/CD |
+| Covers deploying vet or running vet tasks across endpoint fleets | Visibility & Governance | MDM |
 | Covers cloud policy, endpoint inventory, access | Visibility & Governance | SafeDep Cloud / Endpoint Hub / Policy & Risk |
 | Covers consuming the malicious-package feed (reports, campaigns, feed API) | Threat Intel | Getting Started / Consuming the Feed / Reference |
 | Is pure lookup (syntax, flags, API) | Reference | vet Query & Policy / API & Automation |

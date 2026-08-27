@@ -106,6 +106,35 @@ You need a SafeDep Cloud API key and Tenant ID from [app.safedep.io/settings/api
   </Step>
 </Steps>
 
+## Run cloud sync only
+
+Create another Command to repeat cloud sync without installing or configuring PMG again. Set it up the same way as the install Command, with the same shared library and script and **Run As** set to `root`. Use this Command body:
+
+<Tabs>
+  <Tab title="macOS">
+    ```sh
+    #!/bin/sh
+    set -eu
+    cd /tmp/pmg-mdm
+    chmod +x pmg_setup_install_macos.sh
+    SAFEDEP_API_KEY={{safedep_api_key}} SAFEDEP_TENANT_ID={{safedep_tenant_id}} ./pmg_setup_install_macos.sh --cloud-sync-only
+    cd / && rm -rf /tmp/pmg-mdm
+    ```
+  </Tab>
+  <Tab title="Linux">
+    ```sh
+    #!/bin/sh
+    set -eu
+    cd /tmp/pmg-mdm
+    chmod +x pmg_setup_install_linux.sh
+    SAFEDEP_API_KEY={{safedep_api_key}} SAFEDEP_TENANT_ID={{safedep_tenant_id}} ./pmg_setup_install_linux.sh --cloud-sync-only
+    cd / && rm -rf /tmp/pmg-mdm
+    ```
+  </Tab>
+</Tabs>
+
+Assign it to the same device group on a recurring schedule. Use it only for users who already have PMG and cloud sync enabled. Run the normal install Command to configure new users.
+
 <CardGroup cols={2}>
   <Card title="Other MDMs" icon="laptop" href="/package-security/pmg/mdm/overview">
     Jamf, Intune, and the script layout.
