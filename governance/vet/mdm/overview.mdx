@@ -1,52 +1,42 @@
 ---
 title: "Deploy vet with MDM"
-description: "Install, update, and remove vet across endpoint fleets, then add optional visibility tasks through your MDM."
+description: "Install, update, and remove vet across macOS and Linux fleets, then add optional visibility tasks through your MDM."
 ---
 
-Use your mobile device management (MDM) platform to deploy `vet` across macOS, Linux, and Windows endpoints. This guide works with any MDM that can deploy files or run shell or PowerShell commands, such as Jamf, Intune, JumpCloud, Mosyle, or Kandji.
+Use your MDM to install, update, and remove `vet` across managed macOS and Linux endpoints. After `vet` is in place, you can add a separate MDM task to collect endpoint inventory and sync it to SafeDep Cloud.
 
-The core deployment does not depend on a SafeDep-provided MDM script. Use your MDM to manage the CLI lifecycle. Add SafeDep fleet scripts as separate, optional tasks after `vet` is installed.
+This guide works with any MDM that can deploy a package or run shell commands, such as Jamf, Intune, JumpCloud, Mosyle, or Kandji.
 
-The deployment has two parts:
+Use this guide for two jobs:
 
-1. Install and manage the `vet` CLI on each endpoint.
-2. Add optional MDM tasks that run `vet` to collect and sync inventory.
+1. Make `vet` available on each managed endpoint.
+2. Run optional endpoint inventory on a schedule.
 
 <Note>
-  Installing `vet` does not require a SafeDep account. SafeDep Cloud credentials are required only when a task sends data to Endpoint Hub.
+  Installing `vet` does not require a SafeDep account. SafeDep Cloud credentials are required only when you want endpoint inventory in SafeDep Cloud.
 </Note>
 
 ## Before you start
 
 You need:
 
-- An MDM policy that can run a shell or PowerShell command, or deploy a package.
+- An MDM policy that can run a shell command, or deploy a package.
 - Administrator access on the target endpoints.
 - A small test device group for the first deployment.
 - A selected install method: Homebrew, npm, or a pre-built binary.
 
 Use the same install method for installation, updates, and removal. Do not mix package managers on the same endpoint.
 
+If you plan to run scheduled inventory as root, install `vet` in a system path or make sure the MDM job can resolve `vet` from `PATH`. The pre-built binary is the most predictable option for this case.
+
 ## Install vet
 
-Choose the method that matches the software already available on your endpoints.
+Choose the method that matches the software already managed on your endpoints.
 
 <Tabs>
-  <Tab title="Homebrew (macOS and Linux)">
-    Run the command in the user context that owns the Homebrew installation. Do not run Homebrew as root.
-
-    ```sh
-    brew install safedep/tap/vet
-    ```
-  </Tab>
-  <Tab title="npm">
-    Use this method when Node.js and npm are already managed on the endpoint.
-
-    ```sh
-    npm install -g @safedep/vet
-    ```
-  </Tab>
   <Tab title="Pre-built binary">
+    Use this for the most predictable MDM deployment.
+
     Download the archive for each operating system and architecture from [vet releases](https://github.com/safedep/vet/releases). Verify it with the published `checksums.txt` file, then add the extracted `vet` binary to your MDM package.
 
     Install the binary in a system path:
@@ -64,52 +54,43 @@ Choose the method that matches the software already available on your endpoints.
         install -o root -g root -m 0755 vet /usr/local/bin/vet
         ```
       </Tab>
-      <Tab title="Windows">
-        Run this PowerShell command as an administrator. It installs `vet.exe` under `Program Files` and adds that directory to the system `PATH`.
-
-        ```powershell
-        $installDir = Join-Path $env:ProgramFiles "SafeDep\vet"
-        New-Item -ItemType Directory -Force -Path $installDir | Out-Null
-        Copy-Item .\vet.exe (Join-Path $installDir "vet.exe") -Force
-
-        $machinePath = [Environment]::GetEnvironmentVariable("Path", "Machine")
-        if (($machinePath -split ";") -notcontains $installDir) {
-          [Environment]::SetEnvironmentVariable(
-            "Path",
-            "$machinePath;$installDir",
-            "Machine"
-          )
-        }
-        ```
-      </Tab>
     </Tabs>
   </Tab>
+  <Tab title="Homebrew (macOS and Linux)">
+    Use this when Homebrew is already managed on the endpoint. Run the command in the user context that owns the Homebrew installation. Do not run Homebrew as root.
+
+    ```sh
+    brew install safedep/tap/vet
+    ```
+  </Tab>
+  <Tab title="npm">
+    Use this when Node.js and npm are already managed on the endpoint.
+
+    ```sh
+    npm install -g @safedep/vet
+    ```
+  </Tab>
 </Tabs>
+
+## Verify the install
 
 Assign the install policy to your test group first. After the policy runs, verify the installation:
 
-<Tabs>
-  <Tab title="macOS and Linux">
-    ```sh
-    command -v vet
-    vet version
-    ```
-  </Tab>
-  <Tab title="Windows">
-    ```powershell
-    Get-Command vet
-    vet version
-    ```
-  </Tab>
-</Tabs>
+```sh
+command -v vet
+vet version
+```
 
-The first command must return the managed `vet` path. The second command must return the installed version. Start a new command session before you verify a Windows installation so it reads the updated system `PATH`.
+The first command must return the managed `vet` path. The second command must return the installed version.
 
 ## Update vet
 
 Update `vet` through the same MDM policy and install method:
 
 <Tabs>
+  <Tab title="Pre-built binary">
+    Download and verify the required release, then replace the managed `vet` binary in your MDM package. Re-run the install policy to replace `/usr/local/bin/vet` on macOS and Linux.
+  </Tab>
   <Tab title="Homebrew (macOS and Linux)">
     ```sh
     brew upgrade safedep/tap/vet
@@ -120,9 +101,6 @@ Update `vet` through the same MDM policy and install method:
     npm install -g @safedep/vet@latest
     ```
   </Tab>
-  <Tab title="Pre-built binary">
-    Download and verify the required release, then replace the managed `vet` binary in your MDM package. Re-run the install policy to replace `/usr/local/bin/vet` on macOS and Linux or `vet.exe` under `Program Files` on Windows.
-  </Tab>
 </Tabs>
 
 Run `vet version` after the update and confirm that it reports the expected version.
@@ -132,6 +110,11 @@ Run `vet version` after the update and confirm that it reports the expected vers
 Disable any MDM tasks that run `vet` before you remove the CLI. Then use the uninstall command that matches the install method.
 
 <Tabs>
+  <Tab title="Pre-built binary">
+    ```sh
+    rm -f /usr/local/bin/vet
+    ```
+  </Tab>
   <Tab title="Homebrew (macOS and Linux)">
     ```sh
     brew uninstall safedep/tap/vet
@@ -142,48 +125,34 @@ Disable any MDM tasks that run `vet` before you remove the CLI. Then use the uni
     npm uninstall -g @safedep/vet
     ```
   </Tab>
-  <Tab title="Pre-built binary">
-    <Tabs>
-      <Tab title="macOS and Linux">
-        ```sh
-        rm -f /usr/local/bin/vet
-        ```
-      </Tab>
-      <Tab title="Windows">
-        Run this PowerShell command as an administrator:
-
-        ```powershell
-        $installDir = Join-Path $env:ProgramFiles "SafeDep\vet"
-        Remove-Item $installDir -Recurse -Force -ErrorAction SilentlyContinue
-
-        $machinePath = [Environment]::GetEnvironmentVariable("Path", "Machine")
-        $updatedPath = (($machinePath -split ";") |
-          Where-Object { $_ -and $_ -ne $installDir }) -join ";"
-        [Environment]::SetEnvironmentVariable("Path", $updatedPath, "Machine")
-        ```
-      </Tab>
-    </Tabs>
-  </Tab>
 </Tabs>
 
-Run `command -v vet` on macOS or Linux, or `Get-Command vet` on Windows, after removal. It must not return a path.
+Run `command -v vet` after removal. It must not return a path.
 
-## Add fleet visibility tasks
+## Run endpoint inventory with your MDM
 
-Installing `vet` makes the CLI available, but it does not schedule scans. Deploy each visibility task as a separate MDM policy. This lets you change its command, credentials, and schedule without reinstalling `vet`.
+Installing `vet` makes the CLI available, but it does not schedule scans. Deploy endpoint inventory as a separate MDM task. This keeps installation, credentials, and schedules independent.
 
-The current fleet task is [`vet_endpoint_scan.sh`](https://github.com/safedep/vet/blob/main/scripts/mdm/vet_endpoint_scan.sh). It supports macOS and Linux. It runs `vet endpoint scan` for local users and collects AI tools, coding agents, MCP servers, and agent skills. It does not support Windows.
+The current fleet script is [`vet_endpoint_scan.sh`](https://github.com/safedep/vet/blob/main/scripts/mdm/vet_endpoint_scan.sh). It supports macOS and Linux. The script runs `vet endpoint scan` and collects AI tools, coding agents, MCP servers, and agent skills.
 
 <Steps>
   <Step title="Deploy the script">
-    Download the script from the vet repository and deploy it to a managed path on each endpoint. Make the file executable.
+    Download the script from the `vet` repository and deploy it to a managed path on each endpoint. Make the file executable.
 
     ```sh
     chmod 0755 /path/to/vet_endpoint_scan.sh
     ```
+
+    The script expects `vet` to already be installed on the endpoint.
   </Step>
-  <Step title="Add SafeDep Cloud credentials">
-    Create an API key and get your Tenant ID from [SafeDep Cloud settings](https://app.safedep.io/settings/api-keys). Store both values in your MDM secret store, then pass them as environment variables:
+  <Step title="Choose local-only or cloud sync">
+    Run the script with no credentials for local-only inventory:
+
+    ```sh
+    /path/to/vet_endpoint_scan.sh
+    ```
+
+    For SafeDep Cloud sync, create an API key and get your Tenant ID from [SafeDep Cloud settings](https://app.safedep.io/settings/api-keys). Store both values in your MDM secret store, then pass them as environment variables:
 
     ```sh
     SAFEDEP_API_KEY="<api-key>" \
@@ -191,22 +160,33 @@ The current fleet task is [`vet_endpoint_scan.sh`](https://github.com/safedep/ve
     /path/to/vet_endpoint_scan.sh
     ```
 
-    Cloud sync starts only when both variables are set. Without them, the script scans locally and the inventory does not appear in Endpoint Hub.
+    Cloud sync starts only when both variables are set. If neither variable is set, the script runs local-only. Do not set only one variable.
   </Step>
   <Step title="Choose the execution context">
-    Run the script as root to scan every local human account. The script runs each scan in that user's account context so SafeDep Cloud can attribute inventory correctly on shared machines.
+    Run the script as root to scan every local human account on the machine. Use this mode for shared devices or when you want endpoint-wide coverage.
 
-    Run it as the logged-in user to scan only that user. This mode uses the user's full `PATH` and gives the most complete CLI tool discovery on macOS.
+    Run the script as the logged-in user to scan only that user. Use this mode when you want the user's full `PATH`, especially for CLI tool discovery on macOS.
+  </Step>
+  <Step title="Add optional scan flags">
+    Pass extra flags at the end when you want to narrow the inventory or reduce output. The script forwards them to `vet endpoint scan`.
+
+    ```sh
+    /path/to/vet_endpoint_scan.sh --silent --kind ai-tool
+    ```
   </Step>
   <Step title="Assign a schedule">
-    Assign the policy to a test group and choose a schedule that matches how often you need the inventory refreshed. The script continues to the next user if one user scan fails and reports the final result in the MDM job output.
+    Assign the inventory policy to your test group first. Then choose the schedule that matches how often you want the inventory refreshed.
+
+    Keep this policy separate from the install policy. The script continues to the next user if one user scan fails and reports the final result in the MDM job output.
   </Step>
-  <Step title="Verify the inventory">
-    Open [SafeDep Cloud](https://app.safedep.io), select **Endpoint Hub**, open the endpoint, and select the **Inventory** tab. Confirm that the endpoint and its discovered items appear.
+  <Step title="Verify the result">
+    Review the MDM job output and confirm that the script found `vet` and scanned the expected users.
+
+    If Cloud sync is enabled, open [SafeDep Cloud](https://app.safedep.io), select **Endpoints**, open the endpoint, and select the **Inventory** tab. Confirm that the endpoint and its discovered items appear.
   </Step>
 </Steps>
 
-To remove this task, disable its MDM policy and remove the managed script. This does not uninstall `vet`.
+To remove this inventory task, disable the MDM policy and remove the managed script. This does not uninstall `vet`.
 
 <CardGroup cols={2}>
   <Card title="vet installation options" icon="github" href="https://github.com/safedep/vet#installation">
@@ -215,7 +195,7 @@ To remove this task, disable its MDM policy and remove the managed script. This 
   <Card title="vet MDM scripts" icon="code" href="https://github.com/safedep/vet/blob/main/scripts/mdm/README.md">
     Source of truth for current macOS and Linux fleet scripts.
   </Card>
-  <Card title="Endpoint Hub Inventory" icon="server" href="/governance/cloud/endpoint-hub/inventory">
+  <Card title="Endpoints inventory" icon="server" href="/governance/cloud/endpoint-hub/inventory">
     Configure inventory sync and review discovered items.
   </Card>
 </CardGroup>
