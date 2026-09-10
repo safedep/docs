@@ -6,7 +6,7 @@ description: "Install PMG system-wide on Linux so Docker images, CI runners, and
 Use a system-wide install when one machine or image should protect every user account: shared VMs, CI runners, and golden Docker images. It installs PATH shims for all users and an authoritative config under `/etc`, so any user's `npm install` or `pip install` is checked before it runs.
 
 <Info>
-  For a single developer machine, use the per-user setup in the [Quickstart](/package-security/pmg/quickstart) instead. For a macOS fleet, [deploy through your MDM](/package-security/pmg/mdm/overview). Per-user and system-wide installs can coexist.
+  For a single developer machine, use the per-user setup in the [Quickstart](/package-security/pmg/quickstart). For a macOS fleet, [deploy through your MDM](/package-security/pmg/mdm/overview). For a Kubernetes workload, use the [Kubernetes guide](/package-security/pmg/kubernetes). Per-user and system-wide installs can coexist.
 </Info>
 
 ## Requirements
@@ -131,12 +131,16 @@ Cloud sync reports install events to your SafeDep Cloud tenant, where they appea
 
 ### In a Docker image
 
-Enable sync and set a stable endpoint name before your install steps:
+Enable sync and set a stable endpoint name before your install steps. Use this setting for containers that run outside Kubernetes.
 
 ```dockerfile
 ENV PMG_CLOUD_ENABLED=true
 ENV PMG_CLOUD_ENDPOINT_ID="my-golden-image"
 ```
+
+<Warning>
+  Do not set `PMG_CLOUD_ENDPOINT_ID` in an image that runs on Kubernetes. PMG derives a stable Kubernetes workload identity when this value is not set. See [PMG in Kubernetes](/package-security/pmg/kubernetes).
+</Warning>
 
 Containers report a generated hostname per run, so without `PMG_CLOUD_ENDPOINT_ID` every run registers as a new endpoint. A stable name is what you will recognize in Endpoint Hub.
 

@@ -1,0 +1,292 @@
+---
+title: "PMG in Kubernetes"
+description: "Block package installs inside Kubernetes workloads and report PMG events with a stable workload identity."
+---
+
+Use PMG in a Kubernetes workload that installs packages at run time. Common examples include development workspaces, build Pods, and CI jobs.
+
+PMG protects only the containers that include it. It does not protect other Pods in the cluster. It also does not scan packages that are already in an image.
+
+<Info>
+  Use the [Docker image guide](/package-security/pmg/system-install#docker-images) to protect package installs during an image build. This guide adds Kubernetes workload identity and cloud reporting to a PMG-enabled image.
+</Info>
+
+## Requirements
+
+- PMG v0.28.0 or later
+- A Linux container image
+- A workload that runs a supported package manager
+- A writable home directory for the container user, or writable `PMG_CONFIG_DIR` and `PMG_CACHE_DIR` paths
+
+You need a SafeDep Cloud API key and tenant ID only when you want to send events to [Package Guard](/governance/cloud/endpoint-hub/package-guard). PMG blocks malicious packages without these credentials.
+
+## Build a PMG-enabled image
+
+Install PMG in each image that runs package manager commands.
+
+```dockerfile
+FROM ghcr.io/safedep/pmg:v0.28.0 AS pmg
+
+FROM node:22-bookworm
+
+COPY --from=pmg /usr/local/bin/pmg /usr/local/bin/pmg
+RUN pmg setup install --system
+
+ENV PATH="/usr/local/lib/pmg/bin:$PATH"
+
+RUN mkdir -p /app && chown node:node /app
+WORKDIR /app
+USER node
+
+COPY --chown=node:node package*.json ./
+RUN npm ci
+
+COPY --chown=node:node . .
+CMD ["node", "index.js"]
+```
+
+<Note>
+  This example shows the minimum PMG version that supports Kubernetes identity. Check the [PMG releases](https://github.com/safedep/pmg/releases) for the current stable version. Replace `v0.28.0` before you build the image.
+</Note>
+
+The `PATH` value routes package manager commands through PMG. Keep the PMG shim directory before the real package manager directory.
+
+The `npm ci` command in this example runs during the image build. PMG protects it as a Docker build command. PMG uses Kubernetes identity only for commands that run after Kubernetes starts the container.
+
+<Warning>
+  Do not set `PMG_CLOUD_ENDPOINT_ID` in an image that runs on Kubernetes. This value overrides the automatic Kubernetes workload identity.
+</Warning>
+
+## Add the workload identity
+
+PMG can group all replicas of one workload under one endpoint. It can also attach the Pod name and Pod UID to each install session.
+
+<Steps>
+  <Step title="Create the Cloud Secret">
+    Skip this step if you do not use SafeDep Cloud. Also omit `PMG_CLOUD_ENABLED`, `SAFEDEP_API_KEY`, and `SAFEDEP_TENANT_ID` from the workload.
+
+    Create a local file named `safedep-cloud.env`.
+
+    ```text
+    SAFEDEP_API_KEY=<your-api-key>
+    SAFEDEP_TENANT_ID=<your-tenant-id>
+    ```
+
+    Create the Kubernetes Secret in the target namespace.
+
+    ```bash
+    kubectl create secret generic safedep-cloud \
+      --from-env-file=safedep-cloud.env
+    ```
+
+    Delete the local file after Kubernetes creates the Secret. Do not commit the file to source control.
+  </Step>
+
+  <Step title="Add PMG to the workload">
+    Add the PMG settings and Kubernetes fields to the container that runs package installs.
+
+    ```yaml
+    apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+      name: checkout
+    spec:
+      replicas: 2
+      selector:
+        matchLabels:
+          app: checkout
+      template:
+        metadata:
+          labels:
+            app: checkout
+        spec:
+          containers:
+            - name: checkout
+              image: registry.example.com/checkout:1.0.0
+              env:
+                - name: PMG_CLOUD_ENABLED
+                  value: "true"
+                - name: SAFEDEP_API_KEY
+                  valueFrom:
+                    secretKeyRef:
+                      name: safedep-cloud
+                      key: SAFEDEP_API_KEY
+                - name: SAFEDEP_TENANT_ID
+                  valueFrom:
+                    secretKeyRef:
+                      name: safedep-cloud
+                      key: SAFEDEP_TENANT_ID
+                - name: KUBE_NAMESPACE
+                  valueFrom:
+                    fieldRef:
+                      fieldPath: metadata.namespace
+                - name: KUBE_POD_NAME
+                  valueFrom:
+                    fieldRef:
+                      fieldPath: metadata.name
+                - name: KUBE_POD_UID
+                  valueFrom:
+                    fieldRef:
+                      fieldPath: metadata.uid
+                - name: KUBE_WORKLOAD_NAME
+                  value: checkout
+                - name: KUBE_WORKLOAD_KIND
+                  value: Deployment
+    ```
+
+    Set `KUBE_WORKLOAD_NAME` to the workload name. Set `KUBE_WORKLOAD_KIND` to `Deployment`, `StatefulSet`, `DaemonSet`, `Job`, `CronJob`, `ReplicaSet`, or `Pod`.
+
+    Kubernetes does not expose the owning workload through a Downward API field. The workload manifest must set these two values.
+  </Step>
+
+  <Step title="Set the cluster name when needed">
+    Set a cluster name when one SafeDep tenant receives events from more than one cluster.
+
+    ```yaml
+    - name: KUBE_CLUSTER_NAME
+      value: prod-eu
+    ```
+
+    Use the same value for all workloads in one cluster.
+  </Step>
+
+  <Step title="Deploy the workload">
+    Save the manifest as `checkout.yaml` and apply it.
+
+    ```bash
+    kubectl apply -f checkout.yaml
+    kubectl rollout status deployment/checkout
+    ```
+  </Step>
+</Steps>
+
+PMG does not call the Kubernetes API. The container does not need extra RBAC permissions.
+
+## How PMG names the endpoint
+
+PMG uses one of these endpoint IDs.
+
+- `k8s:<namespace>/<workload>`
+- `k8s:<cluster>/<namespace>/<workload>`
+
+All replicas of the `checkout` Deployment use the same endpoint ID. Each install session still includes its Pod name and Pod UID.
+
+PMG can derive common workload names from generated Pod names. Set `KUBE_WORKLOAD_NAME` so the identity stays stable for every workload type.
+
+Do not set `cloud.endpoint_id` or `PMG_CLOUD_ENDPOINT_ID`. A configured endpoint ID has higher priority than the Kubernetes identity. See the [PMG configuration reference](https://github.com/safedep/pmg/blob/main/docs/config.md#endpoint-identity) for the full priority order.
+
+## Sync short-lived workloads
+
+PMG starts automatic cloud sync after package manager commands. This mode works for long-running Pods.
+
+A Job can stop before the automatic sync process finishes. Run a final sync before a short-lived container exits.
+
+Disable automatic sync in the short-lived container.
+
+```yaml
+- name: PMG_CLOUD_AUTO_SYNC_ENABLED
+  value: "false"
+```
+
+Run the package manager and the final sync in the same container command.
+
+```yaml
+command: ["/bin/sh", "-c"]
+args:
+  - |
+    npm ci
+    install_status=$?
+    pmg cloud sync --timeout 60s
+    sync_status=$?
+    if [ "$install_status" -ne 0 ]; then
+      exit "$install_status"
+    fi
+    exit "$sync_status"
+```
+
+This command runs the sync when `npm ci` fails. It also keeps the package manager exit status when PMG blocks a package.
+
+<Note>
+  An abrupt Pod deletion can remove events that PMG has not synced. Use an explicit final sync for Jobs and other short-lived workloads.
+</Note>
+
+## Verify the deployment
+
+Check the PMG version and system setup.
+
+```bash
+kubectl exec deployment/checkout -- pmg version
+kubectl exec deployment/checkout -- pmg setup doctor
+```
+
+Check that the package manager resolves through the PMG shim.
+
+```bash
+kubectl exec deployment/checkout -- sh -c 'command -v npm'
+```
+
+The command must print `/usr/local/lib/pmg/bin/npm`.
+
+Test the block with the benign SafeDep test package. The command must fail because PMG marks this package as malicious for testing.
+
+```bash
+kubectl exec deployment/checkout -- sh -c \
+  'cd /tmp && npm install --no-cache --prefer-online safedep-test-pkg@0.1.3'
+```
+
+Sync the test event now.
+
+```bash
+kubectl exec deployment/checkout -- pmg cloud sync --timeout 60s
+```
+
+Open [SafeDep Cloud](https://app.safedep.io). Select **Endpoint Hub**, and then select the Kubernetes workload endpoint. The endpoint name must match `k8s:<namespace>/checkout` or `k8s:<cluster>/<namespace>/checkout`.
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="The package manager does not use the PMG shim">
+    Check the `PATH` inside the container.
+
+    ```bash
+    kubectl exec deployment/checkout -- sh -c 'printf "%s\n" "$PATH"'
+    ```
+
+    Keep `/usr/local/lib/pmg/bin` before the package manager directory. Call `pmg npm` or `pmg pip` directly when a version manager changes `PATH`.
+  </Accordion>
+
+  <Accordion title="The endpoint does not use a Kubernetes name">
+    Remove `PMG_CLOUD_ENDPOINT_ID` from the image and workload. Also remove `cloud.endpoint_id` from the PMG config.
+
+    Set `KUBE_NAMESPACE` and `KUBE_WORKLOAD_NAME` in the container environment.
+  </Accordion>
+
+  <Accordion title="Each Pod appears as a different endpoint">
+    Set one `KUBE_WORKLOAD_NAME` value for all replicas. Do not use the Pod name as the workload name.
+  </Accordion>
+
+  <Accordion title="PMG cannot write its runtime data">
+    Make the container user's home directory writable. You can also set `PMG_CONFIG_DIR` and `PMG_CACHE_DIR` to writable paths.
+
+    Do not let an init process create these directories as another user.
+  </Accordion>
+
+  <Accordion title="A Job does not send its final events">
+    Run `pmg cloud sync --timeout 60s` before the container exits. Confirm that the container has the Cloud Secret and network access during the sync.
+  </Accordion>
+</AccordionGroup>
+
+<CardGroup cols={2}>
+  <Card title="Docker and shared VMs" icon="docker" href="/package-security/pmg/system-install">
+    Install PMG in an image or on a shared Linux host.
+  </Card>
+  <Card title="Package Guard" icon="shield" href="/governance/cloud/endpoint-hub/package-guard">
+    View package install events in SafeDep Cloud.
+  </Card>
+  <Card title="PMG configuration" icon="github" href="https://github.com/safedep/pmg/blob/main/docs/config.md">
+    Review all PMG configuration keys and endpoint identity rules.
+  </Card>
+  <Card title="PMG overview" icon="box" href="/package-security/pmg/overview">
+    Learn how PMG blocks malicious packages.
+  </Card>
+</CardGroup>
