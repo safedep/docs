@@ -137,7 +137,7 @@ Don't mix Diátaxis types within a single page.
 - Core Concepts: `concepts/malicious-package`, `concepts/vulnerability`, `concepts/policy`, `concepts/cel`, `concepts/sbom`, `concepts/tenant`, `concepts/endpoint`
 
 **Package Security** *(tab landing: `package-security/overview`)*
-- Install-Time Package Blocking: `package-security/pmg/overview` *(landing)*, `package-security/pmg/quickstart`, `package-security/pmg/system-install`
+- Install-Time Package Blocking: `package-security/pmg/overview` *(landing)*, `package-security/pmg/quickstart`, `package-security/pmg/system-install`, `package-security/pmg/kubernetes`
 - MDM: `package-security/pmg/mdm/overview` *(landing)*, `package-security/pmg/mdm/jamf`, `package-security/pmg/mdm/jumpcloud`, `package-security/pmg/mdm/intune`
 - On-Demand Package Scanning: `package-security/scan/overview` *(landing)*, `package-security/scan/quickstart`, `package-security/scan/automation`
 - CI/CD Package Blocking: `package-security/pmg/github-actions`

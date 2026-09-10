@@ -53,7 +53,8 @@
             "root": "package-security/pmg/overview",
             "pages": [
               "package-security/pmg/quickstart",
-              "package-security/pmg/system-install"
+              "package-security/pmg/system-install",
+              "package-security/pmg/kubernetes"
             ]
           },
           {
