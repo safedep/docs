@@ -32,7 +32,7 @@ For optional Cloud sync, you need a SafeDep Cloud API key and Tenant ID from [ap
       <Tab title="Windows">
         Upload `lib_windows.ps1` and `pmg_setup_install_windows.ps1` from [`scripts/mdm/windows/`](https://github.com/safedep/pmg/tree/main/scripts/mdm/windows). Set **File Destination** to `C:\Windows\Temp\pmg-mdm\`.
 
-        For Cloud sync, upload a `config.yml` with `cloud.enabled: true` to the same directory. The Windows installer always creates a managed config.
+        For the Cloud-enabled Command below, also upload `config.yml` with `cloud.enabled: true` to the same directory. Keep your other policy settings in this file because it replaces the managed config. Credentials alone do not enable sync.
 
         Optionally include `pmg.exe` from the [v0.29.0 release zip](https://github.com/safedep/pmg/releases/tag/v0.29.0) to avoid a download. The bundled binary must be owned by Administrators or SYSTEM.
       </Tab>

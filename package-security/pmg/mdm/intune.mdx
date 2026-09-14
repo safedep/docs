@@ -39,14 +39,16 @@ PMG blocking works without Cloud. For a local-only deployment, use the [prebuilt
        Optionally add `--config /path/to/config.yml` for managed config. Set `cloud.enabled: true` in that file.
      </Tab>
      <Tab title="Windows">
-       Create a `config.yml` with Cloud sync enabled:
+       Add this setting to your deployment's `config.yml`:
 
        ```yaml
        cloud:
          enabled: true
        ```
 
-       The generator runs in Bash on macOS or Linux, or Git Bash on Windows:
+       Keep your other policy settings in this file. The installer replaces the managed config with it.
+
+       Generate the installer with both `--config` and `--embed-cloud-credentials`. Run the generator in Bash on macOS or Linux, or Git Bash on Windows:
 
        ```sh
        SAFEDEP_API_KEY=... SAFEDEP_TENANT_ID=... \
@@ -56,7 +58,7 @@ PMG blocking works without Cloud. For a local-only deployment, use the [prebuilt
          --output-dir /path/to/pmg-intune
        ```
 
-       The Windows installer always creates a managed config. Include this file to enable Cloud sync.
+       Credentials alone do not enable Cloud sync. The Windows installer always creates a managed config, which `pmg config set cloud.enabled true` cannot change.
 
        If you generate the installer in Git Bash, restrict its ACL from an elevated PowerShell terminal in the output directory:
 
@@ -112,7 +114,7 @@ Upload the matching uninstaller from the same output directory (`pmg_uninstall_m
 Use a Win32 app to bundle a release binary, including for devices without GitHub access.
 
 1. Put `lib_windows.ps1`, `pmg_setup_install_windows.ps1`, and `pmg_uninstall_windows.ps1` from [`scripts/mdm/windows`](https://github.com/safedep/pmg/tree/main/scripts/mdm/windows) in one source folder.
-2. Add `pmg.exe` from the Windows x86-64 [v0.29.0 release zip](https://github.com/safedep/pmg/releases/tag/v0.29.0). A bundled binary must be owned by Administrators or SYSTEM. For Cloud sync, add `config.yml` with `cloud.enabled: true`.
+2. Add `pmg.exe` from the Windows x86-64 [v0.29.0 release zip](https://github.com/safedep/pmg/releases/tag/v0.29.0). A bundled binary must be owned by Administrators or SYSTEM. For Cloud sync, add `config.yml` with `cloud.enabled: true` and your other policy settings.
 3. Package the folder with Microsoft's Content Prep Tool and [add the Win32 app](https://learn.microsoft.com/en-us/intune/app-management/deployment/add-win32).
 4. Set the install command:
 

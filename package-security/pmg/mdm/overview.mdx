@@ -11,7 +11,7 @@ Install or remove PMG on macOS, Linux, and Windows fleets through your MDM. On m
 
 Run the scripts as root on macOS and Linux, or as SYSTEM or an administrator on Windows. For a single machine or golden image with no MDM agent, such as a shared VM, CI runner, or Docker image, use [system install](/package-security/pmg/system-install) instead.
 
-PMG blocks packages without Cloud credentials. MDM deploys can also sync data to [SafeDep Cloud](/governance/cloud/quickstart). With Cloud credentials configured, the install script runs `pmg cloud sync` after setup. On Windows, it syncs logged-on users only. This adds the device to [Endpoint Hub](/governance/cloud/endpoint-hub/overview) without waiting for a package manager event.
+PMG blocks packages without Cloud credentials. MDM deploys can also sync data to [SafeDep Cloud](/governance/cloud/quickstart). With Cloud credentials configured, the install script attempts `pmg cloud sync` after setup. On Windows, this runs for logged-on users only. A successful sync adds the device to [Endpoint Hub](/governance/cloud/endpoint-hub/overview) without waiting for a package manager event.
 
 To use Cloud sync, you need an API key and Tenant ID from [app.safedep.io/settings/api-keys](https://app.safedep.io/settings/api-keys). To repeat the sync without installing or configuring PMG again, pass `--cloud-sync-only` to the install script. Use this option only for users who already have PMG and cloud sync enabled. Run the normal installer to configure new users. On Windows, run it after those users sign in to store their Cloud credentials.
 
@@ -26,7 +26,15 @@ Jamf, Mosyle, and Kandji use the [macOS scripts](https://github.com/safedep/pmg/
 
 Do not assign an install policy and an uninstall policy to the same devices at the same time.
 
-You can optionally ship a `config.yml` next to the scripts (or pass `--config` when generating a standalone installer) for a machine-wide config. To use Cloud sync, set `cloud.enabled: true` in it. On Windows, always supply this config when enabling sync: system install creates a managed config even without a bundled file. A global config prevents the installer from changing that flag. See [Globally Managed Configuration](https://github.com/safedep/pmg/blob/main/docs/config.md#globally-managed-configuration).
+For managed config, ship `config.yml` beside the scripts or embed it with the standalone generator's `--config` option. Keep your other policy settings in the file. The installer replaces the managed config with the bundled file.
+
+On Windows, Cloud credentials must be accompanied by a config with `cloud.enabled: true`. This applies to runtime and embedded credentials. The system install always creates a managed config, which `pmg config set cloud.enabled true` cannot change. On macOS and Linux, the installer enables sync automatically when credentials are supplied and no managed config exists. If you supply a managed config, set `cloud.enabled: true` in it.
+
+For Windows standalone scripts with runtime credentials, keep `--config` and omit `--embed-cloud-credentials` when generating the installer. See [Globally Managed Configuration](https://github.com/safedep/pmg/blob/main/docs/config.md#globally-managed-configuration).
+
+<Note>
+  A successful MDM install status does not confirm Cloud sync. If a Windows endpoint does not appear in Endpoint Hub, check `pmg config get cloud.enabled` and run `pmg cloud sync` in a logged-on user's session with credentials configured. Cloud login and sync failures do not fail the normal installer.
+</Note>
 
 Windows deployment requires PMG v0.29.0 or later. See the [MDM scripts README](https://github.com/safedep/pmg/blob/main/scripts/mdm/README.md) for platform requirements and cleanup limitations.
 
