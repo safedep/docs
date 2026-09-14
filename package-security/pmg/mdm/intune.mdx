@@ -1,19 +1,21 @@
 ---
 title: "Intune"
-description: "Deploy PMG to macOS or Linux devices with a single-script Microsoft Intune shell-script policy."
+description: "Deploy PMG to macOS, Linux, or Windows devices with Intune scripts, or package a Windows Win32 app."
 ---
 
-Intune accepts one shell script per policy, and it has no script parameters. Generate a [standalone installer](https://github.com/safedep/pmg/tree/main/scripts/mdm/standalone) for your platform with your SafeDep Cloud credentials embedded, then upload that file.
+Intune script policies accept one script with no script parameters. Windows supports PowerShell policies and [Win32 app packages](#windows-win32-app). Generate a [standalone installer](https://github.com/safedep/pmg/tree/main/scripts/mdm/standalone) for your platform with your SafeDep Cloud credentials embedded, then upload that file.
 
 <Note>
   A [SafeDep subscription](https://safedep.io/pricing) is required to sync PMG events with SafeDep Cloud.
 </Note>
 
-You need a SafeDep Cloud API key and Tenant ID from [app.safedep.io/settings/api-keys](https://app.safedep.io/settings/api-keys). Installs sync to [Package Guard](/governance/cloud/endpoint-hub/package-guard).
+For Cloud sync, you need a SafeDep Cloud API key and Tenant ID from [app.safedep.io/settings/api-keys](https://app.safedep.io/settings/api-keys). Installs sync to [Package Guard](/governance/cloud/endpoint-hub/package-guard).
+
+PMG blocking works without Cloud. For a local-only deployment, use the [prebuilt standalone scripts](https://github.com/safedep/pmg/tree/main/scripts/mdm/standalone) or omit credentials and `--embed-cloud-credentials` when generating them.
 
 ## Install
 
-1. Clone [pmg](https://github.com/safedep/pmg) and generate the installer from `scripts/mdm/`:
+1. Clone the `main` branch of [pmg](https://github.com/safedep/pmg) and generate the installer from `scripts/mdm/`:
 
    <Tabs>
      <Tab title="macOS">
@@ -32,13 +34,40 @@ You need a SafeDep Cloud API key and Tenant ID from [app.safedep.io/settings/api
          --output-dir /path/to/pmg-intune
        ```
      </Tab>
+     <Tab title="Windows">
+       Create a `config.yml` with Cloud sync enabled:
+
+       ```yaml
+       cloud:
+         enabled: true
+       ```
+
+       The generator runs in Bash on macOS or Linux, or Git Bash on Windows:
+
+       ```sh
+       SAFEDEP_API_KEY=... SAFEDEP_TENANT_ID=... \
+         ./generate_standalone_windows.sh \
+         --config /path/to/config.yml \
+         --embed-cloud-credentials \
+         --output-dir /path/to/pmg-intune
+       ```
+
+       Windows system install always creates a managed config. Include this config to enable sync; `pmg config set cloud.enabled true` cannot change it afterward.
+     </Tab>
    </Tabs>
 
-   You can optionally add `--config /path/to/config.yml` to package a machine-wide config. Set `cloud.enabled: true` in that file.
+   On macOS and Linux, you can optionally add `--config /path/to/config.yml` to package a machine-wide config. Set `cloud.enabled: true` in that file.
 
 <Warning>
   Base64 is not encryption. Anyone who can read the uploaded installer in Intune can recover the credentials. Use a scoped, revocable API key. Do not commit the generated artifacts.
 </Warning>
+
+If you generate a credential-bearing installer in Git Bash, restrict its Windows ACL from an elevated PowerShell terminal in the output directory:
+
+```powershell
+icacls .\pmg_setup_install_windows_standalone.ps1 /inheritance:r `
+  /grant:r "BUILTIN\Administrators:F" "NT AUTHORITY\SYSTEM:F"
+```
 
 2. Upload the generated installer through Intune, using the procedure for your platform:
 
@@ -55,17 +84,52 @@ You need a SafeDep Cloud API key and Tenant ID from [app.safedep.io/settings/api
 
        See [Microsoft's procedure for Linux shell scripts](https://learn.microsoft.com/en-us/intune/intune-service/configuration/custom-settings-linux).
      </Tab>
+     <Tab title="Windows">
+       Follow [Microsoft's PowerShell script procedure](https://learn.microsoft.com/en-us/intune/device-management/tools/run-powershell-scripts-windows). Upload `pmg_setup_install_windows_standalone.ps1`.
+
+       - Set **Run this script using the logged on credentials** to **No** (SYSTEM).
+       - Set **Run script in 64-bit PowerShell host** to **Yes**.
+       - Sign the generated script if your policy requires a signature; otherwise set **Enforce script signature check** to **No**.
+
+       Before uploading, add `$env:PMG_VERSION = 'v0.29.0-edge.3'` at the start of the generated script. This prerelease includes Windows system install; the default download currently selects an older stable release. See [Windows version requirements](/package-security/pmg/mdm/overview#windows-deployment-checks).
+     </Tab>
    </Tabs>
 
-3. Assign the policy to a device group. Use a recurring install frequency if new users can be added later. Each run configures the target users and runs `pmg cloud sync` for each one.
+3. Assign the policy to a device group. On macOS and Linux, use a recurring install frequency if new users can be added later. On Windows, only logged-on users receive credentials and sync during a run. Windows platform scripts do not run on a recurring schedule after success. Update the script or policy to rerun the installer when credentials are needed for later sign-ins.
 
    A direct standalone upload in Intune cannot pass `--cloud-sync-only` to the script. Run the normal installer again when you need to sync or configure later users.
 
-The generated script stays under Intune's 1 MB size limit.
+Keep macOS and Linux shell scripts below 1 MB. Windows PowerShell scripts must be below 200 KB, including embedded config and credentials.
 
 ## Uninstall
 
-Upload the matching uninstaller from the same output directory (`pmg_uninstall_macos_standalone.sh` or `pmg_uninstall_linux_standalone.sh`), with the same platform settings as install. Do not assign the install and uninstall policies at the same time.
+Upload the matching uninstaller from the same output directory (`pmg_uninstall_macos_standalone.sh`, `pmg_uninstall_linux_standalone.sh`, or `pmg_uninstall_windows_standalone.ps1`), with the same platform settings as install. Do not assign the install and uninstall policies at the same time.
+
+For Windows, follow the [verification and user cleanup steps](/package-security/pmg/mdm/overview#windows-deployment-checks). Installation success does not prove Cloud sync succeeded; check Package Guard after a user runs an install.
+
+## Windows Win32 app
+
+Use a Win32 app to bundle a release binary, including for devices without GitHub access.
+
+1. Put `lib_windows.ps1`, `pmg_setup_install_windows.ps1`, and `pmg_uninstall_windows.ps1` from [`scripts/mdm/windows`](https://github.com/safedep/pmg/tree/main/scripts/mdm/windows) in one source folder.
+2. Add `pmg.exe` from the Windows x86-64 [v0.29.0-edge.3 release zip](https://github.com/safedep/pmg/releases/tag/v0.29.0-edge.3). A bundled binary must be owned by Administrators or SYSTEM. Optionally add `config.yml`; use `cloud.enabled: true` for Cloud sync.
+3. Package the folder with Microsoft's Content Prep Tool and [add the Win32 app](https://learn.microsoft.com/en-us/intune/app-management/deployment/add-win32).
+4. Set the install command:
+
+   ```powershell
+   powershell.exe -NoProfile -ExecutionPolicy Bypass -File pmg_setup_install_windows.ps1
+   ```
+
+5. Set the uninstall command:
+
+   ```powershell
+   powershell.exe -NoProfile -ExecutionPolicy Bypass -File pmg_uninstall_windows.ps1
+   ```
+
+6. Set **Install behavior** to **System**. Add a file-exists detection rule for `%ProgramFiles%\safedep\pmg\pmg.exe`, with **Associated with a 32-bit app on 64-bit clients** set to **No**.
+7. Assign the app to the Windows device group, then run the [Windows deployment checks](/package-security/pmg/mdm/overview#windows-deployment-checks).
+
+A Win32 app does not set the Cloud environment variables. Have users run `pmg cloud login` in their own sessions, or package the credential-bearing standalone installer generated above and use its filename in the install command. Keep `cloud.enabled: true` in the managed config. File-exists detection confirms the binary is present; it does not validate interception or Cloud sync.
 
 <CardGroup cols={2}>
   <Card title="Other MDMs" icon="laptop" href="/package-security/pmg/mdm/overview">

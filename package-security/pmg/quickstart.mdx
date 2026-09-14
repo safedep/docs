@@ -22,7 +22,7 @@ For what PMG is and how it works, see the [PMG overview](/package-security/pmg/o
 
 ## Installation
 
-### Using Homebrew (Recommended)
+### Using Homebrew (macOS and Linux)
 
 ```bash
 brew install safedep/tap/pmg
@@ -38,31 +38,49 @@ go install github.com/safedep/pmg@latest
 
 Download the latest release from our [GitHub releases page](https://github.com/safedep/pmg/releases) and add it to your PATH.
 
+### Windows
+
+Use Windows 10 or 11. Download `pmg_Windows_x86_64.zip` from [v0.29.0-edge.3](https://github.com/safedep/pmg/releases/tag/v0.29.0-edge.3), extract `pmg.exe`, and add its directory to your PATH. The release is x86-64 only; ARM64 runs it under emulation. 32-bit Windows is not supported.
+
+Windows support is currently available in this prerelease. The latest stable release, v0.28.1, predates the fixes.
+
+For Node.js installed by its MSI, winget, or Chocolatey, use the [Windows system install](/package-security/pmg/system-install#windows-machines). These installers put Node on the machine PATH, ahead of every per-user shim. Until system install is complete, invoke `pmg npm` explicitly.
+
 ## Quick Setup
 
 ### Automated Setup (Recommended)
 
 Run PMG's automated setup:
 
-```bash
-# Install shell aliases automatically
+```sh
 pmg setup install
 ```
 
-This command:
+<Tabs>
+  <Tab title="macOS and Linux">
+    Setup creates package-manager PATH shims and the `~/.pmg.rc` alias layer for bash, zsh, and fish. Restart your terminal or source your shell's config file to activate it.
+  </Tab>
+  <Tab title="Windows">
+    Setup creates `.cmd` shims in `%LOCALAPPDATA%\safedep\pmg\bin` and prepends that directory to your user PATH. It does not create aliases or PowerShell profile functions. Open a new PowerShell or `cmd.exe` terminal.
 
-- Creates `~/.pmg.rc` with package manager aliases
-- Adds a source line to your shell configuration files
-- Supports bash, zsh, and fish shells
+    ```powershell
+    Get-Command npm
+    pmg setup doctor
+    ```
 
-<Info>
-  After running `pmg setup install`, restart your terminal or run `source
-  ~/.zshrc` (or your shell's config file) to activate the aliases.
-</Info>
+    `npm` should resolve under the shim directory. If the real manager appears first, follow the diagnostic and use [system install](/package-security/pmg/system-install#windows-machines) for machine-wide toolchains.
+  </Tab>
+</Tabs>
+
+Verify protection with the benign test package. PMG must block it:
+
+```sh
+npm install --no-cache --prefer-online safedep-test-pkg@0.1.3
+```
 
 ### Manual Usage (Alternative)
 
-To run PMG without aliases:
+To invoke PMG explicitly:
 
 ```bash
 pmg npm install <package-name>
@@ -93,8 +111,17 @@ PMG supports these package managers:
 ### If PMG isn't working after setup
 
 1. Restart your terminal
-2. Check that interception is active: `which npm` should resolve to `~/.pmg/bin/npm` (the PMG shim). If it points to system npm, make sure `~/.pmg/bin` is early in your `$PATH`, or run `type npm` to check for a shell alias.
-3. Verify PMG installation: `pmg version`
+2. On macOS or Linux, run `type npm` to check for a PMG alias or shim. If it resolves to the real manager, run `pmg setup install` again and restart the terminal.
+3. On Windows, run `Get-Command npm` in PowerShell. It should resolve under `%LOCALAPPDATA%\safedep\pmg\bin` for a per-user setup, or `%ProgramFiles%\safedep\pmg\bin` for system install.
+4. Run `pmg setup doctor` to check PATH, shims, and config, and `pmg version` to check the installed version.
+
+### Windows coverage
+
+Use PowerShell or `cmd.exe` for automatic interception. Git Bash does not resolve `.cmd` shims through `PATHEXT`; invoke `pmg npm` or `pmg pip` explicitly there. Shell profiles and virtual environments can put the real manager before PMG. Programs that launch managers without a shell may not resolve the shims, and `cmd.exe` searches the current directory before PATH.
+
+Native Windows has no sandbox and no `pmg proxy start --daemon`; foreground proxy mode works. WSL uses the Linux build and protects only the toolchain inside WSL. For `pmg go get`, first run `pmg setup cert install` in your user session. Other supported Windows managers use PMG's injected ephemeral CA.
+
+See the [Windows support reference](https://github.com/safedep/pmg/blob/main/docs/windows-support.md) for coverage and argument-handling details.
 
 ### If packages are incorrectly blocked
 
