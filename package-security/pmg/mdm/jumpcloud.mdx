@@ -3,7 +3,7 @@ title: "JumpCloud"
 description: "Deploy PMG to macOS, Linux, or Windows devices with JumpCloud Commands."
 ---
 
-Deploy PMG with a JumpCloud Command that runs as root on macOS or Linux, or as SYSTEM on Windows. Use the [multi-file MDM scripts](https://github.com/safedep/pmg/tree/main/scripts/mdm) and ship the shared lib with the install or uninstall script for your platform.
+Deploy PMG with a JumpCloud Command that runs as `root` on macOS or Linux, or as `SYSTEM` on Windows. Use the [multi-file MDM scripts](https://github.com/safedep/pmg/tree/main/scripts/mdm) and ship the shared lib with the install or uninstall script for your platform.
 
 <Note>
   A [SafeDep subscription](https://safedep.io/pricing) is required to sync PMG events with SafeDep Cloud.
@@ -15,21 +15,28 @@ For optional Cloud sync, you need a SafeDep Cloud API key and Tenant ID from [ap
 
 <Steps>
   <Step title="Create a Command">
-    In the JumpCloud Admin Console, create a Command and set **Run As** to `root` for macOS or Linux. Windows Commands run as SYSTEM.
+    In the JumpCloud Admin Console, create a Command and set **Run As** to `root` for macOS or Linux. Windows Commands run as `SYSTEM`.
   </Step>
   <Step title="Attach the scripts">
     <Tabs>
       <Tab title="macOS">
-        Upload `lib_macos.sh` and `pmg_setup_install_macos.sh` from [`scripts/mdm/macos/`](https://github.com/safedep/pmg/tree/main/scripts/mdm/macos).
+        Upload `lib_macos.sh` and `pmg_setup_install_macos.sh` from [`scripts/mdm/macos/`](https://github.com/safedep/pmg/tree/main/scripts/mdm/macos). Set **File Destination** to `/tmp/pmg-mdm/`.
+
+        Optionally upload a `config.yml` to the same directory for managed config. Set `cloud.enabled: true` in it for Cloud sync.
       </Tab>
       <Tab title="Linux">
-        Upload `lib_linux.sh` and `pmg_setup_install_linux.sh` from [`scripts/mdm/linux/`](https://github.com/safedep/pmg/tree/main/scripts/mdm/linux).
+        Upload `lib_linux.sh` and `pmg_setup_install_linux.sh` from [`scripts/mdm/linux/`](https://github.com/safedep/pmg/tree/main/scripts/mdm/linux). Set **File Destination** to `/tmp/pmg-mdm/`.
+
+        Optionally upload a `config.yml` to the same directory for managed config. Set `cloud.enabled: true` in it for Cloud sync.
       </Tab>
       <Tab title="Windows">
-        Upload `lib_windows.ps1` and `pmg_setup_install_windows.ps1` from [`scripts/mdm/windows/`](https://github.com/safedep/pmg/tree/main/scripts/mdm/windows). Optionally include `pmg.exe` from the [v0.29.0 release zip](https://github.com/safedep/pmg/releases/tag/v0.29.0), owned by Administrators or SYSTEM, to avoid a download.
+        Upload `lib_windows.ps1` and `pmg_setup_install_windows.ps1` from [`scripts/mdm/windows/`](https://github.com/safedep/pmg/tree/main/scripts/mdm/windows). Set **File Destination** to `C:\Windows\Temp\pmg-mdm\`.
+
+        For Cloud sync, upload a `config.yml` with `cloud.enabled: true` to the same directory. The Windows installer always creates a managed config.
+
+        Optionally include `pmg.exe` from the [v0.29.0 release zip](https://github.com/safedep/pmg/releases/tag/v0.29.0) to avoid a download. The bundled binary must be owned by Administrators or SYSTEM.
       </Tab>
-</Tabs>
-    Use **File Destination** `/tmp/pmg-mdm/` on macOS and Linux, or `C:\Windows\Temp\pmg-mdm\` on Windows. You can also upload a `config.yml` alongside the scripts for managed config. To enable Cloud sync, set `cloud.enabled: true` in it. This config is required for Windows Cloud sync, since the installer always creates a managed config.
+    </Tabs>
   </Step>
   <Step title="Set the timeout">
     Set **Timeout After** to at least 900 seconds so a slow download is not killed mid-run.
@@ -61,13 +68,12 @@ For optional Cloud sync, you need a SafeDep Cloud API key and Tenant ID from [ap
       </Tab>
       <Tab title="Windows">
         ```powershell
-        $env:PMG_VERSION = 'v0.29.0'
         $env:SAFEDEP_API_KEY = '{{safedep_api_key}}'
         $env:SAFEDEP_TENANT_ID = '{{safedep_tenant_id}}'
         & C:\Windows\Temp\pmg-mdm\pmg_setup_install_windows.ps1
         ```
 
-        The version pin selects PMG v0.29.0. Without a pin, the installer downloads the latest stable release. See [Windows version requirements](/package-security/pmg/mdm/overview#windows-deployment-checks).
+        Windows requires PMG v0.29.0 or later. The installer downloads the latest stable release by default. To pin a version, optionally set `$env:PMG_VERSION = 'v0.29.0'` before running it.
       </Tab>
     </Tabs>
   </Step>
@@ -76,13 +82,11 @@ For optional Cloud sync, you need a SafeDep Cloud API key and Tenant ID from [ap
   </Step>
 </Steps>
 
-On Windows, run the [deployment checks](/package-security/pmg/mdm/overview#windows-deployment-checks) in a new terminal after install. Only logged-on users receive Cloud credentials and sync.
-
 ## Uninstall
 
 <Steps>
   <Step title="Create a second Command">
-    Use root on macOS or Linux, or SYSTEM on Windows.
+    Use `root` on macOS or Linux, or `SYSTEM` on Windows.
     <Tabs>
       <Tab title="macOS">
         Upload `lib_macos.sh` and `pmg_uninstall_macos.sh` from [`scripts/mdm/macos/`](https://github.com/safedep/pmg/tree/main/scripts/mdm/macos), with **File Destination** `/tmp/pmg-mdm/`.
@@ -121,8 +125,6 @@ On Windows, run the [deployment checks](/package-security/pmg/mdm/overview#windo
         ```powershell
         & C:\Windows\Temp\pmg-mdm\pmg_uninstall_windows.ps1
         ```
-
-        Complete the [Windows user cleanup steps](/package-security/pmg/mdm/overview#windows-deployment-checks) before removal.
       </Tab>
     </Tabs>
   </Step>
@@ -133,7 +135,7 @@ On Windows, run the [deployment checks](/package-security/pmg/mdm/overview#windo
 
 ## Run cloud sync only
 
-Create another Command to repeat cloud sync without installing or configuring PMG again. Set it up the same way as the install Command, with the same shared library and script and root on macOS/Linux or SYSTEM on Windows. Use this Command body:
+Create another Command to repeat cloud sync without installing or configuring PMG again. Set it up the same way as the install Command, with the same shared library and script and `root` on macOS/Linux or `SYSTEM` on Windows. Use this Command body:
 
 <Tabs>
   <Tab title="macOS">
@@ -163,7 +165,7 @@ Create another Command to repeat cloud sync without installing or configuring PM
     & C:\Windows\Temp\pmg-mdm\pmg_setup_install_windows.ps1 --cloud-sync-only
     ```
 
-    Only logged-on users are synced. This mode does not save credentials in Credential Manager; rerun the normal installer to store them after users sign in.
+    Only logged-on users are synced. This mode does not save credentials in Credential Manager. Rerun the normal installer to store them after users sign in.
   </Tab>
 </Tabs>
 

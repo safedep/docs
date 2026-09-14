@@ -11,7 +11,7 @@ Use a system-wide install when one machine or image should protect every user ac
 
 ## Requirements
 
-- **Linux or Windows.** Run as root on Linux, or as an administrator on Windows. Windows requires Windows 10 or 11; the release is x86-64, with ARM64 using emulation.
+- **Linux or Windows.** Run as root on Linux, or as an administrator on Windows. Windows requires Windows 10 or 11. The release is x86-64, with ARM64 using emulation.
 - **PMG in a system path.** On Linux, use a root-owned path such as `/usr/local/bin`, executable by all users. On Windows, the binary must be `%ProgramFiles%\safedep\pmg\pmg.exe`. A user-local binary is rejected.
 
 ## What gets created
@@ -45,11 +45,9 @@ Use a system-wide install when one machine or image should protect every user ac
    npm install --no-cache --prefer-online safedep-test-pkg@0.1.3
    ```
 
-`npm` should resolve under `%ProgramFiles%\safedep\pmg\bin`, and PMG must block the benign test package. System install puts shims ahead of machine-wide Node.js installations; a per-user install cannot do that.
+`npm` should resolve under `%ProgramFiles%\safedep\pmg\bin`, and PMG must block the benign test package. System install puts shims ahead of machine-wide Node.js installations. A per-user install cannot do that.
 
-System install sets Administrators as owner, gives SYSTEM and Administrators full control, and gives Users read and execute access. It disables permission inheritance on the objects it owns. Do not add a user-writable shim directory to the machine PATH.
-
-For managed config, run system install first, then edit the file it creates as administrator. An existing config with different permissions can stop setup. Inspect the reported file and follow the [system-install reference](https://github.com/safedep/pmg/blob/main/docs/system-install.md#configuration). `pmg setup doctor` checks permissions; rerunning setup restores the expected permissions on installed objects.
+System install sets the required ownership and permissions. Run it before editing the managed config as administrator. See the [system-install reference](https://github.com/safedep/pmg/blob/main/docs/system-install.md#configuration) for permission requirements and troubleshooting.
 
 For fleets, the [Windows MDM scripts](/package-security/pmg/mdm/overview) perform these steps and deploy your config. For shell and interception limits, see [Windows coverage](/package-security/pmg/quickstart#windows-coverage).
 
@@ -76,7 +74,7 @@ RUN pmg setup install --system
 # Required: profile.d is not sourced during docker build
 ENV PATH="/usr/local/lib/pmg/bin:$PATH"
 
-# Optional: switch to a non-root user; the PATH above still applies
+# Optional: switch to a non-root user. The PATH above still applies
 RUN mkdir -p /app && chown node:node /app
 WORKDIR /app
 USER node
@@ -110,7 +108,7 @@ Every `RUN npm install` or `RUN pip install` after the `ENV PATH` line now goes 
    sudo install -m 755 "$(which pmg)" /usr/local/bin/pmg
    ```
 
-   *PMG rejects a binary in a user location (`~/.local/bin`, `~/go/bin`), since any single user could modify it. The install script also picks `~/.local/bin` when that is on your `PATH`; if it did, use the copy command above.*
+   *PMG rejects a binary in a user location (`~/.local/bin`, `~/go/bin`), since any single user could modify it. The install script also picks `~/.local/bin` when that is on your `PATH`. If it did, use the copy command above.*
 
 2. **Install system-wide:**
 
@@ -118,7 +116,7 @@ Every `RUN npm install` or `RUN pip install` after the `ENV PATH` line now goes 
    sudo pmg setup install --system
    ```
 
-3. **Activate the PATH.** The install writes `/etc/profile.d/pmg.sh`, which prepends the shim directory for login shells. New login sessions pick it up; for an already-open shell:
+3. **Activate the PATH.** The install writes `/etc/profile.d/pmg.sh`, which prepends the shim directory for login shells. New login sessions pick it up. For an already-open shell:
 
    ```bash
    source /etc/profile.d/pmg.sh
@@ -152,7 +150,7 @@ The system config file is authoritative for every user. PMG ignores a per-user `
   On Linux, runtime data (event logs, cloud-sync state, cache) stays per user under `~/.config/safedep/pmg` and `~/.cache/safedep/pmg`. The invoking user must be able to write their own config directory. Relocate it with `PMG_CONFIG_DIR` / `PMG_CACHE_DIR` if needed.
 </Note>
 
-On Windows, per-user config is under `%APPDATA%\safedep\pmg`; event logs, cache, and runtime data are under `%LOCALAPPDATA%\safedep\pmg`.
+On Windows, per-user config is under `%APPDATA%\safedep\pmg`. Event logs, cache, and runtime data are under `%LOCALAPPDATA%\safedep\pmg`.
 
 ## Cloud sync
 
@@ -173,7 +171,7 @@ ENV PMG_CLOUD_ENDPOINT_ID="my-golden-image"
 
 Containers report a generated hostname per run, so without `PMG_CLOUD_ENDPOINT_ID` every run registers as a new endpoint. A stable name is what you will recognize in Endpoint Hub.
 
-The credentials exist only where you run `docker`, as shell exports or CI secrets; they never go in the Dockerfile.
+The credentials exist only where you run `docker`, as shell exports or CI secrets. They never go in the Dockerfile.
 
 <Warning>
   Never bake credentials into an image with `ENV SAFEDEP_API_KEY=...`. `ENV` values persist in the image metadata, and anyone who pulls the image can read them.
@@ -273,7 +271,7 @@ Users who should sync with their own key can set the same variables in their own
 
 Installs that ran before the credentials were in place are not lost: PMG buffers those events per user and delivers them on the next sync that finds credentials.
 
-Auto-sync cadence, manual sync, and viewing events are covered in [Package Guard](/governance/cloud/endpoint-hub/package-guard); the full set of cloud keys is in the [PMG configuration reference](https://github.com/safedep/pmg/blob/main/docs/config.md).
+Auto-sync cadence, manual sync, and viewing events are covered in [Package Guard](/governance/cloud/endpoint-hub/package-guard). The full set of cloud keys is in the [PMG configuration reference](https://github.com/safedep/pmg/blob/main/docs/config.md).
 
 ### On Windows
 
@@ -300,7 +298,7 @@ pmg setup remove --system
 pmg setup remove --system --config-file
 ```
 
-This removes machine shims and their PATH entry. It leaves the binary, its PATH entry, and per-user data. For complete fleet removal, use the [MDM uninstaller](/package-security/pmg/mdm/overview#windows-deployment-checks).
+This removes machine shims and their PATH entry. It leaves the binary, its PATH entry, and per-user data. For complete fleet removal, use the [MDM uninstaller](https://github.com/safedep/pmg/blob/main/scripts/mdm/README.md#uninstall).
 
 On Linux:
 
@@ -313,7 +311,7 @@ This leaves the PMG binary in place. To remove it too, run `sudo rm /usr/local/b
 
 ## Troubleshooting
 
-Try running `pmg setup doctor` first. The cases below apply to Linux; for Windows, see [Windows coverage](/package-security/pmg/quickstart#windows-coverage).
+Try running `pmg setup doctor` first. The cases below apply to Linux. For Windows, see [Windows coverage](/package-security/pmg/quickstart#windows-coverage).
 
 <AccordionGroup>
   <Accordion title="npm or pip resolves outside the shim directory">
@@ -336,7 +334,7 @@ Try running `pmg setup doctor` first. The cases below apply to Linux; for Window
     sudo chown -R $(id -un) ~/.config/safedep
     ```
 
-    If the path is **inside another user's home**, your environment leaked that user's `HOME` or `XDG_CONFIG_HOME` (common with `sudo -u` on CI runners). Fix the environment; do not `chown` another user's directory, that breaks PMG for them.
+    If the path is **inside another user's home**, your environment leaked that user's `HOME` or `XDG_CONFIG_HOME` (common with `sudo -u` on CI runners). Fix the environment. Do not `chown` another user's directory, that breaks PMG for them.
 
     ```bash
     export XDG_CONFIG_HOME="$HOME/.config"

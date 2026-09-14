@@ -11,19 +11,13 @@ Install or remove PMG on macOS, Linux, and Windows fleets through your MDM. On m
 
 Run the scripts as root on macOS and Linux, or as SYSTEM or an administrator on Windows. For a single machine or golden image with no MDM agent, such as a shared VM, CI runner, or Docker image, use [system install](/package-security/pmg/system-install) instead.
 
-PMG blocks packages without Cloud credentials. MDM deploys can also sync data to [SafeDep Cloud](/governance/cloud/quickstart). After setup, the install script runs `pmg cloud sync` for each target user. This adds the device to [Endpoint Hub](/governance/cloud/endpoint-hub/overview) without waiting for a package manager event.
+PMG blocks packages without Cloud credentials. MDM deploys can also sync data to [SafeDep Cloud](/governance/cloud/quickstart). With Cloud credentials configured, the install script runs `pmg cloud sync` after setup. On Windows, it syncs logged-on users only. This adds the device to [Endpoint Hub](/governance/cloud/endpoint-hub/overview) without waiting for a package manager event.
 
-To use Cloud sync, you need an API key and Tenant ID from [app.safedep.io/settings/api-keys](https://app.safedep.io/settings/api-keys). To repeat the sync without installing or configuring PMG again, pass `--cloud-sync-only` to the install script. Use this option only for users who already have PMG and cloud sync enabled. Run the normal installer to configure new users.
+To use Cloud sync, you need an API key and Tenant ID from [app.safedep.io/settings/api-keys](https://app.safedep.io/settings/api-keys). To repeat the sync without installing or configuring PMG again, pass `--cloud-sync-only` to the install script. Use this option only for users who already have PMG and cloud sync enabled. Run the normal installer to configure new users. On Windows, run it after those users sign in to store their Cloud credentials.
 
 ## Supported MDMs
 
-| MDM | Platforms covered by these guides | Deployment |
-| --- | --- | --- |
-| [Jamf](/package-security/pmg/mdm/jamf) | macOS | Multi-file scripts or package |
-| [JumpCloud](/package-security/pmg/mdm/jumpcloud) | macOS, Linux, Windows | Command with sibling files |
-| [Intune](/package-security/pmg/mdm/intune) | macOS, Linux, Windows | Standalone scripts; Windows also supports Win32 apps |
-
-For Mosyle, Kandji, or another macOS MDM, use the [macOS scripts](https://github.com/safedep/pmg/tree/main/scripts/mdm/macos). Use the matching platform scripts for other MDMs that can run shell scripts as root or PowerShell as SYSTEM.
+Jamf, Mosyle, and Kandji use the [macOS scripts](https://github.com/safedep/pmg/tree/main/scripts/mdm/macos). [JumpCloud](/package-security/pmg/mdm/jumpcloud) and [Intune](/package-security/pmg/mdm/intune) also support Linux and Windows deployments. Use multi-file scripts when your MDM can ship sibling files, or standalone scripts when it accepts one script per policy.
 
 ## Scripts
 
@@ -34,22 +28,9 @@ Do not assign an install policy and an uninstall policy to the same devices at t
 
 You can optionally ship a `config.yml` next to the scripts (or pass `--config` when generating a standalone installer) for a machine-wide config. To use Cloud sync, set `cloud.enabled: true` in it. On Windows, always supply this config when enabling sync: system install creates a managed config even without a bundled file. A global config prevents the installer from changing that flag. See [Globally Managed Configuration](https://github.com/safedep/pmg/blob/main/docs/config.md#globally-managed-configuration).
 
+Windows deployment requires PMG v0.29.0 or later. See the [MDM scripts README](https://github.com/safedep/pmg/blob/main/scripts/mdm/README.md) for platform requirements and cleanup limitations.
+
 The MDM scripts do not install a persistent MITM CA (`pmg setup cert install`). On macOS this needs interactive Keychain authorization, so it cannot run through MDM: have each user run it in their own session when needed. On Linux, PMG's ephemeral CA is usually enough. Run `pmg setup cert install --system` as your normal user only if a tool needs a persistent CA in the system trust store. Windows package managers use the injected ephemeral CA, except Go, which needs a user-run `pmg setup cert install`.
-
-## Windows deployment checks
-
-<Note>
-  Windows system install requires [v0.29.0](https://github.com/safedep/pmg/releases/tag/v0.29.0) or later. Use scripts from `main` and set `PMG_VERSION=v0.29.0`, or bundle that release's `pmg.exe`. The default download selects the latest stable release.
-</Note>
-
-- Use Windows 10 or 11 and Windows PowerShell 5.1 or PowerShell 7. The release is x86-64 only; ARM64 uses emulation. 32-bit Windows is not supported.
-- The installer places `pmg.exe` in `%ProgramFiles%\safedep\pmg` and managed config in `%PROGRAMDATA%\safedep\pmg\config.yml`. It sets the required ownership and permissions before deploying your config.
-- Reopen the terminal and run `Get-Command npm` in PowerShell. It should resolve under `%ProgramFiles%\safedep\pmg\bin`. Run `pmg setup doctor`, then `npm install --no-cache --prefer-online safedep-test-pkg@0.1.3`. PMG must block this benign test package.
-- Only logged-on users receive Cloud credentials and sync during an installer run. Local and Entra ID accounts are supported. Run the installer again after other users sign in. A scheduled invocation with `--cloud-sync-only` syncs logged-on users with supplied credentials but does not store them in Credential Manager.
-- Before uninstall, have users who will be logged off run `pmg setup remove` and `pmg cloud logout`. Otherwise, their old per-user PATH entry and credentials remain. The uninstaller removes machine state and each local profile's PMG data. Set `PMG_KEEP_GLOBAL_CONFIG=1` to preserve the managed config.
-- If PMG is running during removal, locked logs or sync databases can remain with a warning. Rerun the uninstaller after PMG exits to finish cleanup.
-
-For Git Bash, PATH precedence, and native Windows limitations, see the [Windows support reference](https://github.com/safedep/pmg/blob/main/docs/windows-support.md).
 
 ## Next steps
 

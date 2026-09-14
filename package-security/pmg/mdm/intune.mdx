@@ -25,6 +25,8 @@ PMG blocking works without Cloud. For a local-only deployment, use the [prebuilt
          --embed-cloud-credentials \
          --output-dir /path/to/pmg-intune
        ```
+
+       Optionally add `--config /path/to/config.yml` for managed config. Set `cloud.enabled: true` in that file.
      </Tab>
      <Tab title="Linux">
        ```sh
@@ -33,6 +35,8 @@ PMG blocking works without Cloud. For a local-only deployment, use the [prebuilt
          --embed-cloud-credentials \
          --output-dir /path/to/pmg-intune
        ```
+
+       Optionally add `--config /path/to/config.yml` for managed config. Set `cloud.enabled: true` in that file.
      </Tab>
      <Tab title="Windows">
        Create a `config.yml` with Cloud sync enabled:
@@ -52,22 +56,20 @@ PMG blocking works without Cloud. For a local-only deployment, use the [prebuilt
          --output-dir /path/to/pmg-intune
        ```
 
-       Windows system install always creates a managed config. Include this config to enable sync; `pmg config set cloud.enabled true` cannot change it afterward.
+       The Windows installer always creates a managed config. Include this file to enable Cloud sync.
+
+       If you generate the installer in Git Bash, restrict its ACL from an elevated PowerShell terminal in the output directory:
+
+       ```powershell
+       icacls .\pmg_setup_install_windows_standalone.ps1 /inheritance:r `
+         /grant:r "BUILTIN\Administrators:F" "NT AUTHORITY\SYSTEM:F"
+       ```
      </Tab>
    </Tabs>
-
-   On macOS and Linux, you can optionally add `--config /path/to/config.yml` to package a machine-wide config. Set `cloud.enabled: true` in that file.
 
 <Warning>
   Base64 is not encryption. Anyone who can read the uploaded installer in Intune can recover the credentials. Use a scoped, revocable API key. Do not commit the generated artifacts.
 </Warning>
-
-If you generate a credential-bearing installer in Git Bash, restrict its Windows ACL from an elevated PowerShell terminal in the output directory:
-
-```powershell
-icacls .\pmg_setup_install_windows_standalone.ps1 /inheritance:r `
-  /grant:r "BUILTIN\Administrators:F" "NT AUTHORITY\SYSTEM:F"
-```
 
 2. Upload the generated installer through Intune, using the procedure for your platform:
 
@@ -89,9 +91,9 @@ icacls .\pmg_setup_install_windows_standalone.ps1 /inheritance:r `
 
        - Set **Run this script using the logged on credentials** to **No** (SYSTEM).
        - Set **Run script in 64-bit PowerShell host** to **Yes**.
-       - Sign the generated script if your policy requires a signature; otherwise set **Enforce script signature check** to **No**.
+       - Sign the generated script if your policy requires it. Otherwise, set **Enforce script signature check** to **No**.
 
-       Before uploading, add `$env:PMG_VERSION = 'v0.29.0'` at the start of the generated script. Windows system install requires PMG v0.29.0 or later. See [Windows version requirements](/package-security/pmg/mdm/overview#windows-deployment-checks).
+       Windows requires PMG v0.29.0 or later. The installer downloads the latest stable release by default. To pin a version, optionally add `$env:PMG_VERSION = 'v0.29.0'` at the start of the generated script before uploading.
      </Tab>
    </Tabs>
 
@@ -105,14 +107,12 @@ Keep macOS and Linux shell scripts below 1 MB. Windows PowerShell scripts must b
 
 Upload the matching uninstaller from the same output directory (`pmg_uninstall_macos_standalone.sh`, `pmg_uninstall_linux_standalone.sh`, or `pmg_uninstall_windows_standalone.ps1`), with the same platform settings as install. Do not assign the install and uninstall policies at the same time.
 
-For Windows, follow the [verification and user cleanup steps](/package-security/pmg/mdm/overview#windows-deployment-checks). Installation success does not prove Cloud sync succeeded; check Package Guard after a user runs an install.
-
 ## Windows Win32 app
 
 Use a Win32 app to bundle a release binary, including for devices without GitHub access.
 
 1. Put `lib_windows.ps1`, `pmg_setup_install_windows.ps1`, and `pmg_uninstall_windows.ps1` from [`scripts/mdm/windows`](https://github.com/safedep/pmg/tree/main/scripts/mdm/windows) in one source folder.
-2. Add `pmg.exe` from the Windows x86-64 [v0.29.0 release zip](https://github.com/safedep/pmg/releases/tag/v0.29.0). A bundled binary must be owned by Administrators or SYSTEM. Optionally add `config.yml`; use `cloud.enabled: true` for Cloud sync.
+2. Add `pmg.exe` from the Windows x86-64 [v0.29.0 release zip](https://github.com/safedep/pmg/releases/tag/v0.29.0). A bundled binary must be owned by Administrators or SYSTEM. For Cloud sync, add `config.yml` with `cloud.enabled: true`.
 3. Package the folder with Microsoft's Content Prep Tool and [add the Win32 app](https://learn.microsoft.com/en-us/intune/app-management/deployment/add-win32).
 4. Set the install command:
 
@@ -127,9 +127,9 @@ Use a Win32 app to bundle a release binary, including for devices without GitHub
    ```
 
 6. Set **Install behavior** to **System**. Add a file-exists detection rule for `%ProgramFiles%\safedep\pmg\pmg.exe`, with **Associated with a 32-bit app on 64-bit clients** set to **No**.
-7. Assign the app to the Windows device group, then run the [Windows deployment checks](/package-security/pmg/mdm/overview#windows-deployment-checks).
+7. Assign the app to the Windows device group.
 
-A Win32 app does not set the Cloud environment variables. Have users run `pmg cloud login` in their own sessions, or package the credential-bearing standalone installer generated above and use its filename in the install command. Keep `cloud.enabled: true` in the managed config. File-exists detection confirms the binary is present; it does not validate interception or Cloud sync.
+A Win32 app does not set the Cloud environment variables. Have users run `pmg cloud login` in their own sessions, or package the credential-bearing standalone installer generated above and use its filename in the install command. Keep `cloud.enabled: true` in the managed config.
 
 <CardGroup cols={2}>
   <Card title="Other MDMs" icon="laptop" href="/package-security/pmg/mdm/overview">

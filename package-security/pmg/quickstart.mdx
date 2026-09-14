@@ -40,7 +40,7 @@ Download the latest release from our [GitHub releases page](https://github.com/s
 
 ### Windows
 
-Use Windows 10 or 11. Download `pmg_Windows_x86_64.zip` from [v0.29.0](https://github.com/safedep/pmg/releases/tag/v0.29.0), extract `pmg.exe`, and add its directory to your PATH. The release is x86-64 only; ARM64 runs it under emulation. 32-bit Windows is not supported.
+Use Windows 10 or 11. Download `pmg_Windows_x86_64.zip` from [v0.29.0](https://github.com/safedep/pmg/releases/tag/v0.29.0), extract `pmg.exe`, and add its directory to your PATH. The release is x86-64 only. ARM64 runs it under emulation. 32-bit Windows is not supported.
 
 Windows support requires PMG v0.29.0 or later.
 
@@ -117,11 +117,9 @@ PMG supports these package managers:
 
 ### Windows coverage
 
-Use PowerShell or `cmd.exe` for automatic interception. Git Bash does not resolve `.cmd` shims through `PATHEXT`; invoke `pmg npm` or `pmg pip` explicitly there. Shell profiles and virtual environments can put the real manager before PMG. Programs that launch managers without a shell may not resolve the shims, and `cmd.exe` searches the current directory before PATH.
+Use PowerShell or `cmd.exe` for automatic interception. In Git Bash, invoke `pmg npm` or `pmg pip` explicitly. Run `pmg setup doctor` to diagnose setup problems.
 
-Native Windows has no sandbox and no `pmg proxy start --daemon`; foreground proxy mode works. WSL uses the Linux build and protects only the toolchain inside WSL. For `pmg go get`, first run `pmg setup cert install` in your user session. Other supported Windows managers use PMG's injected ephemeral CA.
-
-See the [Windows support reference](https://github.com/safedep/pmg/blob/main/docs/windows-support.md) for coverage and argument-handling details.
+See the [Windows support reference](https://github.com/safedep/pmg/blob/main/docs/windows-support.md) for PATH behavior, supported shells, WSL, and platform limitations.
 
 ### If packages are incorrectly blocked
 
