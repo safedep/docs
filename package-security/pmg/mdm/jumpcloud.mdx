@@ -26,7 +26,7 @@ For optional Cloud sync, you need a SafeDep Cloud API key and Tenant ID from [ap
         Upload `lib_linux.sh` and `pmg_setup_install_linux.sh` from [`scripts/mdm/linux/`](https://github.com/safedep/pmg/tree/main/scripts/mdm/linux).
       </Tab>
       <Tab title="Windows">
-        Upload `lib_windows.ps1` and `pmg_setup_install_windows.ps1` from [`scripts/mdm/windows/`](https://github.com/safedep/pmg/tree/main/scripts/mdm/windows). Optionally include `pmg.exe` from the [v0.29.0-edge.3 release zip](https://github.com/safedep/pmg/releases/tag/v0.29.0-edge.3), owned by Administrators or SYSTEM, to avoid a download.
+        Upload `lib_windows.ps1` and `pmg_setup_install_windows.ps1` from [`scripts/mdm/windows/`](https://github.com/safedep/pmg/tree/main/scripts/mdm/windows). Optionally include `pmg.exe` from the [v0.29.0 release zip](https://github.com/safedep/pmg/releases/tag/v0.29.0), owned by Administrators or SYSTEM, to avoid a download.
       </Tab>
 </Tabs>
     Use **File Destination** `/tmp/pmg-mdm/` on macOS and Linux, or `C:\Windows\Temp\pmg-mdm\` on Windows. You can also upload a `config.yml` alongside the scripts for managed config. To enable Cloud sync, set `cloud.enabled: true` in it. This config is required for Windows Cloud sync, since the installer always creates a managed config.
@@ -61,13 +61,13 @@ For optional Cloud sync, you need a SafeDep Cloud API key and Tenant ID from [ap
       </Tab>
       <Tab title="Windows">
         ```powershell
-        $env:PMG_VERSION = 'v0.29.0-edge.3'
+        $env:PMG_VERSION = 'v0.29.0'
         $env:SAFEDEP_API_KEY = '{{safedep_api_key}}'
         $env:SAFEDEP_TENANT_ID = '{{safedep_tenant_id}}'
         & C:\Windows\Temp\pmg-mdm\pmg_setup_install_windows.ps1
         ```
 
-        The version pin selects the Windows-capable prerelease. Without a pin, the installer currently downloads an older stable release. See [Windows version requirements](/package-security/pmg/mdm/overview#windows-deployment-checks).
+        The version pin selects PMG v0.29.0. Without a pin, the installer downloads the latest stable release. See [Windows version requirements](/package-security/pmg/mdm/overview#windows-deployment-checks).
       </Tab>
     </Tabs>
   </Step>
