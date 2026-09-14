@@ -92,19 +92,28 @@ If PMG detects a malicious package, it blocks the install and displays a warning
 
 ## Supported Package Managers
 
-PMG supports these package managers:
+PMG supports these tools from the [PMG README](https://github.com/safedep/pmg#supported-package-managers):
 
-| Package Manager | Status  | Command                                                  |
-| --------------- | ------- | -------------------------------------------------------- |
-| `npm`           | Active  | `pmg npm install <package>`                              |
-| `npx`           | Active  | `pmg npx <package> <action>`                             |
-| `pnpm`          | Active  | `pmg pnpm add <package>`                                 |
-| `pnpx`          | Active  | `pmg pnpx <package> <action>`                            |
-| `bun`           | Active  | `pmg bun add <package>`                                  |
-| `pip`           | Active  | `pmg pip install <package>`                              |
-| `uv`            | Active  | `pmg uv add <package>` or `pmg uv pip install <package>` |
-| `poetry`        | Active  | `pmg poetry add <package>`                               |
-| `yarn`          | Active  | `pmg yarn add <package>`                                 |
+| Package Manager | Status | Command |
+| --------------- | ------ | ------- |
+| `npm` | Active | `pmg npm install <package>` |
+| `pnpm` | Active | `pmg pnpm add <package>` |
+| `yarn` | Active | `pmg yarn add <package>` |
+| `bun` | Active | `pmg bun add <package>` |
+| `aube` | Active | `pmg aube add <package>` |
+| `npx` | Active | `pmg npx <package>` |
+| `pnpx` | Active | `pmg pnpx <package>` |
+| `aubx` | Active | `pmg aubx <package>` |
+| `aubr` | Active | `pmg aubr <script>` |
+| `pip` | Active | `pmg pip install <package>` |
+| `pipx` | Active | `pmg pipx run <package>` |
+| `poetry` | Active | `pmg poetry add <package>` |
+| `uv` | Active | `pmg uv add <package>` or `pmg uv pip install <package>` |
+| `uvx` | Active | `pmg uvx <package>` |
+
+<Note>
+  The aube tools (`aube`, `aubx`, and `aubr`) are not part of the initial Windows support. See the [Windows support reference](https://github.com/safedep/pmg/blob/main/docs/windows-support.md#supported-package-managers).
+</Note>
 
 ## Troubleshooting
 
