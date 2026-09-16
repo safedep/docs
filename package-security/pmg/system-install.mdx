@@ -28,7 +28,7 @@ Use a system-wide install when one machine or image should protect every user ac
 
 ## Windows machines
 
-1. Download and extract `pmg_Windows_x86_64.zip` from [v0.29.0](https://github.com/safedep/pmg/releases/tag/v0.29.0). Windows system install requires PMG v0.29.0 or later.
+1. Download and extract `pmg_Windows_x86_64.zip` from the [latest release](https://github.com/safedep/pmg/releases/latest). Windows system install requires PMG v0.29.0 or later.
 2. Open PowerShell as administrator in the extracted directory, then install:
 
    ```powershell
@@ -45,7 +45,7 @@ Use a system-wide install when one machine or image should protect every user ac
    npm install --no-cache --prefer-online safedep-test-pkg@0.1.3
    ```
 
-`npm` should resolve under `%ProgramFiles%\safedep\pmg\bin`, and PMG must block the benign test package. System install puts shims ahead of machine-wide Node.js installations. A per-user install cannot do that.
+`npm` should resolve under `%ProgramFiles%\safedep\pmg\bin`, and PMG must block the test package. System install puts shims ahead of machine-wide Node.js installations. A per-user install cannot do that.
 
 System install sets the required ownership and permissions. Run it before editing the managed config as administrator. See the [system-install reference](https://github.com/safedep/pmg/blob/main/docs/system-install.md#configuration) for permission requirements and troubleshooting.
 
@@ -145,6 +145,12 @@ npm install --no-cache --prefer-online safedep-test-pkg@0.1.3
 The system config file is authoritative for every user. PMG ignores a per-user `config.yml` while the managed config is active: `/etc/safedep/pmg/config.yml` on Linux or `%PROGRAMDATA%\safedep\pmg\config.yml` on Windows.
 
 `pmg config set` and `pmg config edit` are disabled under a system config. Edit the file as root on Linux or as an administrator on Windows, or redeploy it through your image or configuration management.
+
+<Warning>
+  Edit the managed config in place. On Windows, an editor that replaces the file drops the PMG security descriptor. PMG keeps enforcing the file, but the next `pmg setup install --system` fails with `does not carry the PMG security descriptor`.
+
+  Run `pmg config get <key>` after every edit. If the file no longer parses, PMG treats it as locked and falls back to built-in defaults: package blocking still works, but your settings stop applying, and no error appears on the endpoint.
+</Warning>
 
 <Note>
   On Linux, runtime data (event logs, cloud-sync state, cache) stays per user under `~/.config/safedep/pmg` and `~/.cache/safedep/pmg`. The invoking user must be able to write their own config directory. Relocate it with `PMG_CONFIG_DIR` / `PMG_CACHE_DIR` if needed.
