@@ -5,6 +5,8 @@ description: "PMG wraps your package managers and blocks malicious packages at i
 
 [PMG](https://github.com/safedep/pmg) (Package Manager Guard) blocks malicious packages at install time. It wraps the package managers you already use, so every `npm install` or `pip install` is checked against SafeDep's malware intelligence before any code runs. It is free, open source, and needs no account or API key.
 
+PMG runs on macOS, Linux, and Windows. Native Windows interception uses `.cmd` PATH shims in PowerShell and `cmd.exe`. Windows has no sandbox or background proxy daemon. See the [Windows setup guidance](/package-security/pmg/quickstart#windows).
+
 ## What PMG does
 
 - **Blocks before code runs:** catches malicious packages at install time, not after they are already in your environment.
@@ -32,7 +34,7 @@ It supports `npm`, `pnpm`, `yarn`, `bun`, `npx`, `pnpx`, `pip`, `uv`, and `poetr
     Protect package installs in Kubernetes workloads and group events by workload.
   </Card>
   <Card title="Deploy with MDM" icon="laptop" href="/package-security/pmg/mdm/overview">
-    Install PMG on macOS fleets through Jamf, JumpCloud, or Intune.
+    Install PMG on macOS, Linux, and Windows fleets through your MDM.
   </Card>
   <Card title="Malicious Package" icon="lightbulb" href="/concepts/malicious-package">
     How SafeDep detects malicious packages across registries.
