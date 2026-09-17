@@ -1,6 +1,6 @@
 ---
-title: "CrowdStrike Next-Gen SIEM"
-description: "Ingest SafeDep Package Guard block events into CrowdStrike Next-Gen SIEM."
+title: "Ingest Package Guard Events to CrowdStrike SIEM"
+description: "Ingest SafeDep Package Guard block events into CrowdStrike SIEM."
 ---
 
 This guide reads SafeDep endpoint [Package Guard](/governance/cloud/endpoint-hub/package-guard) **block events** and pushes them to a CrowdStrike SIEM [HEC (HTTP Event Collector)](https://developer.crowdstrike.com/ngsiem/data-ingestion/) endpoint. It syncs two block events:
@@ -49,7 +49,7 @@ export CROWDSTRIKE_HEC_TOKEN=<your-hec-ingest-token>
 python3 ingest-sd-ngsiem.py
 ```
 
-This will start the ingest script, which pools safedep cloud api and ingest it to crowdstrike
+This will start the ingest script, which polls safedep cloud api and ingest it to crowdstrike.
 
 Output:
 
