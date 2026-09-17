@@ -146,7 +146,6 @@
               "governance/integrations/gitlab",
               "governance/integrations/bitbucket",
               "governance/integrations/defectdojo",
-              "governance/integrations/crowdstrike-siem",
               "governance/terraform-audit"
             ]
           },
@@ -161,6 +160,7 @@
               "governance/cloud/sync",
               "governance/cloud/talk-to-safedep",
               "governance/cloud/alerts",
+              "governance/cloud/crowdstrike-siem",
               {
                 "group": "Endpoint Hub",
                 "icon": "server",
