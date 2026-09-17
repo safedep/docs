@@ -1,9 +1,9 @@
 ---
 title: "Ingest Package Guard Events to CrowdStrike SIEM"
-description: "Ingest SafeDep Package Guard block events into CrowdStrike SIEM."
+description: "Forward PMG malicious-package and dependency-cooldown block events from SafeDep Cloud to a CrowdStrike SIEM HEC endpoint."
 ---
 
-This guide reads SafeDep endpoint [Package Guard](/governance/cloud/endpoint-hub/package-guard) **block events** and pushes them to a CrowdStrike SIEM [HEC (HTTP Event Collector)](https://developer.crowdstrike.com/ngsiem/data-ingestion/) endpoint. It syncs two block events:
+This guide shows how to ingest SafeDep endpoint [Package Guard](/governance/cloud/endpoint-hub/package-guard) **block events** into CrowdStrike SIEM over [HEC (HTTP Event Collector)](https://developer.crowdstrike.com/ngsiem/data-ingestion/). Two block events are ingested:
 
 - Malicious package blocks (`PMG_PACKAGE_ACTION_BLOCKED`)
 - Dependency cooldown blocks (`PMG_PACKAGE_ACTION_COOLDOWN_BLOCKED`)
@@ -30,7 +30,7 @@ Collect these before you start:
 - `CROWDSTRIKE_HEC_URL`: your CrowdStrike HEC ingest URL, for example `https://<your-cloud>/services/collector`.
 - `CROWDSTRIKE_HEC_TOKEN`: your CrowdStrike HEC token.
 
-## Ingest Package Guard Events to CrowdStrike
+## Run the ingest script
 
 Download the ingest script. [Review it](https://github.com/safedep/docs/blob/main/downloads/ingest-sd-ngsiem.py) before you run it.
 
