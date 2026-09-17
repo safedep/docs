@@ -1,0 +1,147 @@
+---
+title: "CrowdStrike Next-Gen SIEM"
+description: "Ingest SafeDep Package Guard block events into CrowdStrike Next-Gen SIEM."
+---
+
+This guide reads SafeDep endpoint [Package Guard](/governance/cloud/endpoint-hub/package-guard) **block events** and pushes them to a CrowdStrike SIEM [HEC (HTTP Event Collector)](https://developer.crowdstrike.com/ngsiem/data-ingestion/) endpoint. It syncs two block events:
+
+- Malicious package blocks (`PMG_PACKAGE_ACTION_BLOCKED`)
+- Dependency cooldown blocks (`PMG_PACKAGE_ACTION_COOLDOWN_BLOCKED`)
+
+## Prerequisites
+
+- <img src="https://img.logo.dev/safedep.io?token=pk_JMA7_TgCSx--JsncHKu2cA" alt="SafeDep" style={{ height: '1.1em', display: 'inline-block', verticalAlign: 'middle', margin: '0 0.35em 0 0', borderRadius: '3px' }} /> A SafeDep Cloud tenant on the **Team plan or higher**. See the [SafeDep Cloud quickstart](/governance/cloud/quickstart).
+- PMG connected to SafeDep Cloud and syncing to your tenant. See [Enable cloud sync](/governance/cloud/endpoint-hub/package-guard#enable-cloud-sync).
+- The [safedep CLI](/get-started/cli-tools) authenticated to your tenant. See [Authentication](/governance/cloud/authentication).
+- <img src="https://img.logo.dev/crowdstrike.com?token=pk_JMA7_TgCSx--JsncHKu2cA" alt="CrowdStrike" style={{ height: '1.1em', display: 'inline-block', verticalAlign: 'middle', margin: '0 0.35em 0 0', borderRadius: '3px' }} /> CrowdStrike SIEM (Falcon LogScale or Next-Gen SIEM) with an [HEC](https://developer.crowdstrike.com/ngsiem/data-ingestion/) endpoint. For Next-Gen SIEM, set up a HEC data connector.
+- Python 3.8 or later.
+
+### Keys and URLs
+
+Collect these before you start:
+
+- `SAFEDEP_TOKEN`: a SafeDep Cloud API token. Get it with the safedep CLI:
+
+  ```bash
+  export SAFEDEP_TOKEN=$(safedep auth token)
+  ```
+
+- `SAFEDEP_TENANT_ID`: your SafeDep tenant ID.
+- `CROWDSTRIKE_HEC_URL`: your CrowdStrike HEC ingest URL, for example `https://<your-cloud>/services/collector`.
+- `CROWDSTRIKE_HEC_TOKEN`: your CrowdStrike HEC token.
+
+## Ingest Package Guard Events to CrowdStrike
+
+Download the ingest script. [Review it](https://github.com/safedep/docs/blob/main/downloads/ingest-sd-ngsiem.py) before you run it.
+
+```bash
+curl -O https://raw.githubusercontent.com/safedep/docs/main/downloads/ingest-sd-ngsiem.py
+```
+
+Set the environment variables and run the script:
+
+```bash
+export SAFEDEP_TOKEN=$(safedep auth token)
+export SAFEDEP_TENANT_ID=your-company.safedep.io
+export CROWDSTRIKE_HEC_URL=https://<your-cloud>/services/collector
+export CROWDSTRIKE_HEC_TOKEN=<your-hec-ingest-token>
+
+python3 ingest-sd-ngsiem.py
+```
+
+This will start the ingest script, which pools safedep cloud api and ingest it to crowdstrike
+
+Output:
+
+```bash
+2026-09-17 13:30:19,947 starting: poll every 300s, backfill 24h, target https://<your-cloud>/services/collector
+2026-09-17 13:30:19,947 cycle: polling events since 2026-09-16T08:00:19.947653Z
+2026-09-17 13:30:21,210 cycle: 8 event(s) sent to CrowdStrike HEC, next poll in 300s
+```
+
+## Ingested Payload
+
+Each block event is sent to CrowdStrike as one HEC record, pretty-printed here but sent as a single line. IDs and endpoint names are placeholders.
+
+### Malicious package block
+
+```json
+{
+  "event": {
+    "eventId": "d790c54c-37b2-478c-9cfb-64c417325c45",
+    "toolName": "pmg",
+    "toolVersion": "0.29.0",
+    "timestamp": "2026-09-16T15:58:04.594981Z",
+    "endpointId": "01EXAMPLEENDPOINTID000000",
+    "invocationId": "00000000-0000-0000-0000-000000000000",
+    "endpointName": "web-01",
+    "pmgEvent": {
+      "eventType": "PMG_EVENT_TYPE_PACKAGE_DECISION",
+      "packageDecision": {
+        "packageVersion": {
+          "package": { "ecosystem": "ECOSYSTEM_PYPI", "name": "safedep-test-pkg" },
+          "version": "0.0.4"
+        },
+        "action": "PMG_PACKAGE_ACTION_BLOCKED",
+        "analysisId": "01EXAMPLEANALYSISID0000000",
+        "isMalware": true,
+        "isVerified": true
+      }
+    }
+  },
+  "sourcetype": "safedep:package-guard",
+  "time": 1789574284.594981
+}
+```
+
+### Dependency cooldown block
+
+Cooldown events carry a `cooldown` object instead of the malware fields:
+
+```json
+{
+  "event": {
+    "eventId": "e6b01964-082e-40f8-a486-534c5a6013c1",
+    "toolName": "pmg",
+    "toolVersion": "0.24.2",
+    "timestamp": "2026-09-10T11:12:55.105968Z",
+    "endpointId": "01EXAMPLEENDPOINTID000001",
+    "invocationId": "00000000-0000-0000-0000-000000000000",
+    "endpointName": "web-02",
+    "pmgEvent": {
+      "eventType": "PMG_EVENT_TYPE_PACKAGE_DECISION",
+      "packageDecision": {
+        "packageVersion": {
+          "package": { "ecosystem": "ECOSYSTEM_NPM", "name": "some-new-package" },
+          "version": "0.1.0"
+        },
+        "action": "PMG_PACKAGE_ACTION_COOLDOWN_BLOCKED",
+        "cooldown": {
+          "publishDate": "2026-09-09T23:21:08.303Z",
+          "cooldownDays": 3,
+          "daysRemaining": 3
+        }
+      }
+    }
+  },
+  "sourcetype": "safedep:package-guard",
+  "time": 1789031575.105968
+}
+```
+
+## Notes
+
+- **Token.** The token is short-lived. For a long run, refresh `SAFEDEP_TOKEN` with `safedep auth token` again before it expires.
+- **Cursor.** The position is saved to `cursor.json` next to the script, so a restart resumes where it stopped. Delete `cursor.json` to re-read from the backfill window.
+
+## Environment variables
+
+| Variable | Required | Default | Description |
+|---|---|---|---|
+| `SAFEDEP_TOKEN` | yes | - | SafeDep OAuth token. Get it with `safedep auth token`. |
+| `SAFEDEP_TENANT_ID` | yes | - | Tenant domain, e.g. `your-company.safedep.io`. |
+| `SAFEDEP_CLOUD_URL` | no | `https://cloud.safedep.io` | SafeDep Cloud base URL. |
+| `CROWDSTRIKE_HEC_URL` | no | (unset) | HEC collector URL, e.g. `https://<cloud>/services/collector`. Unset means log only. |
+| `CROWDSTRIKE_HEC_TOKEN` | no | (unset) | HEC ingest token. Required when `CROWDSTRIKE_HEC_URL` is set. |
+| `POLL_INTERVAL` | no | `300` | Seconds between poll cycles. |
+| `BACKFILL_HOURS` | no | `24` | First-run window in hours. |

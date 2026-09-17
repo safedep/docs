@@ -146,6 +146,7 @@
               "governance/integrations/gitlab",
               "governance/integrations/bitbucket",
               "governance/integrations/defectdojo",
+              "governance/integrations/crowdstrike-siem",
               "governance/terraform-audit"
             ]
           },
