@@ -151,7 +151,7 @@ Don't mix Diátaxis types within a single page.
 - Bill of Materials: `governance/xbom/overview` *(landing)*, `governance/xbom/quickstart`, `governance/cyclonedx-sbom`
 - AI Visibility: `governance/ai-governance` *(landing)*, `governance/shadow-ai-detection`, `governance/vet/ai-bom`
 - CI/CD & Platform Integrations: `governance/integrations/overview` *(landing)*, `governance/integrations/github`, `governance/integrations/github-code-scanning`, `governance/integrations/gitlab`, `governance/integrations/bitbucket`, `governance/integrations/defectdojo`, `governance/terraform-audit`
-- SafeDep Cloud: `governance/cloud/overview` *(landing)*, `governance/cloud/quickstart`, `governance/cloud/authentication`, `governance/cloud/usage-billing`, `governance/cloud/sync`, `governance/cloud/talk-to-safedep`, `governance/cloud/alerts`
+- SafeDep Cloud: `governance/cloud/overview` *(landing)*, `governance/cloud/quickstart`, `governance/cloud/authentication`, `governance/cloud/usage-billing`, `governance/cloud/sync`, `governance/cloud/talk-to-safedep`, `governance/cloud/alerts`, `governance/cloud/crowdstrike-siem`
   - Endpoint Hub: `governance/cloud/endpoint-hub/overview` *(landing)*, `governance/cloud/endpoint-hub/inventory`, `governance/cloud/endpoint-hub/inventory-catalog`, `governance/cloud/endpoint-hub/package-guard`, `governance/cloud/endpoint-hub/mcp-advisor`, `governance/cloud/endpoint-hub/agentic-investigation`
   - Policy & Risk: `governance/cloud/malware-analysis`, `governance/cloud/package-exclusions`
 
@@ -169,7 +169,7 @@ Don't mix Diátaxis types within a single page.
 - Community: `community`
 - Support: `faq`, `governance/cloud/faq`
 
-Total: **82 pages**
+Total: **88 pages**
 
 ---
 

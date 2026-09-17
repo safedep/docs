@@ -27,7 +27,7 @@ Collect these before you start:
   export SAFEDEP_TOKEN=$(safedep auth token)
   ```
 
-- `SAFEDEP_TENANT_ID`: your SafeDep tenant ID.
+- `SAFEDEP_TENANT_ID`: your SafeDep tenant domain, for example `your-company.safedep.io`.
 - `CROWDSTRIKE_HEC_URL`: your CrowdStrike HEC ingest URL, for example `https://<your-cloud>/services/collector`.
 - `CROWDSTRIKE_HEC_TOKEN`: your CrowdStrike HEC token.
 
@@ -50,7 +50,7 @@ export CROWDSTRIKE_HEC_TOKEN=<your-hec-ingest-token>
 python3 ingest-sd-ngsiem.py
 ```
 
-This will start the ingest script, which polls Safedep cloud api and ingest it to CrowdStrike.
+The script polls the SafeDep Cloud API and sends new block events to CrowdStrike.
 
 Output:
 
