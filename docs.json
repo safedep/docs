@@ -160,6 +160,7 @@
               "governance/cloud/sync",
               "governance/cloud/talk-to-safedep",
               "governance/cloud/alerts",
+              "governance/cloud/crowdstrike-siem",
               {
                 "group": "Endpoint Hub",
                 "icon": "server",
