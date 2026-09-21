@@ -144,6 +144,7 @@
               "governance/integrations/github",
               "governance/integrations/github-code-scanning",
               "governance/integrations/gitlab",
+              "governance/integrations/bitbucket-app",
               "governance/integrations/bitbucket",
               "governance/integrations/defectdojo",
               "governance/terraform-audit"
