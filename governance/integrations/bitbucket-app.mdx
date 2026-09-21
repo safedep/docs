@@ -131,13 +131,13 @@ Optionally, adopt Bitbucket repositories as SafeDep **projects** so scan results
     safedep project sync my-workspace/my-repo --source bitbucket
     ```
 
-    Select by name (`workspace/repository`) or by the immutable repository UUID from `repository list`:
+    Select by name (`workspace/repository`) or by the immutable repository UUID from `repository list`. The UUID flag implies the Bitbucket source, so `--source` is not needed:
 
     ```bash
     safedep project sync --repository-uuid 9a2b3c4d-0000-0000-0000-000000000001
     ```
 
-    The sync is idempotent: repeating it returns the same project for the same repository. When your tenant has both a GitHub installation and a Bitbucket workspace linked, pass `--source bitbucket` explicitly.
+    The sync is idempotent: repeating it returns the same project for the same repository. When you sync by name and your tenant has both a GitHub installation and a Bitbucket workspace linked, pass `--source bitbucket` explicitly.
   </Tab>
   <Tab title="SafeDep console">
     Coming soon. Project sync from [app.safedep.io](https://app.safedep.io) is planned; use the CLI for now.
