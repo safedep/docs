@@ -1,0 +1,170 @@
+---
+title: "Bitbucket Cloud App"
+description: "Install the SafeDep app for Bitbucket Cloud and link your workspace to scan pull requests for supply-chain risk."
+---
+
+The SafeDep app for Bitbucket Cloud scans pull requests for supply-chain risk directly in Bitbucket. It is a hosted service built on [Atlassian Forge](https://developer.atlassian.com/platform/forge/), so unlike [Bitbucket Pipes](/governance/integrations/bitbucket) there is no pipeline to configure or run yourself.
+
+- Scans newly introduced or updated dependencies on every pull request
+- Protects against malicious open source packages, known vulnerabilities, and risky licenses
+- Free for public repositories. Private (commercial) repositories need a [SafeDep subscription](https://safedep.io/pricing)
+- Reports to your [SafeDep Cloud](/governance/cloud/overview) tenant for centralized policy and reporting across repositories
+
+<Note>
+The app is in early access. Install it with the installation link below; the Atlassian Marketplace listing is coming.
+</Note>
+
+## How it works
+
+The Forge app is a thin forwarder: it sends pull request events to SafeDep Cloud, which runs the scan and posts the results back to Bitbucket. The app holds no scan logic and makes no decisions on its own.
+
+Two safe defaults apply until you act:
+
+- An installed app does nothing until the workspace is **linked** to a SafeDep tenant.
+- A linked workspace scans nothing until you **enable repositories**. New links start with an empty selection (default deny).
+
+Some actions in this guide run from the SafeDep side. Each shows two paths: the **safedep CLI** (available now) and the **SafeDep console** at [app.safedep.io](https://app.safedep.io) (coming soon).
+
+## Prerequisites
+
+<CardGroup cols={3}>
+  <Card title="Bitbucket workspace" icon="bitbucket">
+    A Bitbucket Cloud workspace where you are an admin. Installing a Forge app and linking the workspace need admin access.
+  </Card>
+  <Card title="SafeDep Cloud account" icon="cloud">
+    A SafeDep Cloud tenant. Follow the [Cloud Quickstart](/governance/cloud/quickstart) to sign up and create one.
+  </Card>
+  <Card title="safedep CLI" icon="terminal">
+    The [`safedep` CLI](/get-started/cli-tools) installed, and logged in with `safedep auth login` ([authentication](/governance/cloud/authentication)).
+  </Card>
+</CardGroup>
+
+## Step 1: Install the app
+
+1. Open the [SafeDep app installation link](https://developer.atlassian.com/console/install/eeb66bc9-cae4-4606-abb7-97854a77672e?signature=AYABeNgkco8ssLhE8kqOVbe4FQsAAAADAAdhd3Mta21zAEthcm46YXdzOmttczp1cy13ZXN0LTI6NzA5NTg3ODM1MjQzOmtleS83MDVlZDY3MC1mNTdjLTQxYjUtOWY5Yi1lM2YyZGNjMTQ2ZTcAuAECAQB4IOp8r3eKNYw8z2v%2FEq3%2FfvrZguoGsXpNSaDveR%2FF%2Fo0BBBzUyKkOoOa4hk817f%2B1sAAAAH4wfAYJKoZIhvcNAQcGoG8wbQIBADBoBgkqhkiG9w0BBwEwHgYJYIZIAWUDBAEuMBEEDB4sU9EZWhdzpc3RrgIBEIA716z3L%2FGiDmxErAFYrW6KaL3%2B%2BmX6ZOf7%2Fp1D%2B5ctLIYt7fDtXep%2FOEjAEsE5DjbCqp%2BXAF8hZ2NTeJ0AB2F3cy1rbXMAS2Fybjphd3M6a21zOmV1LXdlc3QtMTo3MDk1ODc4MzUyNDM6a2V5LzQ2MzBjZTZiLTAwYzMtNGRlMi04NzdiLTYyN2UyMDYwZTVjYwC4AQICAHijmwVTMt6Oj3F%2B0%2B0cVrojrS8yZ9ktpdfDxqPMSIkvHAFgvz4G7XtKQzuDYpnT7J3qAAAAfjB8BgkqhkiG9w0BBwagbzBtAgEAMGgGCSqGSIb3DQEHATAeBglghkgBZQMEAS4wEQQM6Vv9ozURpDaBj9ToAgEQgDvm430uuNf143RTJM2FV3Pp%2F3aBd9zf5OThrtV9L%2FQexO4v%2FADmC4YI6RT3DDeyWswldyZEZsHWyqOFkwAHYXdzLWttcwBLYXJuOmF3czprbXM6dXMtZWFzdC0xOjcwOTU4NzgzNTI0MzprZXkvNmMxMjBiYTAtNGNkNS00OTg1LWI4MmUtNDBhMDQ5NTJjYzU3ALgBAgIAeLKa7Dfn9BgbXaQmJGrkKztjV4vrreTkqr7wGwhqIYs5ARkiEygdQdaWwaohI8WY4G4AAAB%2BMHwGCSqGSIb3DQEHBqBvMG0CAQAwaAYJKoZIhvcNAQcBMB4GCWCGSAFlAwQBLjARBAzyrzmb4i%2Fo9SmcN7kCARCAOyZtnQCQbRTwY463sxcbUt2DKDiCUyBcoM8QIPKD%2FejhjjNrQcAKPtsIM%2FlJvzexWhJwkqLydnA5zkYdAgAAAAAMAAAQAAAAAAAAAAAAAAAAAN7cwa40QLP6j60bfUQw7VD%2F%2F%2F%2F%2FAAAAAQAAAAAAAAAAAAAAAQAAADI8mC%2B1BfhRCcUZyqhZKqujFHOOFamQw%2Bm9a1FrKHxqvSdAl3DpB5AL4Iy6QR7W5cZBZVMY29pK0XIqWRfg6Mvq4kc%3D&product=bitbucket).
+2. Select the workspace to install into and confirm.
+
+Installing the app adds a **SafeDep** page to your workspace settings. Nothing is scanned yet: the workspace must be linked first.
+
+## Step 2: Link your workspace
+
+Linking pairs the Bitbucket workspace with your SafeDep tenant. A short-lived, single-use **link code** proves that the same person controls both sides.
+
+### Generate a link code
+
+<Tabs>
+  <Tab title="safedep CLI">
+    ```bash
+    safedep integration bitbucket link create
+    ```
+
+    The command prints the code and its expiry. The code is single-use and shown once. Running the command again generates a new code and invalidates every earlier unredeemed one, so re-running is the way to start over.
+  </Tab>
+  <Tab title="SafeDep console">
+    Coming soon. Generating link codes from [app.safedep.io](https://app.safedep.io) is planned; use the CLI for now.
+  </Tab>
+</Tabs>
+
+### Redeem the code in Bitbucket
+
+1. In Bitbucket, open **Workspace settings → SafeDep** (under Apps).
+2. Paste the link code and select **Link**.
+
+The page shows the linked tenant when the redeem succeeds. Verify from the CLI:
+
+```bash
+safedep integration bitbucket link list
+```
+
+## Step 3: Enable repositories for scanning
+
+A fresh link scans nothing. The workspace has a scan scope, `selected` (the default) or `all`:
+
+- **`selected`** — only repositories on the allowlist are scanned.
+- **`all`** — every repository in the workspace is scanned.
+
+<Tabs>
+  <Tab title="safedep CLI">
+    List the workspace's repositories with their UUIDs and current state:
+
+    ```bash
+    safedep integration bitbucket repository list
+    ```
+
+    Enable specific repositories by UUID:
+
+    ```bash
+    safedep integration bitbucket allowlist update --scope selected \
+      --enable 9a2b3c4d-0000-0000-0000-000000000001
+    ```
+
+    Or scan the whole workspace:
+
+    ```bash
+    safedep integration bitbucket allowlist update --scope all
+    ```
+
+    Use `--disable` to remove a repository from the allowlist. Switching scope does not change the stored allowlist, so moving from `all` back to `selected` restores your earlier selection.
+  </Tab>
+  <Tab title="SafeDep console">
+    Coming soon. Repository selection from [app.safedep.io](https://app.safedep.io) is planned; use the CLI for now.
+  </Tab>
+</Tabs>
+
+## Step 4: Scan a pull request
+
+Open or update a pull request on an enabled repository. The app scans changed dependencies and reports on:
+
+- [Malicious / Suspicious packages](/governance/cloud/malware-analysis)
+- Vulnerabilities
+- Risky licenses
+
+Results appear in the pull request as a SafeDep comment, and the full report is available in your SafeDep Cloud tenant. Pull requests on repositories that are not enabled produce no comment, no status, and no scan.
+
+## Sync repositories as SafeDep projects
+
+Optionally, adopt Bitbucket repositories as SafeDep **projects** so scan results are organized per project in your tenant.
+
+<Tabs>
+  <Tab title="safedep CLI">
+    ```bash
+    safedep project sync my-workspace/my-repo --source bitbucket
+    ```
+
+    Select by name (`workspace/repository`) or by the immutable repository UUID from `repository list`:
+
+    ```bash
+    safedep project sync --repository-uuid 9a2b3c4d-0000-0000-0000-000000000001
+    ```
+
+    The sync is idempotent: repeating it returns the same project for the same repository. When your tenant has both a GitHub installation and a Bitbucket workspace linked, pass `--source bitbucket` explicitly.
+  </Tab>
+  <Tab title="SafeDep console">
+    Coming soon. Project sync from [app.safedep.io](https://app.safedep.io) is planned; use the CLI for now.
+  </Tab>
+</Tabs>
+
+## Unlink or uninstall
+
+Uninstall the SafeDep app from **Workspace settings → Installed apps** in Bitbucket. Uninstalling revokes the workspace link and deletes the workspace credential SafeDep holds. To connect again later, reinstall the app and link with a fresh code.
+
+<Note>
+Unlinking from the SafeDep side (CLI or console) without uninstalling the app is planned.
+</Note>
+
+## Troubleshooting
+
+| Symptom | Cause and fix |
+|---|---|
+| "Could not link" on the settings page | The code is wrong, expired, or already used. Generate a new code with `safedep integration bitbucket link create` and retry. Link codes are single-use and short-lived. |
+| Settings page says the workspace is already linked | A workspace links to one tenant at a time. Uninstall and reinstall the app to link it to a different tenant. |
+| Repeated failed link attempts are rejected | Redeems are rate limited per workspace. Wait a few minutes and retry with a fresh code. |
+| `repository list` reports the workspace as not accessible | The workspace credential is missing or expired. Open the SafeDep settings page in Bitbucket once to refresh it, then retry. |
+| A pull request gets no comment or status | Confirm the repository is enabled: `safedep integration bitbucket repository list` shows each repository's state and the workspace scan scope. |
+| `project scan create` fails with "Project not scannable" | On-demand scans are not available for Bitbucket projects yet. See limitations below. |
+
+## Limitations
+
+- **On-demand scans** (`safedep project scan create`) are not available for Bitbucket projects yet. Pull request scanning is the scan path today.
+- **Merge checks** (blocking a merge on a failing scan) are not available yet.
+- The app authenticates to Bitbucket with a workspace-wide credential issued by Atlassian; per-repository credentials are not part of the Forge model.
