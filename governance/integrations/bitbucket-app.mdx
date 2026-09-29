@@ -24,7 +24,7 @@ Two safe defaults apply until you act:
 - An installed app does nothing until the workspace is **linked** to a SafeDep tenant.
 - A linked workspace scans nothing until you **enable repositories**. New links start with an empty selection (default deny).
 
-Some actions in this guide run from the SafeDep side. Each shows two paths: the **SafeDep console** at [app.safedep.io](https://app.safedep.io) (coming soon) and the **safedep CLI** (available now).
+Some actions in this guide run from the SafeDep side. Each shows two paths: the **SafeDep console** at [app.safedep.io](https://app.safedep.io) and the **safedep CLI**.
 
 ## Prerequisites
 
@@ -35,8 +35,8 @@ Some actions in this guide run from the SafeDep side. Each shows two paths: the 
   <Card title="SafeDep Cloud account" icon="cloud">
     A SafeDep Cloud tenant. Follow the [Cloud Quickstart](/governance/cloud/quickstart) to sign up and create one.
   </Card>
-  <Card title="safedep CLI" icon="terminal">
-    The [`safedep` CLI](/get-started/cli-tools) installed, and logged in with `safedep auth login` ([authentication](/governance/cloud/authentication)).
+  <Card title="safedep CLI (optional)" icon="terminal">
+    Needed only for the CLI path. The [`safedep` CLI](/get-started/cli-tools) installed, and logged in with `safedep auth login` ([authentication](/governance/cloud/authentication)).
   </Card>
 </CardGroup>
 
@@ -121,11 +121,13 @@ A fresh link scans nothing. The workspace has a scan scope, `selected` (the defa
        ![Bitbucket App card in the SafeDep console, connected, with the Manage repositories button](/images/bitbucket/6-safedep-console-see-connected-and-manage-repositories.png)
 
     3. Set **Scan scope** to **All repositories** or **Selected**.
-    4. For **Selected**, turn on the toggle for each repository to scan.
+    4. For **Selected**, turn on the toggle for each repository to scan. Turn a toggle off to stop scanning that repository.
 
        ![Bitbucket repositories panel with the scan scope and per repository toggles](/images/bitbucket/7-select-repositoreis-and-enable-them-for-scaning.png)
 
-    Select **Sync to Projects** to list the enabled repositories under Projects.
+    Changes save right away. You cannot change the toggles when the scope is **All repositories**.
+
+    Optionally, select **Sync to Projects** to list the enabled repositories under Projects.
   </Tab>
   <Tab title="safedep CLI">
     List the workspace's repositories with their UUIDs and current state:
@@ -191,11 +193,11 @@ Unlinking from the SafeDep side (CLI or console) without uninstalling the app is
 
 | Symptom | Cause and fix |
 |---|---|
-| "Could not link" on the settings page | The code is wrong, expired, or already used. Generate a new code with `safedep integration bitbucket link create` and retry. Link codes are single-use and short-lived. |
+| "Could not link" on the settings page | The code is wrong, expired, or already used. Generate a new code and retry: select **Issue a new code** in the console, or run `safedep integration bitbucket link create`. Link codes are single-use and short-lived. |
 | Settings page says the workspace is already linked | A workspace links to one tenant at a time. Uninstall and reinstall the app to link it to a different tenant. |
 | Repeated failed link attempts are rejected | Redeems are rate limited per workspace. Wait a few minutes and retry with a fresh code. |
 | `repository list` reports the workspace as not accessible | The workspace credential is missing or expired. Open the SafeDep settings page in Bitbucket once to refresh it, then retry. |
-| A pull request gets no comment or status | Confirm the repository is enabled: `safedep integration bitbucket repository list` shows each repository's state and the workspace scan scope. |
+| A pull request gets no comment or status | Confirm the repository is enabled. In the console, select **Manage repositories**. In the CLI, `safedep integration bitbucket repository list` shows each repository's state and the workspace scan scope. |
 | `project scan create` fails with "Project not scannable" | On-demand scans are not available for Bitbucket projects yet. See limitations below. |
 
 ## Limitations
