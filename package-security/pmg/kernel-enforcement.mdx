@@ -198,7 +198,11 @@ Pass the file that `PMG_CA_BUNDLE` names into the container. It holds the PMG CA
 
 ## Verify
 
-Run these on a Linux machine with Docker before you turn enforcement on in a workflow. Start the daemon with `--enforce --enforce-namespaces redirect`, then run each command from another terminal.
+Run these on a Linux machine with Docker before you turn enforcement on in a workflow. Start the daemon with the container redirect on, then run each command from another terminal.
+
+```bash
+sudo pmg proxy start --daemon --enforce --enforce-namespaces redirect --state /run/pmg/proxy-state.json
+```
 
 1. A host process is enforced. Without proxy variables, `curl` still reaches the registry through the proxy.
 
@@ -223,7 +227,7 @@ Run these on a Linux machine with Docker before you turn enforcement on in a wor
 4. With the bundle mounted, the registry works through the proxy, and a known malicious test package is blocked.
 
    ```bash
-   eval "$(sudo pmg proxy env)"
+   eval "$(sudo pmg proxy env --state /run/pmg/proxy-state.json)"
    docker run --rm -v "$PMG_CA_BUNDLE":/pmg-ca.pem:ro -e CURL_CA_BUNDLE=/pmg-ca.pem \
      curlimages/curl -sS -o /dev/null -w '%{http_code}\n' \
      https://registry.npmjs.org/safedep-test-pkg/-/safedep-test-pkg-0.1.3.tgz
