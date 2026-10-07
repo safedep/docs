@@ -20,6 +20,8 @@ PMG intercepts each install command, resolves the dependency tree, and checks ev
 
 It supports `npm`, `pnpm`, `yarn`, `bun`, `npx`, `pnpx`, `pip`, `uv`, and `poetry`. For dependency-resolution internals and CLI flags, see the [PMG repository](https://github.com/safedep/pmg).
 
+On a CI runner or a shared Linux host, PMG can also run as one persistent proxy that every package manager uses. With [kernel enforcement](/package-security/pmg/kernel-enforcement), the Linux kernel routes every process through that proxy, and a process cannot opt out. The containers that the host starts can be routed too.
+
 <Note>
   Connect PMG to [SafeDep Cloud](/governance/cloud/overview) and the installs it checks sync to [Endpoint Hub](/governance/cloud/endpoint-hub/overview) as Package Guard events, a timeline of package activity across your team's endpoints. Local blocking works the same with or without an account.
 </Note>
@@ -32,6 +34,9 @@ It supports `npm`, `pnpm`, `yarn`, `bun`, `npx`, `pnpx`, `pip`, `uv`, and `poetr
   </Card>
   <Card title="Deploy on Kubernetes" icon="cubes" href="/package-security/pmg/kubernetes">
     Protect package installs in Kubernetes workloads and group events by workload.
+  </Card>
+  <Card title="Kernel Enforcement on Linux" icon="lock" href="/package-security/pmg/kernel-enforcement">
+    Make the kernel route every process and container on a Linux host through PMG.
   </Card>
   <Card title="Deploy with MDM" icon="laptop" href="/package-security/pmg/mdm/overview">
     Install PMG on macOS, Linux, and Windows fleets through your MDM.

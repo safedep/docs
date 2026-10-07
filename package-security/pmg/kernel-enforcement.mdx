@@ -1,0 +1,272 @@
+---
+title: "Kernel Enforcement on Linux"
+description: "Make the Linux kernel route every package install through PMG, on CI runners, shared hosts, and the containers they start."
+---
+
+PMG's persistent proxy normally reaches a package manager through proxy environment variables. A variable is a request. A process can drop it with `env -i` or `sudo`, and an install script with its own HTTP client never reads it. Kernel enforcement closes that gap on Linux. The kernel sends every TCP connection to ports 80 and 443 from every eligible process to the PMG proxy. A process cannot opt out.
+
+Use it on a CI runner or a shared Linux host where you do not control every process. The containers that a host starts can be covered too. For a single developer machine, use the [Quickstart](/package-security/pmg/quickstart).
+
+<Note>
+  Kernel enforcement and the container redirect are in PMG releases later than v0.30.0. Kernel enforcement is Linux only. On macOS and Windows, `pmg proxy start --enforce` fails with an error that names the platform.
+</Note>
+
+## Requirements
+
+- Linux 5.15 or later with kernel BTF (`CONFIG_DEBUG_INFO_BTF`) and cgroup v2. GitHub hosted Ubuntu runners meet this.
+- Root. Attaching the kernel programs needs `CAP_BPF`, `CAP_NET_ADMIN`, and `CAP_PERFMON`.
+- The PMG CA in the system trust store. Install it with `sudo pmg setup cert install --system`. The daemon refuses to start without it.
+- For containers: nf_tables and conntrack. Every Docker host has them.
+
+Run `pmg setup doctor` to check whether a host can enforce. The `Kernel enforcement` line names what is missing.
+
+## Enforce in GitHub Actions
+
+Set `enforce: true` with `server-mode: true` on the [`safedep/pmg`](https://github.com/safedep/pmg) action. The action installs the PMG CA into the system trust store, starts the daemon as root, exempts the runner binaries, and exports the trust variables.
+
+```yaml
+- uses: safedep/pmg@v1
+  with:
+    server-mode: true
+    enforce: true
+    api-key: ${{ secrets.SAFEDEP_API_KEY }}
+    tenant-id: ${{ secrets.SAFEDEP_TENANT_ID }}
+
+- run: npm ci
+
+- name: Enforce PMG policy
+  if: always()
+  run: sudo "$PMG_BIN" proxy stop --state "$PMG_PROXY_STATE" --fail-on-violation
+```
+
+The daemon runs as root, and `sudo` resets `HOME` and `PATH`. The action exports `PMG_BIN` and `PMG_PROXY_STATE` so the job-end step finds the binary and the daemon. The step fails the job when a package was blocked and flushes events to SafeDep Cloud. Credentials are optional. PMG blocks with the free community intelligence without them.
+
+The `enforce-ports`, `enforce-exempt-users`, `enforce-exempt-executables`, `enforce-skip-destinations`, and `enforce-namespaces` inputs set the policy without a config file. Each list adds to the config's list. See the [action reference](https://github.com/safedep/pmg/blob/main/docs/github-action.md#kernel-enforcement) for the input table.
+
+## Enforce on a Linux host
+
+Use these steps on a shared VM or a self-hosted runner. Every `pmg proxy` command runs with `sudo` and an explicit `--state` path, because `sudo` resets `HOME`.
+
+<Steps>
+  <Step title="Install the PMG CA into the system trust store">
+    ```bash
+    sudo pmg setup cert install --system
+    ```
+
+    As root, this writes the keypair to `/etc/safedep/pmg/` with a root-owned key and installs the certificate into the system store.
+  </Step>
+
+  <Step title="Start the daemon with enforcement">
+    ```bash
+    sudo pmg proxy start --daemon --enforce --state /run/pmg/proxy-state.json
+    ```
+
+    The daemon attaches to the cgroup v2 root, so it covers every process on the host. It attaches before it reports ready. Add `--enforce-namespaces redirect` to cover containers too. See [Containers](#containers).
+  </Step>
+
+  <Step title="Export the trust variables">
+    ```bash
+    sudo pmg proxy env --state /run/pmg/proxy-state.json
+    ```
+
+    Under enforcement this prints no proxy variables. It prints the variables that point tools at the system trust store: `NODE_USE_SYSTEM_CA=1`, `UV_NATIVE_TLS=1`, `REQUESTS_CA_BUNDLE`, and `PMG_CA_BUNDLE`. Put them in the environment of the processes that install packages. On a self-hosted GitHub runner, that is the runner's `.env` file.
+  </Step>
+
+  <Step title="Check the status">
+    ```bash
+    sudo pmg proxy status --state /run/pmg/proxy-state.json
+    ```
+
+    The output names the config file the daemon read, the enforced ports, the exempt executables, and the namespace mode.
+  </Step>
+
+  <Step title="Stop the daemon">
+    ```bash
+    sudo pmg proxy stop --state /run/pmg/proxy-state.json --fail-on-violation
+    ```
+
+    The kernel detaches the programs when the daemon exits, after a stop and after a crash. Nothing is left to clean up. Until the daemon runs again, connections go out directly.
+  </Step>
+</Steps>
+
+For a self-hosted runner, a `systemd` unit starts the daemon at boot and restarts it on failure. See the [example unit](https://github.com/safedep/pmg/blob/main/examples/systemd/pmg-proxy.service). A job cannot stop a root daemon, so the daemon serves later jobs until an operator stops it.
+
+<Warning>
+  A root daemon reads the managed config, `/etc/safedep/pmg/config.yml`, when it exists, and root's own per-user file otherwise. It never reads the file of the user who ran `sudo`. Set the policy with `sudo pmg config edit --system`.
+</Warning>
+
+## Set the policy
+
+Every process is eligible unless the policy says otherwise. Only the daemon's own process is exempt. The `pmg` binary is not, so `PMG_INSECURE_INSTALLATION=true pmg npm install` cannot bypass the daemon.
+
+```yaml
+proxy:
+  server:
+    listen_port: 7777
+    enforce:
+      enabled: true
+      ports: [80, 443]
+      exempt_users: []
+      eligible_users: []
+      exempt_executables:
+        - /home/runner/actions-runner/bin/Runner.*
+      skip_destinations: [10.20.0.0/16]
+      deny_udp: true
+      namespaces:
+        mode: ignore
+```
+
+| Key | What it does |
+| --- | --- |
+| `ports` | Destination ports the kernel routes. The ports of your [custom registries](https://github.com/safedep/pmg/blob/main/docs/proxy-mode.md#custom-registries) are always added. |
+| `exempt_executables` | Absolute paths or globs of programs that connect directly. A CI runner agent belongs here. The daemon applies the list to a binary that appears later. |
+| `exempt_users` | Users the kernel never routes. |
+| `eligible_users` | Limits enforcement to these users. Empty means every user. |
+| `skip_destinations` | CIDR prefixes the kernel never routes, in addition to loopback, link-local, and the Azure host address `168.63.129.16`. |
+| `deny_udp` | Refuses UDP to the enforced ports, so a QUIC client falls back to TCP. On by default. |
+| `namespaces.mode` | What happens to containers: `ignore`, `redirect`, or `auto`. See [Containers](#containers). |
+
+<Warning>
+  Never exempt an interpreter such as `node`, `python3`, or `sh`, or an HTTP client such as `curl` or `wget`. An install script can run any of them.
+
+  `eligible_users` is safe only when no eligible user can become another one. `sudo curl` runs as root, and root is then not eligible. Leave it empty on a runner whose user has `sudo`.
+</Warning>
+
+Every key has a flag on `pmg proxy start` and a `PMG_*` variable, for example `--enforce-exempt-executable` and `PMG_PROXY_SERVER_ENFORCE_EXEMPT_EXECUTABLES`. A list flag adds to the list in the file. See the [policy table](https://github.com/safedep/pmg/blob/main/docs/persistent-proxy.md#policy-from-the-command-line) in the PMG repository.
+
+## Containers
+
+A container has its own network namespace, so the kernel programs do not see its connections. Its traffic enters the host through a bridge, and PMG can redirect it there. Set `namespaces.mode`, the `--enforce-namespaces` flag, or the `enforce-namespaces` action input:
+
+- `redirect` turns the redirect on. The start fails when the host cannot redirect.
+- `auto` turns it on where the host can, and runs as `ignore` elsewhere. `pmg proxy status` shows the reason.
+- `ignore` is the default. Containers are not enforced.
+
+```yaml
+- uses: safedep/pmg@v1
+  with:
+    server-mode: true
+    enforce: true
+    enforce-namespaces: redirect
+```
+
+The redirect covers `docker run`, `RUN` steps in `docker build` with the default builder and with a `docker-container` builder, and Docker container actions. The daemon adds `169.254.200.1` to `lo`, listens on it, and loads one nftables table named `pmg`. A rule on each ingress interface, `docker0` and `br-*` by default, sends TCP to the enforced ports to that listener. The kernel deletes the table when the daemon exits.
+
+<Warning>
+  A host firewall with a default deny on input, such as ufw or firewalld, drops the redirected connection, and the container hangs. The daemon warns at start and names the rule to add. For ufw:
+
+  ```bash
+  sudo ufw allow in on docker0 to 169.254.200.1
+  ```
+</Warning>
+
+### Trust inside a container
+
+The redirect is transparent. Trust is not. The proxy terminates a connection to a registry host with the PMG CA, and a container that does not trust the CA fails the TLS handshake. The daemon log names the fix. Every other host keeps its real certificate.
+
+Pass the file that `PMG_CA_BUNDLE` names into the container. It holds the PMG CA and the public roots. `NODE_EXTRA_CA_CERTS` adds to the container's own trust. A tool that replaces its bundle, through `SSL_CERT_FILE`, `REQUESTS_CA_BUNDLE`, `PIP_CERT`, or `CURL_CA_BUNDLE`, needs this full bundle.
+
+<Tabs>
+  <Tab title="docker run">
+    ```bash
+    docker run -v "$PMG_CA_BUNDLE":/pmg-ca.pem:ro -e NODE_EXTRA_CA_CERTS=/pmg-ca.pem node:22 npm ci
+    ```
+  </Tab>
+  <Tab title="docker build">
+    Pass the bundle as a secret, so it never enters the image. `mode=0444` is required, because BuildKit mounts a secret readable by root only.
+
+    ```bash
+    docker build --secret id=pmg-ca,src=$PMG_CA_BUNDLE -t app .
+    ```
+
+    ```dockerfile
+    RUN --mount=type=secret,id=pmg-ca,target=/run/pmg-ca.pem,mode=0444 \
+        NODE_EXTRA_CA_CERTS=/run/pmg-ca.pem npm ci
+    ```
+  </Tab>
+  <Tab title="Docker container action">
+    A container action gets the workspace at `/github/workspace` and the step's `env:`. Copy the bundle into the workspace first.
+
+    ```yaml
+    - run: cp "$PMG_CA_BUNDLE" pmg-ca.pem
+    - uses: some/docker-action@v1
+      env:
+        NODE_EXTRA_CA_CERTS: /github/workspace/pmg-ca.pem
+    ```
+  </Tab>
+</Tabs>
+
+## Verify
+
+Run these on a Linux machine with Docker before you turn enforcement on in a workflow. Start the daemon with `--enforce --enforce-namespaces redirect`, then run each command from another terminal.
+
+1. A host process is enforced. Without proxy variables, `curl` still reaches the registry through the proxy.
+
+   ```bash
+   env -i /usr/bin/curl -sSv -o /dev/null https://registry.npmjs.org/ 2>&1 | grep issuer
+   # issuer: O=SafeDep PMG; CN=SafeDep PMG Proxy CA
+   ```
+
+2. A container that connects to a host that is not a registry passes through. It needs nothing.
+
+   ```bash
+   docker run --rm curlimages/curl -sS https://ifconfig.co
+   ```
+
+3. A container that connects to a registry without the PMG CA fails closed.
+
+   ```bash
+   docker run --rm curlimages/curl -sS https://registry.npmjs.org/-/ping
+   # curl: (60) SSL certificate problem
+   ```
+
+4. With the bundle mounted, the registry works through the proxy, and a known malicious test package is blocked.
+
+   ```bash
+   eval "$(sudo pmg proxy env)"
+   docker run --rm -v "$PMG_CA_BUNDLE":/pmg-ca.pem:ro -e CURL_CA_BUNDLE=/pmg-ca.pem \
+     curlimages/curl -sS -o /dev/null -w '%{http_code}\n' \
+     https://registry.npmjs.org/safedep-test-pkg/-/safedep-test-pkg-0.1.3.tgz
+   # 403
+   ```
+
+`sudo nft list table inet pmg` shows the redirect rules while the daemon runs.
+
+## Coverage and limits
+
+What the kernel routes:
+
+| Traffic | Covered |
+| --- | --- |
+| TCP to an enforced port from a host process | Yes. The kernel redirects it to the proxy. |
+| TCP from a container on `docker0` or `br-*` | Yes, with `namespaces.mode: redirect` or `auto`. |
+| A container with `--network host` | Yes. It is in the host namespace and takes the host path. |
+| UDP to an enforced port | Refused with `deny_udp`. QUIC clients fall back to TCP. |
+| IPv6 from a container to an enforced port | Refused. The listener has an IPv4 address, and the client falls back to IPv4. |
+| A GitHub Actions container job (`jobs.<id>.container`) | No. The action runs inside the job container, so no daemon exists on the host. |
+| A process with an exempt executable or an exempt user | No. It connects directly. |
+
+Known limits:
+
+- The proxy decides by host name. A redirected TLS connection without SNI, or with Encrypted ClientHello, and a plain HTTP request without a `Host` header are dropped. A registry that clients reach by IP needs a name, or a `skip_destinations` entry so the kernel never redirects it.
+- A client that pins certificates fails closed on registry hosts.
+- Node 20 cannot read the system trust store and is not supported under enforcement. Node 22 and later work with `NODE_USE_SYSTEM_CA=1`.
+- A process of the same user can reuse an exempt binary. A job step runs as the same user as the runner worker, so it can hard-link that binary and run under the exempt inode. This takes deliberate, runner-specific work. The [sandbox](https://github.com/safedep/pmg/blob/main/docs/sandbox.md) covers that threat.
+- `sudo` bypasses `eligible_users`, as described in [Set the policy](#set-the-policy).
+- One daemon enforces one cgroup. A second `pmg proxy start --enforce` on the same cgroup fails.
+- The daemon runs as root for its whole life.
+
+<CardGroup cols={2}>
+  <Card title="PMG in GitHub Actions" icon="github" href="/package-security/pmg/github-actions">
+    Run the persistent proxy in CI, with or without enforcement.
+  </Card>
+  <Card title="PMG System Install" icon="server" href="/package-security/pmg/system-install">
+    Protect every user on a shared Linux host or in a Docker image with PATH shims.
+  </Card>
+  <Card title="Persistent proxy reference" icon="book" href="https://github.com/safedep/pmg/blob/main/docs/persistent-proxy.md">
+    How the kernel programs and the container redirect work, with every policy key.
+  </Card>
+  <Card title="PMG" icon="box" href="/package-security/pmg/overview">
+    How PMG blocks malicious packages at install time.
+  </Card>
+</CardGroup>

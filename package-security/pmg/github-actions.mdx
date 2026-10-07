@@ -70,6 +70,28 @@ jobs:
         run: pmg proxy stop --fail-on-violation
 ```
 
+## Enforce in the kernel
+
+Proxy variables are a request that a process can ignore. A step that runs `env -i`, uses `sudo`, or calls an HTTP client of its own bypasses the proxy. Add `enforce: true` to make the Linux kernel route every process on the runner through PMG. Add `enforce-namespaces: redirect` to route the containers that steps start, such as `docker run` and `docker build`.
+
+```yaml
+- uses: safedep/pmg@v1
+  with:
+    server-mode: true
+    enforce: true
+    enforce-namespaces: redirect
+    api-key: ${{ secrets.SAFEDEP_API_KEY }}
+    tenant-id: ${{ secrets.SAFEDEP_TENANT_ID }}
+
+- run: npm ci
+
+- name: Enforce PMG policy
+  if: always()
+  run: sudo "$PMG_BIN" proxy stop --state "$PMG_PROXY_STATE" --fail-on-violation
+```
+
+The daemon runs as root, so the job-end step runs with `sudo` and uses the `PMG_BIN` and `PMG_PROXY_STATE` variables the action exports. Enforcement needs passwordless `sudo` on the runner. GitHub hosted Ubuntu runners have it. A redirected container must trust the PMG CA. See [Kernel Enforcement on Linux](/package-security/pmg/kernel-enforcement) for the policy inputs, container trust, and what enforcement does not cover.
+
 ## Use raw commands
 
 To wire the proxy up directly without the action:
@@ -85,6 +107,9 @@ To wire the proxy up directly without the action:
 For the proxy lifecycle, certificate trust, bind address, and cloud event sync, see the [persistent proxy server docs](https://github.com/safedep/pmg/blob/main/docs/persistent-proxy.md).
 
 <CardGroup cols={2}>
+  <Card title="Kernel Enforcement on Linux" icon="lock" href="/package-security/pmg/kernel-enforcement">
+    Route every process and container on the runner through PMG.
+  </Card>
   <Card title="PMG" icon="box" href="/package-security/pmg/overview">
     How PMG blocks malicious packages at install time.
   </Card>
