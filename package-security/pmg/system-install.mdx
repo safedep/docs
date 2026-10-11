@@ -294,6 +294,8 @@ For managed fleets, use the [MDM deployment guides](/package-security/pmg/mdm/ov
 
 System install does not set up a MITM certificate authority. For npm and pip on Linux, PMG's default ephemeral CA and environment-variable injection are sufficient. To install a persistent CA into the OS trust store, run `pmg setup cert install --system` as your normal user.
 
+PATH shims protect the commands that go through them. To route every process on a Linux host through PMG, including processes that never read `PATH` or proxy variables, see [Kernel Enforcement on Linux](/package-security/pmg/kernel-enforcement). It needs the same command as root: `sudo pmg setup cert install --system`.
+
 ## Uninstall
 
 On Windows, run from an administrator terminal:

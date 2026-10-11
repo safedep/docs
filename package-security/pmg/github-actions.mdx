@@ -13,8 +13,12 @@ description: "Block malicious packages in GitHub Actions CI by routing package i
 
 Run the [`safedep/pmg`](https://github.com/safedep/pmg) action in `server-mode`, then add a final `pmg proxy stop` step to enforce the result.
 
+<Note>
+  Use `safedep/pmg@v0.31.0` or a later release tag. The `v1` tag points at an older action without the `enforce`, `enforce-*` and `expose-to-job-network` inputs. GitHub warns about an unknown input and runs the job without it, so a job on `v1` with `enforce: true` runs without kernel enforcement.
+</Note>
+
 ```yaml
-- uses: safedep/pmg@v1
+- uses: safedep/pmg@v0.31.0
   with:
     server-mode: true
     api-key: ${{ secrets.SAFEDEP_API_KEY }}
@@ -51,7 +55,7 @@ jobs:
       - uses: actions/checkout@v6
 
       # Start PMG in server mode
-      - uses: safedep/pmg@v1
+      - uses: safedep/pmg@v0.31.0
         with:
           server-mode: true
           api-key: ${{ secrets.SAFEDEP_API_KEY }}
@@ -70,6 +74,61 @@ jobs:
         run: pmg proxy stop --fail-on-violation
 ```
 
+## Enforce in the kernel
+
+Proxy variables are a request that a process can ignore. A step that runs `env -i`, uses `sudo`, or calls an HTTP client of its own bypasses the proxy. Add `enforce: true` to make the Linux kernel route every process on the runner through PMG. Add `enforce-namespaces: redirect` to route the containers that steps start, such as `docker run` and `docker build`.
+
+```yaml
+- uses: safedep/pmg@v0.31.0
+  with:
+    server-mode: true
+    enforce: true
+    enforce-namespaces: redirect
+    api-key: ${{ secrets.SAFEDEP_API_KEY }}
+    tenant-id: ${{ secrets.SAFEDEP_TENANT_ID }}
+
+- run: npm ci
+
+- name: Enforce PMG policy
+  if: always()
+  run: sudo "$PMG_BIN" proxy stop --state "$PMG_PROXY_STATE" --fail-on-violation
+```
+
+The action installs the PMG CA into the system trust store, starts the daemon as root, and exports the trust variables. The daemon runs as root, so the job-end step runs with `sudo` and uses the `PMG_BIN` and `PMG_PROXY_STATE` variables the action exports. Enforcement needs passwordless `sudo` on the runner. GitHub hosted Ubuntu runners have it.
+
+The runner is not exempt. Its connections to GitHub go through the proxy, which passes them through with the real certificate. Set `timeout-minutes` on every enforced job. If the daemon stops serving but keeps running, the runner cannot report, and the job hangs until GitHub cancels it.
+
+The `enforce-ports`, `enforce-exempt-users`, `enforce-exempt-executables`, `enforce-skip-destinations`, and `enforce-namespaces` inputs set the policy without a config file. Each list adds to the config's list. See the [action reference](https://github.com/safedep/pmg/blob/main/docs/github-action.md#kernel-enforcement) for the input table. A redirected container must trust the PMG CA through `PMG_CA_BUNDLE`. See [Kernel Enforcement on Linux](/package-security/pmg/kernel-enforcement) for the policy keys, container trust, and what enforcement does not cover.
+
+## Job containers and Docker actions
+
+In a job with a job container (`jobs.<job_id>.container`), the action and the proxy run inside that container, and `run:` steps reach the proxy at `127.0.0.1`. A Docker action or a `docker://` step runs in a different container on the job network, where `127.0.0.1` is its own loopback, so its connection to the proxy fails. Set `expose-to-job-network` to bind the proxy to the job container's address on the job network:
+
+```yaml
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    container:
+      image: node:24
+      options: --init
+    steps:
+      - uses: actions/checkout@v6
+      - uses: safedep/pmg@v0.31.0
+        with:
+          server-mode: true
+          expose-to-job-network: true
+      - run: npm ci
+      - uses: docker://node:24
+        with:
+          args: npm ci
+      - if: always()
+        run: pmg proxy stop --fail-on-violation
+```
+
+Every container on the job network can then reach the proxy, including service containers. The runner mounts `/github/home` in the job container and in Docker actions, so the exported CA path is valid in both. The action fails when the job has no job container, and it warns when `HOME`, `XDG_CONFIG_HOME`, or `PMG_CONFIG_DIR` moves the CA outside `/github/home`.
+
+Kernel enforcement does not apply inside a job container, because no daemon runs on the runner host. `expose-to-job-network` applies to server mode without `enforce`.
+
 ## Use raw commands
 
 To wire the proxy up directly without the action:
@@ -85,6 +144,9 @@ To wire the proxy up directly without the action:
 For the proxy lifecycle, certificate trust, bind address, and cloud event sync, see the [persistent proxy server docs](https://github.com/safedep/pmg/blob/main/docs/persistent-proxy.md).
 
 <CardGroup cols={2}>
+  <Card title="Kernel Enforcement on Linux" icon="lock" href="/package-security/pmg/kernel-enforcement">
+    Route every process and container on the runner through PMG.
+  </Card>
   <Card title="PMG" icon="box" href="/package-security/pmg/overview">
     How PMG blocks malicious packages at install time.
   </Card>
