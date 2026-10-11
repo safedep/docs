@@ -13,8 +13,12 @@ description: "Block malicious packages in GitHub Actions CI by routing package i
 
 Run the [`safedep/pmg`](https://github.com/safedep/pmg) action in `server-mode`, then add a final `pmg proxy stop` step to enforce the result.
 
+<Note>
+  Use `safedep/pmg@v0.31.0` or a later release tag. The `v1` tag points at an older action without the `enforce`, `enforce-*` and `expose-to-job-network` inputs. GitHub warns about an unknown input and runs the job without it, so a job on `v1` with `enforce: true` runs without kernel enforcement.
+</Note>
+
 ```yaml
-- uses: safedep/pmg@v1
+- uses: safedep/pmg@v0.31.0
   with:
     server-mode: true
     api-key: ${{ secrets.SAFEDEP_API_KEY }}
@@ -51,7 +55,7 @@ jobs:
       - uses: actions/checkout@v6
 
       # Start PMG in server mode
-      - uses: safedep/pmg@v1
+      - uses: safedep/pmg@v0.31.0
         with:
           server-mode: true
           api-key: ${{ secrets.SAFEDEP_API_KEY }}
@@ -75,7 +79,7 @@ jobs:
 Proxy variables are a request that a process can ignore. A step that runs `env -i`, uses `sudo`, or calls an HTTP client of its own bypasses the proxy. Add `enforce: true` to make the Linux kernel route every process on the runner through PMG. Add `enforce-namespaces: redirect` to route the containers that steps start, such as `docker run` and `docker build`.
 
 ```yaml
-- uses: safedep/pmg@v1
+- uses: safedep/pmg@v0.31.0
   with:
     server-mode: true
     enforce: true
@@ -96,10 +100,6 @@ The runner is not exempt. Its connections to GitHub go through the proxy, which 
 
 The `enforce-ports`, `enforce-exempt-users`, `enforce-exempt-executables`, `enforce-skip-destinations`, and `enforce-namespaces` inputs set the policy without a config file. Each list adds to the config's list. See the [action reference](https://github.com/safedep/pmg/blob/main/docs/github-action.md#kernel-enforcement) for the input table. A redirected container must trust the PMG CA through `PMG_CA_BUNDLE`. See [Kernel Enforcement on Linux](/package-security/pmg/kernel-enforcement) for the policy keys, container trust, and what enforcement does not cover.
 
-<Note>
-  Kernel enforcement needs a PMG release later than v0.30.0 and a `safedep/pmg` action tag that carries the `enforce` input.
-</Note>
-
 ## Job containers and Docker actions
 
 In a job with a job container (`jobs.<job_id>.container`), the action and the proxy run inside that container, and `run:` steps reach the proxy at `127.0.0.1`. A Docker action or a `docker://` step runs in a different container on the job network, where `127.0.0.1` is its own loopback, so its connection to the proxy fails. Set `expose-to-job-network` to bind the proxy to the job container's address on the job network:
@@ -113,7 +113,7 @@ jobs:
       options: --init
     steps:
       - uses: actions/checkout@v6
-      - uses: safedep/pmg@v1
+      - uses: safedep/pmg@v0.31.0
         with:
           server-mode: true
           expose-to-job-network: true

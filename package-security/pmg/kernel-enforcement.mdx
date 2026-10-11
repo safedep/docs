@@ -8,7 +8,7 @@ PMG's persistent proxy serves every package manager on a host through proxy envi
 This page covers a Linux host you operate: a VM, a shared build machine, or a self-hosted CI runner for GitHub Actions, GitLab, CircleCI, Jenkins, or any other CI system. It also covers the containers that host starts. For GitHub hosted runners, the `safedep/pmg` action does these steps for you. See [PMG in GitHub Actions](/package-security/pmg/github-actions#enforce-in-the-kernel).
 
 <Note>
-  Kernel enforcement and the container redirect are in PMG v0.31.0 edge builds and later. No stable release carries them yet. Kernel enforcement is Linux only. On macOS and Windows, `pmg proxy start --enforce` fails with an error that names the platform.
+  Kernel enforcement and the container redirect are in PMG v0.31.0 and later. Kernel enforcement is Linux only. On macOS and Windows, `pmg proxy start --enforce` fails with an error that names the platform.
 </Note>
 
 ## Requirements
