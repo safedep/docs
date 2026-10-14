@@ -183,7 +183,9 @@ To give the bundle to a container at runtime, mount it in the container:
 <Tabs>
   <Tab title="docker run">
     ```bash
-    docker run -v "$PMG_CA_BUNDLE":/pmg-ca.pem:ro -e NODE_EXTRA_CA_CERTS=/pmg-ca.pem node:24 npm ci
+    docker run -v "$PWD":/app -w /app \
+      -v "$PMG_CA_BUNDLE":/pmg-ca.pem:ro -e NODE_EXTRA_CA_CERTS=/pmg-ca.pem \
+      node:24 npm ci
     ```
   </Tab>
   <Tab title="Docker action">
