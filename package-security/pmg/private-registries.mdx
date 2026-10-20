@@ -1,0 +1,69 @@
+---
+title: "Use PMG with a Private Registry or Mirror"
+description: "Make PMG check packages that come from an internal npm, PyPI, Go, or Cargo registry or mirror, such as Artifactory or Nexus."
+---
+
+PMG checks packages from the public registries, such as `registry.npmjs.org` and `pypi.org`. When your package manager uses an internal mirror or a registry proxy, such as Artifactory, Nexus, or Athens, add the registry to the PMG config. PMG then checks each package that comes from it.
+
+PMG checks public packages. A private package that is not in the SafeDep malware database passes the check.
+
+## Add the registry
+
+<Steps>
+  <Step title="Find the registry URL your package manager uses">
+    ```bash
+    npm config get registry
+    npm config get @myscope:registry
+    pip config debug
+    ```
+
+    Run `npm config get` for each scope that you use. For Go, use the `GOPROXY` URL. For Cargo, read the `[registries]` and `[source]` tables of `.cargo/config.toml`.
+  </Step>
+  <Step title="Add the registry to the PMG config">
+    Open the config file with `pmg config edit` and add an entry under `proxy.registries`:
+
+    ```yaml
+    proxy:
+      registries:
+        - name: npm-mirror
+          ecosystem: npm
+          endpoints:
+            - url: https://packages.example.com/artifactory/api/npm/npm-virtual
+        - name: pypi-mirror
+          ecosystem: pypi
+          endpoints:
+            - url: https://packages.example.com/artifactory/api/pypi/python/simple
+    ```
+
+    The `ecosystem` is `npm`, `pypi`, `go`, or `cargo`. For PyPI, use a URL that ends in `/simple`. If the registry serves files from a second host, add that URL as a second endpoint.
+  </Step>
+  <Step title="Check the config">
+    ```bash
+    pmg setup doctor
+    ```
+
+    The `Custom registries` row shows the number of endpoints. When an entry is not valid, the row names the error, and PMG refuses to run installs until you fix it.
+  </Step>
+  <Step title="Install a package from the registry">
+    ```bash
+    pmg npm install express
+    ```
+
+    The report shows `PMG: N packages analyzed`.
+  </Step>
+</Steps>
+
+Do not put credentials in the PMG config. Keep them where your package manager reads them, such as `.npmrc` or the pip config. PMG does not store them.
+
+## Next steps
+
+For how PMG matches a request, the requirements for each registry type, and troubleshooting, see [Custom Registries](https://github.com/safedep/pmg/blob/main/docs/proxy-mode.md#custom-registries) in the PMG repository.
+
+<CardGroup cols={2}>
+  <Card title="Hold Back Newly Published Package Versions" icon="clock" href="/package-security/pmg/dependency-cooldown">
+    Set the dependency cooldown window.
+  </Card>
+  <Card title="Limit the Hosts a Package Install Can Reach" icon="network-wired" href="/package-security/pmg/network-policy">
+    Allow an install to reach only your registry.
+  </Card>
+</CardGroup>

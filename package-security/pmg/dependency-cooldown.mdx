@@ -1,0 +1,61 @@
+---
+title: "Hold Back Newly Published Package Versions"
+description: "Set how many days PMG waits before it installs a newly published package version, and exempt the packages you trust."
+---
+
+An attacker who takes over a maintainer account publishes a malicious version. The version is most dangerous in its first days, before it is found and removed. The PMG dependency cooldown hides each version that is younger than a set number of days, so the package manager installs an older version.
+
+The cooldown is on by default with a window of 2 days. It applies to npm, PyPI, Go, and Cargo packages.
+
+## Set the window
+
+```bash
+pmg config set dependency_cooldown.days 7
+```
+
+To turn the cooldown off, set `dependency_cooldown.enabled` to `false`.
+
+## Read the result
+
+When the version range allows an older version, the package manager installs it and PMG shows no message. PMG blocks the install in these cases:
+
+- Every version of the package is inside the window.
+- You asked for an exact version, such as `pmg npm install pkg@1.2.3`, and that version is inside the window.
+
+The report starts with `Dependency cooldown` and names each blocked package. A lockfile can also ask for a version inside the window. The package manager then fails, and PMG lists the held-back versions after the error. Add `--verbose` to see the held-back versions on every install.
+
+## Exempt a package
+
+For a package that you must install as soon as it is published, such as your own SDK, add it to the skip list. Open the config file with `pmg config edit` and add an entry:
+
+```yaml
+dependency_cooldown:
+  enabled: true
+  days: 7
+  skip:
+    - purl: pkg:npm/my-internal-sdk
+      reason: "First-party SDK, tested on release"
+    - purl: pkg:npm/another-internal-pkg@1.2.3
+      reason: "One build we must test now"
+```
+
+A package URL (PURL) without a version exempts all versions. A PURL with a version exempts only that version. PMG still checks an exempt package for malware.
+
+## Skip the cooldown for one install
+
+```bash
+pmg --skip-dependency-cooldown npm install express
+```
+
+## Next steps
+
+For pip version requirements, custom registry behavior, and the `trusted_packages` list, see the [dependency cooldown documentation](https://github.com/safedep/pmg/blob/main/docs/dependency-cooldown.md) in the PMG repository.
+
+<CardGroup cols={2}>
+  <Card title="Alert on PMG blocks" icon="bell" href="/governance/cloud/alerts">
+    Send malicious and cooldown blocks to Slack or a webhook.
+  </Card>
+  <Card title="Use PMG with a Private Registry or Mirror" icon="server" href="/package-security/pmg/private-registries">
+    Check packages from an internal registry.
+  </Card>
+</CardGroup>

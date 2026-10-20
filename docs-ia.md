@@ -137,13 +137,13 @@ Don't mix Diátaxis types within a single page.
 - Core Concepts: `concepts/malicious-package`, `concepts/vulnerability`, `concepts/policy`, `concepts/cel`, `concepts/sbom`, `concepts/tenant`, `concepts/endpoint`
 
 **Package Security** *(tab landing: `package-security/overview`)*
-- Install-Time Package Blocking: `package-security/pmg/overview` *(landing)*, `package-security/pmg/quickstart`, `package-security/pmg/system-install`, `package-security/pmg/kernel-enforcement`, `package-security/pmg/kubernetes`
+- Install-Time Package Blocking: `package-security/pmg/overview` *(landing)*, `package-security/pmg/quickstart`, `package-security/pmg/sandbox`, `package-security/pmg/network-policy`, `package-security/pmg/dependency-cooldown`, `package-security/pmg/private-registries`, `package-security/pmg/system-install`, `package-security/pmg/kernel-enforcement`, `package-security/pmg/kubernetes`
 - MDM: `package-security/pmg/mdm/overview` *(landing)*, `package-security/pmg/mdm/jamf`, `package-security/pmg/mdm/jumpcloud`, `package-security/pmg/mdm/intune`
 - On-Demand Package Scanning: `package-security/scan/overview` *(landing)*, `package-security/scan/quickstart`, `package-security/scan/automation`
-- CI/CD Package Blocking: `package-security/pmg/github-actions`
+- CI/CD Package Blocking: `package-security/pmg/github-actions`, `package-security/pmg/github-actions-network-policy`
 
-**AI Agent Security** *(tab landing: `ai-security/overview`)* — flat list, scoped to securing AI coding *agents*. The "AI as a software component" pages (Shadow AI in Code, AI Governance) moved to Visibility & Governance, since AI SDKs in your app are a supply-chain concern, not agent security. Order is discover → observe → augment.
-- `ai-security/ai-tools-discovery`, `ai-security/gryph-overview`, `ai-security/mcp-server`
+**AI Agent Security** *(tab landing: `ai-security/overview`)* — flat list, scoped to securing AI coding *agents*. The "AI as a software component" pages (Shadow AI in Code, AI Governance) moved to Visibility & Governance, since AI SDKs in your app are a supply-chain concern, not agent security. Order is discover → observe → augment → contain.
+- `ai-security/ai-tools-discovery`, `ai-security/gryph-overview`, `ai-security/mcp-server`, `ai-security/sandbox-coding-agents`
 
 **Visibility & Governance** *(tab landing: `governance/overview`)*
 - Repository Scanning: `governance/vet/overview` *(landing)*, `governance/vet/quickstart`, `governance/vet/dependency-inventory`, `governance/vet/dependency-usage`, `governance/vet/code-analysis`
