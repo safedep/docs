@@ -142,7 +142,7 @@ Don't mix Diátaxis types within a single page.
 - On-Demand Package Scanning: `package-security/scan/overview` *(landing)*, `package-security/scan/quickstart`, `package-security/scan/automation`
 - CI/CD Package Blocking: `package-security/pmg/github-actions`, `package-security/pmg/github-actions-network-policy`
 
-**AI Agent Security** *(tab landing: `ai-security/overview`)* — flat list, scoped to securing AI coding *agents*. The "AI as a software component" pages (Shadow AI in Code, AI Governance) moved to Visibility & Governance, since AI SDKs in your app are a supply-chain concern, not agent security. Order is discover → observe → augment → contain.
+**AI Agent Security** *(tab landing: `ai-security/overview`)*: flat list, scoped to securing AI coding *agents*. The "AI as a software component" pages (Shadow AI in Code, AI Governance) moved to Visibility & Governance, since AI SDKs in your app are a supply-chain concern, not agent security. Order is discover → observe → augment → contain.
 - `ai-security/ai-tools-discovery`, `ai-security/gryph-overview`, `ai-security/mcp-server`, `ai-security/sandbox-coding-agents`
 
 **Visibility & Governance** *(tab landing: `governance/overview`)*

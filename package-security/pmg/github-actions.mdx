@@ -256,7 +256,7 @@ To wire the proxy up directly without the action:
 ```
 
 <Warning>
-  `pmg proxy env >> "$GITHUB_ENV"` sets `HTTP_PROXY`, `HTTPS_PROXY`, and the CA variables for every later step. `pmg proxy stop` does not remove them. A step after the stop step that uses the network connects to the stopped proxy and fails, for example `actions/upload-artifact` with `ECONNRESET`. Put the stop step last in the job.
+  `pmg proxy env >> "$GITHUB_ENV"` sets `HTTP_PROXY`, `HTTPS_PROXY`, and the CA variables for every later step. The action does the same in `server-mode` without `enforce`. `pmg proxy stop` does not remove the variables. A step after the stop step that uses the network connects to the stopped proxy and fails, for example `actions/upload-artifact` with `ECONNRESET`. Put the stop step last in the job.
 </Warning>
 
 For the proxy lifecycle, certificate trust, bind address, and cloud event sync, see the [persistent proxy server docs](https://github.com/safedep/pmg/blob/main/docs/persistent-proxy.md).

@@ -35,10 +35,10 @@ The policy has two modes:
   </Step>
   <Step title="Review the profile">
     ```bash
-    pmg sandbox profile show my-npm
+    pmg sandbox profile edit my-npm
     ```
 
-    Remove each host that the install does not need.
+    Remove each host that the install does not need. PMG checks the profile when you close the editor.
   </Step>
   <Step title="Use the profile for npm">
     ```bash
@@ -49,6 +49,8 @@ The policy has two modes:
     ```bash
     pmg config set sandbox.network_mode enforce
     ```
+
+    The mode applies to every package manager. The built-in profiles of the other package managers also deny every host that they do not list.
   </Step>
 </Steps>
 
@@ -75,7 +77,7 @@ pmg sandbox allow net-connect=registry.example.com:443
 
 ## Refuse connections that skip the proxy
 
-The policy applies to the connections that go through the PMG proxy. A script that ignores the proxy variables can connect directly. To refuse direct connections, set `network_via_proxy_only: true` in the profile. Landlock and Seatbelt support this setting. Bubblewrap does not.
+The policy applies to the connections that go through the PMG proxy. A script that ignores the proxy variables can connect directly. To refuse direct connections, set `network_via_proxy_only: true` in the profile. Landlock and Seatbelt support this setting. Bubblewrap refuses a profile with this setting.
 
 On a Linux host or a CI runner, [kernel enforcement](/package-security/pmg/kernel-enforcement) routes every process through the proxy.
 

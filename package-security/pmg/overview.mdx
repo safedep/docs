@@ -16,7 +16,7 @@ PMG runs on macOS, Linux, and Windows. Native Windows interception uses `.cmd` P
 
 ## How it works
 
-PMG intercepts each install command, resolves the dependency tree, and checks every package against SafeDep's [malicious package intelligence](/concepts/malicious-package) before allowing the install to proceed. Known malicious packages are blocked outright. An optional dependency cooldown policy can also skip package versions published inside a recent time window, when a freshly compromised release is most likely to slip through.
+PMG intercepts each install command, resolves the dependency tree, and checks every package against SafeDep's [malicious package intelligence](/concepts/malicious-package) before allowing the install to proceed. Known malicious packages are blocked outright. A [dependency cooldown](/package-security/pmg/dependency-cooldown), on by default, also skips package versions published inside a recent time window, when a freshly compromised release is most likely to slip through.
 
 It supports `npm`, `pnpm`, `yarn`, `bun`, `aube`, `npx`, `pnpx`, `aubx`, `aubr`, `pip`, `pipx`, `poetry`, `uv`, and `uvx`. Support for `go` and `cargo` is experimental. For dependency-resolution internals and CLI flags, see the [PMG repository](https://github.com/safedep/pmg).
 

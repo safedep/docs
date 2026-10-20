@@ -7,7 +7,7 @@ An install script runs with your user rights. It can read your SSH keys, your cl
 
 The sandbox:
 
-- Blocks reads and writes of credential files such as `.env`, `.ssh`, `.aws`, and `.npmrc`.
+- Blocks reads and writes of credential files such as `.env`, `.ssh`, `.aws`, and `.netrc`.
 - Removes known secret variables, such as `AWS_SECRET_ACCESS_KEY` and `GITHUB_TOKEN`, from the package manager environment.
 - Blocks host unix sockets, such as the SSH agent and the Docker daemon.
 - Blocks writes to Git hooks and Git config.
@@ -48,7 +48,7 @@ pmg --sandbox npm install express
 
 ## Fix a denied operation
 
-A denied operation fails in the package manager with a permission error. PMG records the denial.
+A denied operation fails in the package manager with a permission error. PMG records the denials that the sandbox driver reports. The Landlock and Bubblewrap drivers do not report every denial. See the [sandbox debug commands](https://github.com/safedep/pmg/blob/main/docs/sandbox.md#sandbox-debug-commands).
 
 <Steps>
   <Step title="Find the cause">

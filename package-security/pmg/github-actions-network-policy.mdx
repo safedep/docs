@@ -86,11 +86,11 @@ Set `network-profile` and `network-mode` on the action. Remove the proposal step
 
 The proxy refuses each destination that the profile does not allow. The stop step fails the job, and its report names the destination, the rule, and the program.
 
-To add the destinations of a later run to the profile, run the proposal step with `--into .pmg/profiles/ci.yml` in place of `--new pmg-network.yml`.
+To add new destinations to the profile, run the job with `network-mode: audit` and the proposal steps. In the proposal step, use `--into .pmg/profiles/ci.yml` in place of `--new pmg-network.yml`, and upload `.pmg/profiles/ci.yml`. In enforce mode, the proxy refuses a new destination, so the proposal gets no rule for it.
 
 ## Next steps
 
-For the input table, the steps without `enforce`, and the steps with `config-file`, see [Network policy](https://github.com/safedep/pmg/blob/main/docs/github-action.md#network-policy) in the PMG action documentation.
+For the steps without `enforce` and the steps with `config-file`, see [Build the profile from a run](https://github.com/safedep/pmg/blob/main/docs/github-action.md#build-the-profile-from-a-run) in the PMG action documentation. For the input table, see [Inputs](https://github.com/safedep/pmg/blob/main/docs/github-action.md#inputs).
 
 <CardGroup cols={2}>
   <Card title="PMG in GitHub Actions" icon="github" href="/package-security/pmg/github-actions">

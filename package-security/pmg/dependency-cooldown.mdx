@@ -3,7 +3,7 @@ title: "Hold Back Newly Published Package Versions"
 description: "Set how many days PMG waits before it installs a newly published package version, and exempt the packages you trust."
 ---
 
-An attacker who takes over a maintainer account publishes a malicious version. The version is most dangerous in its first days, before it is found and removed. The PMG dependency cooldown hides each version that is younger than a set number of days, so the package manager installs an older version.
+An attacker who takes over a maintainer account publishes a malicious version. The registry often removes the version within days. The PMG dependency cooldown hides each version that is younger than a set number of days, so the package manager installs an older version.
 
 The cooldown is on by default with a window of 2 days. It applies to npm, PyPI, Go, and Cargo packages.
 
@@ -22,7 +22,9 @@ When the version range allows an older version, the package manager installs it 
 - Every version of the package is inside the window.
 - You asked for an exact version, such as `pmg npm install pkg@1.2.3`, and that version is inside the window.
 
-The report starts with `Dependency cooldown` and names each blocked package. A lockfile can also ask for a version inside the window. The package manager then fails, and PMG lists the held-back versions after the error. Add `--verbose` to see the held-back versions on every install.
+The report starts with `Dependency cooldown` and names each blocked package. When a dependency asks for an exact version inside the window, the package manager fails, and PMG lists the held-back versions after the error. Add `--verbose` to see the held-back versions on every install.
+
+The cooldown filters the list of versions that the registry sends. It does not apply when the package manager downloads a locked version directly, such as `npm ci` with a lockfile. Cargo is the exception. PMG checks each download from a `Cargo.lock` against the window.
 
 ## Exempt a package
 
@@ -49,11 +51,11 @@ pmg --skip-dependency-cooldown npm install express
 
 ## Next steps
 
-For pip version requirements, custom registry behavior, and the `trusted_packages` list, see the [dependency cooldown documentation](https://github.com/safedep/pmg/blob/main/docs/dependency-cooldown.md) in the PMG repository.
+For pip version requirements and the `trusted_packages` list, see the [dependency cooldown documentation](https://github.com/safedep/pmg/blob/main/docs/dependency-cooldown.md) in the PMG repository.
 
 <CardGroup cols={2}>
   <Card title="Alert on PMG blocks" icon="bell" href="/governance/cloud/alerts">
-    Send malicious and cooldown blocks to Slack or a webhook.
+    With SafeDep Cloud, send malicious and cooldown blocks to Slack or a webhook.
   </Card>
   <Card title="Use PMG with a Private Registry or Mirror" icon="server" href="/package-security/pmg/private-registries">
     Check packages from an internal registry.

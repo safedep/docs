@@ -10,7 +10,7 @@ The sandbox:
 - Blocks reads and writes of credential files in the repository and in your home directory.
 - Removes secret variables, model API keys included, from the agent environment.
 - Makes the agent hook configuration read-only, so the agent cannot remove a hook such as [Gryph](/ai-security/gryph-overview).
-- Lets the agent write only in the repository, temporary directories, and tool caches.
+- Lets the agent write only in the repository, temporary directories, tool caches, and the state directory of its preset.
 - Sends every outbound connection through a PMG proxy that applies a network policy.
 
 <iframe
@@ -24,7 +24,7 @@ The sandbox:
 ></iframe>
 
 <Note>
-  `pmg sandbox exec` is experimental. It runs on macOS and on Linux with the Landlock driver. It does not run with Bubblewrap or on Windows. The network policy steps need PMG v0.33.0 or later. Install PMG with the [PMG quickstart](/package-security/pmg/quickstart).
+  `pmg sandbox exec` is experimental. It runs on macOS and on Linux with the Landlock driver. It does not run with Bubblewrap or on Windows. This page needs PMG v0.33.0 or later. Install PMG with the [PMG quickstart](/package-security/pmg/quickstart).
 </Note>
 
 ## Run the agent in the sandbox
@@ -70,14 +70,14 @@ By default the agent can reach every host, and PMG records each destination. Bui
   </Step>
   <Step title="Propose a profile">
     ```bash
-    pmg sandbox profile propose --last --new agent.yml
+    pmg sandbox profile propose --last --new agent
     ```
 
-    The `agent.yml` profile allows each host that the session reached and denies every other destination. Remove each host that the agent does not need.
+    PMG writes the user profile `agent` in the PMG config directory, outside the repository, where the agent cannot change it. The profile allows each host that the session reached and denies every other destination. Open it with `pmg sandbox profile edit agent` and remove each host that the agent does not need.
   </Step>
   <Step title="Run the agent under the profile">
     ```bash
-    pmg sandbox exec --sandbox-profile agent.yml --network-mode enforce \
+    pmg sandbox exec --sandbox-profile agent --network-mode enforce \
       --sandbox-allow preset=claude -- claude
     ```
 
