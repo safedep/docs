@@ -15,21 +15,21 @@ PMG in CI blocks a malicious package and fails the job. One failed job shows one
   - In GitHub Actions, set the `api-key` and `tenant-id` inputs of the PMG action. See [PMG in GitHub Actions](/package-security/pmg/github-actions).
   - In other CI systems, run `pmg cloud sync` at the end of the job. See [Package Guard](/governance/cloud/endpoint-hub/package-guard#manual-sync).
 
-## Review one runner
+## Review one pipeline
 
 <Steps>
   <Step title="Open the endpoint list">
-    Sign in to [app.safedep.io](https://app.safedep.io) and select **Endpoints**. Each CI runner that syncs is an endpoint.
+    Sign in to [app.safedep.io](https://app.safedep.io) and select **Endpoints**. In GitHub Actions, each repository is one endpoint by default. Set the `endpoint-id` input of the PMG action to change it.
   </Step>
-  <Step title="Open the runner">
-    Select the runner, then select **Package Events**. Each session shows the install command and its outcome: **Blocked**, **Cooldown**, or **Success**.
+  <Step title="Open the endpoint">
+    Select the endpoint, then select **Package Events**. Each session shows the install command and its outcome, such as **Blocked** or **Success**. Each package row shows its action, such as **Blocked** or **Cooldown**.
   </Step>
   <Step title="Filter the events">
     Use **Package action** or **Session outcome** to show only the blocks.
   </Step>
 </Steps>
 
-<img src="/images/cloud/ci-runner-package-events.png" alt="Package Events of a GitHub Actions runner in SafeDep Cloud with blocked, cooldown, and successful installs" />
+<img src="/images/cloud/ci-runner-package-events.png" alt="Package Events of a GitHub Actions endpoint in SafeDep Cloud with blocked, cooldown, and successful installs" />
 
 ## Review all pipelines
 
@@ -53,7 +53,7 @@ Run it from **Query** in the sidebar, or with `safedep query exec --sql-file`.
 
 <img src="/images/cloud/sql-ci-blocks.png" alt="SafeDep Cloud query console with the package blocks on all CI runners" />
 
-The console shows enum columns, such as `package_action`, as numbers. For the enum values, see the [SQL query guide](/reference/sql-query).
+The console shows enum columns as numbers. In `package_action`, `1` is a malicious package block and `4` is a cooldown hold. In `ci_provider`, `1` is GitHub Actions, `2` is GitLab CI, and `3` is Jenkins.
 
 ## Next steps
 

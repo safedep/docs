@@ -287,8 +287,9 @@ macbookpro.lan            0               1             2026-06-04T08:54:03Z
 ```
 
 The `endpoint_type` and `trust_level` enums are not groupable, so use `WHERE`
-filters and listings rather than `GROUP BY` for endpoints. Filter them by name
-(`endpoint_type = 'CI_RUNNER'`).
+filters and listings rather than `GROUP BY` for endpoints. SafeDep Cloud does not
+set `endpoint_type` yet, so every endpoint shows `0`. To find CI events, filter
+on `package_guard_events.ci_provider IS NOT NULL`.
 
 </Accordion>
 
