@@ -296,7 +296,7 @@ on `package_guard_events.ci_provider IS NOT NULL`.
 <Accordion title="Which endpoints have blocked any package">
 
 For "which endpoints..." questions you want a de-duplicated list, not one row per
-event. `endpoints.identifier` is not groupable, so use `SELECT DISTINCT`:
+event, so use `SELECT DISTINCT`:
 
 ```bash
 safedep query exec --sql "
