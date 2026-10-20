@@ -1,9 +1,17 @@
 ---
 title: "SafeDep Cloud"
-description: "Hosted control plane that centralizes policy, malicious-package intelligence, and fleet-wide visibility across your organization."
+description: "The control plane, data lake, and intelligence layer that runs SafeDep's open source tools across a team or an organization."
 ---
 
-SafeDep Cloud is the hosted control plane for managing open source software supply chain risk across your organization. It centralizes policy, malicious-package intelligence, and fleet-wide visibility on top of SafeDep's open source tools. It is optional: [Vet](/governance/vet/overview), [PMG](/package-security/pmg/overview), and [xBom](/governance/xbom/overview) all work without it. Reach for Cloud when you want to govern risk across many repositories and machines from one place.
+SafeDep Cloud is the software supply chain security platform built on SafeDep's open source tools. Every feature of [PMG](/package-security/pmg/overview), [Vet](/governance/vet/overview), and [xBom](/governance/xbom/overview) is open source. You can read the code and verify what each tool does before you run it.
+
+One developer needs only the tools. A team can deploy the tools by hand and write its own reporting. SafeDep Cloud does this work for a team or an organization:
+
+- **Control plane.** Connect the tools on developer machines, CI runners, and agent sandboxes to one tenant. [Endpoint Hub](/governance/cloud/endpoint-hub/overview) shows each endpoint and what the tools on it blocked or found.
+- **Data lake.** Keep package events, scan results, policy violations, and AI tool inventory in one place. Query them with [SQL](/reference/sql-query) from the console, the `safedep` CLI, or the API. An [AI agent](/governance/cloud/talk-to-safedep) can use the same queries to answer questions about your supply chain.
+- **Intelligence layer.** Run [on-demand scans](/package-security/scan/overview) of packages, extensions, and repositories, and get the [Threat Intel Feed](/threat-intel/overview).
+
+You own your data. The [SafeDep Cloud API](/reference/api-introduction) gives you full access to it, so you can build your own integrations. See [SafeDep Plans](/governance/cloud/plans) for what each plan includes.
 
 ## Set up Cloud
 
@@ -28,7 +36,7 @@ SafeDep Cloud is the hosted control plane for managing open source software supp
   <Card title="Malware Analysis" icon="shield-halved" href="/governance/cloud/malware-analysis">
     Detect malicious packages in your dependencies with Cloud code analysis.
   </Card>
-  <Card title="Plans & Pricing" icon="globe" href="https://safedep.io/pricing">
-    Compare the Free, Pro, and Enterprise plans.
+  <Card title="SafeDep Plans" icon="tag" href="/governance/cloud/plans">
+    Compare what the Free, Team, and Enterprise plans include.
   </Card>
 </CardGroup>
