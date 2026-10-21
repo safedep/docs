@@ -17,14 +17,16 @@ To turn the cooldown off, set `dependency_cooldown.enabled` to `false`.
 
 ## Read the result
 
-When the version range allows an older version, the package manager installs it and PMG shows no message. PMG blocks the install in these cases:
+For npm, PyPI, and Cargo, PMG removes each version inside the window from the version list that the registry sends. When the version range allows an older version, the package manager installs it and PMG shows no message. PMG blocks the install in these cases:
 
 - Every version of the package is inside the window.
 - You asked for an exact version, such as `pmg npm install pkg@1.2.3`, and that version is inside the window.
 
 The report starts with `Dependency cooldown` and names each blocked package. When a dependency asks for an exact version inside the window, the package manager fails, and PMG lists the held-back versions after the error. Add `--verbose` to see the held-back versions on every install.
 
-The cooldown filters the list of versions that the registry sends. It does not apply when the package manager downloads a locked version directly, such as `npm ci` with a lockfile. Cargo is the exception. PMG checks each download from a `Cargo.lock` against the window.
+For npm and PyPI, the cooldown does not apply when the package manager downloads a locked version directly, such as `npm ci` with a lockfile.
+
+For Go and Cargo, PMG also checks each download against the window, so a version from `go.mod` or `Cargo.lock` is checked too. PMG does not change the version list for Go. The `go` command picks the version, and PMG blocks the download when that version is inside the window.
 
 ## Exempt a package
 

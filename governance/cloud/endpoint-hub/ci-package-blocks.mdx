@@ -13,7 +13,7 @@ PMG in CI blocks a malicious package and fails the job. One failed job shows one
 
 - PMG runs in your pipelines and syncs to your tenant:
   - In GitHub Actions, set the `api-key` and `tenant-id` inputs of the PMG action. See [PMG in GitHub Actions](/package-security/pmg/github-actions).
-  - In other CI systems, run `pmg cloud sync` at the end of the job. See [Package Guard](/governance/cloud/endpoint-hub/package-guard#manual-sync).
+  - In other CI systems, run `pmg cloud sync` at the end of the job. See [Package Guard](/governance/cloud/endpoint-hub/package-guard#manual-sync). To find these jobs later, set `PMG_CLOUD_ENDPOINT_ID` as shown in [Other CI systems](#other-ci-systems).
 
 ## Review one pipeline
 
@@ -33,17 +33,16 @@ PMG in CI blocks a malicious package and fails the job. One failed job shows one
 
 ## Review all pipelines
 
-PMG records the CI provider with each event. This query lists the malicious package blocks and the cooldown holds on all CI runners:
+PMG records the CI provider for GitHub Actions jobs. This query lists the malicious package blocks and the cooldown holds in all GitHub Actions jobs:
 
 ```sql
 SELECT endpoints.identifier,
-       package_guard_events.ci_provider,
        package_guard_events.package_name,
        package_guard_events.package_action,
        package_guard_events.timestamp
 FROM package_guard_events
 JOIN endpoints ON endpoints.id = package_guard_events.invocation_id
-WHERE package_guard_events.ci_provider IS NOT NULL
+WHERE package_guard_events.ci_provider = 'ENDPOINT_CI_PROVIDER_GITHUB_ACTIONS'
   AND package_guard_events.package_action IN (
     'PMG_PACKAGE_ACTION_BLOCKED', 'PMG_PACKAGE_ACTION_COOLDOWN_BLOCKED')
 ORDER BY package_guard_events.timestamp DESC
@@ -51,9 +50,26 @@ ORDER BY package_guard_events.timestamp DESC
 
 Run it from **Query** in the sidebar, or with `safedep query exec --sql-file`.
 
-<img src="/images/cloud/sql-ci-blocks.png" alt="SafeDep Cloud query console with the package blocks on all CI runners" />
+<img src="/images/cloud/sql-ci-blocks.png" alt="SafeDep Cloud query console with the package blocks in all GitHub Actions jobs" />
 
-The console shows enum columns as numbers. In `package_action`, `1` is a malicious package block and `4` is a cooldown hold. In `ci_provider`, `1` is GitHub Actions, `2` is GitLab CI, and `3` is Jenkins.
+The console shows enum columns as numbers. In `package_action`, `1` is a malicious package block and `4` is a cooldown hold.
+
+### Other CI systems
+
+PMG does not record the CI provider for other CI systems. To group their events, give each CI endpoint an ID with a common prefix. In the job, set `PMG_CLOUD_ENDPOINT_ID`, for example to `ci-jenkins-payments`. Then filter on the prefix:
+
+```sql
+SELECT endpoints.identifier,
+       package_guard_events.package_name,
+       package_guard_events.package_action,
+       package_guard_events.timestamp
+FROM package_guard_events
+JOIN endpoints ON endpoints.id = package_guard_events.invocation_id
+WHERE endpoints.identifier LIKE 'ci-%'
+  AND package_guard_events.package_action IN (
+    'PMG_PACKAGE_ACTION_BLOCKED', 'PMG_PACKAGE_ACTION_COOLDOWN_BLOCKED')
+ORDER BY package_guard_events.timestamp DESC
+```
 
 ## Next steps
 
