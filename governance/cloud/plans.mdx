@@ -1,0 +1,54 @@
+---
+title: "SafeDep Plans"
+description: "What the open source tools include, and what the Free, Team, and Enterprise plans of SafeDep Cloud add."
+---
+
+Every feature of PMG, Vet, xBom, and Gryph is in the open source release. The plans apply to [SafeDep Cloud](/governance/cloud/overview), the control plane, data lake, and intelligence layer for a team or an organization. For prices and monthly allowances, see the [pricing page](https://safedep.io/pricing).
+
+## Open source tools
+
+No account is necessary for these tools.
+
+| Tool | What it does |
+| --- | --- |
+| [PMG](/package-security/pmg/overview) | Blocks malicious packages at install time. Includes the dependency cooldown, the sandbox, network policy, and kernel enforcement. |
+| [Vet](/governance/vet/overview) | Scans repositories, lockfiles, and SBOMs. Applies policy, and discovers AI tools on an endpoint. |
+| [xBom](/governance/xbom/overview) | Generates a bill of materials from code. |
+| [Gryph](/ai-security/gryph-overview) | Records what an AI coding agent reads, writes, and runs. |
+
+PMG and Vet check packages against SafeDep's [malicious package intelligence](/concepts/malicious-package) through a free community API.
+
+## SafeDep Cloud plans
+
+| Capability | Free | Team | Enterprise |
+| --- | --- | --- | --- |
+| [Sync Vet scans](/governance/cloud/sync): projects, components, and vulnerabilities | Yes | Yes | Yes |
+| [Endpoint Hub](/governance/cloud/endpoint-hub/overview): PMG package events, AI tool inventory, and MCP Advisor | | Yes | Yes |
+| [SQL query](/reference/sql-query) from the console, the `safedep` CLI, and the API | | Yes | Yes |
+| [Alerts](/governance/cloud/alerts) from a SQL query to Slack or a webhook | | Yes | Yes |
+| Policy violations across projects | | Yes | Yes |
+| [Package exclusions](/governance/cloud/package-exclusions) | | Yes | Yes |
+| [On-demand package scans](/package-security/scan/overview) | | Yes | Yes |
+| [GitHub App](/governance/integrations/github) for private repositories | | Yes | Yes |
+| [SIEM integrations](/governance/cloud/crowdstrike-siem) | | | Yes |
+| [MDM deployment](/package-security/pmg/mdm/overview) with SafeDep Cloud sync | | | Yes |
+| Enterprise support | | | Yes |
+
+The Team and Enterprise plans include a monthly allowance for metered features, such as on-demand scans and SQL queries. See [Usage & On-Demand Billing](/governance/cloud/usage-billing).
+
+The [Threat Intel Feed](/threat-intel/overview) is an add-on to a plan.
+
+## Check your plan
+
+```bash
+safedep subscription status
+```
+
+<CardGroup cols={2}>
+  <Card title="SafeDep Cloud Quickstart" icon="rocket" href="/governance/cloud/quickstart">
+    Create a tenant and connect your first tool.
+  </Card>
+  <Card title="Pricing" icon="tag" href="https://safedep.io/pricing">
+    Compare prices and allowances, and contact sales.
+  </Card>
+</CardGroup>
