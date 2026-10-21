@@ -163,7 +163,6 @@
             "root": "governance/cloud/overview",
             "pages": [
               "governance/cloud/quickstart",
-              "governance/cloud/plans",
               "governance/cloud/authentication",
               "governance/cloud/usage-billing",
               "governance/cloud/sync",
