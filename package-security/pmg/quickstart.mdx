@@ -110,6 +110,8 @@ PMG supports these tools from the [PMG README](https://github.com/safedep/pmg#su
 | `poetry` | Active | `pmg poetry add <package>` |
 | `uv` | Active | `pmg uv add <package>` or `pmg uv pip install <package>` |
 | `uvx` | Active | `pmg uvx <package>` |
+| `go` | Experimental | `pmg go get <module>` |
+| `cargo` | Experimental | `pmg cargo add <crate>` |
 
 <Note>
   The aube tools (`aube`, `aubx`, and `aubr`) are not part of the initial Windows support. See the [Windows support reference](https://github.com/safedep/pmg/blob/main/docs/windows-support.md#supported-package-managers).
@@ -139,6 +141,7 @@ See the [Windows support reference](https://github.com/safedep/pmg/blob/main/doc
 ## Next Steps
 
 - Learn [what PMG is and how it works](/package-security/pmg/overview)
+- [Stop install scripts from reading your secrets](/package-security/pmg/sandbox) with the PMG sandbox on macOS and Linux
 - See the [PMG repository](https://github.com/safedep/pmg) for complete documentation and examples
 - Join our [Discord community](https://discord.gg/kAGEj25dCn) for support
 - Check out other SafeDep tools like [Vet](/governance/vet/overview) and [SafeDep Cloud](/governance/cloud/overview)

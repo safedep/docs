@@ -74,7 +74,25 @@ jobs:
         run: pmg proxy stop --fail-on-violation
 ```
 
+## See blocks from every pipeline
+
+With the `api-key` and `tenant-id` inputs, the blocks from every job go to one tenant. To review them across all repositories, see [Review Package Blocks Across CI Pipelines](/governance/cloud/endpoint-hub/ci-package-blocks).
+
+<Note>
+  This needs the SafeDep Cloud Team or Enterprise plan. See [pricing](https://safedep.io/pricing).
+</Note>
+
 ## Enforce in the kernel
+
+<iframe
+  width="100%"
+  height="315"
+  src="https://www.youtube.com/embed/V3kwD04L6N4"
+  title="PMG Kernel Enforcement for GitHub Actions"
+  frameBorder="0"
+  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen"
+  allowFullScreen
+></iframe>
 
 Proxy variables are a request that a process can ignore. A step that runs `env -i`, uses `sudo`, or calls an HTTP client of its own bypasses the proxy. Add `enforce: true` to make the Linux kernel route every process on the runner through PMG. Add `enforce-namespaces: redirect` to route the containers that steps start, such as `docker run` and `docker build`.
 
@@ -99,6 +117,8 @@ The action installs the PMG CA into the system trust store, starts the daemon as
 The runner is not exempt. Its connections to GitHub go through the proxy, which passes them through with the real certificate. Set `timeout-minutes` on every enforced job. If the daemon stops serving but keeps running, the runner cannot report, and the job hangs until GitHub cancels it.
 
 The `enforce-ports`, `enforce-exempt-users`, `enforce-exempt-executables`, `enforce-skip-destinations`, and `enforce-namespaces` inputs set the policy without a config file. Each list adds to the config's list. See the [action reference](https://github.com/safedep/pmg/blob/main/docs/github-action.md#kernel-enforcement) for the input table, and [Kernel Enforcement on Linux](/package-security/pmg/kernel-enforcement) for the policy keys and what enforcement does not cover.
+
+To refuse every host that the job does not need, add a network policy. See [Allow Only Known Hosts in GitHub Actions](/package-security/pmg/github-actions-network-policy).
 
 ### Protect Docker builds and containers
 
@@ -243,9 +263,16 @@ To wire the proxy up directly without the action:
   if: always()
 ```
 
+<Warning>
+  `pmg proxy env >> "$GITHUB_ENV"` sets `HTTP_PROXY`, `HTTPS_PROXY`, and the CA variables for every later step. The action does the same in `server-mode` without `enforce`. `pmg proxy stop` does not remove the variables. A step after the stop step that uses the network connects to the stopped proxy and fails, for example `actions/upload-artifact` with `ECONNRESET`. Put the stop step last in the job.
+</Warning>
+
 For the proxy lifecycle, certificate trust, bind address, and cloud event sync, see the [persistent proxy server docs](https://github.com/safedep/pmg/blob/main/docs/persistent-proxy.md).
 
 <CardGroup cols={2}>
+  <Card title="Allow Only Known Hosts in GitHub Actions" icon="network-wired" href="/package-security/pmg/github-actions-network-policy">
+    Refuse every host that the job does not need.
+  </Card>
   <Card title="Kernel Enforcement on Linux" icon="lock" href="/package-security/pmg/kernel-enforcement">
     Route every process and container on the runner through PMG.
   </Card>

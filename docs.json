@@ -53,6 +53,10 @@
             "root": "package-security/pmg/overview",
             "pages": [
               "package-security/pmg/quickstart",
+              "package-security/pmg/sandbox",
+              "package-security/pmg/network-policy",
+              "package-security/pmg/dependency-cooldown",
+              "package-security/pmg/private-registries",
               "package-security/pmg/system-install",
               "package-security/pmg/kernel-enforcement",
               "package-security/pmg/kubernetes"
@@ -81,7 +85,8 @@
             "group": "CI/CD Package Blocking",
             "icon": "shield-check",
             "pages": [
-              "package-security/pmg/github-actions"
+              "package-security/pmg/github-actions",
+              "package-security/pmg/github-actions-network-policy"
             ]
           }
         ]
@@ -93,7 +98,8 @@
           "ai-security/overview",
           "ai-security/ai-tools-discovery",
           "ai-security/gryph-overview",
-          "ai-security/mcp-server"
+          "ai-security/mcp-server",
+          "ai-security/sandbox-coding-agents"
         ]
       },
       {
@@ -172,6 +178,8 @@
                   "governance/cloud/endpoint-hub/inventory",
                   "governance/cloud/endpoint-hub/inventory-catalog",
                   "governance/cloud/endpoint-hub/package-guard",
+                  "governance/cloud/endpoint-hub/find-malicious-package",
+                  "governance/cloud/endpoint-hub/ci-package-blocks",
                   "governance/cloud/endpoint-hub/mcp-advisor",
                   "governance/cloud/endpoint-hub/agentic-investigation"
                 ]

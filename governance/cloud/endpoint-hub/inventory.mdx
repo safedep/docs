@@ -96,6 +96,27 @@ Endpoint inventory shows what AI tooling is active across your endpoints (develo
 - **CI/CD:** Set `SAFEDEP_API_KEY` and `SAFEDEP_TENANT_ID` as pipeline secrets. Ephemeral runners (e.g. GitHub-hosted) register as a new endpoint per run; self-hosted runners on a persistent host update the same endpoint.
 - **Suppress table output:** `vet endpoint scan --silent`: runs and syncs without printing the local table.
 
+## Review AI tools across your team
+
+Open an endpoint in **Endpoints** and select **AI Tools**. The tab lists the coding agents, MCP servers, and other AI tools from the last scan.
+
+<img src="/images/cloud/endpoint-ai-tools.png" alt="AI Tools tab of an endpoint in SafeDep Cloud with two coding agents and three MCP servers" />
+
+To see one kind of tool on all endpoints, run a query. This query lists the MCP servers:
+
+```sql
+SELECT endpoints.identifier,
+       inventory_events.app,
+       inventory_events.item_identity
+FROM inventory_events
+JOIN endpoints ON endpoints.id = inventory_events.invocation_id
+WHERE inventory_events.item_kind = 'INVENTORY_ITEM_KIND_MCP_SERVER'
+```
+
+<Note>
+  Endpoint Hub and SQL queries need the SafeDep Cloud Team or Enterprise plan. See [pricing](https://safedep.io/pricing).
+</Note>
+
 ## Next steps
 
 <CardGroup cols={2}>

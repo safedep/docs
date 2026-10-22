@@ -1,0 +1,120 @@
+---
+title: "Stop Install Scripts from Reading Your Secrets"
+description: "Run package installs in the PMG sandbox to block credential files, secret environment variables, and the SSH agent."
+---
+
+An install script runs with your user rights. It can read your SSH keys, your cloud credentials, and every secret in your shell environment. The PMG sandbox runs the package manager and its scripts under an operating system policy that blocks these reads.
+
+The sandbox:
+
+- Blocks reads and writes of credential files such as `.env`, `.ssh`, `.aws`, and `.netrc`.
+- Removes known secret variables, such as `AWS_SECRET_ACCESS_KEY` and `GITHUB_TOKEN`, from the package manager environment.
+- Blocks host unix sockets, such as the SSH agent and the Docker daemon.
+- Blocks writes to Git hooks and Git config.
+
+<Note>
+  The sandbox runs on macOS (Seatbelt) and Linux (Landlock on kernel 5.13 or later, or Bubblewrap). It does not run on Windows. The sandbox is off by default.
+</Note>
+
+## Turn on the sandbox
+
+<Steps>
+  <Step title="Enable the sandbox">
+    ```bash
+    pmg config set sandbox.enabled true
+    ```
+  </Step>
+  <Step title="Check the sandbox driver">
+    ```bash
+    pmg sandbox doctor
+    ```
+
+    The output shows the driver that PMG uses on this machine. On Ubuntu 23.10 and later, follow the AppArmor fix that the doctor shows.
+  </Step>
+  <Step title="Install a package">
+    ```bash
+    pmg npm install express
+    ```
+
+    PMG applies the sandbox to install commands. Other commands, such as `npm run build`, run without it.
+  </Step>
+</Steps>
+
+To try the sandbox for one command without a config change, add `--sandbox`:
+
+```bash
+pmg --sandbox npm install express
+```
+
+## Fix a denied operation
+
+A denied operation fails in the package manager with a permission error. PMG records the denials that the sandbox driver reports. The Landlock and Bubblewrap drivers do not report every denial. See the [sandbox debug commands](https://github.com/safedep/pmg/blob/main/docs/sandbox.md#sandbox-debug-commands).
+
+<Steps>
+  <Step title="Find the cause">
+    ```bash
+    pmg sandbox explain --last
+    ```
+
+    The output names the denied path, command, or variable, and the command that allows it.
+  </Step>
+  <Step title="Allow it for one run">
+    ```bash
+    pmg --sandbox-allow write=./.gitignore npx create-next-app@latest
+    ```
+
+    The types are `read`, `write`, `exec`, `net-connect`, `net-bind`, `env`, and `preset`. For a removed variable, use `env=NAME`.
+  </Step>
+  <Step title="Keep it for this repository">
+    ```bash
+    pmg sandbox allow --last
+    ```
+
+    PMG saves the allowance in a project overlay outside the repository, and applies it on every run in this repository. A cloned repository cannot add an overlay. Show the overlay with `pmg sandbox project show`.
+  </Step>
+</Steps>
+
+<Warning>
+  `pmg sandbox allow` refuses a credential file, such as `.env` or `.npmrc`, unless you add `--force`. A package that reads the file during an install can send it to an attacker.
+</Warning>
+
+## Use a preset for a known tool
+
+A preset is a set of allowances for one tool, such as a dev server. Use a preset instead of allowing each denial:
+
+```bash
+pmg sandbox preset list
+pmg sandbox allow preset=vite
+```
+
+A preset only adds allowances. It cannot remove a deny rule or open a credential file.
+
+## With SafeDep Cloud
+
+The sandbox is free in PMG. With SafeDep Cloud, you see the sandbox allowances on every endpoint of your team. PMG records each `--sandbox-allow` and each project allowance as a sandbox override event. This query lists the endpoints that use an override, and the number of sessions on each:
+
+```sql
+SELECT endpoints.identifier,
+       COUNT(DISTINCT package_guard_events.invocation_id) AS sessions
+FROM package_guard_events
+JOIN endpoints ON endpoints.id = package_guard_events.invocation_id
+WHERE package_guard_events.event_type = 'PMG_EVENT_TYPE_SANDBOX_OVERRIDE'
+GROUP BY endpoints.identifier
+```
+
+<Note>
+  This section needs the SafeDep Cloud Team or Enterprise plan, with PMG [connected to your tenant](/governance/cloud/endpoint-hub/package-guard). See [pricing](https://safedep.io/pricing).
+</Note>
+
+## Next steps
+
+For the profile format, custom profiles, and platform limits, see the [sandbox documentation](https://github.com/safedep/pmg/blob/main/docs/sandbox.md) in the PMG repository.
+
+<CardGroup cols={2}>
+  <Card title="Limit the Hosts a Package Install Can Reach" icon="network-wired" href="/package-security/pmg/network-policy">
+    Allow only the registries an install needs.
+  </Card>
+  <Card title="Sandbox Your AI Coding Agent" icon="robot" href="/ai-security/sandbox-coding-agents">
+    Run Claude Code, Codex, or Pi in the PMG sandbox.
+  </Card>
+</CardGroup>

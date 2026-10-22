@@ -16,9 +16,11 @@ PMG runs on macOS, Linux, and Windows. Native Windows interception uses `.cmd` P
 
 ## How it works
 
-PMG intercepts each install command, resolves the dependency tree, and checks every package against SafeDep's [malicious package intelligence](/concepts/malicious-package) before allowing the install to proceed. Known malicious packages are blocked outright. An optional dependency cooldown policy can also skip package versions published inside a recent time window, when a freshly compromised release is most likely to slip through.
+PMG intercepts each install command, resolves the dependency tree, and checks every package against SafeDep's [malicious package intelligence](/concepts/malicious-package) before allowing the install to proceed. Known malicious packages are blocked outright. A [dependency cooldown](/package-security/pmg/dependency-cooldown), on by default, also skips package versions published inside a recent time window, when a freshly compromised release is most likely to slip through.
 
-It supports `npm`, `pnpm`, `yarn`, `bun`, `npx`, `pnpx`, `pip`, `uv`, and `poetry`. For dependency-resolution internals and CLI flags, see the [PMG repository](https://github.com/safedep/pmg).
+It supports `npm`, `pnpm`, `yarn`, `bun`, `aube`, `npx`, `pnpx`, `aubx`, `aubr`, `pip`, `pipx`, `poetry`, `uv`, and `uvx`. Support for `go` and `cargo` is experimental. For dependency-resolution internals and CLI flags, see the [PMG repository](https://github.com/safedep/pmg).
+
+On macOS and Linux, PMG can also run each install in a [sandbox](/package-security/pmg/sandbox) that blocks credential reads, and apply a [network policy](/package-security/pmg/network-policy) that limits the hosts an install can reach.
 
 On a CI runner or a shared Linux host, PMG can also run as one persistent proxy that every package manager uses. With [kernel enforcement](/package-security/pmg/kernel-enforcement), the Linux kernel routes every process through that proxy, and a process cannot opt out. The containers that the host starts can be routed too.
 
@@ -31,6 +33,24 @@ On a CI runner or a shared Linux host, PMG can also run as one persistent proxy 
 <CardGroup cols={2}>
   <Card title="PMG Quickstart" icon="rocket" href="/package-security/pmg/quickstart">
     Install PMG and protect your package managers in minutes.
+  </Card>
+  <Card title="Stop Install Scripts from Reading Your Secrets" icon="box" href="/package-security/pmg/sandbox">
+    Run package installs in the PMG sandbox.
+  </Card>
+  <Card title="Limit the Hosts a Package Install Can Reach" icon="network-wired" href="/package-security/pmg/network-policy">
+    Allow an install to reach only the hosts it needs.
+  </Card>
+  <Card title="Hold Back Newly Published Package Versions" icon="clock" href="/package-security/pmg/dependency-cooldown">
+    Set the dependency cooldown window and exempt packages.
+  </Card>
+  <Card title="Use PMG with a Private Registry or Mirror" icon="server" href="/package-security/pmg/private-registries">
+    Check packages from an internal registry.
+  </Card>
+  <Card title="PMG in GitHub Actions" icon="github" href="/package-security/pmg/github-actions">
+    Block malicious packages in CI and limit the hosts a job can reach.
+  </Card>
+  <Card title="Sandbox Your AI Coding Agent" icon="robot" href="/ai-security/sandbox-coding-agents">
+    Run Claude Code, Codex, or Pi in the PMG sandbox.
   </Card>
   <Card title="Deploy on Kubernetes" icon="cubes" href="/package-security/pmg/kubernetes">
     Protect package installs in Kubernetes workloads and group events by workload.

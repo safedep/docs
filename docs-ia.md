@@ -137,13 +137,13 @@ Don't mix Diátaxis types within a single page.
 - Core Concepts: `concepts/malicious-package`, `concepts/vulnerability`, `concepts/policy`, `concepts/cel`, `concepts/sbom`, `concepts/tenant`, `concepts/endpoint`
 
 **Package Security** *(tab landing: `package-security/overview`)*
-- Install-Time Package Blocking: `package-security/pmg/overview` *(landing)*, `package-security/pmg/quickstart`, `package-security/pmg/system-install`, `package-security/pmg/kernel-enforcement`, `package-security/pmg/kubernetes`
+- Install-Time Package Blocking: `package-security/pmg/overview` *(landing)*, `package-security/pmg/quickstart`, `package-security/pmg/sandbox`, `package-security/pmg/network-policy`, `package-security/pmg/dependency-cooldown`, `package-security/pmg/private-registries`, `package-security/pmg/system-install`, `package-security/pmg/kernel-enforcement`, `package-security/pmg/kubernetes`
 - MDM: `package-security/pmg/mdm/overview` *(landing)*, `package-security/pmg/mdm/jamf`, `package-security/pmg/mdm/jumpcloud`, `package-security/pmg/mdm/intune`
 - On-Demand Package Scanning: `package-security/scan/overview` *(landing)*, `package-security/scan/quickstart`, `package-security/scan/automation`
-- CI/CD Package Blocking: `package-security/pmg/github-actions`
+- CI/CD Package Blocking: `package-security/pmg/github-actions`, `package-security/pmg/github-actions-network-policy`
 
-**AI Agent Security** *(tab landing: `ai-security/overview`)* — flat list, scoped to securing AI coding *agents*. The "AI as a software component" pages (Shadow AI in Code, AI Governance) moved to Visibility & Governance, since AI SDKs in your app are a supply-chain concern, not agent security. Order is discover → observe → augment.
-- `ai-security/ai-tools-discovery`, `ai-security/gryph-overview`, `ai-security/mcp-server`
+**AI Agent Security** *(tab landing: `ai-security/overview`)*: flat list, scoped to securing AI coding *agents*. The "AI as a software component" pages (Shadow AI in Code, AI Governance) moved to Visibility & Governance, since AI SDKs in your app are a supply-chain concern, not agent security. Order is discover → observe → augment → contain.
+- `ai-security/ai-tools-discovery`, `ai-security/gryph-overview`, `ai-security/mcp-server`, `ai-security/sandbox-coding-agents`
 
 **Visibility & Governance** *(tab landing: `governance/overview`)*
 - Repository Scanning: `governance/vet/overview` *(landing)*, `governance/vet/quickstart`, `governance/vet/dependency-inventory`, `governance/vet/dependency-usage`, `governance/vet/code-analysis`
@@ -152,7 +152,7 @@ Don't mix Diátaxis types within a single page.
 - AI Visibility: `governance/ai-governance` *(landing)*, `governance/shadow-ai-detection`, `governance/vet/ai-bom`
 - CI/CD & Platform Integrations: `governance/integrations/overview` *(landing)*, `governance/integrations/github`, `governance/integrations/github-code-scanning`, `governance/integrations/gitlab`, `governance/integrations/bitbucket-app`, `governance/integrations/bitbucket`, `governance/integrations/defectdojo`, `governance/terraform-audit`
 - SafeDep Cloud: `governance/cloud/overview` *(landing)*, `governance/cloud/quickstart`, `governance/cloud/authentication`, `governance/cloud/usage-billing`, `governance/cloud/sync`, `governance/cloud/talk-to-safedep`, `governance/cloud/alerts`, `governance/cloud/crowdstrike-siem`
-  - Endpoint Hub: `governance/cloud/endpoint-hub/overview` *(landing)*, `governance/cloud/endpoint-hub/inventory`, `governance/cloud/endpoint-hub/inventory-catalog`, `governance/cloud/endpoint-hub/package-guard`, `governance/cloud/endpoint-hub/mcp-advisor`, `governance/cloud/endpoint-hub/agentic-investigation`
+  - Endpoint Hub: `governance/cloud/endpoint-hub/overview` *(landing)*, `governance/cloud/endpoint-hub/inventory`, `governance/cloud/endpoint-hub/inventory-catalog`, `governance/cloud/endpoint-hub/package-guard`, `governance/cloud/endpoint-hub/find-malicious-package`, `governance/cloud/endpoint-hub/ci-package-blocks`, `governance/cloud/endpoint-hub/mcp-advisor`, `governance/cloud/endpoint-hub/agentic-investigation`
   - Policy & Risk: `governance/cloud/malware-analysis`, `governance/cloud/package-exclusions`
 
 **Threat Intel** *(tab landing: `threat-intel/overview`)* — subscription-gated feed API (`FEATURE_THREAT_INTEL_FEED`). Product-level API guide; `threat-intel/schema` links out to the public `buf.build/safedep/api` module for the message/field/enum definitions (R6, don't hand-copy tables that drift). The module is public (a keyless `@buf/safedep_api.bufbuild_es` install resolves), so no in-page restatement is needed.

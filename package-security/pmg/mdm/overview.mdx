@@ -13,7 +13,7 @@ Run the scripts as root on macOS and Linux, or as SYSTEM or an administrator on 
 
 PMG blocks packages without Cloud credentials. MDM deploys can also sync data to [SafeDep Cloud](/governance/cloud/quickstart). With Cloud credentials configured, the install script attempts `pmg cloud sync` after setup. On Windows, this runs for logged-on users only. A successful sync adds the device to [Endpoint Hub](/governance/cloud/endpoint-hub/overview) without waiting for a package manager event.
 
-To use Cloud sync, you need an API key and Tenant ID from [app.safedep.io/settings/api-keys](https://app.safedep.io/settings/api-keys). To repeat the sync without installing or configuring PMG again, pass `--cloud-sync-only` to the install script. Use this option only for users who already have PMG and cloud sync enabled. Run the normal installer to configure new users. On Windows, run it after those users sign in to store their Cloud credentials.
+Cloud sync from an MDM fleet needs the SafeDep Cloud Enterprise plan. See [pricing](https://safedep.io/pricing). To use Cloud sync, you need an API key and Tenant ID from [app.safedep.io/settings/api-keys](https://app.safedep.io/settings/api-keys). To repeat the sync without installing or configuring PMG again, pass `--cloud-sync-only` to the install script. Use this option only for users who already have PMG and cloud sync enabled. Run the normal installer to configure new users. On Windows, run it after those users sign in to store their Cloud credentials.
 
 ## Supported MDMs
 

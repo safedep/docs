@@ -1,0 +1,102 @@
+---
+title: "Allow Only Known Hosts in GitHub Actions"
+description: "Build a network policy from a CI run, commit it, and make PMG refuse every other destination in GitHub Actions."
+---
+
+A compromised package can send your CI secrets to a host that the attacker controls. A network policy lists the hosts that a job can reach. The PMG proxy refuses every other destination, and the job fails.
+
+<iframe
+  width="100%"
+  height="315"
+  src="https://www.youtube.com/embed/F6FKH_gi5EY"
+  title="PMG Network Policy for GitHub Actions"
+  frameBorder="0"
+  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen"
+  allowFullScreen
+></iframe>
+
+<Note>
+  Network policy needs `safedep/pmg@v0.33.0` or later. Use it with `enforce: true`. Without kernel enforcement, a process can ignore the proxy variables and connect directly. See [PMG in GitHub Actions](/package-security/pmg/github-actions#enforce-in-the-kernel).
+</Note>
+
+## Build the policy from a run
+
+The proxy records every destination that a job reaches. Run the job once with no policy, then turn the run into a profile.
+
+<Steps>
+  <Step title="Add the proposal steps to the job">
+    ```yaml
+    - uses: safedep/pmg@v0.33.0
+      with:
+        server-mode: true
+        enforce: true
+
+    - run: npm ci
+
+    - name: Stop PMG
+      if: always()
+      run: sudo "$PMG_BIN" proxy stop --state "$PMG_PROXY_STATE" --fail-on-violation
+
+    - name: Propose the network profile
+      if: always()
+      run: sudo "$PMG_BIN" sandbox profile propose --run "$PMG_PROXY_RUN" --new pmg-network.yml
+
+    - uses: actions/upload-artifact@v7
+      if: always()
+      with:
+        name: pmg-network-profile
+        path: pmg-network.yml
+    ```
+
+    The action exports the run ID as `PMG_PROXY_RUN`. The run ID comes from the event log, so do not set `skip-event-logging: true`.
+  </Step>
+  <Step title="Run the workflow and download the artifact">
+    The `pmg-network.yml` file has one allow rule for each host that the job reached, and a rule that denies every other destination.
+  </Step>
+  <Step title="Review and commit the profile">
+    Remove each host that the job does not need. Commit the file as `.pmg/profiles/ci.yml`.
+  </Step>
+  <Step title="Protect the profile">
+    The profile controls what the job can reach, so give it the same review as the workflow file. Add a `CODEOWNERS` line:
+
+    ```text
+    .pmg/profiles/ @your-org/security
+    ```
+  </Step>
+</Steps>
+
+## Enforce the policy
+
+Set `network-profile` and `network-mode` on the action. Remove the proposal steps.
+
+```yaml
+- uses: safedep/pmg@v0.33.0
+  with:
+    server-mode: true
+    enforce: true
+    network-profile: .pmg/profiles/ci.yml
+    network-mode: enforce
+
+- run: npm ci
+
+- name: Stop PMG
+  if: always()
+  run: sudo "$PMG_BIN" proxy stop --state "$PMG_PROXY_STATE" --fail-on-violation
+```
+
+The proxy refuses each destination that the profile does not allow. The stop step fails the job, and its report names the destination, the rule, and the program.
+
+To add new destinations to the profile, run the job with `network-mode: audit` and the proposal steps. In the proposal step, use `--into .pmg/profiles/ci.yml` in place of `--new pmg-network.yml`, and upload `.pmg/profiles/ci.yml`. In enforce mode, the proxy refuses a new destination, so the proposal gets no rule for it.
+
+## Next steps
+
+For the steps without `enforce` and the steps with `config-file`, see [Build the profile from a run](https://github.com/safedep/pmg/blob/main/docs/github-action.md#build-the-profile-from-a-run) in the PMG action documentation. For the input table, see [Inputs](https://github.com/safedep/pmg/blob/main/docs/github-action.md#inputs).
+
+<CardGroup cols={2}>
+  <Card title="PMG in GitHub Actions" icon="github" href="/package-security/pmg/github-actions">
+    Set up the PMG action and kernel enforcement.
+  </Card>
+  <Card title="Limit the Hosts a Package Install Can Reach" icon="network-wired" href="/package-security/pmg/network-policy">
+    Apply a network policy on a developer machine.
+  </Card>
+</CardGroup>

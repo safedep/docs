@@ -1,0 +1,116 @@
+---
+title: "Sandbox Your AI Coding Agent"
+description: "Run Claude Code, Codex, or Pi in the PMG sandbox to block credential reads and limit the hosts the agent can reach."
+---
+
+A coding agent runs many commands in a session, and each command can read your credentials or send data out. `pmg sandbox exec` runs the agent and every process it starts under one sandbox policy.
+
+The sandbox:
+
+- Blocks reads and writes of credential files in the repository and in your home directory.
+- Removes secret variables, model API keys included, from the agent environment.
+- Makes the agent hook configuration read-only, so the agent cannot remove a hook such as [Gryph](/ai-security/gryph-overview).
+- Lets the agent write only in the repository, temporary directories, tool caches, and the state directory of its preset.
+- Sends every outbound connection through a PMG proxy that applies a network policy.
+
+<iframe
+  width="100%"
+  height="315"
+  src="https://www.youtube.com/embed/rwlIeKNVVnw"
+  title="PMG Sandbox Network Policy for Coding Agents"
+  frameBorder="0"
+  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen"
+  allowFullScreen
+></iframe>
+
+<Note>
+  `pmg sandbox exec` is experimental. It runs on macOS and on Linux with the Landlock driver. It does not run with Bubblewrap or on Windows. This page needs PMG v0.33.0 or later. Install PMG with the [PMG quickstart](/package-security/pmg/quickstart).
+</Note>
+
+## Run the agent in the sandbox
+
+Each agent has a preset that adds its state directory, its own API key, and its own hosts.
+
+<Tabs>
+  <Tab title="Claude Code">
+    ```bash
+    pmg sandbox exec --sandbox-allow preset=claude -- claude
+    ```
+  </Tab>
+  <Tab title="Codex">
+    ```bash
+    pmg sandbox exec --sandbox-allow preset=codex -- codex
+    ```
+  </Tab>
+  <Tab title="Pi">
+    ```bash
+    pmg sandbox exec --sandbox-allow preset=pi -- pi
+    ```
+  </Tab>
+</Tabs>
+
+To apply the preset on every run in this repository, save it once:
+
+```bash
+pmg sandbox allow preset=claude
+pmg sandbox exec -- claude
+```
+
+## Limit the hosts the agent can reach
+
+By default the agent can reach every host, and PMG records each destination. Build a network policy from a session, then enforce it.
+
+<Steps>
+  <Step title="Run a normal session">
+    ```bash
+    pmg sandbox exec --sandbox-allow preset=claude -- claude
+    ```
+
+    Do the work that the agent usually does in this repository.
+  </Step>
+  <Step title="Propose a profile">
+    ```bash
+    pmg sandbox profile propose --last --new agent
+    ```
+
+    PMG writes the user profile `agent` in the PMG config directory, outside the repository, where the agent cannot change it. The profile allows each host that the session reached and denies every other destination. Open it with `pmg sandbox profile edit agent` and remove each host that the agent does not need.
+  </Step>
+  <Step title="Run the agent under the profile">
+    ```bash
+    pmg sandbox exec --sandbox-profile agent --network-mode enforce \
+      --sandbox-allow preset=claude -- claude
+    ```
+
+    The preset keeps the agent hosts open, such as its model API and sign-in. The profile keeps the hosts that the repository needs.
+  </Step>
+</Steps>
+
+When the proxy refuses a destination, PMG prints the destination and the rule after the agent exits:
+
+```text
+⊘ Network policy denied pastebin.com:443  rule *:*
+  Allow it with pmg sandbox allow net-connect=pastebin.com:443.
+```
+
+## Fix a denied operation
+
+The agent sees a permission error. After the session, find the cause and the command that allows it:
+
+```bash
+pmg sandbox explain --last
+```
+
+Git over SSH fails, because the sandbox blocks the SSH agent socket. Use an HTTPS remote.
+
+## Next steps
+
+For the exec profile, custom profiles, the network flags, and the limits, see the [sandbox exec documentation](https://github.com/safedep/pmg/blob/main/docs/sandbox-exec.md) in the PMG repository. Read the hosts that a preset allows with `pmg sandbox preset show claude`.
+
+<CardGroup cols={2}>
+  <Card title="Gryph" icon="eye" href="/ai-security/gryph-overview">
+    Record every file and command your coding agent touches.
+  </Card>
+  <Card title="Stop Install Scripts from Reading Your Secrets" icon="box" href="/package-security/pmg/sandbox">
+    Run package installs in the PMG sandbox.
+  </Card>
+</CardGroup>
