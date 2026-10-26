@@ -14,11 +14,11 @@ description: "Block malicious packages in GitHub Actions CI by routing package i
 Run the [`safedep/pmg`](https://github.com/safedep/pmg) action in `server-mode`, then add a final `pmg proxy stop` step to enforce the result.
 
 <Note>
-  Use `safedep/pmg@v0.31.0` or a later release tag. The `v1` tag points at an older action without the `enforce`, `enforce-*` and `expose-to-job-network` inputs. GitHub warns about an unknown input and runs the job without it, so a job on `v1` with `enforce: true` runs without kernel enforcement.
+  Use `safedep/pmg@v0.33.0` or a later release tag. The `v1` tag points at an older action without the `enforce`, `enforce-*` and `expose-to-job-network` inputs. GitHub warns about an unknown input and runs the job without it, so a job on `v1` with `enforce: true` runs without kernel enforcement.
 </Note>
 
 ```yaml
-- uses: safedep/pmg@v0.31.0
+- uses: safedep/pmg@v0.33.0
   with:
     server-mode: true
     api-key: ${{ secrets.SAFEDEP_API_KEY }}
@@ -55,7 +55,7 @@ jobs:
       - uses: actions/checkout@v6
 
       # Start PMG in server mode
-      - uses: safedep/pmg@v0.31.0
+      - uses: safedep/pmg@v0.33.0
         with:
           server-mode: true
           api-key: ${{ secrets.SAFEDEP_API_KEY }}
@@ -97,7 +97,7 @@ With the `api-key` and `tenant-id` inputs, the blocks from every job go to one t
 Proxy variables are a request that a process can ignore. A step that runs `env -i`, uses `sudo`, or calls an HTTP client of its own bypasses the proxy. Add `enforce: true` to make the Linux kernel route every process on the runner through PMG. Add `enforce-namespaces: redirect` to route the containers that steps start, such as `docker run` and `docker build`.
 
 ```yaml
-- uses: safedep/pmg@v0.31.0
+- uses: safedep/pmg@v0.33.0
   with:
     server-mode: true
     enforce: true
@@ -144,7 +144,7 @@ jobs:
     steps:
       - uses: actions/checkout@v6
 
-      - uses: safedep/pmg@v0.31.0
+      - uses: safedep/pmg@v0.33.0
         with:
           server-mode: true
           enforce: true
@@ -237,7 +237,7 @@ jobs:
       options: --init
     steps:
       - uses: actions/checkout@v6
-      - uses: safedep/pmg@v0.31.0
+      - uses: safedep/pmg@v0.33.0
         with:
           server-mode: true
           expose-to-job-network: true
