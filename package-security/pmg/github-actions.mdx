@@ -46,7 +46,7 @@ The action has a post step. GitHub runs it at the end of the job, also when an e
 
 1. Stops the proxy. With `api-key`, the proxy sends its last events to SafeDep Cloud.
 2. Proposes a network profile from the hosts that the job reached. See [Allow Only Known Hosts in GitHub Actions](/package-security/pmg/github-actions-network-policy).
-3. Writes the job summary. The summary shows the verdict, each blocked package, each denied connection, and each destination host. The run also gets an annotation for each block and each denial.
+3. Writes the job summary. The summary shows the verdict, the number of blocked packages, each denied connection, and each destination host. The run also gets an annotation when PMG blocked a package, and one for each denial.
 4. Fails the job when PMG blocked a package or the network policy denied a connection.
 
 These inputs change the post step:
