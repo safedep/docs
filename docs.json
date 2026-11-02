@@ -11,6 +11,18 @@
   "css": [
     "/styles.css"
   ],
+  "contextual": {
+    "options": [
+      "copy",
+      "view",
+      "chatgpt",
+      "claude",
+      "perplexity",
+      "mcp",
+      "cursor",
+      "vscode"
+    ]
+  },
   "navigation": {
     "tabs": [
       {
