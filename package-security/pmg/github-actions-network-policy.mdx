@@ -72,7 +72,7 @@ network:
     - "*:*"
 ```
 
-`deny_ip_literals` refuses a connection to an IP address that no allow rule names. Without it, an allow list of names does not stop a package that sends data to an IP address.
+`deny_ip_literals` refuses a connection to an IP address that is not explicitly allowed. Without it, an allow list of names does not stop a package that sends data to an IP address.
 
 ## Enforce the policy
 
@@ -89,6 +89,15 @@ Set `network-mode: enforce`:
 ```
 
 The proxy refuses each destination that the profile does not allow. The post step fails the job, and the job summary names the destination, the rule, and the program.
+
+The two inputs control different things:
+
+| Input | What it controls |
+| --- | --- |
+| `enforce: true` | Which connections reach the proxy. The Linux kernel sends every process on the runner through the proxy, so a step cannot go around it. |
+| `network-mode: enforce` | What the proxy does with a destination that the profile does not allow. `enforce` refuses the connection. `audit`, the default, lets it through and records it. |
+
+Use both. Without `enforce: true`, a process that ignores the proxy variables connects directly, and the profile never sees the connection.
 
 To add a host later, run the job with `network-mode: audit` and add the rule that the summary shows. Under `enforce`, the proxy refuses a new destination, so the proposal gets no rule for it.
 
