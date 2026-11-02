@@ -1,6 +1,6 @@
 ---
 title: "Allow Only Known Hosts in GitHub Actions"
-description: "Build a network policy from a CI run, commit it, and make PMG refuse every other destination in GitHub Actions."
+description: "Build a network policy from the PMG job summary, commit it, and make PMG refuse every other destination in GitHub Actions."
 ---
 
 A compromised package can send your CI secrets to a host that the attacker controls. A network policy lists the hosts that a job can reach. The PMG proxy refuses every other destination, and the job fails.
@@ -16,77 +16,104 @@ A compromised package can send your CI secrets to a host that the attacker contr
 ></iframe>
 
 <Note>
-  Network policy needs `safedep/pmg@v0.33.0` or later. Use it with `enforce: true`. Without kernel enforcement, a process can ignore the proxy variables and connect directly. See [PMG in GitHub Actions](/package-security/pmg/github-actions#enforce-in-the-kernel).
+  This page uses `safedep/pmg@v0.34.0` or later. Earlier releases have no job summary and need the stop and proposal steps that their documentation shows. Use the policy with [kernel enforcement](/package-security/pmg/github-actions#enforce-in-the-kernel). Without it, a process can ignore the proxy variables and connect directly.
 </Note>
 
 ## Build the policy from a run
 
-The proxy records every destination that a job reaches. Run the job once with no policy, then turn the run into a profile.
+The proxy records every destination that a job reaches. At the end of the job, the post step of the action proposes a profile from these destinations and shows it in the job summary.
 
 <Steps>
-  <Step title="Add the proposal steps to the job">
+  <Step title="Run the job with the action">
     ```yaml
-    - uses: safedep/pmg@v0.33.0
+    - uses: safedep/pmg@v0.34.0
       with:
-        server-mode: true
         enforce: true
 
     - run: npm ci
-
-    - name: Stop PMG
-      if: always()
-      run: sudo "$PMG_BIN" proxy stop --state "$PMG_PROXY_STATE" --fail-on-violation
-
-    - name: Propose the network profile
-      if: always()
-      run: sudo "$PMG_BIN" sandbox profile propose --run "$PMG_PROXY_RUN" --new pmg-network.yml
-
-    - uses: actions/upload-artifact@v7
-      if: always()
-      with:
-        name: pmg-network-profile
-        path: pmg-network.yml
     ```
 
-    The action exports the run ID as `PMG_PROXY_RUN`. The run ID comes from the event log, so do not set `skip-event-logging: true`.
+    The job summary proposes a profile for `.pmg/network.yml`. To propose it for another path, set `network-profile` to a path that does not exist yet. The proposal comes from the event log, so do not set `skip-event-logging: true` or `baseline: false`.
   </Step>
-  <Step title="Run the workflow and download the artifact">
-    The `pmg-network.yml` file has one allow rule for each host that the job reached, and a rule that denies every other destination.
+  <Step title="Review the proposal">
+    The proposal has one allow rule for each host that the job reached. It inherits the built-in `github-actions` profile, which allows the hosts of the runner and refuses every host that no rule allows. One run does not reach every host that the job needs. Remove each host that the job does not need.
   </Step>
-  <Step title="Review and commit the profile">
-    Remove each host that the job does not need. Commit the file as `.pmg/profiles/ci.yml`.
+  <Step title="Commit the profile">
+    Save the proposal as `.pmg/network.yml`, commit it, and set `network-profile` on the action:
+
+    ```yaml
+    - uses: safedep/pmg@v0.34.0
+      with:
+        enforce: true
+        network-profile: .pmg/network.yml
+    ```
+
+    `network-mode` is `audit` by default. Each later run lists the destinations that the profile does not allow, in the summary and as a warning on the run. The summary shows the rules to add.
   </Step>
   <Step title="Protect the profile">
     The profile controls what the job can reach, so give it the same review as the workflow file. Add a `CODEOWNERS` line:
 
     ```text
-    .pmg/profiles/ @your-org/security
+    .pmg/network.yml @your-org/security
     ```
   </Step>
 </Steps>
 
+A committed profile looks like this:
+
+```yaml .pmg/network.yml
+name: network
+inherits: github-actions
+network:
+  deny_ip_literals: true
+  allow_outbound:
+    - registry.npmjs.org:443
+  deny_outbound:
+    - "*:*"
+```
+
+`deny_ip_literals` refuses a connection to an IP address that is not explicitly allowed. Without it, an allow list of names does not stop a package that sends data to an IP address.
+
 ## Enforce the policy
 
-Set `network-profile` and `network-mode` on the action. Remove the proposal steps.
+Set `network-mode: enforce`:
 
 ```yaml
-- uses: safedep/pmg@v0.33.0
+- uses: safedep/pmg@v0.34.0
   with:
-    server-mode: true
     enforce: true
-    network-profile: .pmg/profiles/ci.yml
+    network-profile: .pmg/network.yml
     network-mode: enforce
 
 - run: npm ci
-
-- name: Stop PMG
-  if: always()
-  run: sudo "$PMG_BIN" proxy stop --state "$PMG_PROXY_STATE" --fail-on-violation
 ```
 
-The proxy refuses each destination that the profile does not allow. The stop step fails the job, and its report names the destination, the rule, and the program.
+The proxy refuses each destination that the profile does not allow. The post step fails the job, and the job summary names the destination, the rule, and the program.
 
-To add new destinations to the profile, run the job with `network-mode: audit` and the proposal steps. In the proposal step, use `--into .pmg/profiles/ci.yml` in place of `--new pmg-network.yml`, and upload `.pmg/profiles/ci.yml`. In enforce mode, the proxy refuses a new destination, so the proposal gets no rule for it.
+The two inputs control different things:
+
+| Input | What it controls |
+| --- | --- |
+| `enforce: true` | Which connections reach the proxy. The Linux kernel sends every process on the runner through the proxy, so a step cannot go around it. |
+| `network-mode: enforce` | What the proxy does with a destination that the profile does not allow. `enforce` refuses the connection. `audit`, the default, lets it through and records it. |
+
+Use both. Without `enforce: true`, a process that ignores the proxy variables connects directly, and the profile never sees the connection.
+
+To add a host later, run the job with `network-mode: audit` and add the rule that the summary shows. Under `enforce`, the proxy refuses a new destination, so the proposal gets no rule for it.
+
+## Hosts of the runner
+
+Make your profile inherit `github-actions`. This built-in profile allows the hosts of the runner, its agents, GitHub releases, the GitHub container registry, and the cache and artifact storage. To see the hosts, run:
+
+```bash
+pmg sandbox profile show github-actions
+```
+
+Do not inherit another built-in profile, such as `npm-restrictive`. It does not allow the hosts of the runner, so the proxy refuses the connections of the runner to GitHub.
+
+The runner, `actions/cache`, and `actions/upload-artifact` store data in Azure storage. `github-actions` allows only the storage accounts that the [GitHub Meta API](https://api.github.com/meta) lists, not every Azure storage account. When GitHub adds a storage account, a job under `network-mode: enforce` fails, and the job summary names a denied `productionresultssa<N>.blob.core.windows.net` host. Add that host to `network.allow_outbound` in your profile. You do not need a new PMG release.
+
+An action that downloads from another host also needs a rule in your profile.
 
 ## Next steps
 

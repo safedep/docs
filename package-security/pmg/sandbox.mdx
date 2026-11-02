@@ -102,6 +102,17 @@ WHERE package_guard_events.event_type = 'PMG_EVENT_TYPE_SANDBOX_OVERRIDE'
 GROUP BY endpoints.identifier
 ```
 
+PMG v0.34.0 and later also send what the sandbox blocked. After each sandboxed run with a denial, PMG records one sandbox violation event. The event lists each denied file, program, or host, with a count. To find the endpoints where the sandbox blocked something, filter on `PMG_EVENT_TYPE_SANDBOX_VIOLATION`:
+
+```sql
+SELECT endpoints.identifier,
+       COUNT(DISTINCT package_guard_events.invocation_id) AS sessions
+FROM package_guard_events
+JOIN endpoints ON endpoints.id = package_guard_events.invocation_id
+WHERE package_guard_events.event_type = 'PMG_EVENT_TYPE_SANDBOX_VIOLATION'
+GROUP BY endpoints.identifier
+```
+
 <Note>
   This section needs the SafeDep Cloud Team or Enterprise plan, with PMG [connected to your tenant](/governance/cloud/endpoint-hub/package-guard). See [pricing](https://safedep.io/pricing).
 </Note>
