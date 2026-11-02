@@ -65,7 +65,7 @@ Every structural decision derives from these rules. Full rationale in `docs-ia-p
 | Covers consuming the malicious-package feed (reports, campaigns, feed API) | Threat Intel | Getting Started / Consuming the Feed / Reference |
 | Is pure lookup (syntax, flags, API) | Reference | vet Query & Policy / API & Automation |
 | Is community/support | Community & Support | Community / Support |
-| Records what SafeDep shipped (changelog) | Community & Support | Updates (`changelog`, one page, written with the `writing-changelog` skill) |
+| Records what SafeDep shipped (changelog) | Community & Support | Updates (`changelog/<year>`, one page for each year, written with the `writing-changelog` skill) |
 
 A page appears in **exactly one** sidebar slot. Use an in-body `<Card>` to surface it from another tab — never a second nav entry.
 
@@ -169,7 +169,7 @@ Don't mix Diátaxis types within a single page.
 **Community & Support**
 - Community: `community`
 - Support: `faq`, `governance/cloud/faq`
-- Updates: `changelog`
+- Updates: `changelog/2026` (`/changelog` redirects to the current year)
 
 Total: **89 pages**
 

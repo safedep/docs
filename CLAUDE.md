@@ -54,7 +54,7 @@ Every placement decision derives from these rules. Full rationale and page map: 
 | Covers consuming the malicious-package feed (reports, campaigns, feed API) | Threat Intel | Getting Started / Consuming the Feed / Reference |
 | Is pure lookup (syntax, flags, API) | Reference | vet Query & Policy / API & Automation |
 | Is community/support | Community & Support | Community / Support |
-| Records what SafeDep shipped (changelog) | Community & Support | Updates (`changelog.mdx`: use the `writing-changelog` skill) |
+| Records what SafeDep shipped (changelog) | Community & Support | Updates (`changelog/<year>.mdx`: use the `writing-changelog` skill) |
 
 A page appears in **exactly one** sidebar slot. To surface it from another tab, add an in-body `<Card>` — never a second nav entry.
 

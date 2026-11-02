@@ -301,7 +301,7 @@
             "group": "Updates",
             "icon": "newspaper",
             "pages": [
-              "changelog"
+              "changelog/2026"
             ]
           }
         ]
@@ -328,6 +328,10 @@
     }
   },
   "redirects": [
+    {
+      "source": "/changelog",
+      "destination": "/changelog/2026"
+    },
     {
       "source": "/concepts/malicious-package-protection",
       "destination": "/concepts/malicious-package"

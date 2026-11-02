@@ -1,11 +1,11 @@
 ---
 name: writing-changelog
-description: Use when someone asks to write, update, backfill or review the SafeDep changelog (changelog.mdx), or asks "what did we ship", "write the changelog for October", "add the latest changelog entry" or "release notes for the last two weeks". The skill reads what shipped in the SafeDep Cloud repositories and the open source tool releases, keeps only user-facing changes, and adds one entry for each half month.
+description: Use when someone asks to write, update, backfill or review the SafeDep changelog (changelog/<year>.mdx), or asks "what did we ship", "write the changelog for October", "add the latest changelog entry" or "release notes for the last two weeks". The skill reads what shipped in the SafeDep Cloud repositories and the open source tool releases, keeps only user-facing changes, and adds one entry for each half month.
 ---
 
 # Writing the SafeDep changelog
 
-`changelog.mdx` tells users what SafeDep shipped. It tells one platform story: the open source
+The changelog tells users what SafeDep shipped. It tells one platform story: the open source
 tools are the core, and SafeDep Cloud runs them across a team. Write it for a person who uses
 SafeDep, not for an engineer who reads the commit log.
 
@@ -34,6 +34,22 @@ Rules for the scope:
   internal review tool: its changes never go in.
 - Merged work in an open source tool with no release waits for the period of its release.
 
+## Pages
+
+One page for each year: `changelog/2026.mdx`, `changelog/2027.mdx`. A year page has at most 24
+entries, and an entry never moves to another page, so a link such as
+`/changelog/2026#2026-10-31` stays valid. `/changelog` is a redirect in `docs.json` to the page of
+the current year. The navbar links to `/changelog`.
+
+The first entry of a new year starts a new page:
+
+1. Create `changelog/<year>.mdx` with the frontmatter and intro of the previous year page. Change
+   the year in `title`, `sidebarTitle` and `description`.
+2. In `docs.json`, put `changelog/<year>` first in the pages of the Updates group, and change the
+   destination of the `/changelog` redirect to `/changelog/<year>`.
+3. At the end of the intro of the new page, link the previous year page.
+4. Tell the user that the RSS feed of the new page is a new URL (`/changelog/<year>/rss.xml`).
+
 ## Cadence and labels
 
 One entry for each calendar half month: the 1st to the 15th, and the 16th to the last day. The
@@ -42,7 +58,7 @@ never change it after you publish it. A period with no user-facing change gets n
 
 ## Steps
 
-1. **Find the period.** Read the newest `<Update label>` in `changelog.mdx`. The next period is
+1. **Find the period.** Read the newest `<Update label>` in the page of the current year. The next period is
    the half month after it. Stop if that period has not ended yet, unless the user asks for a
    partial entry. To backfill, do each period in order, oldest first.
 2. **Collect.** Run `scripts/collect.sh SINCE UNTIL` from this skill folder. It prints the merged
@@ -60,10 +76,10 @@ never change it after you publish it. A period with no user-facing change gets n
    dropped that a reader could argue about, each with one reason. Ask about each change that is
    behind a feature flag, needs a plan or an add-on, is not announced, or names a data source or a
    customer. Do not write the entry before the user answers.
-6. **Write.** Add the entry at the top of `changelog.mdx`, after the intro, with the template
-   below. Newest entry first.
+6. **Write.** Add the entry at the top of the year page, after the intro, with the template
+   below. Newest entry first. Start a new year page when the entry is the first of a year.
 7. **Verify.** Run `bunx -b mintlify broken-links` from the repository root, and
-   `grep -n '—' changelog.mdx` (no output expected). Read the diff. Commit with the period in the
+   `grep -n '—' changelog/*.mdx` (no output expected). Read the diff. Commit with the period in the
    subject, for example `docs(changelog): add October 16 to 31, 2026`.
 
 ## Entry template
@@ -75,7 +91,7 @@ never change it after you publish it. A period with no user-facing change gets n
 
 ## Open Source
 
-### PMG v0.33.0
+### PMG [v0.33.0](https://github.com/safedep/pmg/releases/tag/v0.33.0)
 
 - **New:** ...
 
@@ -95,13 +111,17 @@ never change it after you publish it. A period with no user-facing change gets n
   run starts after it.
 - **Section order:** PMG, vet v2, Gryph, then Endpoint Hub, Threat Intel, Web app, SafeDep CLI.
   Leave out a section with no change.
-- **Section heading of a tool:** the tool and each release in the period, as
-  `### PMG v0.30.0, v0.31.0, v0.32.0`. A release that has only fixes still gets its heading and
-  its fix lines. For vet v2 alphas, write `### vet v2 (alpha)` and name the release date in the
-  first line, because the alpha tags are timestamps.
+- **Section heading of a tool:** the tool and each release in the period. Each version links to
+  its GitHub release, as `### PMG [v0.30.0](…), [v0.31.0](…)`. The link lets the entry leave out
+  small changes. A release with only fixes still gets its heading. vet v2 alpha tags are
+  timestamps, so write the date: `### vet v2 [alpha of October 23](…)`.
 
 ## Items
 
+- **Twelve items or fewer in each entry.** Keep the items that change what a user can do: new
+  capability, Breaking, Deprecated, and security fixes. Leave out small fixes and small
+  improvements. The release link in the heading covers them. A Cloud change has no release notes,
+  so keep a small Cloud change only when a user would ask about it.
 - One line for each item. Start with **New**, **Improved**, **Fixed**, **Breaking** or
   **Deprecated**, in that order inside a section.
 - Say what the user can do now, in present tense and active voice. Name the command, flag or page
@@ -124,9 +144,3 @@ Refactors, tests, CI, dependency and toolchain bumps, lint, logging, metrics, sp
 docs, agent skills, seed data and local development tools, Malbase, data migrations, and
 performance work that a user cannot see. Leave out a fix for a bug that no release had. Keep a
 security fix that a user can see or must act on.
-
-## Archive
-
-`changelog.mdx` keeps the last 12 months. In January, move the entries older than 12 months to
-`changelog/<year>.mdx`, add that page to the Updates group in `docs.json`, and link it at the
-bottom of `changelog.mdx`. Keep each label as it is.
