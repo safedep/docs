@@ -19,7 +19,7 @@ The documentation is organized into **7 tabs** — solution tabs at the core, pl
 4. **Visibility & Governance**: scan repos/SBOMs/CI/CD for risk; deploy fleet tooling; manage policy and cloud visibility (vet, xBom, SafeDep Cloud, Endpoint Hub, Endpoint Sync)
 5. **Threat Intel** — consume the malicious-package feed as an API: reports and campaigns (ThreatIntelService). Subscription-gated (`FEATURE_THREAT_INTEL_FEED`)
 6. **Reference** — exact syntax/APIs (vet query & policy, API & automation)
-7. **Community & Support** — community resources and FAQ
+7. **Community & Support** — community resources, FAQ and the changelog
 
 > **Status:** the IA migration is complete. The 6-tab structure is live in `docs.json`, and all pages have moved to solution-aligned paths (`get-started/`, `concepts/`, `package-security/`, `ai-security/`, `governance/`, `reference/`). Old paths (`vet/`, `pmg/`, `cloud/`, `apps/`, `scan/`, `xbom/`, `api-reference/`) are **redirects** in `docs.json` `redirects[]`, not live files. When you add or move a page, add its redirect there too.
 
@@ -54,6 +54,7 @@ Every placement decision derives from these rules. Full rationale and page map: 
 | Covers consuming the malicious-package feed (reports, campaigns, feed API) | Threat Intel | Getting Started / Consuming the Feed / Reference |
 | Is pure lookup (syntax, flags, API) | Reference | vet Query & Policy / API & Automation |
 | Is community/support | Community & Support | Community / Support |
+| Records what SafeDep shipped (changelog) | Community & Support | Updates (`changelog.mdx`: use the `writing-changelog` skill) |
 
 A page appears in **exactly one** sidebar slot. To surface it from another tab, add an in-body `<Card>` — never a second nav entry.
 

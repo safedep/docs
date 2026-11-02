@@ -296,6 +296,13 @@
               "faq",
               "governance/cloud/faq"
             ]
+          },
+          {
+            "group": "Updates",
+            "icon": "newspaper",
+            "pages": [
+              "changelog"
+            ]
           }
         ]
       }
@@ -524,6 +531,10 @@
   },
   "navbar": {
     "links": [
+      {
+        "label": "Changelog",
+        "href": "/changelog"
+      },
       {
         "label": "Support",
         "href": "mailto:support@safedep.io"
