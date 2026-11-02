@@ -280,7 +280,7 @@ The action needs a POSIX shell and common tools in the image, such as busybox, p
   Deploy PMG one way on a runner host. Either use the `safedep/pmg` action in each workflow, or install PMG for the whole system and run the proxy as a service on the host. PMG does not support both on one host.
 </Warning>
 
-To run the proxy as a service on the host, see [Kernel Enforcement on Linux](/package-security/pmg/kernel-enforcement). On that host, remove the `safedep/pmg` step from the workflows. The host proxy serves every job, so the jobs get no post step, no job summary, and no verdict for each job.
+To run the proxy as a service on the host, see [Kernel Enforcement on Linux](/package-security/pmg/kernel-enforcement). On that host, remove the `safedep/pmg` step from the workflows. One host proxy serves all jobs, so the jobs get no post step, no job summary, and no verdict for each job. The host proxy routes only the processes on the host. A job container, a Docker action, or a `docker run` step goes around it unless the proxy redirects containers and each container trusts the PMG CA. See [Kernel Enforcement on Linux](/package-security/pmg/kernel-enforcement).
 
 ## Use raw commands
 
