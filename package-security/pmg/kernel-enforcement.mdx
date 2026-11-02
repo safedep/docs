@@ -83,6 +83,8 @@ A job cannot stop a root daemon, so the daemon serves every job until an operato
 
 ### CI runners
 
+On a GitHub Actions runner host, the service replaces the `safedep/pmg` action. PMG does not support both on one host. Remove the `safedep/pmg` step from the workflows that run on that host. See [PMG in GitHub Actions](/package-security/pmg/github-actions#self-hosted-runners).
+
 Do not exempt the runner. Its traffic to the CI service goes through the proxy, which passes it through with the real certificate. The user that runs the jobs can write the runner's folder, so an exemption would let a job put any program there under an exempt name and reach a registry directly.
 
 Set a job timeout on every enforced job. If the daemon stops serving but keeps running, the runner cannot report, and the job hangs until the CI system cancels it. A self-hosted runner is then offline until the daemon restarts. `Restart=on-failure` does not restart a hung daemon.
