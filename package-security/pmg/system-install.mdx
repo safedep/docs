@@ -144,6 +144,13 @@ npm install --no-cache --prefer-online safedep-test-pkg@0.1.3
 
 The system config file is authoritative for every user. PMG ignores a per-user `config.yml` while the managed config is active: `/etc/safedep/pmg/config.yml` on Linux or `%PROGRAMDATA%\safedep\pmg\config.yml` on Windows.
 
+PMG obeys the managed config only when no account other than the system account can change it:
+
+- **Linux and macOS.** Root must own the file and each directory from `/` down to it. No group or other write is allowed, except on a sticky directory such as `/tmp`. PMG follows a link only when root owns it, and the target must pass the same check.
+- **Windows.** Administrators or SYSTEM must own the file and the two directories above it, and no other account may write any of the three.
+
+Otherwise PMG ignores the file, and the per-user config applies. `global_lockdown` then has no effect. Each `pmg` command prints a warning that names the path that failed the check, and the "Managed config" row of `pmg setup doctor` fails. `pmg setup install --system` runs the same check and names the path. Fix it with `sudo chown root <path>` and `sudo chmod go-w <path>`. PMG v0.34.0 and later run this check on Linux and macOS. For read-only mounts and Kubernetes ConfigMaps, see the [system-install reference](https://github.com/safedep/pmg/blob/main/docs/system-install.md#configuration).
+
 `pmg config set` and `pmg config edit` are disabled under a system config. Edit the file as root on Linux or as an administrator on Windows, or redeploy it through your image or configuration management.
 
 <Warning>
