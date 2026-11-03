@@ -82,7 +82,8 @@ for entry in "${released_repos[@]}"; do
       continue
     fi
     echo "- changes since ${prev}:"
-    gh api "repos/${owner}/${repo}/compare/${prev}...${tag}" \
+    # One page holds at most 250 commits, so read every page.
+    gh api --paginate "repos/${owner}/${repo}/compare/${prev}...${tag}?per_page=100" \
       --jq '.commits[] | "  - \(.sha[0:7]) \(.commit.message | split("\n")[0])"'
   done <<<"${in_period}"
 done
