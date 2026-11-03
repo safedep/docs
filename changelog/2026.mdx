@@ -1,0 +1,87 @@
+---
+title: Changelog 2026
+sidebarTitle: "2026"
+description: "What SafeDep shipped in 2026, twice a month: the open source tools PMG, vet and Gryph, and SafeDep Cloud."
+rss: true
+---
+
+SafeDep is open core. The open source tools [PMG](/package-security/pmg/overview), [vet](/governance/vet/overview) and [Gryph](/ai-security/gryph-overview) are the core. [SafeDep Cloud](/governance/cloud/overview) is the intelligence layer that makes them work: it gives the tools real-time threat intelligence about [malicious packages](/concepts/malicious-package), and it runs them across a team. Each entry covers half a month and lists the open source releases first. A release heading links to its full release notes.
+
+<Update label="2026-10-31" description="October 16 to 31, 2026" tags={["Open Source", "SafeDep Cloud", "PMG", "vet", "Endpoint Hub", "Threat Intel", "Web app"]}>
+
+{/* sources: pmg@v0.33.0 vet@v2.0.0-alpha.20261023182239 control-tower@2e2842d app.safedep.io@684e8bd malysis@656baf5 */}
+
+## Open Source
+
+### PMG [v0.33.0](https://github.com/safedep/pmg/releases/tag/v0.33.0)
+
+- **New:** A sandbox profile can list the hosts that a package manager may reach. The PMG proxy enforces the list, also in the persistent proxy. `deny_ip_literals: true` also refuses an IP address that no rule names. See [Network policy](/package-security/pmg/network-policy).
+- **New:** `pmg sandbox profile propose` builds a network profile from the hosts that a run reached. The GitHub Action builds one from each job. See [Allow Only Known Hosts in GitHub Actions](/package-security/pmg/github-actions-network-policy).
+- **New:** The `claude`, `codex` and `pi` sandbox presets allow the hosts that each agent needs. See [Use a preset for a known tool](/package-security/pmg/sandbox#use-a-preset-for-a-known-tool).
+- **Breaking:** `pmg sandbox exec` sends every outbound connection through a PMG proxy. A program that does not use the proxy variables, such as `psql`, `ssh` or `nc`, cannot connect. To allow direct connections again, set `network_via_proxy_only: false` in a child profile.
+
+### vet v2 [alpha of October 23](https://github.com/safedep/vet/releases/tag/v2.0.0-alpha.20261023182239)
+
+- **New:** Each vulnerability finding says whether your code imports the vulnerable package. For Go, it also says whether your code calls the vulnerable function. `vet report finding show` prints the call path. Set the depth with `vet scan --reach`.
+- **Improved:** Findings carry MITRE ATT&CK technique IDs in JSON and SARIF output. Attack findings come first.
+- **Breaking:** vet does not read the saved scans of older alpha builds. Run the scan again.
+
+## SafeDep Cloud
+
+### Endpoint Hub
+
+- **New:** The Package Events tab of an endpoint shows the network policy decisions of PMG: each host that PMG allowed or denied. Needs PMG v0.33.0 or later. See [Package Guard](/governance/cloud/endpoint-hub/package-guard).
+- **New:** The Package Events tab shows the sandbox violations that PMG reports, with the denied operations of each run. Needs PMG v0.34.0 or later.
+
+### Threat Intel
+
+- **New:** The Threat Intel Feed has four new indicator types: container image, Telegram bot token, Telegram chat ID and HTTP header. Needs the Threat Intel Feed add-on. See [Schema](/threat-intel/schema).
+
+### Web app
+
+- **New:** Maintainers of open source projects can apply for a free Team plan at [app.safedep.io/oss/apply](https://app.safedep.io/oss/apply).
+- **Fixed:** A revoked invitation can no longer give access to a tenant.
+
+</Update>
+
+<Update label="2026-10-15" description="October 1 to 15, 2026" tags={["Open Source", "SafeDep Cloud", "PMG", "vet", "Endpoint Hub", "Threat Intel", "Web app", "SafeDep CLI"]}>
+
+{/* sources: pmg@v0.32.0 vet@v2.0.0-alpha.20261014124335 cli@v0.10.0 control-tower@318a167 app.safedep.io@95f21dc malysis@78a050f */}
+
+## Open Source
+
+### PMG [v0.30.0](https://github.com/safedep/pmg/releases/tag/v0.30.0), [v0.31.0](https://github.com/safedep/pmg/releases/tag/v0.31.0), [v0.32.0](https://github.com/safedep/pmg/releases/tag/v0.32.0)
+
+- **New:** Kernel enforcement on Linux. The kernel sends package manager traffic to the persistent proxy, so a tool cannot go around PMG. Traffic from containers on the host goes through the proxy too. See [Kernel enforcement](/package-security/pmg/kernel-enforcement).
+- **New:** A Windows MSI installs PMG for all users. It is also on Chocolatey and winget. See [System-wide install](/package-security/pmg/system-install).
+- **New:** PMG checks crates from a custom Cargo registry. The persistent proxy also checks Cargo crates and Go modules. See [Private registries](/package-security/pmg/private-registries).
+
+### vet v2 [first alpha](https://github.com/safedep/vet/releases/tag/v2.0.0-alpha.20261014124335)
+
+vet v2 is a new release line with a new command line, report, policy format and config. vet v1 gets security fixes only. The [vet v2.0.0 release notes](https://github.com/safedep/vet/blob/v2/docs/release-notes/v2.0.0.md) list each change that a v1 user must make.
+
+- **New:** `vet scan` scans a directory, a git URL, a container image, an SBOM or one package URL. It finds malicious packages, vulnerabilities, risky GitHub Actions workflows, lockfile tampering and changes to AI agent configs.
+- **New:** `vet scan --base-ref origin/main` reports only what a pull request adds. The `safedep/vet` GitHub Action comments on pull requests, and `vet ci init` adds it to a repository.
+- **New:** `vet endpoint audit` checks the AI tools, MCP servers, agent skills, editor extensions and global npm packages on a machine.
+- **New:** `vet auth login` connects vet to a SafeDep Cloud tenant. PMG and the SafeDep CLI use the same login.
+
+## SafeDep Cloud
+
+### Endpoint Hub
+
+- **New:** A host observation event shows the port, the entry point and the client process. Needs PMG v0.31.0 or later.
+
+### Threat Intel
+
+- **New:** Each indicator of compromise in reports, campaigns and the snapshot export has a confidence (automated or human verified) and a disposition. The feed no longer serves a withdrawn indicator. Needs the Threat Intel Feed add-on.
+- **Improved:** Detection flags npm packages that hide a loader in a prebuilt native addon.
+
+### Web app
+
+- **New:** On a component page, each project links to the scan that found the component.
+
+### SafeDep CLI [v0.10.0](https://github.com/safedep/cli/releases/tag/v0.10.0)
+
+- **New:** `safedep integration bitbucket link delete` removes the link to a Bitbucket workspace.
+
+</Update>

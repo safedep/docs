@@ -296,6 +296,13 @@
               "faq",
               "governance/cloud/faq"
             ]
+          },
+          {
+            "group": "Updates",
+            "icon": "newspaper",
+            "pages": [
+              "changelog/2026"
+            ]
           }
         ]
       }
@@ -321,6 +328,10 @@
     }
   },
   "redirects": [
+    {
+      "source": "/changelog",
+      "destination": "/changelog/2026"
+    },
     {
       "source": "/concepts/malicious-package-protection",
       "destination": "/concepts/malicious-package"
@@ -524,6 +535,10 @@
   },
   "navbar": {
     "links": [
+      {
+        "label": "Changelog",
+        "href": "/changelog"
+      },
       {
         "label": "Support",
         "href": "mailto:support@safedep.io"

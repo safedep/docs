@@ -18,7 +18,7 @@ Seven tabs — solution tabs at the core, plus supporting tabs.
 | **Visibility & Governance** | Scan repos, SBOMs, and CI/CD for supply-chain risk; deploy fleet tooling; manage policy and org-wide cloud visibility | Repository Scanning · MDM · Bill of Materials · AI Visibility · CI/CD & Platform Integrations · SafeDep Cloud (nests Endpoint Hub, Policy & Risk, Authentication) |
 | **Threat Intel** | Consume the malicious-package feed as an API: reports and campaigns. Subscription-gated (`FEATURE_THREAT_INTEL_FEED`) | Getting Started · Consuming the Feed · Reference |
 | **Reference** | Exact syntax, flags, API specs — no explanation | Query & Policy · API & Automation |
-| **Community & Support** | Community resources, FAQ | Community · Support |
+| **Community & Support** | Community resources, FAQ, changelog | Community · Support · Updates |
 
 > **Implementation note:** the 6-tab structure is live in `docs.json` (Phase 1 re-tab complete). Moving page files to solution-aligned folders is a later phase; legacy paths (`vet/`, `cloud/`, `apps/`, `xbom/`) stay grandfathered until then.
 
@@ -65,6 +65,7 @@ Every structural decision derives from these rules. Full rationale in `docs-ia-p
 | Covers consuming the malicious-package feed (reports, campaigns, feed API) | Threat Intel | Getting Started / Consuming the Feed / Reference |
 | Is pure lookup (syntax, flags, API) | Reference | vet Query & Policy / API & Automation |
 | Is community/support | Community & Support | Community / Support |
+| Records what SafeDep shipped (changelog) | Community & Support | Updates (`changelog/<year>`, one page for each year, written with the `writing-changelog` skill) |
 
 A page appears in **exactly one** sidebar slot. Use an in-body `<Card>` to surface it from another tab — never a second nav entry.
 
@@ -168,8 +169,9 @@ Don't mix Diátaxis types within a single page.
 **Community & Support**
 - Community: `community`
 - Support: `faq`, `governance/cloud/faq`
+- Updates: `changelog/2026` (`/changelog` redirects to the current year)
 
-Total: **88 pages**
+Total: **89 pages**
 
 ---
 
