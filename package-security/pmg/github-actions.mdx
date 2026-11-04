@@ -282,6 +282,52 @@ The action needs a POSIX shell and common tools in the image, such as busybox, p
 
 To run the proxy as a service on the host, see [Kernel Enforcement on Linux](/package-security/pmg/kernel-enforcement). On that host, remove the `safedep/pmg` step from the workflows. One host proxy serves all jobs, so the jobs get no post step, no job summary, and no verdict for each job. The host proxy routes only the processes on the host. A job container, a Docker action, or a `docker run` step goes around it unless the proxy redirects containers and each container trusts the PMG CA. See [Kernel Enforcement on Linux](/package-security/pmg/kernel-enforcement).
 
+## Action inputs and outputs
+
+The sections above cover `api-key`, `tenant-id`, `fail-on-violation`, `auto-stop`, `baseline`, `enforce`, the `enforce-*` inputs, and `expose-to-job-network`. For `network-profile` and `network-mode`, see [Allow Only Known Hosts in GitHub Actions](/package-security/pmg/github-actions-network-policy).
+
+### Other inputs
+
+An input that maps to a `PMG_*` variable has no effect when you leave it empty. PMG then uses the value from `config-file`, or its own default.
+
+| Input | Default | Effect |
+| --- | --- | --- |
+| `version` | `latest` | The PMG release to install, for example `v0.34.0`, or `latest`. |
+| `endpoint-id` | `gha/<owner>/<repo>` | The name of the runner in SafeDep Cloud. Applies only with `api-key` and `tenant-id`. |
+| `server-mode` | Empty (server mode) | Set `false` to use the PMG shims instead of the proxy. With shims, the job has no job summary and no kernel enforcement. `sandbox: true` also selects shims. |
+| `paranoid` | `false` | Set `true` to block suspicious packages as well as malicious ones. Sets `PMG_PARANOID`. |
+| `cooldown-enabled` | `true` | Set `false` to allow package versions that were published recently. Sets `PMG_DEPENDENCY_COOLDOWN_ENABLED`. |
+| `cooldown-days` | `2` | The number of days that a new package version stays blocked. Sets `PMG_DEPENDENCY_COOLDOWN_DAYS`. |
+| `sandbox` | `false` | Set `true` to run package managers in an OS sandbox. Applies only with shims, so it turns off server mode unless `server-mode` is `true`. The action also relaxes the AppArmor limit on user namespaces on the runner. Sets `PMG_SANDBOX_ENABLED`. |
+| `sandbox-driver` | `landlock` | The sandbox backend: `landlock` or `bubblewrap`. With `bubblewrap`, the action installs it with `apt-get`. Sets `PMG_SANDBOX_DRIVER`. |
+| `verbosity` | `normal` | The PMG output level: `silent`, `normal`, or `verbose`. Sets `PMG_VERBOSITY`. |
+| `disable-telemetry` | `false` | Set `true` to stop anonymous PMG telemetry. Sets `PMG_DISABLE_TELEMETRY`. |
+| `skip-event-logging` | `false` | Set `true` to stop writing audit events to the local event log. This also removes the proposed network profile from the job summary. Sets `PMG_SKIP_EVENT_LOGGING`. |
+| `config-file` | Empty | The path of a PMG `config.yml` in the repository. The action copies it to the PMG config directory before PMG starts. An input that you set overrides the same key in the file. |
+| `cache` | `false` | Set `true` to keep the PMG binary in the runner tool cache. The action checks the cached file against the release checksum on each run. |
+
+The `proxy-mode` input is removed. The value `false` fails the job. Any other value gives a warning.
+
+### Outputs
+
+| Output | Value |
+| --- | --- |
+| `version` | The PMG release that the action installed, for example `v0.34.0`. |
+| `bin-dir` | The directory that holds the `pmg` binary on the runner. |
+
+To read an output, give the step an `id`:
+
+```yaml
+- uses: safedep/pmg@v0.34.0
+  id: pmg
+
+- run: echo "PMG ${{ steps.pmg.outputs.version }} is in ${{ steps.pmg.outputs.bin-dir }}"
+```
+
+### Supported runners
+
+The action supports Linux runners on x86_64 and arm64. On a macOS or Windows runner, the action fails.
+
 ## Use raw commands
 
 To wire the proxy up directly without the action:
