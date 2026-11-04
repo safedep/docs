@@ -49,13 +49,7 @@ The action has a post step. GitHub runs it at the end of the job, also when an e
 3. Writes the job summary. The summary shows the verdict, the number of blocked packages, each denied connection, and each destination host. The run also gets an annotation when PMG blocked a package, and one for each denial.
 4. Fails the job when PMG blocked a package or the network policy denied a connection.
 
-These inputs change the post step:
-
-| Input | Default | Effect |
-| --- | --- | --- |
-| `fail-on-violation` | `true` | Set `false` to report a block without a failed job. When PMG cannot stop the proxy, for example after a crash, the job fails with every setting. |
-| `auto-stop` | `true` | Set `false` when a step of the job stops the proxy. |
-| `baseline` | `true` | Set `false` to leave the proposed profile and the list of destination hosts out of the summary. |
+The `fail-on-violation`, `auto-stop`, and `baseline` inputs change the post step. See [Inputs](#inputs).
 
 <Warning>
   On a public repository, anyone can read the job summary. It lists the hosts that the job reached. Set `baseline: false` to leave them out. A denied connection still shows in the summary, with its host.
@@ -142,7 +136,7 @@ The action installs the PMG CA into the system trust store, starts the proxy as 
 
 The runner is not exempt. Its connections to GitHub go through the proxy, which passes them through with the real certificate. If the proxy stops serving but keeps running, the runner cannot report. GitHub then cancels the job after its `timeout-minutes`, and the post step does not run. The GitHub default is 360 minutes, so set a shorter timeout on every job.
 
-The `enforce-ports`, `enforce-exempt-users`, `enforce-exempt-executables`, `enforce-skip-destinations`, and `enforce-namespaces` inputs set the policy without a config file. Each list adds to the config's list. With `enforce: auto`, an `enforce-*` input fails the job where the action cannot enforce, so a runner change does not turn enforcement off without notice. See the [action reference](https://github.com/safedep/pmg/blob/main/docs/github-action.md#kernel-enforcement) for the input table, and [Kernel Enforcement on Linux](/package-security/pmg/kernel-enforcement) for the policy keys and what enforcement does not cover.
+The `enforce-*` inputs set the policy without a config file. See [Inputs](#inputs). With `enforce: auto`, an `enforce-*` input fails the job where the action cannot enforce, so a runner change does not turn enforcement off without notice. For the policy keys and what enforcement does not cover, see [Kernel Enforcement on Linux](/package-security/pmg/kernel-enforcement).
 
 To refuse every host that the job does not need, add a network policy. See [Allow Only Known Hosts in GitHub Actions](/package-security/pmg/github-actions-network-policy).
 
@@ -284,17 +278,30 @@ To run the proxy as a service on the host, see [Kernel Enforcement on Linux](/pa
 
 ## Action inputs and outputs
 
-The sections above cover `api-key`, `tenant-id`, `fail-on-violation`, `auto-stop`, `baseline`, `enforce`, the `enforce-*` inputs, and `expose-to-job-network`. For `network-profile` and `network-mode`, see [Allow Only Known Hosts in GitHub Actions](/package-security/pmg/github-actions-network-policy).
+### Inputs
 
-### Other inputs
-
-An input that maps to a `PMG_*` variable has no effect when you leave it empty. PMG then uses the value from `config-file`, or its own default.
+An input that maps to a `PMG_*` variable or to a config key has no effect when you leave it empty. PMG then uses the value from `config-file`, or its own default.
 
 | Input | Default | Effect |
 | --- | --- | --- |
 | `version` | `latest` | The PMG release to install, for example `v0.34.0`, or `latest`. |
+| `cache` | `false` | Set `true` to keep the PMG binary in the runner tool cache. The action checks the cached file against the release checksum on each run. |
+| `api-key` | Empty | The SafeDep Cloud API key. Set it with `tenant-id`, from a secret. With both inputs, the proxy sends its events to SafeDep Cloud. The action fails when you set only one of them. |
+| `tenant-id` | Empty | The SafeDep Cloud tenant ID. Set it with `api-key`. |
 | `endpoint-id` | `gha/<owner>/<repo>` | The name of the runner in SafeDep Cloud. Applies only with `api-key` and `tenant-id`. |
 | `server-mode` | Empty (server mode) | Set `false` to use the PMG shims instead of the proxy. With shims, the job has no job summary and no kernel enforcement. `sandbox: true` also selects shims. |
+| `fail-on-violation` | `true` | Fail the job at its end when PMG blocked a package or the network policy denied a connection. Set `false` to report a block without a failed job. When PMG cannot stop the proxy, for example after a crash, the job fails with every setting. |
+| `auto-stop` | `true` | Stop the proxy in the post step. Set `false` when a step of the job stops the proxy. |
+| `baseline` | `true` | Show the proposed network profile and the list of destination hosts in the job summary. Set `false` to leave them out. |
+| `enforce` | `auto` | Kernel enforcement: `auto`, `true`, or `false`. See [Enforce in the kernel](#enforce-in-the-kernel). |
+| `enforce-ports` | Empty | With enforcement, more destination ports that the kernel routes through the proxy. |
+| `enforce-exempt-users` | Empty | With enforcement, users that the kernel never routes. |
+| `enforce-exempt-executables` | Empty | With enforcement, programs that connect directly, as absolute paths or globs. |
+| `enforce-skip-destinations` | Empty | With enforcement, CIDR prefixes that the kernel never routes. |
+| `enforce-namespaces` | `ignore` | With enforcement, what happens to the containers that steps start: `ignore`, `redirect`, or `auto`. `redirect` fails the job when the runner cannot redirect them. `auto` redirects them where the runner can. See [Protect Docker builds and containers](#protect-docker-builds-and-containers). |
+| `network-profile` | Empty | The network profile that the proxy applies, as a path in the repository or a built-in name. Turns on server mode, and fails with `server-mode: false`. See [Allow Only Known Hosts in GitHub Actions](/package-security/pmg/github-actions-network-policy). |
+| `network-mode` | `audit` | With `network-profile`, what the proxy does with a denied destination: `audit` or `enforce`. |
+| `expose-to-job-network` | `false` | In a job with a job container, bind the proxy to the address of the job container on the job network. The action fails when the job has no job container. Ignored with `enforce: true`. See [Job containers and Docker actions](#job-containers-and-docker-actions). |
 | `paranoid` | `false` | Set `true` to block suspicious packages as well as malicious ones. Sets `PMG_PARANOID`. |
 | `cooldown-enabled` | `true` | Set `false` to allow package versions that were published recently. Sets `PMG_DEPENDENCY_COOLDOWN_ENABLED`. |
 | `cooldown-days` | `2` | The number of days that a new package version stays blocked. Sets `PMG_DEPENDENCY_COOLDOWN_DAYS`. |
@@ -304,7 +311,8 @@ An input that maps to a `PMG_*` variable has no effect when you leave it empty. 
 | `disable-telemetry` | `false` | Set `true` to stop anonymous PMG telemetry. Sets `PMG_DISABLE_TELEMETRY`. |
 | `skip-event-logging` | `false` | Set `true` to stop writing audit events to the local event log. This also removes the proposed network profile from the job summary. Sets `PMG_SKIP_EVENT_LOGGING`. |
 | `config-file` | Empty | The path of a PMG `config.yml` in the repository. The action copies it to the PMG config directory before PMG starts. An input that you set overrides the same key in the file. |
-| `cache` | `false` | Set `true` to keep the PMG binary in the runner tool cache. The action checks the cached file against the release checksum on each run. |
+
+The `enforce-*` inputs take a list, separated by commas or new lines. Each list adds to the same list in the config.
 
 The `proxy-mode` input is removed. The value `false` fails the job. Any other value gives a warning.
 
