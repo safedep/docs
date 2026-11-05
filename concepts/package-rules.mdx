@@ -50,7 +50,7 @@ Package rules are not in the policy settings document. Each rule command of the 
 
 The tools apply package rules on the endpoint and in the pull request check. The malware analysis does not apply them: it gives the same verdict to every tenant and holds no tenant data.
 
-A PMG with no cloud policy support, or with the cloud policy turned off, gets no package rules from the cloud. It gets no trust entries, so a trust entry never lets a package through on that endpoint. It also gets no block entries, so a block entry does not stop an install on that endpoint. During an incident, do not count on a block entry for such endpoints. To list the endpoints that have not applied a revision, run `safedep endpoint list --applied-revision '<N'`, where `N` is the revision number.
+A PMG with no cloud policy support, or with the cloud policy turned off, gets no package rules from the cloud. It gets no trust entries, so a trust entry never lets a package through on that endpoint. It also gets no block entries, so a block entry does not stop an install on that endpoint. During an incident, do not count on a block entry for such endpoints. Such an endpoint reports no applied revision, so its `Policy` column in `safedep endpoint list` shows `-`. The filter `--applied-revision '<N'` lists only the endpoints that apply an older revision, not these.
 
 ## Rules in the PMG config
 
