@@ -48,7 +48,9 @@ A rule attaches to the policy base, and then it applies to every endpoint and pr
 
 Package rules are not in the policy settings document. Each rule command of the safedep CLI publishes at once, as one new [policy revision](/concepts/policy-revisions). So a run that publishes the settings document cannot delete a block that an on-call responder added. A rule never changes its selector, effect or scopes. To change them, delete the rule and create another.
 
-The tools apply package rules on the endpoint and in the pull request check. The malware analysis does not apply them: it gives the same verdict to every tenant and holds no tenant data. An old PMG without cloud policy support gets no trust entries from the cloud, so it blocks more, never less.
+The tools apply package rules on the endpoint and in the pull request check. The malware analysis does not apply them: it gives the same verdict to every tenant and holds no tenant data.
+
+A PMG with no cloud policy support, or with the cloud policy turned off, gets no package rules from the cloud. It gets no trust entries, so a trust entry never lets a package through on that endpoint. It also gets no block entries, so a block entry does not stop an install on that endpoint. During an incident, do not count on a block entry for such endpoints. To list the endpoints that have not applied a revision, run `safedep endpoint list --applied-revision '<N'`, where `N` is the revision number.
 
 ## Rules in the PMG config
 
