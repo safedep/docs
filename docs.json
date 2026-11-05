@@ -78,6 +78,7 @@
               "package-security/pmg/sandbox",
               "package-security/pmg/network-policy",
               "package-security/pmg/dependency-cooldown",
+              "package-security/pmg/cloud-policy",
               "package-security/pmg/private-registries",
               "package-security/pmg/system-install",
               "package-security/pmg/kernel-enforcement",

@@ -3,6 +3,8 @@ title: "JumpCloud"
 description: "Deploy PMG to macOS, Linux, or Windows devices with JumpCloud Commands."
 ---
 
+import PmgMdmCloudPolicy from '/snippets/pmg-mdm-cloud-policy.mdx';
+
 Deploy PMG with a JumpCloud Command that runs as `root` on macOS or Linux, or as `SYSTEM` on Windows. Use the [multi-file MDM scripts](https://github.com/safedep/pmg/tree/main/scripts/mdm) and ship the shared lib with the install or uninstall script for your platform.
 
 <Note>
@@ -170,6 +172,10 @@ Create another Command to repeat cloud sync without installing or configuring PM
 </Tabs>
 
 Assign it to the same device group on a recurring schedule. Use it only for users who already have PMG and cloud sync enabled. Run the normal install Command to configure new users.
+
+## Manage settings from the cloud policy
+
+<PmgMdmCloudPolicy />
 
 <CardGroup cols={2}>
   <Card title="Other MDMs" icon="laptop" href="/package-security/pmg/mdm/overview">

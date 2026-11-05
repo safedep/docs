@@ -1,0 +1,115 @@
+---
+title: "Apply the Cloud Policy in PMG"
+description: "Turn on cloud.policy so that PMG applies the block entries, trust entries and dependency cooldown of your SafeDep Cloud tenant."
+---
+
+With the `cloud.policy` setting on, PMG applies the [cloud policy](/governance/cloud/policy/overview) of your tenant: its block entries, its trust entries and its dependency cooldown. Your security admin changes the policy in SafeDep Cloud, and PMG gets the change with no new config on each machine.
+
+<Note>
+  The cloud policy needs the SafeDep Cloud Team or Enterprise plan. See [pricing](https://safedep.io/pricing). Without `cloud.policy`, PMG works as before and blocks malicious packages with no account.
+</Note>
+
+## Turn on the cloud policy on one machine
+
+```bash
+pmg config set cloud.enabled true
+pmg cloud login
+pmg config set cloud.policy true
+pmg cloud sync
+```
+
+- `pmg cloud login` stores the tenant ID and an API key of the tenant. PMG can also read them from the `SAFEDEP_TENANT_ID` and `SAFEDEP_API_KEY` environment variables.
+- `cloud.policy` applies only when `cloud.enabled` is `true`.
+- `pmg cloud sync` fetches the policy at once.
+
+Then check the state:
+
+```bash
+pmg setup doctor
+```
+
+The cloud policy check names the tenant, the revision that PMG applied and the age of the cache. It warns when no cache exists yet, when the cache is more than 7 days old, when PMG rejected a policy, and for each field that PMG does not apply.
+
+## Turn on the cloud policy with MDM
+
+On an endpoint with a managed config file, users cannot change the PMG config. Set both keys in the managed config file:
+
+```yaml
+cloud:
+  enabled: true
+  policy: true
+```
+
+To turn off all cloud content on a managed endpoint, set `cloud.policy: false` in the managed config file. Under `global_lockdown: true`, the cloud policy does not change a key that the managed config file sets. So keep each key that the cloud policy must manage out of that file. See [Deploy PMG with MDM](/package-security/pmg/mdm/overview#manage-settings-from-the-cloud-policy).
+
+## What PMG fetches
+
+PMG fetches the resolved policy of the endpoint. It holds the package rules that apply to the endpoint and the dependency cooldown. PMG sends the labels `reported/os` and `reported/arch` with each fetch, so a policy override can select endpoints by operating system or CPU architecture.
+
+PMG fetches the policy in the background after a command ends, also after a blocked install. It fetches at most once every 5 minutes, also when `cloud.auto_sync.enabled` is `false`. `pmg cloud sync` fetches at once. The persistent proxy applies a new policy with no restart.
+
+PMG keeps the policy in the `cloud-policy/` folder of its config folder. Under `sudo`, PMG reads the cache of the user who ran `sudo` first.
+
+On a short-lived CI runner, run `pmg cloud sync` before the first install. A new runner has no cache, so it applies only the PMG config until the first fetch.
+
+## Offline and failed fetches
+
+PMG never drops the cloud policy because it is offline. It keeps the last policy that it applied until a newer one arrives.
+
+| State | When | What PMG does |
+|---|---|---|
+| Applied | A fetch succeeded in the last 7 days | Applies the policy |
+| Stale | No fetch succeeded for more than 7 days | Applies the last policy. `pmg setup doctor` warns. |
+| Rejected | A new policy fails its check, for example it is for another machine | Keeps the previous policy. `pmg setup doctor` warns. |
+| None | No cache yet | Applies only the PMG config |
+
+A fetch that fails keeps the cache. When you log out, PMG keeps the last policy. PMG drops a trust entry at its expiry, also with no network.
+
+## Which settings the cloud policy changes
+
+| PMG setting | With the cloud policy |
+|---|---|
+| `dependency_cooldown.enabled`, `dependency_cooldown.days` | When the policy sets the cooldown, its value wins over the config file and the `PMG_*` environment variables. PMG refuses `--skip-dependency-cooldown`. PMG rounds the value up to whole days. Exception: under `global_lockdown`, a managed config file that sets one of these keys keeps its value. |
+| `dependency_cooldown.skip` | Still applies. |
+| `blocked_packages` | Still applies, together with the block entries of the policy. |
+| `trusted_packages`, `--insecure-installation` | Still apply, but a block entry of the policy wins over them. |
+| Malicious Package Exclusions of SafeDep Cloud | PMG ignores them. Use [trust entries](/governance/cloud/policy/trust-a-package) instead. |
+| Every other setting, such as the sandbox and the proxy | Not changed. The cloud policy does not manage them. |
+
+A trust entry of the policy never skips the malware analysis and never allows verified malware. See [Package Rules](/concepts/package-rules).
+
+## What a block looks like
+
+A block entry of the cloud policy stops the install with a message that names the rule and the revision. This example comes from the PMG tests:
+
+```text
+pmg: blocked pkg:npm/evil@1.2.4 by the policy of your tenant
+     rule r_9c1 · policy revision 48 · default policy revision 12 · IR-2291 credential stealer
+     To ask for an exception, send the rule id and the reason to your security admin.
+     They can run: safedep policy rule show r_9c1
+```
+
+With `cloud.enabled` on, PMG syncs each decision of the cloud policy to your tenant. Your security admin can list them with `safedep policy decision list`. See [Explain a Decision](/governance/cloud/policy/explain-a-decision).
+
+## Known gaps
+
+- PMG keeps the cache in the folder of the user. A user can change the cache on a laptop. The same user can also remove PMG.
+- IT can keep a value from the cloud policy only with `global_lockdown`, which keeps every key that the managed config file sets. IT cannot lock one field of the policy alone.
+- The first install after a new block can use the previous policy, until the next background fetch.
+
+## Next steps
+
+<CardGroup cols={2}>
+  <Card title="Cloud Policy" icon="scale-balanced" href="/governance/cloud/policy/overview">
+    What the cloud policy controls and who can change it.
+  </Card>
+  <Card title="Hold Back Newly Published Versions" icon="hourglass" href="/package-security/pmg/dependency-cooldown">
+    The dependency cooldown of PMG.
+  </Card>
+  <Card title="Deploy PMG with MDM" icon="laptop" href="/package-security/pmg/mdm/overview">
+    Ship the managed config file to a fleet.
+  </Card>
+  <Card title="PMG configuration" icon="gear" href="https://github.com/safedep/pmg/blob/main/docs/config.md#cloud-policy">
+    The config reference in the PMG repository.
+  </Card>
+</CardGroup>

@@ -1,0 +1,14 @@
+With the [cloud policy](/package-security/pmg/cloud-policy), your security admin changes the package rules and the dependency cooldown of PMG in SafeDep Cloud, with no new MDM package. To use it on the fleet, change the managed `config.yml` that you ship with the scripts:
+
+1. Set `cloud.enabled: true` and `cloud.policy: true`.
+2. Keep `dependency_cooldown.enabled` and `dependency_cooldown.days` out of the file. Under `global_lockdown: true`, PMG keeps the value of each key that the managed file sets, and the cloud policy cannot change it. PMG reports the field as locked, and `safedep endpoint policy show` shows the exception.
+
+```yaml config.yml
+global_lockdown: true
+cloud:
+  enabled: true
+  policy: true
+# No dependency_cooldown keys: the cloud policy sets the cooldown.
+```
+
+Users cannot change the managed config. To turn off all cloud content on the fleet, ship `cloud.policy: false`. The cloud policy needs the SafeDep Cloud Team or Enterprise plan. See [pricing](https://safedep.io/pricing).

@@ -3,6 +3,8 @@ title: "Jamf"
 description: "Deploy PMG to macOS devices with a Jamf script payload or package."
 ---
 
+import PmgMdmCloudPolicy from '/snippets/pmg-mdm-cloud-policy.mdx';
+
 Deploy PMG with a Jamf policy that runs the [multi-file MDM scripts](https://github.com/safedep/pmg/tree/main/scripts/mdm/macos) as root. Ship `lib_macos.sh` with the install or uninstall script.
 
 Jamf manages Apple devices only. For a Linux or Windows fleet, use [JumpCloud](/package-security/pmg/mdm/jumpcloud) or [Intune](/package-security/pmg/mdm/intune) instead.
@@ -53,6 +55,10 @@ SAFEDEP_API_KEY="$4" SAFEDEP_TENANT_ID="$5" ./pmg_setup_install_macos.sh --cloud
 ```
 
 Assign this policy to the same computer group with a recurring trigger. Use it only for users who already have PMG and cloud sync enabled. Run the normal install policy to configure new users.
+
+## Manage settings from the cloud policy
+
+<PmgMdmCloudPolicy />
 
 <CardGroup cols={2}>
   <Card title="Other MDMs" icon="laptop" href="/package-security/pmg/mdm/overview">

@@ -3,6 +3,8 @@ title: "Intune"
 description: "Deploy PMG to macOS, Linux, or Windows devices with Intune scripts, or package a Windows Win32 app."
 ---
 
+import PmgMdmCloudPolicy from '/snippets/pmg-mdm-cloud-policy.mdx';
+
 Intune script policies accept one script with no script parameters. Windows supports PowerShell policies and [Win32 app packages](#windows-win32-app). Generate a [standalone installer](https://github.com/safedep/pmg/tree/main/scripts/mdm/standalone) for your platform with your SafeDep Cloud credentials embedded, then upload that file.
 
 <Note>
@@ -132,6 +134,10 @@ Use a Win32 app to bundle a release binary, including for devices without GitHub
 7. Assign the app to the Windows device group.
 
 A Win32 app does not set the Cloud environment variables. Have users run `pmg cloud login` in their own sessions, or package the credential-bearing standalone installer generated above and use its filename in the install command. Keep `cloud.enabled: true` in the managed config.
+
+## Manage settings from the cloud policy
+
+<PmgMdmCloudPolicy />
 
 <CardGroup cols={2}>
   <Card title="Other MDMs" icon="laptop" href="/package-security/pmg/mdm/overview">
