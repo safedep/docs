@@ -65,9 +65,9 @@
 ## SafeDep Cloud / Endpoint Hub
 
 - **One-liner:** SafeDep Cloud is the hosted control and management plane — policy, multi-repo / multi-machine visibility, org governance.
-- **What it is:** A closed-source hosted offering. It surfaces in the docs as user-facing features: **SafeDep Cloud, Endpoint Hub, Endpoint Sync, Malware Analysis, Policy & Risk, Tenants & Access.**
+- **What it is:** A closed-source hosted offering. It surfaces in the docs as user-facing features: **SafeDep Cloud, Endpoint Hub, Endpoint Sync, Malware Analysis, Cloud Policy, Tenants & Access.**
 - **Public repos:** none — the implementation is internal. Document the user-facing surface only (UI flows, API endpoints exposed to users, concepts).
-- **Docs home:** **Visibility & Governance** — across the SafeDep Cloud, Endpoint Hub, Policy & Risk, and Access & Identity groups. R2 reminder: Cloud features get a simple `<Note>` callout, **not** a separate persona/tier tab.
+- **Docs home:** **Visibility & Governance**, across the SafeDep Cloud (with Endpoint Hub nested), Cloud Policy, and Access & Identity groups. R2 reminder: Cloud features get a simple `<Note>` callout, **not** a separate persona/tier tab.
 - **Plans:** Free, Team, and Enterprise. Never write "Pro" or "Professional": the API enum is `BILLING_TIER_PROFESSIONAL`, but the product, the pricing page, and `safedep subscription status` say Team. The pricing page (`https://safedep.io/pricing`) is the only source of plan data. Do not copy the plan table into the docs. A Cloud feature gets a `<Note>` that names the plan and links to the pricing page. Every PMG and Vet feature is open source, so a Cloud section says what Cloud adds (team-wide visibility, query, alerts), never that the tool feature itself is paid. SIEM integrations and MDM fleet sync are Enterprise. Feature gates live in Control Tower `models/billing_tier.go`.
 - **SQL gotcha:** `endpoints.endpoint_type` is always `0` in production (nothing sets it). PMG sets `package_guard_events.ci_provider` only for GitHub Actions (`internal/audit/cloud_env_resolver.go` has one resolver). Filter GitHub Actions events on `ci_provider = 'ENDPOINT_CI_PROVIDER_GITHUB_ACTIONS'`. For other CI systems, filter on an `endpoints.identifier` prefix set with `PMG_CLOUD_ENDPOINT_ID`. The query engine rejects `COUNT(*)`; use `COUNT(column)` or `COUNT(DISTINCT column)`.
 - **Where to read up-to-date facts:** the live product (`app.safedep.io`), the public API reference under `api-reference/` in this docs repo, and any user-facing release notes. Do not document internal services, internal repo names, or non-public endpoints.
@@ -76,6 +76,19 @@
   - Generated SDKs (all supported languages): `https://buf.build/safedep/api/sdks`
   - When writing API/automation pages, link schemas to buf.build rather than restating them (R6) — the existing pattern is `vet/guides/insights-api-using-typescript.mdx`.
 - **What lives in the user docs vs the product:** the docs site covers concepts, how-tos, and screens-level workflows. Exhaustive API/SDK reference belongs in the product's own reference (R6).
+
+---
+
+## Cloud Policy
+
+- **One-liner:** One policy for each tenant in SafeDep Cloud. An Admin changes it with the safedep CLI, and PMG and the pull request checks apply it with no MDM push.
+- **What it is:** Policy settings in layers (the SafeDep default policy, the policy base, then policy overrides that select endpoints and projects by label) plus package rules (block entries and trust entries). Each publish makes an immutable, numbered policy revision. A rollback is a new change, so revision numbers only go up.
+- **Managed with:** the `safedep` CLI: `safedep policy` (`show`, `get`, `edit`, `change`, `revision`, `rule`, `decision list`), `safedep project|endpoint label set`, `safedep project|endpoint policy show`, `safedep audit event list`. No console forms yet.
+- **Enforced by:** PMG with `cloud.policy: true` (package rules, `package_admission.cooldown.min_age`) and the pull request check of the GitHub App and the Bitbucket app (`scan_gate.*`, package rules). Vet does not read it yet.
+- **Plan:** Team or Enterprise (`FEATURE_POLICY_MANAGEMENT` in Control Tower `models/billing_tier.go`).
+- **Docs home:** **Visibility & Governance › Cloud Policy** (`governance/cloud/policy/`, landing `governance/cloud/policy/overview`). Concepts in **Core Concepts › Policy** (`concepts/policy`, `policy-resolution`, `labels`, `package-rules`, `policy-revisions`). PMG setup at `package-security/pmg/cloud-policy`. Lookup at `reference/cloud-policy-settings` and `reference/cloud-policy-limits`. `governance/cloud/package-exclusions` is deprecated: trust entries with the scope `malware` replace Malicious Package Exclusions.
+- **Vocabulary:** use the terms of Control Tower `docs/glossary.md`: policy, policy settings, policy base, policy override (never "override" alone), package rule, trust entry, block entry, trust scope, label, subject, policy revision (never "version"), policy change (never "draft" alone), resolved policy, default policy, tool managed file. Do not call package rules allowlist, denylist, waiver or exception. Do not confuse the cloud policy with policy as code (Vet filter suites) or with the deprecated Vet v1 `PolicyService`.
+- **Where to read up-to-date facts:** Control Tower `services/tenantpolicy/` (`limits.go`, `validate.go`, `defaultpolicy/`, `direction.go`) and `services/integrations/scm/scanners/oss/policygate/`; the contract in `api/proto/safedep/policy/` and `api/proto/safedep/services/controltower/policy/v1/` (read `origin/main`); the CLI pages `docs/cmd/policy-*.md` in `safedep/cli`; PMG `internal/cloudpolicy/` and `docs/config.md#cloud-policy`; `dry/policy/match` for rule matching.
 
 ---
 
@@ -149,5 +162,7 @@ Never write product behavior from memory. Package managers supported, CLI flags,
 **Homebrew:** `vet`, `pmg`, `gryph`, `xbom` are formulae (`brew install safedep/tap/<tool>`). The unified `safedep` CLI is a **Cask**: `brew install --cask safedep/tap/cli`. Tap formulae are generated at release time and may not appear in the `homebrew-tap` repo tree, so trust each tool's README over the tap checkout.
 
 **CI secret naming (standardized across docs):** secret/variable names are `SAFEDEP_CLOUD_API_KEY` and `SAFEDEP_CLOUD_TENANT_DOMAIN`; the env vars the tools actually read are `SAFEDEP_API_KEY` and `SAFEDEP_TENANT_ID`.
+
+**Cloud policy:** the SafeDep default policy is revision 1 and sets only `scan_gate.fail_on: high` and `scan_gate.fail_on_attacks: fail`. It sets no cooldown, so PMG uses its own `dependency_cooldown` until a tenant sets `package_admission.cooldown.min_age`. A field that no layer set before a change counts as a change that loosens (`compareLeaf` in `direction.go`), so the first cooldown that a tenant sets loosens and sends a notice. The pull request check does not support the cooldown, treats `fail_on: info` as partial, and with `fail_on_attacks: fail` reports an unverified malware verdict without failing on it (`policygate/coverage.go`). The preview code `LOW_ENFORCED_COVERAGE` exists in the API, but Control Tower does not emit it. PMG fetches the policy in the background at most every 5 minutes (`PolicyFetchInterval`), not every 15. A failing pull request check shows the policy block; a passing check shows none (`report_policy.go`). The resolved policy carries the reason of a package rule, never its ticket or requester.
 
 **Editorial invariants:** no em-dashes anywhere in published pages; one Diátaxis mode per page (keep "Benefits / Why / Best Practices" explanation and advice out of how-tos); `broken-links` does not catch wrong commands, bad anchors, or dropped content (verify those by hand).
