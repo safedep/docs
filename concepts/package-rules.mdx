@@ -1,0 +1,74 @@
+---
+title: Package Rules
+description: "A package rule is a block entry or a trust entry in the cloud policy. It selects packages by PURL and has a reason, an author and an expiry."
+---
+
+A package rule is one entry in the cloud [policy](/concepts/policy) that decides about specific packages. It is a **block entry** or a **trust entry**. Each rule selects packages with a package URL (PURL), has a reason and an author, and can expire. A rule id, such as `r_9c1x4kq7dm`, identifies it, and each decision that the rule makes cites that id.
+
+## Block entries
+
+A block entry stops the packages that it selects. PMG blocks the install, and the pull request check fails when a pull request adds the package. A block entry stops new installs. It does not remove copies that are already installed.
+
+A block entry can select:
+
+- every version of one package, as `pkg:npm/evil`;
+- one version, as `pkg:npm/evil@1.2.4`;
+- a version range in the [vers](https://github.com/package-url/vers-spec) form, as `vers:npm/>=1.2.0|<2.0.0`;
+- many packages with a prefix that ends with `/*` or `.*`, as `pkg:npm/@acme/*`, `pkg:maven/org.apache.*` or `pkg:nuget/Microsoft.*`.
+
+A prefix has no version. To limit a prefix to some versions, add a range. A wide prefix such as `pkg:npm/*` selects every package of an ecosystem, and so stops every install of that ecosystem in the tenant.
+
+## Trust entries
+
+A trust entry waives the verdicts of its trust scopes for one package. It selects one package, with an optional version or range. It cannot use a prefix: in most ecosystems anyone can publish under a prefix, so a prefix would also trust packages that do not exist yet and that no one reviewed.
+
+Each trust entry names the trust scopes that it waives: `malware` (a malware verdict that is not verified, such as a suspicious package), `cooldown` (the dependency cooldown) or `vulnerability` (the vulnerability findings of a scan gate). Each tool applies only the scopes that fit its checks. See [Cloud Policy Settings](/reference/cloud-policy-settings#package-rule-fields) for the scopes that PMG and the pull request check apply.
+
+A trust entry never waives a scope that it does not name. A client that offers "all scopes" expands it to the scopes that exist when the admin creates the rule. So a scope that a later release adds never widens a rule that exists.
+
+A trust entry needs a reason and an expiry. The expiry is at most 90 days from now. A trust entry never skips the malware analysis.
+
+## Block beats trust
+
+When a block entry and a trust entry both select a package, the block entry wins. A cloud block entry in PMG also wins over the PMG `trusted_packages` list and the `--insecure-installation` flag.
+
+## Verified malware is never trusted
+
+No trust entry waives a verdict of verified malware, whatever its scopes. No policy setting turns off the block of verified malware either. Without this rule, an attacker who takes over the account of one Admin could trust a malicious package and deliver it to every developer of the tenant. PMG and the pull request check both enforce the rule.
+
+## How rules match
+
+Every match compares the canonical package name and version, by the rules of the ecosystem. For example, PyPI treats `Foo_Bar` and `foo-bar` as one package, so a rule for one spelling also selects the other. A PURL that is not canonical never lets a blocked package through. Set a version in the PURL or a range, not both.
+
+When a tool cannot order a version, a block entry with a range still selects it, and a trust entry with a range does not. The checks fail closed.
+
+## Where a rule applies
+
+A rule attaches to the policy base, and then it applies to every endpoint and project of the tenant. Or it attaches to one policy override, and then it applies only to the subjects that the policy override matches.
+
+Package rules are not in the policy settings document. Each rule command of the safedep CLI publishes at once, as one new [policy revision](/concepts/policy-revisions). So a run that publishes the settings document cannot delete a block that an on-call responder added. A rule never changes its selector, effect or scopes. To change them, delete the rule and create another.
+
+The tools apply package rules on the endpoint and in the pull request check. The malware analysis does not apply them: it gives the same verdict to every tenant and holds no tenant data.
+
+A PMG with no cloud policy support, or with the cloud policy turned off, gets no package rules from the cloud. It gets no trust entries, so a trust entry never lets a package through on that endpoint. It also gets no block entries, so a block entry does not stop an install on that endpoint. During an incident, do not count on a block entry for such endpoints. Such an endpoint reports no applied revision, so its `Policy` column in `safedep endpoint list` shows `-`. The filter `--applied-revision '<N'` lists only the endpoints that apply an older revision, not these.
+
+## Rules in the PMG config
+
+PMG also has a local block list, `blocked_packages`, in its own config file. It applies with no cloud. A decision from it names no policy revision, and it is not in the decision log of the tenant.
+
+## Related
+
+<CardGroup cols={2}>
+  <Card title="Block a Package" icon="ban" href="/governance/cloud/policy/block-a-package">
+    Block a package for the whole tenant during an incident.
+  </Card>
+  <Card title="Trust a Package" icon="circle-check" href="/governance/cloud/policy/trust-a-package">
+    Trust a package after a false positive.
+  </Card>
+  <Card title="Malicious Package" icon="shield-virus" href="/concepts/malicious-package">
+    How SafeDep classifies a package as malicious.
+  </Card>
+  <Card title="Cloud Policy Limits" icon="gauge" href="/reference/cloud-policy-limits">
+    The number of rules, the length of a reason and other limits.
+  </Card>
+</CardGroup>

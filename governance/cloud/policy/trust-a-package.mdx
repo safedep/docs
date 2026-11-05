@@ -1,0 +1,88 @@
+---
+title: "Trust a Package After a False Positive"
+description: "Create a trust entry in the cloud policy to waive a malware, cooldown or vulnerability verdict for one package, with a reason and an expiry."
+---
+
+Use a trust entry when your team reviewed a package and decided that a verdict is wrong for your tenant. A trust entry waives the verdicts of its scopes for one package until it expires. It replaces [Malicious Package Exclusions](/governance/cloud/package-exclusions).
+
+<Note>
+  This guide needs the SafeDep Cloud Team or Enterprise plan and the Admin role. See [pricing](https://safedep.io/pricing).
+</Note>
+
+## Create the trust entry
+
+```bash
+safedep policy rule create --trust pkg:pypi/foo@1.0.3 --scope malware \
+  --reason "False positive, S-88" --expires 30d --requested-by data-eng
+```
+
+- The selector names one package. Add a version in the PURL, or a range with `--vers`, to trust only some versions. A trust entry cannot use a prefix.
+- `--scope` names the verdicts to waive. Give it more than once, or use `all`. See [Choose the scope](#choose-the-scope).
+- `--expires` is required. It takes a duration, as `30d`, or a date, as `2027-01-26`. The expiry is at most 90 days from now.
+- `--reason` is required.
+
+The command warns that the rule loosens the policy, creates the rule and publishes a new policy revision. Every Owner and Admin of the tenant gets an email about it.
+
+## Choose the scope
+
+| Scope | Use it when | Where it applies |
+|---|---|---|
+| `malware` | SafeDep marks the package as malicious or suspicious, and you reviewed it | PMG and the pull request check |
+| `cooldown` | You must install a new version before the dependency cooldown ends, such as your own SDK | PMG |
+| `vulnerability` | A pull request check fails on a vulnerability that you accept for this package | The pull request check |
+
+Choose the narrowest scope. `--scope all` expands to the scopes that exist now. A scope that a later release adds does not apply to this rule.
+
+A trust entry never waives a verdict of **verified** malware, whatever its scope. A trust entry also never skips the malware analysis. If a block entry selects the same package, the block entry wins.
+
+## Extend or end the trust
+
+To extend the trust entry, give a new expiry. A later expiry loosens the policy:
+
+```bash
+safedep policy rule update r_a41b7c9xkd --expires 90d --reason "Reviewed again for Q1"
+```
+
+To list the trust entries that expire soon:
+
+```bash
+safedep policy rule list --effect trust --expiring 7d
+```
+
+To end the trust now, delete the rule. The delete tightens the policy:
+
+```bash
+safedep policy rule delete r_a41b7c9xkd --reason "Upstream fixed the false positive"
+```
+
+An expired trust entry no longer applies. PMG drops it at its expiry also when the endpoint is offline.
+
+## Move from Malicious Package Exclusions
+
+Trust entries with the scope `malware` replace Malicious Package Exclusions. SafeDep Cloud does not copy exclusions into the cloud policy. For each exclusion that you still need, create a trust entry:
+
+| Exclusion field | Trust entry |
+|---|---|
+| Ecosystem, package name | The PURL, as `pkg:npm/name` |
+| Version | A version in the PURL. For the version `0` (all versions), give no version. |
+| Reason | `--reason` |
+| Expires At | `--expires`. A trust entry needs an expiry of at most 90 days. |
+
+PMG with `cloud.policy` on ignores the exclusions and applies only the trust entries.
+
+## Next steps
+
+<CardGroup cols={2}>
+  <Card title="Package Rules" icon="list-check" href="/concepts/package-rules">
+    Trust scopes and the verified malware guard.
+  </Card>
+  <Card title="Explain a Decision" icon="magnifying-glass" href="/governance/cloud/policy/explain-a-decision">
+    List the installs that a trust entry allowed.
+  </Card>
+  <Card title="Malicious Package" icon="shield-virus" href="/concepts/malicious-package">
+    How SafeDep classifies a package as malicious.
+  </Card>
+  <Card title="Command Reference" icon="terminal" href="https://github.com/safedep/cli/tree/main/docs/cmd">
+    Every flag of `safedep policy rule`.
+  </Card>
+</CardGroup>

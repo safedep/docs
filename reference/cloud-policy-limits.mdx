@@ -1,0 +1,82 @@
+---
+title: "Cloud Policy Limits"
+description: "Reference for the limits, the retention, the known gaps and the API key access of the SafeDep cloud policy."
+---
+
+This page lists the limits that SafeDep Cloud enforces on the [cloud policy](/governance/cloud/policy/overview) of a tenant, how long it keeps policy data, and the gaps of this release.
+
+## Limits
+
+A write over a limit fails with `RESOURCE_EXHAUSTED`, and the error names the limit.
+
+| Limit | Value |
+|---|---|
+| Policy overrides in a policy | 100 |
+| Active package rules | 10,000 |
+| Size of the policy settings document, in its binary form | 256 KiB |
+| Size of the resolved policy of one subject | 2 MiB. A publish that would make a larger one fails. |
+| Open policy changes | 50 |
+| Publishes in a day (UTC) | 100. Each rule command counts as one publish. |
+| Package rule operations in one change | 1,000. A bulk block from a file holds at most 1,000 selectors. |
+| `custom/` labels on a subject | 32 |
+| Length of a `custom/` label value | 63 characters |
+| Length of the name of a label key, after the prefix | 75 characters |
+| Subjects in one label command | 100 |
+| Expiry of a trust entry | At most 90 days from now |
+| `package_admission.cooldown.min_age` | 0 to 365 days |
+| Priority of a policy override | 1 to 1,000,000, unique in the policy |
+| Pairs in `matchLabels`, terms in `matchExpressions` | 32 each |
+| Size of one request or reply of a policy service | 4 MiB |
+
+For the length of the other fields, see [Cloud Policy Settings](/reference/cloud-policy-settings).
+
+## Roles
+
+| Action | Lowest role |
+|---|---|
+| Read the policy, its revisions, its changes, its package rules and its decisions | ReadOnly |
+| Create, edit, sync, delete or publish a policy change | Admin |
+| Create, update or delete a package rule | Admin |
+| Set or delete a `custom/` label | Admin |
+| Read the audit events | Admin |
+| Fetch the resolved policy of an endpoint | The tenant API key |
+
+## Retention
+
+| Data | SafeDep Cloud keeps it for at least |
+|---|---|
+| Policy revisions | The life of the tenant |
+| Package rules, also deleted rules | The life of the tenant |
+| A policy change after its publish or its delete | 30 days. An open change stays until someone publishes or deletes it. |
+| Audit events | 1 year |
+
+## What a holder of the tenant API key can read
+
+The tenant API key can call only the data plane. It cannot read or change the policy settings document, the revisions or the audit events. It can fetch the resolved policy of an endpoint.
+
+Until endpoint enrollment ships, an endpoint asserts its own identity and its `managed/` and `reported/` labels. So a holder of the key can fetch the resolved policy that matches another endpoint or other labels. Treat each policy override and the reason of each package rule as readable by every holder of the key. The ticket and the requester of a package rule are not in the resolved policy.
+
+Do not put a secret in a reason, a ticket, a requester or a description.
+
+A holder of the key can also report an applied policy revision for any endpoint. So the applied revision of an endpoint is a record of what the endpoint reported, not proof. The policy revisions prove which policy SafeDep Cloud served.
+
+## Known gaps
+
+These gaps are accepted in this release:
+
+- PMG keeps its policy cache in the folder of the user. A user can change the cache on a laptop. The same user can also remove PMG.
+- IT can keep a value from the cloud policy only with the PMG `global_lockdown` setting, which keeps every key that the managed config file sets. IT cannot lock one field of the policy alone.
+- No endpoint label is an access boundary: an endpoint can claim the identity of another endpoint and get the policy overrides of that endpoint.
+- PMG fetches the policy in the background after a command, at most once every 5 minutes. The first install after a new block can use the previous policy.
+- Vet does not read the cloud policy. The pull request check does not apply the dependency cooldown, and reports a malware verdict that is not verified without failing on it.
+
+## Related
+
+<CardGroup cols={2}>
+  <Card title="Cloud Policy Settings" icon="table" href="/reference/cloud-policy-settings">
+    Each setting and each field of a package rule.
+  </Card>
+  <Card title="Labels" icon="tags" href="/concepts/labels">
+    Which labels you can trust.
+  </Card>
+</CardGroup>

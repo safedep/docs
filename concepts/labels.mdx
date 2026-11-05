@@ -1,0 +1,62 @@
+---
+title: Labels
+description: "A label is a key and value on an endpoint or a project. The prefix of the key names its source, and a policy override selects subjects by their labels."
+---
+
+A label is a `key=value` pair on an [endpoint](/concepts/endpoint) or a project. A policy override of the cloud [policy](/concepts/policy) uses a label selector to choose the endpoints and projects that it applies to. See [Policy Resolution](/concepts/policy-resolution).
+
+## Prefixes and sources
+
+The key of a label has the form `prefix/name`, as in `custom/criticality`. The prefix names the source of the label. Each source can write only its own prefixes, so an endpoint cannot write a `custom/` label and an Admin cannot write a `scm/` label.
+
+| Prefix | Source | Labels |
+|---|---|---|
+| `safedep.io/` | SafeDep Cloud | `safedep.io/endpoint-id` on an endpoint. `safedep.io/project-id` and `safedep.io/project-source` (such as `github`) on a project. |
+| `scm/` | SafeDep Cloud, from the repository that is bound to a project | `scm/forge` (`github` or `bitbucket`), `scm/owner` and `scm/repo`. |
+| `custom/` | An Admin of the tenant | Any name and value that you choose, as `custom/criticality=high`. Set them with `safedep project label set` and `safedep endpoint label set`. |
+| `reported/` | The tool on the endpoint | PMG sends `reported/os` and `reported/arch`, with values such as `darwin` and `arm64`. |
+| `managed/` | A managed file that MDM writes | No tool sends these labels yet. |
+| `scm-property/` | GitHub custom properties | SafeDep Cloud does not store these labels yet. |
+
+A selector can name each of the six prefixes. A project that is not bound to a repository has only `safedep.io/` and `custom/` labels.
+
+## Selectors
+
+A label selector has the form of a Kubernetes label selector:
+
+- `matchLabels` holds pairs that must match exactly.
+- `matchExpressions` holds terms with the operators `In`, `NotIn`, `Exists` and `DoesNotExist`.
+
+Every pair and every term must hold. An empty selector matches every subject. A key that a subject does not have fails `In` and `Exists`, and passes `NotIn` and `DoesNotExist`.
+
+To select the subjects that have one of two labels, give them one shared `custom/` label, or write two policy overrides.
+
+Before you publish a policy override, you can list the projects and endpoints that its selector matches. See [Target a Group](/governance/cloud/policy/target-a-group#check-the-result).
+
+## When a label change applies
+
+A label change makes no policy revision. It applies when the subject resolves next: at the next policy fetch of an endpoint, or at the next pull request check of a project. Each label change writes an audit event.
+
+## Which labels you can trust
+
+An endpoint sends its own `reported/` labels, and later its `managed/` labels. A forge admin sets GitHub custom properties. SafeDep Cloud cannot check these values. Also, until endpoint enrollment ships, an endpoint asserts its own identity, so an endpoint can claim the identity, and the labels, of another endpoint. So no endpoint label is an access boundary yet.
+
+For a policy override that loosens the policy, select on `safedep.io/`, `scm/` or `custom/` labels. The preview of a policy change warns when a policy override that loosens selects on `managed/`, `reported/` or `scm-property/` labels.
+
+## Limits
+
+A subject has at most 32 `custom/` labels. A `custom/` value has at most 63 characters, and the name after the prefix has at most 75. See [Cloud Policy Limits](/reference/cloud-policy-limits).
+
+## Related
+
+<CardGroup cols={2}>
+  <Card title="Policy Resolution" icon="layer-group" href="/concepts/policy-resolution">
+    How the matched policy overrides merge.
+  </Card>
+  <Card title="Target a Group" icon="bullseye" href="/governance/cloud/policy/target-a-group">
+    Label endpoints and projects and write a policy override for them.
+  </Card>
+  <Card title="Endpoint" icon="server" href="/concepts/endpoint">
+    The machines and runners that report to your tenant.
+  </Card>
+</CardGroup>

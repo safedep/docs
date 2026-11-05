@@ -1,0 +1,95 @@
+---
+title: Policy Revisions and Changes
+description: "How a change to the cloud policy goes from a draft to a published revision: preview, change direction, stale changes, rollback, notices and audit."
+---
+
+Each change to the cloud [policy](/concepts/policy) goes through the same steps. You write a draft, you read a preview of its effect, and you publish it. The publish makes a new policy revision. This page explains each step.
+
+## Policy changes
+
+A policy change is a draft on the server. It starts from a base revision, the head revision when you created it. It can edit the policy settings document, add package rule operations, or both. Nothing applies until an Admin publishes it.
+
+`safedep policy edit` opens the policy settings document of the tenant in your editor: the policy base and every policy override. When you save the file, the command creates a policy change. Package rules are not in this document. The rule commands, such as `safedep policy rule create`, create a change and publish it in one step.
+
+The document keeps no YAML comments. Write the reason for a value in the `description` of the policy override, or in `base_description` for the policy base.
+
+## The preview
+
+`safedep policy change show` compares an open change with the head revision. It shows:
+
+- each field that changes, in the policy base and in each policy override, with its old value, its new value and its change direction;
+- each change to a policy override itself, such as a new selector or priority;
+- the package rule operations;
+- the number of projects and endpoints that the change reaches;
+- policy coverage: how many of those subjects can enforce each new value, and which ones enforce it only in part;
+- warnings, for example when a block entry selects every package of an ecosystem, when a policy override that loosens selects on a label that an endpoint can send, or when a rollback drops fields of a policy override.
+
+In this release, only the pull request check reports policy coverage, so the coverage counts include projects only.
+
+## Change direction
+
+SafeDep Cloud computes the change direction of each change: it **tightens**, it **loosens**, or it is **neutral**. It compares the resolved policy before and after the change, for each group of subjects that the change reaches.
+
+- A setting tightens when its new value is stricter, such as a longer cooldown or a lower severity for `scan_gate.fail_on`.
+- A setting that had no value before the change, or that has no value after it, loosens. SafeDep Cloud cannot know what a tool does when no layer sets the field. So the first cooldown that you set counts as a change that loosens.
+- A new block entry tightens. A new trust entry loosens.
+- A deleted block entry loosens. A deleted trust entry tightens.
+- A later expiry of a trust entry loosens. A new or earlier expiry of a block entry loosens, because it narrows the block.
+- A new or deleted policy override, or a change of a selector, a priority or the expiry of a policy override, loosens. Such a change can move subjects to a looser result.
+- A change of a name or a description is neutral.
+
+A change loosens when any part of it loosens.
+
+## Publish and revisions
+
+`safedep policy change publish` makes a new policy revision from an open change. A revision is immutable, and revision numbers only go up. In this release every publish needs the Admin role. A change that loosens the policy also needs a confirmation: the command asks in a terminal, and needs `--yes` in a script.
+
+After a publish, each pull request check uses the new revision at once. Each endpoint applies it after its next policy fetch.
+
+## Stale changes and sync
+
+Two Admins can work on the policy at the same time. A publish checks that the parts that a change edits did not change after its base revision:
+
+- The policy settings document is one part. When another publish changed it, the change is stale.
+- Each package rule is one part, by its rule id.
+
+A new block entry does not touch the settings document. So a block that an on-call responder adds does not make an open settings change stale.
+
+A stale change must be synced before it can be published. A sync moves the base revision of the change to head and keeps the settings as the admin wrote them. SafeDep Cloud never merges two changes, so the settings of a synced change can undo the other change. The admin reads the preview again before the publish. See [If the publish stops](/governance/cloud/policy/target-a-group#if-the-publish-stops).
+
+## Rollback
+
+A rollback is a new change, not a deletion of history. It restores capabilities, such as `scan_gate`, from an old revision. For each restored capability, the policy base and every policy override take their values from that revision. A policy override that did not exist then loses the fields of the restored capabilities, and the preview warns about it.
+
+Package rules stay at head, unless the admin asks to restore them too. The publish of a rollback makes a new revision with a higher number. See [Roll Back a Change](/governance/cloud/policy/roll-back-a-change).
+
+## Notices
+
+SafeDep Cloud sends an email to every Owner and Admin of the tenant after a publish that:
+
+- loosens the policy,
+- adds a block entry, or
+- restores a revision.
+
+The email names the tenant, the revision, the person who published it, the change direction, the message, the changed fields, and for a block the selector and the reason.
+
+## Audit events
+
+Each admin action writes one audit event in the same transaction as the action: each change, publish, rule operation and label change. An action that fails writes no event, and a publish that fails sends no email. See [Audit Policy Changes](/governance/cloud/policy/audit-policy-changes).
+
+## Related
+
+<CardGroup cols={2}>
+  <Card title="Quickstart" icon="rocket" href="/governance/cloud/policy/quickstart">
+    Publish your first policy revision.
+  </Card>
+  <Card title="Roll Back a Change" icon="clock-rotate-left" href="/governance/cloud/policy/roll-back-a-change">
+    Restore a setting from an old revision.
+  </Card>
+  <Card title="Policy Resolution" icon="layer-group" href="/concepts/policy-resolution">
+    How a revision becomes the policy of one subject.
+  </Card>
+  <Card title="Cloud Policy Limits" icon="gauge" href="/reference/cloud-policy-limits">
+    Publishes in a day, open changes and retention.
+  </Card>
+</CardGroup>

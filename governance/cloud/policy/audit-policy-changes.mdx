@@ -1,0 +1,83 @@
+---
+title: "Audit Changes to the Cloud Policy"
+description: "See who changed the cloud policy, when and how, with audit events, policy revisions and the email notices to Owners and Admins."
+---
+
+SafeDep Cloud keeps three records of each change to the cloud policy: an audit event for each admin action, a policy revision for each publish, and an email to the Owners and Admins for each risky publish. Use them to review changes and to answer an auditor.
+
+<Note>
+  This guide needs the SafeDep Cloud Team or Enterprise plan. See [pricing](https://safedep.io/pricing). Reading audit events needs the Admin role.
+</Note>
+
+## List the audit events
+
+```bash
+safedep audit event list --since 7d --action policy.
+```
+
+Each event names the actor, the action, the resource, the result, the time and details such as the revision. Each admin action writes one event, in the same transaction as the action. So an action that failed and rolled back writes no event.
+
+These are the actions of the cloud policy:
+
+| Action | Resource kind | When |
+|---|---|---|
+| `policy.change.create`, `policy.change.update`, `policy.change.sync`, `policy.change.delete` | `policy_change` | An Admin works on a draft |
+| `policy.change.publish` | `policy_change` | An Admin publishes a change. The details hold the revision and the change direction. |
+| `policy.rule.create`, `policy.rule.update`, `policy.rule.delete` | `package_rule` | An Admin creates, changes or deletes one package rule |
+| `policy.rule.bulk_create` | `policy_change` | An Admin creates block entries from a file. One event covers all of them. |
+| `policy.endpoint_label.set`, `policy.endpoint_label.delete` | `endpoint` | An Admin sets or deletes `custom/` labels on an endpoint |
+| `policy.project_label.set`, `policy.project_label.delete` | `project` | An Admin sets or deletes `custom/` labels on a project |
+
+Filter the list:
+
+```bash
+# Only the package rule actions
+safedep audit event list --action policy.rule.
+
+# The events of one policy change
+safedep audit event list --resource policy_change/18
+
+# The events of one person
+safedep audit event list --actor alice
+```
+
+`--actor` matches the actor id or the display name exactly.
+
+## Review the revisions
+
+Each publish makes one policy revision. A user with the ReadOnly role or a higher role can read them:
+
+```bash
+safedep policy revision list
+safedep policy revision show 47
+```
+
+A revision shows who published it, when, from which change, its change direction, and the policy settings document at that revision. To see the package rules that were active at a revision:
+
+```bash
+safedep policy rule list --at-revision 47
+```
+
+The revisions show which policy SafeDep Cloud served on a date. The applied revision that an endpoint reports is a record of what the endpoint said. It is not proof, because until endpoint enrollment ships, a holder of the tenant API key can report for any endpoint.
+
+## Email notices
+
+Every Owner and Admin of the tenant gets an email after some publishes, such as a publish that loosens the policy. To get the emails, give the person the Owner or Admin role in the tenant. To check a publish that an email names, run `safedep policy revision show` with the revision of the email. For which publishes send an email and what it holds, see [Notices](/concepts/policy-revisions#notices).
+
+## Retention
+
+SafeDep Cloud keeps audit events for at least one year, and policy revisions and package rules for the life of the tenant. See [Cloud Policy Limits](/reference/cloud-policy-limits#retention).
+
+## Next steps
+
+<CardGroup cols={2}>
+  <Card title="Policy Revisions and Changes" icon="code-branch" href="/concepts/policy-revisions">
+    Change direction and notices.
+  </Card>
+  <Card title="Roll Back a Change" icon="clock-rotate-left" href="/governance/cloud/policy/roll-back-a-change">
+    Undo a publish with a new revision.
+  </Card>
+  <Card title="Command Reference" icon="terminal" href="https://github.com/safedep/cli/tree/main/docs/cmd">
+    Every flag of `safedep audit event list`.
+  </Card>
+</CardGroup>

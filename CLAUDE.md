@@ -16,7 +16,7 @@ The documentation is organized into **7 tabs** — solution tabs at the core, pl
 1. **Get Started** — "What is SafeDep?" primer, quickstarts, core concepts
 2. **Package Security** — block malicious packages at install time and in CI/CD, and scan any package, extension, or repo on demand before use (pmg, safedep CLI)
 3. **AI Agent Security** — discover, audit, and control what AI agents access and run (MCP, Gryph, vet AI discovery)
-4. **Visibility & Governance**: scan repos/SBOMs/CI/CD for risk; deploy fleet tooling; manage policy and cloud visibility (vet, xBom, SafeDep Cloud, Endpoint Hub, Endpoint Sync)
+4. **Visibility & Governance**: scan repos/SBOMs/CI/CD for risk; deploy fleet tooling; manage policy and cloud visibility (vet, xBom, SafeDep Cloud, Endpoint Hub, Endpoint Sync, Cloud Policy)
 5. **Threat Intel** — consume the malicious-package feed as an API: reports and campaigns (ThreatIntelService). Subscription-gated (`FEATURE_THREAT_INTEL_FEED`)
 6. **Reference** — exact syntax/APIs (vet query & policy, API & automation)
 7. **Community & Support** — community resources, FAQ and the changelog
@@ -30,7 +30,7 @@ Every placement decision derives from these rules. Full rationale and page map: 
 - **R1 — One primary entry point.** New visitors meet a clear "What is SafeDep?" primer, not a tool catalog.
 - **R2 — Capability ladder, not persona gate.** The journey runs: individual dev → team → org-wide governance. Navigation doesn't pin users to a tier. Features requiring SafeDep Cloud are marked with a `<Note>` callout — no structural separation.
 - **R3 — Organize by solution, not by tool.** Tabs name the security outcome SafeDep delivers. Grammar test: "SafeDep solves ___" must complete naturally with the tab name.
-- **R4 — Concepts are first-class, atomic, linkable.** Each concept gets one dedicated page under Get Started › Core Concepts (`concepts/`). The seven that exist: `malicious-package`, `vulnerability`, `policy`, `cel`, `sbom`, `tenant`, `endpoint`. **Malicious-package *protection* is a solution (the Package Security tab), not a concept** — the concept is the malicious package itself, and `concepts/malicious-package` carries the user-facing detection story (how SafeDep classifies a package as malicious). Malysis/Malbase are **not** concept pages — they are internal infrastructure (R6). The Malysis *pipeline* is never a product tab; a productized Threat Intelligence offering gets its own solution tab (shipped as the **Threat Intel** tab, `threat-intel/`; see `docs-ia.md` §8) — the rule protects pipeline vs product.
+- **R4: Concepts are first-class, atomic, linkable.** Each concept gets one dedicated page under Get Started › Core Concepts (`concepts/`). The eleven that exist: `malicious-package`, `vulnerability`, `policy`, `policy-resolution`, `labels`, `package-rules`, `policy-revisions`, `cel`, `sbom`, `tenant`, `endpoint`. The policy concepts and `cel` sit in a nested "Policy" group. **Malicious-package *protection* is a solution (the Package Security tab), not a concept.** The concept is the malicious package itself, and `concepts/malicious-package` carries the user-facing detection story (how SafeDep classifies a package as malicious). Malysis/Malbase are **not** concept pages. They are internal infrastructure (R6). The Malysis *pipeline* is never a product tab. A productized Threat Intelligence offering gets its own solution tab (shipped as the **Threat Intel** tab, `threat-intel/`; see `docs-ia.md` §8). The rule protects pipeline vs product.
 - **R5 — Progressive disclosure.** Tab depth is unlimited; groups handle it. A tab splits only when it covers fundamentally different security outcomes. The Reference tab is the only place for exhaustive lookup content.
 - **R6 — docs.safedep.io is the guide layer.** Product-level technical reference (CLI flags, type definitions) lives in individual product repos. This site covers concepts, how-tos, and integration guides.
 - **R7 — AI-agent consumability is first-class.** One concept per atomic page, predictable headings, stable URLs.
@@ -50,7 +50,10 @@ Every placement decision derives from these rules. Full rationale and page map: 
 | Covers AI agent discovery, audit, or control | AI Agent Security | AI Agent Observability / AI Coding Protection |
 | Covers scanning repos, SBOMs, CI/CD for risk | Visibility & Governance | Repository Scanning / Bill of Materials / CI/CD |
 | Covers deploying vet or running vet tasks across endpoint fleets | Visibility & Governance | MDM |
-| Covers cloud policy, endpoint inventory, access | Visibility & Governance | SafeDep Cloud / Endpoint Hub / Policy & Risk |
+| Covers endpoint inventory or org-wide access in SafeDep Cloud | Visibility & Governance | SafeDep Cloud / Endpoint Hub |
+| Changes a cloud policy setting, package rule or policy module | Visibility & Governance | Cloud Policy (one subgroup per capability when there is more than one) |
+| Connects or sets up a tool that enforces the cloud policy | That tool's outcome tab | The tool's group, with a card from Cloud Policy |
+| Is an independent capability with its own data and workflow that the policy only references (for example a catalog of approved components) | Visibility & Governance | Its own group |
 | Covers consuming the malicious-package feed (reports, campaigns, feed API) | Threat Intel | Getting Started / Consuming the Feed / Reference |
 | Is pure lookup (syntax, flags, API) | Reference | vet Query & Policy / API & Automation |
 | Is community/support | Community & Support | Community / Support |

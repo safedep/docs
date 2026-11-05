@@ -3,8 +3,12 @@ title: Malicious Package Exclusions
 description: "Manage package exclusions for malicious package analysis in SafeDep Cloud"
 ---
 
+<Warning>
+Malicious Package Exclusions are deprecated. Package rules of the [cloud policy](/governance/cloud/policy/overview) replace them: a trust entry with the scope `malware` waives a malware verdict for one package. Exclusions get no new features, and a later release removes them. SafeDep Cloud does not copy your exclusions. PMG with `cloud.policy` on ignores them. To move an exclusion, see [Trust a Package](/governance/cloud/policy/trust-a-package#move-from-malicious-package-exclusions).
+</Warning>
+
 <Info>
-Malicious Package Exclusions are available in SafeDep Cloud **Pro and above**.
+Malicious Package Exclusions are available in the SafeDep Cloud **Team** and **Enterprise** plans.
 See [pricing](https://safedep.io/pricing).
 
 Only tenant owners can create, edit, or delete exclusions. If you can view package analysis results but cannot manage an exclusion, contact your tenant owner.
@@ -194,7 +198,7 @@ If the button is disabled, ask your tenant owner to create or manage the exclusi
 
 ### I see a paywall instead of the exclusions table
 
-Malicious Package Exclusions are available in SafeDep Cloud Pro and above.
+Malicious Package Exclusions are available in the SafeDep Cloud Team and Enterprise plans.
 
 Upgrade your plan or contact your SafeDep representative if you need access.
 

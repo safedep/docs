@@ -1,0 +1,98 @@
+---
+title: "Cloud Policy"
+description: "Set one policy for your tenant in SafeDep Cloud: block and trust packages, set the dependency cooldown, and choose what fails a pull request check."
+---
+
+The cloud policy is one [policy](/concepts/policy) for your tenant in SafeDep Cloud. A security admin changes it with the [safedep CLI](/get-started/cli-tools), and PMG and the pull request checks apply it. You change the policy of the whole fleet with no new MDM package.
+
+<Note>
+  The cloud policy needs the SafeDep Cloud Team or Enterprise plan. See [pricing](https://safedep.io/pricing).
+</Note>
+
+## What the cloud policy controls
+
+- **Package rules.** Block a package for the whole tenant, or trust one package after a false positive. See [Package Rules](/concepts/package-rules).
+- **Dependency cooldown.** Hold back package versions that are younger than a minimum age.
+- **Pull request checks.** Choose the lowest vulnerability severity that fails a check.
+
+You can set a value for the whole tenant, or for a group of endpoints or projects with a policy override. See [Policy Resolution](/concepts/policy-resolution).
+
+## What enforces each part
+
+| Part of the policy | PMG | Pull request check | Vet |
+|---|---|---|---|
+| Block entries | Enforces | Enforces | Not yet |
+| Trust entries, scope `malware` | Enforces | Enforces | Not yet |
+| Trust entries, scope `cooldown` | Enforces | Not supported | Not yet |
+| Trust entries, scope `vulnerability` | Not applicable | Enforces | Not yet |
+| Dependency cooldown (`package_admission.cooldown.min_age`) | Enforces | Not supported | Not yet |
+| Scan gate (`scan_gate.fail_on`, `scan_gate.fail_on_attacks`) | Not applicable | Enforces, with exceptions | Not yet |
+
+The [settings reference](/reference/cloud-policy-settings) gives the exceptions of each setting.
+
+## Who can change the policy
+
+A user with the ReadOnly role or a higher role can read the policy, its revisions and its decisions. Only an Admin can create, edit, publish or delete a policy change, create or change a package rule, or set a label. Only an Admin can read the audit events.
+
+## How a change reaches the tools
+
+1. An Admin edits the policy with `safedep policy edit`. The edit makes a draft, a policy change.
+2. The Admin reads the preview with `safedep policy change show`.
+3. The Admin publishes the change. The publish makes a new policy revision.
+4. The next pull request check of each project uses the new revision. PMG on each endpoint applies it after its next policy fetch.
+
+A package rule skips the draft: `safedep policy rule create` publishes at once. See [Policy Revisions and Changes](/concepts/policy-revisions).
+
+## Set up the tools
+
+<CardGroup cols={2}>
+  <Card title="Apply the cloud policy in PMG" icon="box" href="/package-security/pmg/cloud-policy">
+    Turn on `cloud.policy` in PMG on developer machines and CI runners.
+  </Card>
+  <Card title="Pull request checks" icon="code-pull-request" href="/governance/cloud/policy/pull-request-checks">
+    Use the policy in the GitHub App and the Bitbucket app.
+  </Card>
+</CardGroup>
+
+## Guides
+
+<CardGroup cols={2}>
+  <Card title="Quickstart" icon="rocket" href="/governance/cloud/policy/quickstart">
+    Publish your first policy with the safedep CLI.
+  </Card>
+  <Card title="Block a Package" icon="ban" href="/governance/cloud/policy/block-a-package">
+    Block a package for the whole tenant during an incident.
+  </Card>
+  <Card title="Trust a Package" icon="circle-check" href="/governance/cloud/policy/trust-a-package">
+    Trust a package after a false positive.
+  </Card>
+  <Card title="Set a Cooldown" icon="hourglass" href="/governance/cloud/policy/set-a-cooldown">
+    Set the dependency cooldown for the tenant or for a group.
+  </Card>
+  <Card title="Target a Group" icon="bullseye" href="/governance/cloud/policy/target-a-group">
+    Label endpoints and projects and write a policy override.
+  </Card>
+  <Card title="Fail Pull Request Checks" icon="code-pull-request" href="/governance/cloud/policy/pull-request-checks">
+    Choose the severities that fail a check for a group of projects.
+  </Card>
+  <Card title="Roll Back a Change" icon="clock-rotate-left" href="/governance/cloud/policy/roll-back-a-change">
+    Restore a setting from an old revision.
+  </Card>
+  <Card title="Explain a Decision" icon="magnifying-glass" href="/governance/cloud/policy/explain-a-decision">
+    Find the rule or setting that blocked a package or failed a check.
+  </Card>
+  <Card title="Audit Policy Changes" icon="clipboard-list" href="/governance/cloud/policy/audit-policy-changes">
+    See who changed the policy, and when.
+  </Card>
+</CardGroup>
+
+## Reference
+
+<CardGroup cols={2}>
+  <Card title="Cloud Policy Settings" icon="table" href="/reference/cloud-policy-settings">
+    Each setting, its type and its default.
+  </Card>
+  <Card title="Cloud Policy Limits" icon="gauge" href="/reference/cloud-policy-limits">
+    Limits, retention and known gaps.
+  </Card>
+</CardGroup>

@@ -12,10 +12,10 @@ Seven tabs — solution tabs at the core, plus supporting tabs.
 
 | Tab | Purpose | Groups |
 |---|---|---|
-| **Get Started** | What is SafeDep, vocabulary, entry points | Introduction · Core Concepts |
+| **Get Started** | What is SafeDep, vocabulary, entry points | Introduction · Core Concepts (nests Policy) |
 | **Package Security** | Block malicious packages at install time — on dev machines and in CI/CD — and scan any component on demand before use | Install-Time Package Blocking · MDM · On-Demand Package Scanning · CI/CD Package Blocking |
 | **AI Agent Security** | Discover, audit, and control what AI agents access and run | AI Agent Observability · AI Coding Protection |
-| **Visibility & Governance** | Scan repos, SBOMs, and CI/CD for supply-chain risk; deploy fleet tooling; manage policy and org-wide cloud visibility | Repository Scanning · MDM · Bill of Materials · AI Visibility · CI/CD & Platform Integrations · SafeDep Cloud (nests Endpoint Hub, Policy & Risk, Authentication) |
+| **Visibility & Governance** | Scan repos, SBOMs, and CI/CD for supply-chain risk; deploy fleet tooling; manage policy and org-wide cloud visibility | Repository Scanning · MDM · Bill of Materials · AI Visibility · CI/CD & Platform Integrations · SafeDep Cloud (nests Endpoint Hub) · Cloud Policy |
 | **Threat Intel** | Consume the malicious-package feed as an API: reports and campaigns. Subscription-gated (`FEATURE_THREAT_INTEL_FEED`) | Getting Started · Consuming the Feed · Reference |
 | **Reference** | Exact syntax, flags, API specs — no explanation | Query & Policy · API & Automation |
 | **Community & Support** | Community resources, FAQ, changelog | Community · Support · Updates |
@@ -34,7 +34,7 @@ Every structural decision derives from these rules. Full rationale in `docs-ia-p
 
 - **R3 — Organize by solution, not by tool.** Tabs name the security outcome SafeDep delivers. Tools appear one level deeper, inside groups. Grammar test: "SafeDep solves ___" must complete naturally with the tab name. Imperative verbs ("Scan & Analyze") fail; solution nouns ("Package Security") pass.
 
-- **R4 — Concepts are first-class, atomic, linkable.** Each concept (Malicious Package, Vulnerability, Policy, CEL, SBOM, Tenant, Endpoint) gets one dedicated page under Get Started › Core Concepts. **Malicious-package *protection* is a solution (the Package Security tab), not a concept**: the concept is the malicious package itself, and `concepts/malicious-package` carries the user-facing detection story (how SafeDep classifies a package as malicious). The Malysis/Malbase *pipeline* is internal infrastructure, never a concept page, product tab, or sidebar group. If SafeDep's threat-intelligence offering productizes, the user-facing *product* gets a docs home under the planned Threat Intelligence tab (§8); the pipeline stays invisible. The distinction this rule protects is pipeline vs product, not "intelligence never gets a tab."
+- **R4: Concepts are first-class, atomic, linkable.** Each concept (Malicious Package, Vulnerability, Policy, Policy Resolution, Labels, Package Rules, Policy Revisions, CEL, SBOM, Tenant, Endpoint) gets one dedicated page under Get Started › Core Concepts. The policy concepts and CEL sit in a nested Policy group. **Malicious-package *protection* is a solution (the Package Security tab), not a concept**: the concept is the malicious package itself, and `concepts/malicious-package` carries the user-facing detection story (how SafeDep classifies a package as malicious). The Malysis/Malbase *pipeline* is internal infrastructure, never a concept page, product tab, or sidebar group. If SafeDep's threat-intelligence offering productizes, the user-facing *product* gets a docs home under the planned Threat Intelligence tab (§8); the pipeline stays invisible. The distinction this rule protects is pipeline vs product, not "intelligence never gets a tab."
 
 - **R5 — Progressive disclosure.** Tab depth is unlimited; groups handle it. A tab splits only when it covers fundamentally different security outcomes. The Reference tab is the technical lookup layer — CLI flags, filter syntax, API specs — and is the only place exhaustive lookup content belongs.
 
@@ -61,7 +61,10 @@ Every structural decision derives from these rules. Full rationale in `docs-ia-p
 | Covers AI agent discovery, audit, or control | AI Agent Security | AI Agent Observability / AI Coding Protection |
 | Covers scanning repos, SBOMs, or CI/CD for supply-chain risk | Visibility & Governance | Repository Scanning / Bill of Materials / CI/CD |
 | Covers deploying vet or running vet tasks across endpoint fleets | Visibility & Governance | MDM |
-| Covers cloud policy, endpoint inventory, or org-wide access | Visibility & Governance | SafeDep Cloud / Endpoint Hub / Policy & Risk |
+| Covers endpoint inventory or org-wide access in SafeDep Cloud | Visibility & Governance | SafeDep Cloud / Endpoint Hub |
+| Changes a cloud policy setting, package rule or policy module | Visibility & Governance | Cloud Policy (one subgroup per capability when there is more than one) |
+| Connects or sets up a tool that enforces the cloud policy | That tool's outcome tab | The tool's group, with a card from Cloud Policy (example: `package-security/pmg/cloud-policy`) |
+| Is an independent capability with its own data and workflow that the policy only references (for example a catalog of approved components) | Visibility & Governance | Its own group |
 | Covers consuming the malicious-package feed (reports, campaigns, feed API) | Threat Intel | Getting Started / Consuming the Feed / Reference |
 | Is pure lookup (syntax, flags, API) | Reference | vet Query & Policy / API & Automation |
 | Is community/support | Community & Support | Community / Support |
@@ -135,10 +138,11 @@ Don't mix Diátaxis types within a single page.
 
 **Get Started**
 - Introduction: `introduction`, `get-started/choose-your-path`, `get-started/cli-tools`, `get-started/safedep-skill`
-- Core Concepts: `concepts/malicious-package`, `concepts/vulnerability`, `concepts/policy`, `concepts/cel`, `concepts/sbom`, `concepts/tenant`, `concepts/endpoint`
+- Core Concepts: `concepts/malicious-package`, `concepts/vulnerability`, `concepts/sbom`, `concepts/tenant`, `concepts/endpoint`
+  - Policy: `concepts/policy`, `concepts/policy-resolution`, `concepts/labels`, `concepts/package-rules`, `concepts/policy-revisions`, `concepts/cel`
 
 **Package Security** *(tab landing: `package-security/overview`)*
-- Install-Time Package Blocking: `package-security/pmg/overview` *(landing)*, `package-security/pmg/quickstart`, `package-security/pmg/sandbox`, `package-security/pmg/network-policy`, `package-security/pmg/dependency-cooldown`, `package-security/pmg/private-registries`, `package-security/pmg/system-install`, `package-security/pmg/kernel-enforcement`, `package-security/pmg/kubernetes`
+- Install-Time Package Blocking: `package-security/pmg/overview` *(landing)*, `package-security/pmg/quickstart`, `package-security/pmg/sandbox`, `package-security/pmg/network-policy`, `package-security/pmg/dependency-cooldown`, `package-security/pmg/cloud-policy`, `package-security/pmg/private-registries`, `package-security/pmg/system-install`, `package-security/pmg/kernel-enforcement`, `package-security/pmg/kubernetes`
 - MDM: `package-security/pmg/mdm/overview` *(landing)*, `package-security/pmg/mdm/jamf`, `package-security/pmg/mdm/jumpcloud`, `package-security/pmg/mdm/intune`
 - On-Demand Package Scanning: `package-security/scan/overview` *(landing)*, `package-security/scan/quickstart`, `package-security/scan/automation`
 - CI/CD Package Blocking: `package-security/pmg/github-actions`, `package-security/pmg/github-actions-network-policy`
@@ -152,9 +156,9 @@ Don't mix Diátaxis types within a single page.
 - Bill of Materials: `governance/xbom/overview` *(landing)*, `governance/xbom/quickstart`, `governance/cyclonedx-sbom`
 - AI Visibility: `governance/ai-governance` *(landing)*, `governance/shadow-ai-detection`, `governance/vet/ai-bom`
 - CI/CD & Platform Integrations: `governance/integrations/overview` *(landing)*, `governance/integrations/github`, `governance/integrations/github-code-scanning`, `governance/integrations/gitlab`, `governance/integrations/bitbucket-app`, `governance/integrations/bitbucket`, `governance/integrations/defectdojo`, `governance/terraform-audit`
-- SafeDep Cloud: `governance/cloud/overview` *(landing)*, `governance/cloud/quickstart`, `governance/cloud/authentication`, `governance/cloud/usage-billing`, `governance/cloud/sync`, `governance/cloud/talk-to-safedep`, `governance/cloud/alerts`, `governance/cloud/crowdstrike-siem`
+- SafeDep Cloud: `governance/cloud/overview` *(landing)*, `governance/cloud/quickstart`, `governance/cloud/authentication`, `governance/cloud/usage-billing`, `governance/cloud/sync`, `governance/cloud/talk-to-safedep`, `governance/cloud/alerts`, `governance/cloud/crowdstrike-siem`, `governance/cloud/malware-analysis`
   - Endpoint Hub: `governance/cloud/endpoint-hub/overview` *(landing)*, `governance/cloud/endpoint-hub/inventory`, `governance/cloud/endpoint-hub/inventory-catalog`, `governance/cloud/endpoint-hub/package-guard`, `governance/cloud/endpoint-hub/find-malicious-package`, `governance/cloud/endpoint-hub/ci-package-blocks`, `governance/cloud/endpoint-hub/mcp-advisor`, `governance/cloud/endpoint-hub/agentic-investigation`
-  - Policy & Risk: `governance/cloud/malware-analysis`, `governance/cloud/package-exclusions`
+- Cloud Policy: `governance/cloud/policy/overview` *(landing)*, `governance/cloud/policy/quickstart`, `governance/cloud/policy/block-a-package`, `governance/cloud/policy/trust-a-package`, `governance/cloud/policy/set-a-cooldown`, `governance/cloud/policy/target-a-group`, `governance/cloud/policy/pull-request-checks`, `governance/cloud/policy/roll-back-a-change`, `governance/cloud/policy/explain-a-decision`, `governance/cloud/policy/audit-policy-changes`, `governance/cloud/package-exclusions` (deprecated: package rules replace it)
 
 **Threat Intel** *(tab landing: `threat-intel/overview`)* — subscription-gated feed API (`FEATURE_THREAT_INTEL_FEED`). Product-level API guide; `threat-intel/schema` links out to the public `buf.build/safedep/api` module for the message/field/enum definitions (R6, don't hand-copy tables that drift). The module is public (a keyless `@buf/safedep_api.bufbuild_es` install resolves), so no in-page restatement is needed.
 - Getting Started: `threat-intel/quickstart`, `threat-intel/concepts`
@@ -163,7 +167,7 @@ Don't mix Diátaxis types within a single page.
 - Reference: `threat-intel/schema`, `threat-intel/errors`, `threat-intel/sdks`
 
 **Reference**
-- Query & Policy: `reference/filtering`, `reference/build-your-own-queries`, `reference/policy-as-code`, `reference/exceptions`, `reference/path-exclusion`
+- Query & Policy: `reference/filtering`, `reference/build-your-own-queries`, `reference/policy-as-code`, `reference/exceptions`, `reference/path-exclusion`, `reference/cloud-policy-settings`, `reference/cloud-policy-limits`
 - API & Automation: `reference/api-introduction`, `reference/endpoints`, `reference/insights-api-typescript`, `reference/sql-query`
 
 **Community & Support**
@@ -171,7 +175,7 @@ Don't mix Diátaxis types within a single page.
 - Support: `faq`, `governance/cloud/faq`
 - Updates: `changelog/2026` (`/changelog` redirects to the current year)
 
-Total: **89 pages**
+Total: **116 pages** (counted from `docs.json` after the Cloud Policy pages landed. The earlier total of 89 was stale.)
 
 ---
 
@@ -211,6 +215,6 @@ These are decided or flagged but deliberately out of scope for the IA-revamp PR 
 
 - **Concept reclassification (DONE).** Standup ruling applied: "malicious package protection" is a **solution** (the Package Security tab), and **malicious package** + **vulnerability** are the core concepts. `concepts/malicious-package` (carries the detection story) and `concepts/vulnerability` replace `concepts/malicious-package-protection` (retired, redirected). R4 rewritten in §2, `CLAUDE.md`, and the skill. Inbound cards repointed.
 - **JFrog Xray placement (DONE).** The JFrog Xray integration moved from Package Security to **Threat Intel › Integrations** (`threat-intel/integrations/jfrog-xray`). It was the lone paid, registry-level, team-scoped item in a tab that otherwise sells free, no-account, install-time blocking; it now sits with the feed it consumes (the integration is gated on the Threat Intel Feed add-on). Old path `/package-security/jfrog-xray` redirects to the new one; inbound cards repointed.
-- **Visibility & Governance breadth (watch).** Six groups span the whole capability ladder, with Endpoint Hub and Policy & Risk nested under SafeDep Cloud. Accepted risk for now; the natural relief valve is the Threat Intelligence tab above, which will draw intel-consumption use-cases out of V&G.
+- **Visibility & Governance breadth (watch).** Seven groups span the whole capability ladder, with Endpoint Hub nested under SafeDep Cloud and Cloud Policy as its own group. Accepted risk for now; the natural relief valve is the Threat Intelligence tab above, which will draw intel-consumption use-cases out of V&G.
 - **Reference how-to misfiles (flagged).** `reference/build-your-own-queries` and `reference/insights-api-typescript` are how-tos (goal-phrased, step-by-step) sitting in the Reference tab. Diátaxis says how-tos belong in a solution tab (Visibility & Governance). Needs a landing-group decision before moving (redirects required). Interim: a one-line cross-link to the Insights API was added on `package-security/overview` to serve the "check a package programmatically" use-case.
 - **Endpoint Hub: MCP advisor stream (DONE, 2026-07-07).** Endpoint Hub has **three** sources: Inventory (`vet endpoint scan`), Package Guard (PMG), and **Advisor events (SafeDep MCP server)**. Verified in control-tower `services/endpoint_management/list_endpoint_advisor_events.go` (`mcp_tool_call_logs` JOIN `endpoints`, gated by `FEATURE_ENDPOINT_SYNC`) and app.safedep.io endpoint-detail Advisor tab. Shipped: (1) dedicated page `governance/cloud/endpoint-hub/mcp-advisor` (sibling to Package Guard); (2) `governance/cloud/endpoint-hub/overview` rewritten "two views" → three (Inventory · Package Guard · MCP Advisor), naming the MCP server as the source; (3) Endpoint Hub `<Note>` + cross-link added to `ai-security/mcp-server`. Attribution is best-effort via the `X-Endpoint-ID` header the SafeDep CLI injects (`setup mcp install`); manual raw-header setup records at tenant level only. Gryph stays local-only (no endpoint link until it gains Cloud sync).

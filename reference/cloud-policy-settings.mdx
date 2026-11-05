@@ -1,0 +1,77 @@
+---
+title: "Cloud Policy Settings"
+description: "Reference for each setting of the SafeDep cloud policy: its path, type, values, SafeDep default and the tools that enforce it."
+---
+
+This page lists each setting of the [cloud policy](/governance/cloud/policy/overview) and the fields of a package rule. For the concepts, see [Policy](/concepts/policy) and [Policy Resolution](/concepts/policy-resolution). The protobuf contract of the policy is the `safedep.policy` packages in the [SafeDep API](https://buf.build/safedep/api). For the flags of each command, see the [safedep CLI command reference](https://github.com/safedep/cli/tree/main/docs/cmd).
+
+## Policy settings
+
+| Path | Type | Values | SafeDep default policy | PMG | Pull request check |
+|---|---|---|---|---|---|
+| `package_admission.cooldown.min_age` | Duration | 0 to 365 days. `0` turns the cooldown off. | Not set | Enforces | Not supported |
+| `scan_gate.fail_on` | Severity | `critical`, `high`, `medium`, `low`, `info` | `high` | Not applicable | Enforces. `info` is partial. |
+| `scan_gate.fail_on_attacks` | Attack gate | `report`, `fail` | `fail` | Not applicable | `report` enforces. With `fail`, the check reports and does not fail yet. |
+
+Vet does not read the cloud policy yet.
+
+Notes:
+
+- **`package_admission.cooldown.min_age`.** The minimum age of a package version since its publish time. A longer age is stricter. PMG rounds the value up to whole days, and maps it to `dependency_cooldown.enabled` and `dependency_cooldown.days`. When no layer sets it, PMG uses its own config.
+- **`scan_gate.fail_on`.** The check fails on a vulnerability at or above this severity. A lower severity is stricter. The check ranks a vulnerability with no severity as `info`.
+- **`scan_gate.fail_on_attacks`.** What the check does with a finding of an attack control, such as a malware verdict that is not verified. Verified malware always fails the check, whatever the value. `fail` is stricter than `report`.
+- Each setting is mandatory in PMG: an environment variable or a flag does not override the cloud value.
+
+## The policy settings document
+
+`safedep policy get` and `safedep policy edit` show the settings as YAML:
+
+| Element | Form |
+|---|---|
+| Field names | The contract names, as `scan_gate.fail_on` |
+| Enum values | Short tokens, as `medium` for `SEVERITY_MEDIUM` |
+| Durations | Go durations, as `168h`. An edit also accepts days, as `7d`. |
+| `base` | The settings of the policy base |
+| `base_description` | Text, at most 1,000 characters |
+| `overrides[].id` | Set by the server. Leave it out for a new policy override. |
+| `overrides[].name` | Lowercase letters, digits and hyphens, at most 63 characters. It starts and ends with a letter or a digit. Unique. |
+| `overrides[].priority` | 1 to 1,000,000. Unique. The higher priority wins. |
+| `overrides[].description` | Text, at most 1,000 characters |
+| `overrides[].selector` | `matchLabels` and `matchExpressions`, with the operators `In`, `NotIn`, `Exists` and `DoesNotExist` |
+| `overrides[].spec` | The settings that the policy override changes |
+| `overrides[].expires_at` | Optional timestamp. Required when the selector names `safedep.io/endpoint-id`. |
+
+The document holds no package rules and keeps no comments.
+
+## Package rule fields
+
+| Field | Block entry | Trust entry | Notes |
+|---|---|---|---|
+| Selector (PURL) | Required. A PURL, or a prefix that ends with `/*` or `.*`. | Required. One package. No prefix. | At most 512 characters |
+| Version range (`vers`) | Optional | Optional | The vers form, as `vers:npm/>=1.2.0\|<2.0.0`. Not with a version in the PURL. |
+| Effect | `block` | `trust` | |
+| Scopes | None | Required: `malware`, `cooldown`, `vulnerability` | |
+| Reason | Required | Required | 1 to 1,000 characters. Tools receive it. |
+| Expiry | Optional | Required, at most 90 days from now | |
+| Ticket | Optional | Optional | At most 128 characters. Tools do not receive it. |
+| Requested by | Optional | Optional | At most 128 characters. Tools do not receive it. |
+| Attaches to | The policy base, or one policy override | The policy base, or one policy override | |
+
+A rule never changes its selector, its effect or its scopes. Its reason, expiry, ticket and requester can change.
+
+| Trust scope | Waives | PMG | Pull request check |
+|---|---|---|---|
+| `malware` | A malware verdict that is not verified | Enforces | Enforces |
+| `cooldown` | The dependency cooldown | Enforces | Not supported |
+| `vulnerability` | The vulnerability findings of a scan gate | Not applicable | Enforces |
+
+## Related
+
+<CardGroup cols={2}>
+  <Card title="Cloud Policy Limits" icon="gauge" href="/reference/cloud-policy-limits">
+    Limits, retention and known gaps.
+  </Card>
+  <Card title="Package Rules" icon="list-check" href="/concepts/package-rules">
+    How block and trust entries match.
+  </Card>
+</CardGroup>

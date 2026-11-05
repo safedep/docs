@@ -1,34 +1,61 @@
 ---
 title: Policy
-description: "A SafeDep policy is a set of CEL rules that decide which dependencies pass or fail, enforced during scans and in CI/CD."
+description: "A SafeDep policy decides which packages pass. There are two kinds: the cloud policy of a tenant, and policy as code in a repository."
 ---
 
-A policy turns your supply-chain rules into configuration that Vet evaluates automatically. Instead of reviewing dependencies by hand, you write the rules once and Vet applies them to every package, including transitive ones.
+A policy turns your supply chain rules into data that SafeDep tools apply to each package. You write a rule once, and the tools apply it the same way on every machine and in every check. SafeDep has two kinds of policy. They differ in where they live, who changes them, and which tools read them.
 
-## Why it matters
+## The cloud policy
 
-Manual vetting does not scale and misses transitive dependencies. A policy makes a rule like "block known malware", "no GPL licenses", or "no unmaintained packages" an automated, repeatable check that runs the same way locally and in CI/CD.
+The cloud policy is one policy for each [tenant](/concepts/tenant). It lives in SafeDep Cloud, and an Admin of the tenant changes it with the [safedep CLI](/get-started/cli-tools). A change reaches every endpoint and every pull request check of the tenant with no new MDM package.
 
-## How it works
+The cloud policy holds two kinds of content:
 
-A policy is a set of [CEL](/concepts/cel) rules, written as a filter suite in a YAML file. Vet evaluates each package against the rules, and you decide what a match does:
+- **Policy settings** are typed values, such as the dependency cooldown or the lowest vulnerability severity that fails a pull request check. Settings come in layers: the SafeDep default policy, the policy base of the tenant, and policy overrides for groups of endpoints and projects. See [Policy Resolution](/concepts/policy-resolution).
+- **Package rules** are block entries and trust entries for packages. See [Package Rules](/concepts/package-rules).
 
-- During a local scan, Vet can exit non-zero when a package matches a blocking rule.
-- In CI/CD with [vet-action](https://github.com/safedep/vet-action), the policy file is passed via the `policy` input (conventionally `.github/vet/policy.yml`), and `paranoid: true` fails the build on a violation.
+Each publish makes a new [policy revision](/concepts/policy-revisions). Each decision that a tool makes with the cloud policy names the revision and the rule or setting that decided. So you can explain a block, roll back a bad change, and show an auditor which policy applied on a date.
 
-See [Policy as Code](/reference/policy-as-code) for the full syntax and examples.
+These tools enforce the cloud policy:
+
+- [PMG](/package-security/pmg/cloud-policy) on developer machines and CI runners applies the package rules and the dependency cooldown.
+- The pull request check of the [SafeDep GitHub App](/governance/integrations/github) and the [Bitbucket app](/governance/integrations/bitbucket-app) applies the scan gate settings and the package rules.
+- Vet does not read the cloud policy yet.
+
+## Policy as code
+
+Policy as code is a Vet filter suite: a YAML file of [CEL](/concepts/cel) rules that you keep in a repository. Vet evaluates each package of a scan against the rules, including transitive dependencies, and you decide what a match does. During a local scan, Vet can exit with a non-zero code when a package matches a rule. In CI/CD, [vet-action](https://github.com/safedep/vet-action) takes the policy file in its `policy` input.
+
+See [Policy as Code](/reference/policy-as-code) for the syntax and examples.
+
+## Compare the two kinds
+
+| | Cloud policy | Policy as code |
+|---|---|---|
+| Where it lives | SafeDep Cloud, one for each tenant | A YAML file in a repository |
+| Who changes it | An Admin of the tenant, with the safedep CLI | Each person who can change the file |
+| What it holds | Policy settings and package rules | CEL rules over package data |
+| History | Policy revisions and audit events | The history of the repository |
+| What enforces it | PMG and the pull request check | Vet and vet-action |
+| Plan | SafeDep Cloud Team or Enterprise | Free and open source |
 
 ## Related
 
 <CardGroup cols={2}>
+  <Card title="Cloud Policy" icon="shield-halved" href="/governance/cloud/policy/overview">
+    Manage the cloud policy of your tenant.
+  </Card>
+  <Card title="Policy Resolution" icon="layer-group" href="/concepts/policy-resolution">
+    How the layers of the cloud policy merge for one endpoint or project.
+  </Card>
   <Card title="Policy as Code" icon="file-code" href="/reference/policy-as-code">
-    Write and structure policy files.
+    Write and structure Vet policy files.
   </Card>
   <Card title="CEL" icon="code" href="/concepts/cel">
-    The expression syntax policies are built from.
+    The expression syntax of policy as code.
   </Card>
   <Card title="Malicious Package" icon="shield-virus" href="/concepts/malicious-package">
-    The intelligence policies act on.
+    The intelligence that policies act on.
   </Card>
   <Card title="JFrog Xray Blocking" icon="shield-halved" href="/threat-intel/integrations/jfrog-xray">
     Enforce package blocking in JFrog Xray.

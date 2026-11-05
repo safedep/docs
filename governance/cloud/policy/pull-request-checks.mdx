@@ -1,0 +1,137 @@
+---
+title: "Fail Pull Request Checks on Chosen Severities"
+description: "Use the cloud policy to choose which vulnerability severities fail the SafeDep pull request check for a group of projects, on GitHub and Bitbucket."
+---
+
+The pull request check of the [SafeDep GitHub App](/governance/integrations/github) and the [Bitbucket app](/governance/integrations/bitbucket-app) reads the cloud policy of your tenant. Both apps use the same check, so one policy applies to repositories on both forges. There is no separate setting in each app.
+
+<Note>
+  This guide needs the SafeDep Cloud Team or Enterprise plan and the Admin role. See [pricing](https://safedep.io/pricing). The app must scan the repositories for your tenant.
+</Note>
+
+## What the check reads
+
+| Part of the policy | What the check does |
+|---|---|
+| `scan_gate.fail_on` | Fails on a vulnerability at or above this severity: `critical`, `high`, `medium`, `low` or `info`. The SafeDep default policy sets `high`. |
+| `scan_gate.fail_on_attacks` | With `report`, the check reports a malware verdict that is not verified and does not fail on it. With `fail` (the default), the check also reports it and does not fail on it yet. |
+| Block entries | Fail the check when the pull request adds a package that they select. |
+| Trust entries, scope `vulnerability` | Waive the vulnerabilities of the package that they select. |
+| Trust entries, scope `malware` | Waive a malware verdict that is not verified. |
+
+Verified malware always fails the check. No setting and no trust entry changes that. The check also fails on a risky license, by a fixed rule of the check that the policy does not control yet. The check does not apply a dependency cooldown.
+
+`info` is a partial value: the vulnerability data has no info grade, so the check ranks a vulnerability with no severity as info.
+
+## Fail on medium for a group of projects
+
+1. Label the projects of the group. A repository is a project:
+
+   ```bash
+   safedep project label set acme/payments-api acme/ledger PAY/settlement --label custom/criticality=high
+   ```
+
+   If a repository has no project yet, create it with `safedep project sync OWNER/REPOSITORY`.
+
+2. Open the policy settings document and add a policy override:
+
+   ```bash
+   safedep policy edit -m "payments: fail on medium"
+   ```
+
+   ```yaml
+   overrides:
+     - name: payments
+       priority: 200
+       description: Stricter gate for payment services
+       selector:
+         matchLabels: {custom/criticality: high}
+       spec:
+         scan_gate:
+           fail_on: medium
+   ```
+
+3. Preview the change. The preview counts the projects that the policy override reaches, and how many of them can enforce `medium`:
+
+   ```bash
+   safedep policy change show 18
+   ```
+
+4. Publish it:
+
+   ```bash
+   safedep policy change publish 18 -m "payments: fail on medium"
+   ```
+
+   Use the change number that `safedep policy edit` printed. The next check of each project uses the new revision.
+
+To set the gate for every project of the tenant, set `scan_gate.fail_on` in the policy base instead. To target one forge, select on `scm/forge`, as in `matchLabels: {scm/forge: bitbucket}`.
+
+## Waive one vulnerable package
+
+To pass a check that fails on a vulnerability that you accept, create a trust entry with the scope `vulnerability`:
+
+```bash
+safedep policy rule create --trust pkg:npm/minimist@1.2.5 --scope vulnerability \
+  --reason "Not reachable in our build, S-91" --expires 30d
+```
+
+The trust entry waives every vulnerability of the versions that it selects, also a vulnerability that is published later.
+
+## What the check shows
+
+A failing check shows a policy block above the package report:
+
+- On GitHub, in the comment of the SafeDep app and in the output of the check run.
+- On Bitbucket, in the comment of the SafeDep app. The build status of the commit links to the pull request.
+
+The block names the policy revision, each setting that the check read and the layer that set it, and each failing, waived and reported finding with the rule that decided it. This example comes from the SafeDep test data:
+
+```markdown
+**SafeDep policy: failed**
+
+Policy: tenant revision 47 · SafeDep default policy revision 1
+
+| Setting | Value | Set by | Coverage |
+| --- | --- | --- | --- |
+| `scan_gate.fail_on` | MEDIUM | policy override "payments" (selects `custom/criticality=high`) | ENFORCE |
+
+| Package | Finding | Result | Rule |
+| --- | --- | --- | --- |
+| `left-padd 1.0.0` | block entry `r_9c1x4kq7dm` | Failing | "typosquat of left-pad" |
+| `lodash 4.17.20` | CVE-2021-23337 (high) | Failing | `scan_gate.fail_on` |
+| `minimist 1.2.5` | CVE-2021-44906 (critical) | Waived | trust entry `r_trust` (VULNERABILITY), expires 2026-12-03 |
+
+Fixed rule of the check: `risky-oss-licenses`
+
+Ask your security admin. They can run `safedep project policy show acme/payments-api`
+```
+
+- A passing check shows no policy block.
+- On a public repository, the block shows the rule id of a package rule, not its reason.
+- When the tenant has no policy revision, the block names only the SafeDep default policy.
+
+## When the check does not use your policy
+
+- **The repository has no project.** The check resolves the policy with the `scm/` labels of the repository. The policy base, the package rules of the policy base and the policy overrides that select `scm/` labels apply. A `custom/` label needs a project. Run `safedep project sync`.
+- **The installation is not linked to a tenant, or the plan of the tenant has no cloud policy.** The SafeDep default policy applies alone.
+- **SafeDep Cloud cannot read the policy.** The check retries, and then fails with an error. It never falls back to the default policy, because the default policy can be looser than yours.
+
+A failed check stops a merge only when the forge requires the check.
+
+## Next steps
+
+<CardGroup cols={2}>
+  <Card title="Explain a Decision" icon="magnifying-glass" href="/governance/cloud/policy/explain-a-decision">
+    List the checks that a rule or a setting failed.
+  </Card>
+  <Card title="Target a Group" icon="bullseye" href="/governance/cloud/policy/target-a-group">
+    Labels and selectors for projects.
+  </Card>
+  <Card title="GitHub App" icon="github" href="/governance/integrations/github">
+    Install the SafeDep GitHub App.
+  </Card>
+  <Card title="Bitbucket App" icon="bitbucket" href="/governance/integrations/bitbucket-app">
+    Install and link the Bitbucket app.
+  </Card>
+</CardGroup>

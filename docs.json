@@ -45,8 +45,18 @@
             "pages": [
               "concepts/malicious-package",
               "concepts/vulnerability",
-              "concepts/policy",
-              "concepts/cel",
+              {
+                "group": "Policy",
+                "icon": "scale-balanced",
+                "pages": [
+                  "concepts/policy",
+                  "concepts/policy-resolution",
+                  "concepts/labels",
+                  "concepts/package-rules",
+                  "concepts/policy-revisions",
+                  "concepts/cel"
+                ]
+              },
               "concepts/sbom",
               "concepts/tenant",
               "concepts/endpoint"
@@ -68,6 +78,7 @@
               "package-security/pmg/sandbox",
               "package-security/pmg/network-policy",
               "package-security/pmg/dependency-cooldown",
+              "package-security/pmg/cloud-policy",
               "package-security/pmg/private-registries",
               "package-security/pmg/system-install",
               "package-security/pmg/kernel-enforcement",
@@ -181,6 +192,7 @@
               "governance/cloud/talk-to-safedep",
               "governance/cloud/alerts",
               "governance/cloud/crowdstrike-siem",
+              "governance/cloud/malware-analysis",
               {
                 "group": "Endpoint Hub",
                 "icon": "server",
@@ -195,16 +207,24 @@
                   "governance/cloud/endpoint-hub/mcp-advisor",
                   "governance/cloud/endpoint-hub/agentic-investigation"
                 ]
-              },
-              {
-                "group": "Policy & Risk",
-                "icon": "shield-halved",
-                "expanded": false,
-                "pages": [
-                  "governance/cloud/malware-analysis",
-                  "governance/cloud/package-exclusions"
-                ]
               }
+            ]
+          },
+          {
+            "group": "Cloud Policy",
+            "icon": "scale-balanced",
+            "root": "governance/cloud/policy/overview",
+            "pages": [
+              "governance/cloud/policy/quickstart",
+              "governance/cloud/policy/block-a-package",
+              "governance/cloud/policy/trust-a-package",
+              "governance/cloud/policy/set-a-cooldown",
+              "governance/cloud/policy/target-a-group",
+              "governance/cloud/policy/pull-request-checks",
+              "governance/cloud/policy/roll-back-a-change",
+              "governance/cloud/policy/explain-a-decision",
+              "governance/cloud/policy/audit-policy-changes",
+              "governance/cloud/package-exclusions"
             ]
           }
         ]
@@ -263,7 +283,9 @@
               "reference/build-your-own-queries",
               "reference/policy-as-code",
               "reference/exceptions",
-              "reference/path-exclusion"
+              "reference/path-exclusion",
+              "reference/cloud-policy-settings",
+              "reference/cloud-policy-limits"
             ]
           },
           {
