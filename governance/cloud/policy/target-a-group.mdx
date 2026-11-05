@@ -109,11 +109,25 @@ safedep project list --selector custom/criticality=high
 safedep endpoint list --selector custom/criticality=high
 ```
 
+`--selector` takes the selector as text. Separate the terms with commas, as in `custom/team=release,reported/os=darwin`. Every term must hold. A term can be `key=value`, `key!=value`, `key in (a,b)`, `key notin (a,b)`, `key` or `!key`.
+
 After you publish, show the policy of one subject and the layer that set each value:
 
 ```bash
 safedep project policy show acme/payments-api --field scan_gate.fail_on
 ```
+
+## If the publish stops
+
+When another Admin published a change to the policy settings after you created your change, the publish stops, because your change is stale. Sync the change, read the preview again, and publish:
+
+```bash
+safedep policy change sync 18
+safedep policy change show 18
+safedep policy change publish 18 -m "payments: fail on medium"
+```
+
+The sync moves the base of the change to the head revision and keeps your settings as you wrote them. Your settings can undo the change of the other Admin, so read the preview before you publish.
 
 ## Select one endpoint for a short time
 

@@ -22,15 +22,9 @@ A prefix has no version. To limit a prefix to some versions, add a range. A wide
 
 A trust entry waives the verdicts of its trust scopes for one package. It selects one package, with an optional version or range. It cannot use a prefix: in most ecosystems anyone can publish under a prefix, so a prefix would also trust packages that do not exist yet and that no one reviewed.
 
-Each trust entry names the scopes that it waives:
+Each trust entry names the trust scopes that it waives: `malware` (a malware verdict that is not verified, such as a suspicious package), `cooldown` (the dependency cooldown) or `vulnerability` (the vulnerability findings of a scan gate). Each tool applies only the scopes that fit its checks. See [Cloud Policy Settings](/reference/cloud-policy-settings#package-rule-fields) for the scopes that PMG and the pull request check apply.
 
-| Trust scope | It waives | PMG | Pull request check |
-|---|---|---|---|
-| `malware` | A malware verdict that is not verified, such as a suspicious package | Applies | Applies |
-| `cooldown` | The dependency cooldown | Applies | Not supported |
-| `vulnerability` | The vulnerability findings of a scan gate | Ignores | Applies |
-
-`--scope all` in the safedep CLI expands to the scopes that exist when you create the rule. A scope that a later release adds never widens a rule that exists.
+A trust entry never waives a scope that it does not name. A client that offers "all scopes" expands it to the scopes that exist when the admin creates the rule. So a scope that a later release adds never widens a rule that exists.
 
 A trust entry needs a reason and an expiry. The expiry is at most 90 days from now. A trust entry never skips the malware analysis.
 

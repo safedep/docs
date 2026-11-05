@@ -21,6 +21,7 @@ pmg cloud sync
 - `pmg cloud login` stores the tenant ID and an API key of the tenant. PMG can also read them from the `SAFEDEP_TENANT_ID` and `SAFEDEP_API_KEY` environment variables.
 - `cloud.policy` applies only when `cloud.enabled` is `true`.
 - `pmg cloud sync` fetches the policy at once.
+- `pmg config set` adds `cloud.policy` to a config file that an older PMG wrote. If the command prints `key not found`, the file has no `cloud` section. Run `pmg setup install` to add the missing keys of the PMG template to your config file, then run `pmg config set` again. You can also add the key by hand with `pmg config edit`.
 
 Then check the state:
 
@@ -46,7 +47,7 @@ To turn off all cloud content on a managed endpoint, set `cloud.policy: false` i
 
 PMG fetches the resolved policy of the endpoint. It holds the package rules that apply to the endpoint and the dependency cooldown. PMG sends the labels `reported/os` and `reported/arch` with each fetch, so a policy override can select endpoints by operating system or CPU architecture.
 
-PMG fetches the policy in the background after a command ends, also after a blocked install. It fetches at most once every 5 minutes, also when `cloud.auto_sync.enabled` is `false`. `pmg cloud sync` fetches at once. The persistent proxy applies a new policy with no restart.
+PMG fetches the policy in the background after each command, also after a command that PMG blocked. It fetches at most once every 5 minutes, also when `cloud.auto_sync.enabled` is `false`. `pmg cloud sync` fetches at once. The persistent proxy applies a new policy with no restart.
 
 PMG keeps the policy in the `cloud-policy/` folder of its config folder. Under `sudo`, PMG reads the cache of the user who ran `sudo` first.
 
@@ -93,9 +94,7 @@ With `cloud.enabled` on, PMG syncs each decision of the cloud policy to your ten
 
 ## Known gaps
 
-- PMG keeps the cache in the folder of the user. A user can change the cache on a laptop. The same user can also remove PMG.
-- IT can keep a value from the cloud policy only with `global_lockdown`, which keeps every key that the managed config file sets. IT cannot lock one field of the policy alone.
-- The first install after a new block can use the previous policy, until the next background fetch.
+PMG keeps the policy cache in the folder of the user, so a user can change the cache on a laptop. For each gap of this release, see [Cloud Policy Limits](/reference/cloud-policy-limits#known-gaps).
 
 ## Next steps
 

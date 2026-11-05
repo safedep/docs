@@ -62,9 +62,7 @@ The revisions show which policy SafeDep Cloud served on a date. The applied revi
 
 ## Email notices
 
-SafeDep Cloud sends an email to every Owner and Admin of the tenant after a publish that loosens the policy, adds a block entry, or restores a revision. The email names the tenant, the revision, the person who published it, the change direction, the message, the changed fields, and for a block the selector and the reason.
-
-A publish that fails sends no email.
+Every Owner and Admin of the tenant gets an email after some publishes, such as a publish that loosens the policy. To get the emails, give the person the Owner or Admin role in the tenant. To check a publish that an email names, run `safedep policy revision show` with the revision of the email. For which publishes send an email and what it holds, see [Notices](/concepts/policy-revisions#notices).
 
 ## Retention
 
