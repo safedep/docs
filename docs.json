@@ -283,7 +283,9 @@
               "reference/build-your-own-queries",
               "reference/policy-as-code",
               "reference/exceptions",
-              "reference/path-exclusion"
+              "reference/path-exclusion",
+              "reference/cloud-policy-settings",
+              "reference/cloud-policy-limits"
             ]
           },
           {
