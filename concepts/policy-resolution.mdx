@@ -1,0 +1,69 @@
+---
+title: Policy Resolution
+description: "How SafeDep Cloud merges the default policy, the policy base and the policy overrides into the resolved policy of one endpoint or project."
+---
+
+A tenant has one cloud [policy](/concepts/policy), but its endpoints and projects do not all need the same values. A CI runner can need a longer dependency cooldown than a laptop. A payment service can need a stricter pull request check than an internal tool. Policy resolution is how SafeDep Cloud computes the values for one of them.
+
+## Subjects
+
+A subject is a thing that the policy resolves for: an [endpoint](/concepts/endpoint) or a project. A repository is a project. Each subject has [labels](/concepts/labels), and the labels decide which policy overrides apply to it.
+
+## The three layers
+
+Resolution stacks three layers of policy settings, from low to high:
+
+1. **The SafeDep default policy.** SafeDep defines it and gives it its own revision number. No tenant can change it. It holds policy settings only, never package rules. Today it sets `scan_gate.fail_on` to `high` and `scan_gate.fail_on_attacks` to `fail`, the gate that the pull request check used before the cloud policy existed.
+2. **The policy base.** It applies to every endpoint and every project of the tenant.
+3. **Policy overrides.** Each policy override has a name, a label selector, a unique priority, and the settings that it changes. It applies only to the subjects that its selector matches. A policy override can also have an expiry, after which it matches no subject.
+
+For each field, the highest layer that sets the field wins. Among the policy overrides that match a subject, the one with the highest priority wins. A policy override sets only the fields that it lists. Every other field comes from the next layer down.
+
+A tenant that sets nothing gets the default policy alone. So does a pull request check of an installation that is not linked to a tenant, and of a tenant whose plan does not include the cloud policy.
+
+## Package rules
+
+[Package rules](/concepts/package-rules) do not use the layers above. A package rule attaches to the policy base, or to one policy override. A subject gets the rules of the policy base plus the rules of each policy override that matches it.
+
+## Example
+
+The policy base sets a cooldown of 48 hours. Two policy overrides change it:
+
+| Policy override | Priority | Selector | Settings |
+|---|---|---|---|
+| `payments` | 200 | `custom/criticality=high` | `scan_gate.fail_on: medium`, `package_admission.cooldown.min_age: 168h` |
+| `macs` | 100 | `reported/os=darwin` | `package_admission.cooldown.min_age: 120h` |
+
+| Subject | Matches | Cooldown | `scan_gate.fail_on` |
+|---|---|---|---|
+| A Linux CI runner with no `custom/` labels | none | 48h, from the policy base | `high`, from the default policy |
+| A macOS laptop | `macs` | 120h, from `macs` | `high`, from the default policy |
+| A macOS laptop with `custom/criticality=high` | `payments` and `macs` | 168h, from `payments` (higher priority) | `medium`, from `payments` |
+
+## The resolved policy
+
+The resolved policy is the result for one subject. It holds the merged settings, the package rules that apply, the tenant policy revision, the default policy revision and the policy overrides that matched. It also names the layer that set each field, so a tool can explain a decision.
+
+SafeDep Cloud resolves the policy when a subject needs it:
+
+- An endpoint gets its resolved policy at each policy fetch. PMG keeps the last one in a local cache.
+- A project gets its resolved policy at each pull request check.
+
+A new revision, a label change or an expiry changes the result at the next fetch or check. To see the result for one subject, and the layer that set each value, run `safedep endpoint policy show` or `safedep project policy show`.
+
+## Related
+
+<CardGroup cols={2}>
+  <Card title="Labels" icon="tags" href="/concepts/labels">
+    How a policy override selects endpoints and projects.
+  </Card>
+  <Card title="Package Rules" icon="list-check" href="/concepts/package-rules">
+    Block and trust entries.
+  </Card>
+  <Card title="Target a Group" icon="bullseye" href="/governance/cloud/policy/target-a-group">
+    Write a policy override for a group of endpoints or projects.
+  </Card>
+  <Card title="Cloud Policy Settings" icon="table" href="/reference/cloud-policy-settings">
+    Each setting and its value in the default policy.
+  </Card>
+</CardGroup>

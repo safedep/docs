@@ -45,8 +45,18 @@
             "pages": [
               "concepts/malicious-package",
               "concepts/vulnerability",
-              "concepts/policy",
-              "concepts/cel",
+              {
+                "group": "Policy",
+                "icon": "scale-balanced",
+                "pages": [
+                  "concepts/policy",
+                  "concepts/policy-resolution",
+                  "concepts/labels",
+                  "concepts/package-rules",
+                  "concepts/policy-revisions",
+                  "concepts/cel"
+                ]
+              },
               "concepts/sbom",
               "concepts/tenant",
               "concepts/endpoint"
