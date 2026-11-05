@@ -1,0 +1,107 @@
+---
+title: "Block a Package During an Incident"
+description: "Block a malicious package, a version range or a list of packages for every endpoint and project of your tenant with the safedep CLI."
+---
+
+Use a block entry when a package is a threat to your tenant and you cannot wait for an MDM push. The block reaches every pull request check at once, and each PMG endpoint after its next policy fetch.
+
+<Note>
+  This guide needs the SafeDep Cloud Team or Enterprise plan and the Admin role. See [pricing](https://safedep.io/pricing).
+</Note>
+
+## Block one package
+
+```bash
+safedep policy rule create --block pkg:npm/evil --vers '>=1.2.0' \
+  --reason "IR-2291 credential stealer" --ticket IR-2291
+```
+
+- The selector is a PURL. Without a version or `--vers`, the block selects every version.
+- `--vers` takes a range, as `'>=1.2.0'`. Quote it, because the shell reads `>`.
+- `--reason` is required. PMG shows it in the block message. The pull request check shows it on a private repository only.
+- `--ticket` and `--requested-by` are optional. Tools never receive them.
+
+The command creates the rule and publishes a new policy revision at once. It prints the rule id, such as `r_9c1x4kq7dm`. Each decision of the rule cites that id.
+
+## Block a namespace
+
+A block entry can use a prefix that ends with `/*` or `.*`:
+
+```bash
+safedep policy rule create --block 'pkg:npm/@evil-scope/*' --reason "IR-2300 hijacked scope"
+```
+
+A prefix has no version. Use `--vers` to limit it to a range. A prefix such as `pkg:npm/*` selects every package of an ecosystem and stops every install of it, and the command warns you.
+
+## Block a list of packages
+
+Write one selector on each line of a file. A line can add a range after a space. A line that starts with `#` is a comment.
+
+```text iocs.txt
+# IR-2300 campaign
+pkg:npm/evil-one
+pkg:npm/evil-two vers:npm/>=2.0.0
+pkg:pypi/evil-three@0.4.1
+```
+
+```bash
+safedep policy rule create --block -f iocs.txt --reason "IR-2300 campaign" --ticket IR-2300
+```
+
+The file holds at most 1,000 selectors. All of them go into one policy revision. Use `-f -` to read the list from standard input.
+
+## Block for one group only
+
+By default a rule attaches to the policy base and applies to every endpoint and project. To block for the subjects of one policy override, add `--override NAME`:
+
+```bash
+safedep policy rule create --block pkg:npm/legacy-sdk --reason "Not allowed in payment services" \
+  --override payments
+```
+
+## Check the block
+
+1. List the endpoints that did not apply the new revision yet. Use the revision number that the create command printed:
+
+   ```bash
+   safedep endpoint list --applied-revision '<48'
+   ```
+
+2. List the decisions of the rule:
+
+   ```bash
+   safedep policy decision list --rule r_9c1x4kq7dm
+   ```
+
+Every Owner and Admin of the tenant gets an email about the new block.
+
+A block stops new installs. It does not remove copies that are already installed. To find the endpoints that have the package, see [Find a Malicious Package](/governance/cloud/endpoint-hub/find-malicious-package).
+
+## How fast a block reaches PMG
+
+PMG fetches the policy in the background after a command, at most once every 5 minutes. So the first install after a block can still use the previous policy. To fetch at once on one machine, run `pmg cloud sync`.
+
+## Remove the block
+
+```bash
+safedep policy rule delete r_9c1x4kq7dm --reason "IR-2291 closed"
+```
+
+The delete loosens the policy and publishes a new revision. The rule stays in the history of the revisions.
+
+## Next steps
+
+<CardGroup cols={2}>
+  <Card title="Package Rules" icon="list-check" href="/concepts/package-rules">
+    Selectors, prefixes and how a block beats a trust entry.
+  </Card>
+  <Card title="Explain a Decision" icon="magnifying-glass" href="/governance/cloud/policy/explain-a-decision">
+    Find the rule behind a block.
+  </Card>
+  <Card title="Audit Policy Changes" icon="clipboard-list" href="/governance/cloud/policy/audit-policy-changes">
+    See who added or removed a rule.
+  </Card>
+  <Card title="Command Reference" icon="terminal" href="https://github.com/safedep/cli/tree/main/docs/cmd">
+    Every flag of `safedep policy rule`.
+  </Card>
+</CardGroup>

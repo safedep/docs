@@ -1,0 +1,96 @@
+---
+title: "Set the Dependency Cooldown from the Cloud"
+description: "Set the minimum age of a package version for every PMG endpoint of your tenant, or for a group of endpoints, with the cloud policy."
+---
+
+The [PMG dependency cooldown](/package-security/pmg/dependency-cooldown) holds back package versions that are younger than a set age. The cloud policy sets this age for every PMG endpoint of your tenant with no change to each machine.
+
+<Note>
+  This guide needs the SafeDep Cloud Team or Enterprise plan and the Admin role. See [pricing](https://safedep.io/pricing). Each endpoint needs PMG with [`cloud.policy` on](/package-security/pmg/cloud-policy).
+</Note>
+
+The setting is `package_admission.cooldown.min_age`. PMG applies it. The pull request check does not apply a cooldown yet.
+
+## Set the cooldown for the tenant
+
+1. Open the policy settings document:
+
+   ```bash
+   safedep policy edit -m "Cooldown 5 days"
+   ```
+
+2. Set the value in the policy base:
+
+   ```yaml
+   base:
+     package_admission:
+       cooldown:
+         min_age: 5d
+   ```
+
+   The value is a duration, as `5d` or `120h`, from 0 to 365 days. PMG rounds it up to whole days. `0` turns the cooldown off.
+
+3. Save the file, close the editor, and publish the change that the command created:
+
+   ```bash
+   safedep policy change show 18
+   safedep policy change publish 18 -m "Cooldown 5 days"
+   ```
+
+   Use the change number that `safedep policy edit` printed. A shorter cooldown loosens the policy, and so does the first cooldown that you set, because no layer set the field before. For a change that loosens, the publish asks you to confirm it.
+
+## Set the cooldown for a group of endpoints
+
+Add a policy override with a selector. This override sets a longer cooldown on macOS endpoints:
+
+```yaml
+overrides:
+  - name: macs
+    priority: 100
+    description: Longer cooldown on macOS laptops
+    selector:
+      matchLabels: {reported/os: darwin}
+    spec:
+      package_admission:
+        cooldown:
+          min_age: 7d
+```
+
+To select a group that you choose, give its endpoints a `custom/` label first. See [Target a Group](/governance/cloud/policy/target-a-group).
+
+## Exempt one package
+
+To install a new version of one package before the cooldown ends, create a trust entry with the scope `cooldown`:
+
+```bash
+safedep policy rule create --trust pkg:npm/my-internal-sdk --scope cooldown \
+  --reason "First-party SDK, tested on release" --expires 90d
+```
+
+## What the cloud value changes in PMG
+
+When the policy sets the cooldown, PMG uses the cloud value instead of `dependency_cooldown.enabled` and `dependency_cooldown.days` in its config file and in `PMG_*` environment variables. PMG refuses `--skip-dependency-cooldown`. The skip list in the PMG config still applies.
+
+One exception: under `global_lockdown: true`, a managed config file that sets `dependency_cooldown.enabled` or `dependency_cooldown.days` keeps its value, and PMG reports the field as locked. See [Apply the Cloud Policy in PMG](/package-security/pmg/cloud-policy).
+
+## Check the value on one endpoint
+
+```bash
+safedep endpoint policy show arjuns-mbp --field package_admission.cooldown.min_age
+```
+
+The output shows the value, the layer that set it, and the exceptions that PMG reported, such as a locked field.
+
+## Next steps
+
+<CardGroup cols={2}>
+  <Card title="Hold Back Newly Published Versions" icon="hourglass" href="/package-security/pmg/dependency-cooldown">
+    How the PMG cooldown works.
+  </Card>
+  <Card title="Target a Group" icon="bullseye" href="/governance/cloud/policy/target-a-group">
+    Label endpoints and write a policy override.
+  </Card>
+  <Card title="Explain a Decision" icon="magnifying-glass" href="/governance/cloud/policy/explain-a-decision">
+    List the installs that the cooldown blocked.
+  </Card>
+</CardGroup>

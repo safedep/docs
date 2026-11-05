@@ -191,6 +191,7 @@
               "governance/cloud/talk-to-safedep",
               "governance/cloud/alerts",
               "governance/cloud/crowdstrike-siem",
+              "governance/cloud/malware-analysis",
               {
                 "group": "Endpoint Hub",
                 "icon": "server",
@@ -205,16 +206,24 @@
                   "governance/cloud/endpoint-hub/mcp-advisor",
                   "governance/cloud/endpoint-hub/agentic-investigation"
                 ]
-              },
-              {
-                "group": "Policy & Risk",
-                "icon": "shield-halved",
-                "expanded": false,
-                "pages": [
-                  "governance/cloud/malware-analysis",
-                  "governance/cloud/package-exclusions"
-                ]
               }
+            ]
+          },
+          {
+            "group": "Cloud Policy",
+            "icon": "scale-balanced",
+            "root": "governance/cloud/policy/overview",
+            "pages": [
+              "governance/cloud/policy/quickstart",
+              "governance/cloud/policy/block-a-package",
+              "governance/cloud/policy/trust-a-package",
+              "governance/cloud/policy/set-a-cooldown",
+              "governance/cloud/policy/target-a-group",
+              "governance/cloud/policy/pull-request-checks",
+              "governance/cloud/policy/roll-back-a-change",
+              "governance/cloud/policy/explain-a-decision",
+              "governance/cloud/policy/audit-policy-changes",
+              "governance/cloud/package-exclusions"
             ]
           }
         ]

@@ -1,0 +1,150 @@
+---
+title: "Target a Group of Endpoints or Projects"
+description: "Label endpoints and projects, then write a policy override that sets other policy values for them."
+---
+
+A policy override sets other values for the endpoints and projects that its label selector matches. This guide labels a group, writes a policy override for it, and checks the result. For the rules of resolution, see [Policy Resolution](/concepts/policy-resolution) and [Labels](/concepts/labels).
+
+<Note>
+  This guide needs the SafeDep Cloud Team or Enterprise plan and the Admin role. See [pricing](https://safedep.io/pricing).
+</Note>
+
+## Choose the labels
+
+Each subject already has some labels:
+
+- An endpoint with PMG has `reported/os` and `reported/arch`, such as `reported/os=darwin`.
+- A project that is bound to a repository has `scm/forge`, `scm/owner` and `scm/repo`.
+
+For any other group, set a `custom/` label. For a policy override that loosens the policy, select on `custom/`, `scm/` or `safedep.io/` labels only. An endpoint sends its own `reported/` labels, so SafeDep Cloud cannot check them.
+
+## Label projects
+
+1. Find the projects. A repository is a project:
+
+   ```bash
+   safedep project list --source github
+   ```
+
+   If a repository is not in the list, create its project with `safedep project sync OWNER/REPOSITORY`.
+
+2. Set the label on each project, by its exact name:
+
+   ```bash
+   safedep project label set acme/payments-api acme/ledger --label custom/criticality=high
+   ```
+
+## Label endpoints
+
+1. Find the endpoints:
+
+   ```bash
+   safedep endpoint list --search laptop
+   ```
+
+2. Set the label. An endpoint is its id, a unique prefix of the id, or a hostname that `safedep endpoint list` showed:
+
+   ```bash
+   safedep endpoint label set arjuns-mbp --label custom/team=release
+   ```
+
+A label change makes no policy revision. It applies at the next policy fetch of each endpoint, and at the next pull request check of each project.
+
+## Write the policy override
+
+1. Open the policy settings document:
+
+   ```bash
+   safedep policy edit -m "payments: fail on medium"
+   ```
+
+2. Add a policy override under `overrides`:
+
+   ```yaml
+   overrides:
+     - name: payments
+       priority: 200
+       description: Stricter gate for payment services (CUST-412)
+       selector:
+         matchLabels: {custom/criticality: high}
+       spec:
+         scan_gate:
+           fail_on: medium
+         package_admission:
+           cooldown:
+             min_age: 7d
+   ```
+
+   - `name` uses lowercase letters, digits and hyphens. Each name is unique.
+   - `priority` is a number from 1 to 1,000,000. Each priority is unique. When two policy overrides match a subject and set one field, the higher priority wins.
+   - `spec` holds only the fields that the policy override changes.
+   - Leave out `id` for a new policy override. The server sets it. Keep the `id` of an existing policy override when you edit or rename it.
+
+   A selector can also use `matchExpressions`, with the operators `In`, `NotIn`, `Exists` and `DoesNotExist`:
+
+   ```yaml
+       selector:
+         matchExpressions:
+           - {key: reported/os, operator: In, values: [darwin, linux]}
+           - {key: custom/team, operator: Exists}
+   ```
+
+3. Save the file and close the editor.
+
+4. Preview and publish the change that the command created:
+
+   ```bash
+   safedep policy change show 18
+   safedep policy change publish 18 -m "payments: fail on medium"
+   ```
+
+   Use the change number that `safedep policy edit` printed. A new policy override counts as a change that loosens, because it can move subjects to a looser result. So the publish asks you to confirm it.
+
+## Check the result
+
+Before you publish, list the subjects that the selector matches:
+
+```bash
+safedep project list --selector custom/criticality=high
+safedep endpoint list --selector custom/criticality=high
+```
+
+After you publish, show the policy of one subject and the layer that set each value:
+
+```bash
+safedep project policy show acme/payments-api --field scan_gate.fail_on
+```
+
+## Select one endpoint for a short time
+
+A selector can name one endpoint by `safedep.io/endpoint-id`. Such a policy override needs an expiry:
+
+```yaml
+overrides:
+  - name: debug-arjun
+    priority: 900
+    description: No cooldown on one laptop while we debug a build (S-102)
+    expires_at: 2026-12-01T00:00:00Z
+    selector:
+      matchLabels: {safedep.io/endpoint-id: 01KR0EKN6PMW0ZRFRN992H1PKX}
+    spec:
+      package_admission:
+        cooldown:
+          min_age: 0s
+```
+
+The selector takes the full endpoint id that `safedep endpoint list --output json` shows. After its expiry, the policy override matches no subject.
+
+## Next steps
+
+<CardGroup cols={2}>
+  <Card title="Fail Pull Request Checks" icon="code-pull-request" href="/governance/cloud/policy/pull-request-checks">
+    Use a policy override on the scan gate of a group of projects.
+  </Card>
+  <Card title="Set a Cooldown" icon="hourglass" href="/governance/cloud/policy/set-a-cooldown">
+    Set the cooldown for a group of endpoints.
+  </Card>
+  <Card title="Labels" icon="tags" href="/concepts/labels">
+    Prefixes, sources and selectors.
+  </Card>
+</CardGroup>

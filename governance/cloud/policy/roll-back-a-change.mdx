@@ -1,0 +1,66 @@
+---
+title: "Roll Back a Policy Change"
+description: "Restore settings, and optionally package rules, from an old revision of the cloud policy with a new policy change."
+---
+
+A rollback does not delete a revision. It makes a new policy change that takes values from an old revision, and its publish makes a new revision with a higher number. The history stays complete.
+
+<Note>
+  This guide needs the SafeDep Cloud Team or Enterprise plan and the Admin role. See [pricing](https://safedep.io/pricing).
+</Note>
+
+## Find the revision to restore
+
+```bash
+safedep policy revision list
+```
+
+The list shows each revision, who published it, its change direction and its message. To read the settings of one revision:
+
+```bash
+safedep policy revision show 46
+```
+
+## Create the rollback change
+
+Restore one capability, such as `scan_gate`:
+
+```bash
+safedep policy change create --from-revision 46 --capability scan_gate -m "Revert fail_on to high"
+```
+
+- `--capability` names a capability to restore: `scan_gate` or `package_admission`. Give it more than once for more capabilities. Without it, the change restores every capability.
+- For each restored capability, the policy base and every policy override take their values from revision 46. A policy override that did not exist then loses the fields of the restored capabilities.
+- Package rules stay as they are now. To restore the set of package rules of revision 46 as well, add `--package-rules revision`. The change then deletes the rules that came after revision 46, and creates again the rules that were removed after it, with new rule ids. A rule whose expiry at revision 46 is now in the past does not come back. The restore never keeps more package rules than the old revision had.
+
+The command prints the number of the new change and its change direction.
+
+## Preview and publish
+
+```bash
+safedep policy change show 20
+safedep policy change publish 20 -m "Revert fail_on to high"
+```
+
+Use the change number that the create command printed. The preview warns when the rollback drops fields of a policy override. A rollback that loosens the policy asks you to confirm it.
+
+Every Owner and Admin of the tenant gets an email about the rollback, also when it tightens the policy.
+
+## Undo one package rule
+
+To undo one block or trust entry, you do not need a rollback. Delete the rule:
+
+```bash
+safedep policy rule delete r_9c1x4kq7dm --reason "Block added by mistake"
+```
+
+## Next steps
+
+<CardGroup cols={2}>
+  <Card title="Policy Revisions and Changes" icon="code-branch" href="/concepts/policy-revisions">
+    Revisions, change direction and stale changes.
+  </Card>
+  <Card title="Audit Policy Changes" icon="clipboard-list" href="/governance/cloud/policy/audit-policy-changes">
+    Find the publish that you want to undo.
+  </Card>
+</CardGroup>

@@ -1,0 +1,96 @@
+---
+title: "Explain a Policy Decision"
+description: "Find the package rule or the setting that blocked an install in PMG or failed a pull request check, with the decision log and the citation."
+---
+
+Each decision that PMG or the pull request check makes with the cloud policy carries a citation: the policy revision, the revision of the SafeDep default policy, and the package rule or the setting that decided. Use the citation to answer "why was this package blocked?" for one endpoint or one pull request.
+
+<Note>
+  This guide needs the SafeDep Cloud Team or Enterprise plan. See [pricing](https://safedep.io/pricing). A user with the ReadOnly role or a higher role can read the decision log.
+</Note>
+
+## Read the citation where the decision happened
+
+**In PMG.** A block entry of the cloud policy stops the install with a message that names the rule. This example comes from the PMG tests:
+
+```text
+pmg: blocked pkg:npm/evil@1.2.4 by the policy of your tenant
+     rule r_9c1 · policy revision 48 · default policy revision 12 · IR-2291 credential stealer
+     To ask for an exception, send the rule id and the reason to your security admin.
+     They can run: safedep policy rule show r_9c1
+```
+
+**In a pull request check.** A failing check shows a policy block with the revision, the settings and the rule of each finding. See [What the check shows](/governance/cloud/policy/pull-request-checks#what-the-check-shows).
+
+## Show the rule
+
+```bash
+safedep policy rule show r_9c1x4kq7dm
+```
+
+The output shows the selector, the effect, the scopes, the reason, the ticket, the requester, where the rule attaches, its expiry, its author, and the revisions that added and removed it.
+
+## List the decisions
+
+`safedep policy decision list` lists the decisions of the tenant, newest first. Each row names the tool, the package, the outcome, the rule or the setting that decided, the revision and the place of the decision.
+
+The decisions of one package rule:
+
+```bash
+safedep policy decision list --rule r_9c1x4kq7dm
+```
+
+The installs that the cloud cooldown blocked in the last day:
+
+```bash
+safedep policy decision list --path package_admission.cooldown.min_age --since 1d
+```
+
+The decisions about one package, in all its versions, on one endpoint:
+
+```bash
+safedep policy decision list --package pkg:npm/lodash --endpoint 01KR0EKN6PMW0ZRFRN992H1PKX
+```
+
+Other filters:
+
+| Filter | Keeps |
+|---|---|
+| `--tool pmg` or `--tool pull-request-check` | The decisions of one tool |
+| `--outcome blocked`, `failed` or `allowed` | Blocked installs, failed checks, or packages that a trust entry allowed |
+| `--revision N` | The decisions that applied revision N |
+| `--override NAME` | The decisions of one policy override: a field that it set, or a rule that attaches to it |
+| `--project ID` | The decisions of the checks of one project |
+| `--since` and `--until` | A time window, as `7d` or `12h` |
+
+The `--package` filter takes a PURL with no version. The name must match the stored name exactly, with the same case.
+
+## What is not in the decision log
+
+- A decision with no citation: a block by the malware analysis alone, a block by the PMG `blocked_packages` list, and a cooldown block when the cooldown came from the PMG config and not from the cloud policy.
+- A PMG decision that PMG did not sync yet. PMG syncs its events to SafeDep Cloud with `cloud.enabled` on. See [Package Guard](/governance/cloud/endpoint-hub/package-guard).
+
+## Show the policy of one subject
+
+To see the value of each setting for one endpoint or project, and the layer that set it:
+
+```bash
+safedep endpoint policy show arjuns-mbp
+safedep project policy show acme/payments-api --field scan_gate.fail_on
+```
+
+The output also shows the revision that each tool applied, and the exceptions that it reported, such as a field that a managed config file locks.
+
+## Next steps
+
+<CardGroup cols={2}>
+  <Card title="Policy Resolution" icon="layer-group" href="/concepts/policy-resolution">
+    Layers, policy overrides and the resolved policy.
+  </Card>
+  <Card title="Trust a Package" icon="circle-check" href="/governance/cloud/policy/trust-a-package">
+    Act on a block that was wrong.
+  </Card>
+  <Card title="Command Reference" icon="terminal" href="https://github.com/safedep/cli/tree/main/docs/cmd">
+    Every flag of `safedep policy decision list`.
+  </Card>
+</CardGroup>

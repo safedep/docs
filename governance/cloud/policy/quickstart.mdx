@@ -1,0 +1,121 @@
+---
+title: "Cloud Policy Quickstart"
+description: "Publish your first cloud policy with the safedep CLI, then see PMG and a pull request check apply it."
+---
+
+In this tutorial you publish the first policy of your tenant with the safedep CLI. The policy holds back package versions that are younger than 7 days, and fails pull request checks on vulnerabilities of medium severity or higher. Then you see PMG and a pull request check apply it.
+
+<Note>
+  The cloud policy needs the SafeDep Cloud Team or Enterprise plan. See [pricing](https://safedep.io/pricing).
+</Note>
+
+## Before you start
+
+- You have the Admin role in a SafeDep Cloud tenant.
+- The [safedep CLI](/get-started/cli-tools) is installed.
+- To see the effect in PMG: [PMG](/package-security/pmg/quickstart) is installed on a machine, and you have an API key of the tenant from [app.safedep.io/settings/api-keys](https://app.safedep.io/settings/api-keys).
+- To see the effect in a pull request check: the [GitHub App](/governance/integrations/github) or the [Bitbucket app](/governance/integrations/bitbucket-app) scans a repository for your tenant.
+
+<Steps>
+  <Step title="Log in">
+    ```bash
+    safedep auth login
+    ```
+
+    The command opens a login page in your browser. If you have access to more than one tenant, it asks you to pick one. Run `safedep auth status` to see the tenant of the session.
+  </Step>
+
+  <Step title="Show the policy">
+    ```bash
+    safedep policy show
+    ```
+
+    The output shows the head revision of the policy, the open policy changes, the number of package rules, the SafeDep default policy and the policy overrides. A new tenant has no revision yet. Its policy is the SafeDep default policy alone.
+  </Step>
+
+  <Step title="Edit the policy">
+    ```bash
+    safedep policy edit -m "First policy: 7-day cooldown, fail on medium"
+    ```
+
+    The command opens the policy settings document in your editor. The comments at the top show the layers of the policy. Make the `base` section of the document hold these values:
+
+    ```yaml
+    base:
+      package_admission:
+        cooldown:
+          min_age: 7d
+      scan_gate:
+        fail_on: medium
+    ```
+
+    The policy base applies to every endpoint and project of the tenant. Save the file and close the editor. The command saves a policy change on the server and prints its number. Nothing applies yet. This tutorial uses change 1. Use the number that the command printed.
+  </Step>
+
+  <Step title="Preview the change">
+    ```bash
+    safedep policy change show 1
+    ```
+
+    The preview lists each field that changes, its old and new value, and its change direction:
+
+    - `scan_gate.fail_on` goes from `high`, the value of the SafeDep default policy, to `medium`. A lower severity fails more checks, so this field tightens.
+    - `package_admission.cooldown.min_age` had no value before. A field with no value on one side counts as a change that loosens, because SafeDep Cloud cannot know what each tool did without it.
+
+    So the change loosens as a whole. The preview also counts the projects that the change reaches, and how many of them can enforce each value.
+  </Step>
+
+  <Step title="Publish the change">
+    ```bash
+    safedep policy change publish 1 -m "First policy: 7-day cooldown, fail on medium"
+    ```
+
+    The change loosens the policy, so the command asks you to confirm. Every Owner and Admin of the tenant gets an email about the publish. The publish makes a new policy revision. To see it, run:
+
+    ```bash
+    safedep policy revision list
+    ```
+  </Step>
+
+  <Step title="See the policy in PMG">
+    On a machine with PMG, connect PMG to your tenant and turn on the cloud policy:
+
+    ```bash
+    pmg config set cloud.enabled true
+    pmg cloud login
+    pmg config set cloud.policy true
+    pmg cloud sync
+    ```
+
+    `pmg cloud login` asks for the tenant ID and the API key. `pmg cloud sync` fetches the policy at once. Then run:
+
+    ```bash
+    pmg setup doctor
+    ```
+
+    The cloud policy check names your tenant and the revision that PMG applied. PMG now holds back each package version that is younger than 7 days. To see the revision that each endpoint applied, run `safedep endpoint list`.
+  </Step>
+
+  <Step title="See the policy in a pull request check">
+    Open a pull request that adds a package with a vulnerability of medium severity, in a repository that the app scans. The check fails. The comment of the SafeDep app starts with a block titled **SafeDep policy: failed**. The block names your tenant revision, the `scan_gate.fail_on` setting with the value `MEDIUM`, and the vulnerability that failed the check.
+  </Step>
+</Steps>
+
+You published a policy, and two tools apply it. The policy base applies to every endpoint and project. To set other values for a group, see [Target a Group](/governance/cloud/policy/target-a-group).
+
+## Next steps
+
+<CardGroup cols={2}>
+  <Card title="Block a Package" icon="ban" href="/governance/cloud/policy/block-a-package">
+    Block a package for the whole tenant.
+  </Card>
+  <Card title="Target a Group" icon="bullseye" href="/governance/cloud/policy/target-a-group">
+    Set other values for a group of endpoints or projects.
+  </Card>
+  <Card title="Policy Revisions and Changes" icon="code-branch" href="/concepts/policy-revisions">
+    What happens between an edit and a publish.
+  </Card>
+  <Card title="Apply the cloud policy in PMG" icon="box" href="/package-security/pmg/cloud-policy">
+    Settings, cache and offline behavior of PMG.
+  </Card>
+</CardGroup>
