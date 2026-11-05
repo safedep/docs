@@ -38,7 +38,7 @@ In this tutorial you publish the first policy of your tenant with the safedep CL
     safedep policy edit -m "First policy: 7-day cooldown, fail on medium"
     ```
 
-    The command opens the policy settings document in your editor. The comments at the top show the layers of the policy. Make the `base` section of the document hold these values:
+    The command opens the policy settings document in your editor. The comments at the top show the layers of the policy. The document lists each field that you can set as a commented line, with its allowed values and its value now. To set a field, remove the `# ` at the start of its line and of the lines of its parents. Make the `base` section of the document hold these values:
 
     ```yaml
     base:
