@@ -62,8 +62,27 @@ You get an array of reports and a pagination cursor:
         "versions": ["9.9.9"]
       },
       "iocs": [
-        {"type": "INDICATOR_TYPE_C2_DOMAIN", "value": "exfil.example.com"},
-        {"type": "INDICATOR_TYPE_FILE_SHA256", "value": "3b1f0c9a...c2a9"}
+        {
+          "type": "INDICATOR_TYPE_C2_DOMAIN",
+          "value": "exfil.example.com",
+          "externalId": "01JZ8QD2P4R6T8V0X2Z4B6D8F0",
+          "disposition": "INDICATOR_DISPOSITION_ACTIVE",
+          "confidence": "INDICATOR_CONFIDENCE_HUMAN_VERIFIED"
+        },
+        {
+          "type": "INDICATOR_TYPE_C2_DOMAIN",
+          "value": "api.telegram.org",
+          "externalId": "01JZ8QD2P4R6T8V0X2Z4B6D8F1",
+          "disposition": "INDICATOR_DISPOSITION_SHARED_INFRASTRUCTURE",
+          "confidence": "INDICATOR_CONFIDENCE_HUMAN_VERIFIED"
+        },
+        {
+          "type": "INDICATOR_TYPE_FILE_SHA256",
+          "value": "3b1f0c9a...c2a9",
+          "externalId": "01JZ8QD2P4R6T8V0X2Z4B6D8F2",
+          "disposition": "INDICATOR_DISPOSITION_ACTIVE",
+          "confidence": "INDICATOR_CONFIDENCE_AUTOMATED"
+        }
       ],
       "campaigns": [
         {"campaignId": "01JZ8QC0N2W5R8T3Y6U9I1O4P7", "name": "npm crypto-stealer wave"}
@@ -109,6 +128,45 @@ curl -sS "$TI/ListPackageReports" \
 Repeat until `nextPageToken` comes back empty.
 </Step>
 </Steps>
+
+## Read the indicators
+
+Each entry in `iocs` is one indicator of compromise (IOC). Reports and campaigns use the same shape:
+
+| Field | What it is |
+|---|---|
+| `type` | The kind of indicator, for example `INDICATOR_TYPE_C2_DOMAIN`, `INDICATOR_TYPE_C2_URL`, `INDICATOR_TYPE_C2_IPV4` or `INDICATOR_TYPE_FILE_SHA256`. The [schema reference](/threat-intel/schema) lists all values. SafeDep adds new types, so skip a type you do not know. |
+| `value` | The observable: a domain, URL, IP address, hash or wallet address. |
+| `externalId` | The permanent ID of the indicator. One indicator keeps one `externalId` across reports and campaigns. |
+| `disposition` | SafeDep's call on whether to block the indicator. See the next table. |
+| `confidence` | Who verified the indicator: `INDICATOR_CONFIDENCE_HUMAN_VERIFIED` (a SafeDep researcher), `INDICATOR_CONFIDENCE_MACHINE_VERIFIED` (a trusted external source) or `INDICATOR_CONFIDENCE_AUTOMATED` (automated analysis). |
+| `note` | Optional. A researcher's note on the indicator. |
+
+Use `disposition` to decide what to block:
+
+| `disposition` | Meaning | Block it? |
+|---|---|---|
+| `INDICATOR_DISPOSITION_ACTIVE` | Malicious and in use. | **Yes** |
+| `INDICATOR_DISPOSITION_SHARED_INFRASTRUCTURE` | A legitimate service that the malware abuses, for example `api.telegram.org` or `github.com`. If you block it, you break normal traffic. Block the URL indicator on the same report. | No |
+| `INDICATOR_DISPOSITION_BENIGN` | An address the malware reads that is not malicious, for example a cloud metadata IP or a private IP. | No |
+| `INDICATOR_DISPOSITION_EXPIRED` | Malicious in the past, out of use now, for example a domain that its registrar took down. | No |
+
+<Warning>
+Block only indicators with `INDICATOR_DISPOSITION_ACTIVE`. Use the other dispositions as context for an investigation. If you block every indicator, you block GitHub and Telegram for your users.
+</Warning>
+
+This command prints the indicators to block from one page of reports:
+
+```bash
+curl -sS "$TI/ListPackageReports" \
+  -H "Content-Type: application/json" \
+  -H "Authorization: $SAFEDEP_API_KEY" \
+  -H "X-Tenant-ID: $SAFEDEP_TENANT_ID" \
+  -d '{"pagination":{"pageSize":5,"sortOrder":"SORT_ORDER_DESCENDING"}}' \
+  | jq -r '.packageReports[].iocs[]? | select(.disposition == "INDICATOR_DISPOSITION_ACTIVE") | [.type, .value] | @tsv'
+```
+
+SafeDep can change a disposition. The report then returns in the feed with the new value, so your mirror picks up the change. If SafeDep withdraws an indicator, the indicator disappears from all reports and campaigns.
 
 ## Next steps
 
