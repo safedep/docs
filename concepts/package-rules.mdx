@@ -30,7 +30,7 @@ A trust entry needs a reason and an expiry. The expiry is at most 90 days from n
 
 ## Block beats trust
 
-When a block entry and a trust entry both select a package, the block entry wins. A cloud block entry in PMG also wins over the PMG `trusted_packages` list and the `--insecure-installation` flag.
+When a block entry and a trust entry both select a package, the block entry wins. A cloud block entry in PMG also wins over the PMG `trusted_packages` list and the `PMG_INSECURE_INSTALLATION` environment variable.
 
 ## Verified malware is never trusted
 

@@ -26,7 +26,7 @@ For any other group, set a `custom/` label. For a policy override that loosens t
    safedep project list --source github
    ```
 
-   If a repository is not in the list, create its project with `safedep project sync OWNER/REPOSITORY`.
+   If a repository is not in the list, create its project with `safedep project sync OWNER/REPOSITORY --source github`. Use `--source bitbucket` for a Bitbucket repository. The CLI needs `--source` when your tenant links both GitHub and Bitbucket.
 
 2. Set the label on each project, by its exact name:
 

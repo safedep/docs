@@ -21,6 +21,8 @@ The pull request check of the [SafeDep GitHub App](/governance/integrations/gith
 
 Verified malware always fails the check. No setting and no trust entry changes that. The check also fails on a risky license, by a fixed rule of the check that the policy does not control yet. The check does not apply a dependency cooldown.
 
+The check still applies the [Malicious Package Exclusions](/governance/cloud/package-exclusions) of your tenant. When an exclusion selects a package version, the check does not report a malware verdict of that version that is not verified. PMG with `cloud.policy` on ignores exclusions.
+
 `info` is a partial value: the vulnerability data has no info grade, so the check ranks a vulnerability with no severity as info.
 
 ## Fail on medium for a group of projects
@@ -31,7 +33,7 @@ Verified malware always fails the check. No setting and no trust entry changes t
    safedep project label set acme/payments-api acme/ledger PAY/settlement --label custom/criticality=high
    ```
 
-   If a repository has no project yet, create it with `safedep project sync OWNER/REPOSITORY`.
+   If a repository has no project yet, create it with `safedep project sync OWNER/REPOSITORY --source github`. Use `--source bitbucket` for a Bitbucket repository. The CLI needs `--source` when your tenant links both GitHub and Bitbucket.
 
 2. Open the policy settings document and add a policy override:
 
@@ -113,7 +115,7 @@ Ask your security admin. They can run `safedep project policy show acme/payments
 
 ## When the check does not use your policy
 
-- **The repository has no project.** The check resolves the policy with the `scm/` labels of the repository. The policy base, the package rules of the policy base and the policy overrides that select `scm/` labels apply. A `custom/` label needs a project. Run `safedep project sync`.
+- **The repository has no project.** The check resolves the policy with the `scm/` labels of the repository. The policy base, the package rules of the policy base and the policy overrides that select `scm/` labels apply. A `custom/` label needs a project. Run `safedep project sync OWNER/REPOSITORY --source github`, or `--source bitbucket` for a Bitbucket repository.
 - **The installation is not linked to a tenant, or the plan of the tenant has no cloud policy.** The SafeDep default policy applies alone.
 - **SafeDep Cloud cannot read the policy.** The check retries, and then fails with an error. It never falls back to the default policy, because the default policy can be looser than yours.
 

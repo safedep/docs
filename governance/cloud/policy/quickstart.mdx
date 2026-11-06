@@ -59,8 +59,8 @@ In this tutorial you publish the first policy of your tenant with the safedep CL
 
     The preview lists each field that changes, its old and new value, and its change direction:
 
-    - `scan_gate.fail_on` changes from `high`, the value of the SafeDep default policy, to `medium`. A lower severity fails more checks, so this field tightens.
-    - `package_admission.cooldown.min_age` had no value before. A field with no value on one side counts as a change that loosens, because SafeDep Cloud cannot know what each tool did without it.
+    - `scan_gate.fail_on` shows `-` as the old value and `medium` as the new value. The `-` means that no revision of your tenant set the field, so the value `high` of the SafeDep default policy applied. SafeDep Cloud compares `medium` with `high`. A lower severity fails more checks, so this field tightens.
+    - `package_admission.cooldown.min_age` also shows `-` as the old value. The SafeDep default policy does not set it either. A field with no value on one side counts as a change that loosens, because SafeDep Cloud cannot know what each tool did without it.
 
     So the change loosens as a whole. The preview also counts the projects that the change reaches, and how many of them can enforce each value.
   </Step>
@@ -89,7 +89,15 @@ In this tutorial you publish the first policy of your tenant with the safedep CL
 
     `pmg cloud login` asks for the tenant ID and the API key. `pmg cloud sync` fetches the policy at once.
 
-    If `pmg config set` prints `key not found`, your config file has no `cloud` section. Run `pmg setup install` to add the missing keys of the PMG template to your config file, then run the `pmg config set` command again. You can also add the key by hand with `pmg config edit`.
+    If `pmg config set` prints `key not found`, your config file has no `cloud` section. Run `pmg config edit` and add this section to the file:
+
+    ```yaml
+    cloud:
+      enabled: true
+      policy: true
+    ```
+
+    Save the file and run `pmg cloud login` and `pmg cloud sync`. You can also run `pmg setup install` and then the `pmg config set` commands again. `pmg setup install` adds the missing keys of the PMG template to your config file. It also installs the PMG shell aliases and PATH shims.
 
     Then run:
 
