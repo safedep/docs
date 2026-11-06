@@ -21,7 +21,7 @@ The pull request check of the [SafeDep GitHub App](/governance/integrations/gith
 
 Verified malware always fails the check. No setting and no trust entry changes that. The check also fails on a risky license, by a fixed rule of the check that the policy does not control yet. The check does not apply a dependency cooldown.
 
-The check still applies the [Malicious Package Exclusions](/governance/cloud/package-exclusions) of your tenant. When an exclusion selects a package version, the check does not report a malware verdict of that version that is not verified. PMG with `cloud.policy` on ignores exclusions.
+The check still applies the [Malicious Package Exclusions](/governance/cloud/package-exclusions) of your tenant. When an exclusion selects a package version, the check does not report an unverified malware verdict for that version. Verified malware still fails the check. PMG with `cloud.policy` on ignores exclusions.
 
 `info` is a partial value: the vulnerability data has no info grade, so the check ranks a vulnerability with no severity as info.
 
