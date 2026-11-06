@@ -21,7 +21,15 @@ pmg cloud sync
 - `pmg cloud login` stores the tenant ID and an API key of the tenant. PMG can also read them from the `SAFEDEP_TENANT_ID` and `SAFEDEP_API_KEY` environment variables.
 - `cloud.policy` applies only when `cloud.enabled` is `true`.
 - `pmg cloud sync` fetches the policy at once.
-- `pmg config set` adds `cloud.policy` to a config file that an older PMG wrote. If the command prints `key not found`, the file has no `cloud` section. Run `pmg setup install` to add the missing keys of the PMG template to your config file, then run `pmg config set` again. You can also add the key by hand with `pmg config edit`.
+- `pmg config set` adds `cloud.policy` to a config file that an older PMG wrote. If the command prints `key not found`, the file has no `cloud` section. Run `pmg config edit` and add this section to the file:
+
+  ```yaml
+  cloud:
+    enabled: true
+    policy: true
+  ```
+
+  Save the file and run `pmg cloud login` and `pmg cloud sync`. You can also run `pmg setup install` and then the `pmg config set` commands again. `pmg setup install` adds the missing keys of the PMG template to your config file. It also installs the PMG PATH shims, and on macOS and Linux the shell aliases.
 
 Then check the state:
 
@@ -73,7 +81,7 @@ A fetch that fails keeps the cache. When you log out, PMG keeps the last policy.
 | `dependency_cooldown.enabled`, `dependency_cooldown.days` | When the policy sets the cooldown, its value wins over the config file and the `PMG_*` environment variables. PMG refuses `--skip-dependency-cooldown`. PMG rounds the value up to whole days. Exception: under `global_lockdown`, a managed config file that sets one of these keys keeps its value. |
 | `dependency_cooldown.skip` | Still applies. |
 | `blocked_packages` | Still applies, together with the block entries of the policy. |
-| `trusted_packages`, `--insecure-installation` | Still apply, but a block entry of the policy wins over them. |
+| `trusted_packages`, the `PMG_INSECURE_INSTALLATION` environment variable | Still apply, but a block entry of the policy wins over them. Under `global_lockdown`, PMG ignores `PMG_INSECURE_INSTALLATION`. |
 | Malicious Package Exclusions of SafeDep Cloud | PMG ignores them. Use [trust entries](/governance/cloud/policy/trust-a-package) instead. |
 | Every other setting, such as the sandbox and the proxy | Not changed. The cloud policy does not manage them. |
 
