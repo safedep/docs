@@ -1,12 +1,12 @@
 ---
-title: Generate an AI BOM
-sidebarTitle: "Generate an AI BOM"
-description: "Build an AI Bill of Materials from source code with vet's xBOM engine: AI SDK detections in CycloneDX with file and line evidence."
+title: "Detect Shadow AI in Code"
+sidebarTitle: "Shadow AI Detection"
+description: "Find shadow AI in your code with vet: detect the AI SDKs your application calls, then generate an AI BOM in CycloneDX with file and line evidence."
 ---
 
-`vet` finds the AI libraries, SDKs, and agent frameworks your application actually calls. It scans source code, matches call sites against signatures for known AI SDKs, and writes each match into its [CycloneDX](/concepts/sbom) output as an extended Bill of Materials (xBOM). The AI components, each marked with an `ai` property and file and line evidence, are your AI BOM.
+Shadow AI is AI services and SDKs that developers added to the code without a security review. `vet` finds the AI libraries, SDKs, and agent frameworks your application actually calls. It scans source code and matches call sites against signatures for known AI SDKs. Because the results come from call sites, they show what the code calls, not only what the manifests declare.
 
-Because the inventory comes from call sites, it shows what the code calls, not just what the manifests declare. Use it to find shadow AI: AI services that developers added to the code without a security review.
+`vet` can then write each match into its [CycloneDX](/concepts/sbom) output as an extended Bill of Materials (xBOM). The AI components, each marked with an `ai` property and file and line evidence, are your AI BOM.
 
 Coverage tracks the AI ecosystem in current use:
 
@@ -21,7 +21,7 @@ Browse the [full signature set](https://github.com/safedep/vet/tree/main/signatu
 - `vet` [installed](/governance/vet/quickstart)
 - Access to the source code you want to analyze
 
-## Generate the AI BOM
+## Detect shadow AI
 
 <Steps>
   <Step title="Scan the source code">
@@ -49,18 +49,8 @@ Browse the [full signature set](https://github.com/safedep/vet/tree/main/signatu
     ```
   </Step>
 
-  <Step title="Write the CycloneDX BOM">
-    The second pass runs a normal `vet` scan, enriches it with the recorded detections, and writes the BOM:
-
-    ```bash
-    vet scan -D ./src --code code.db --report-cdx xbom.json
-    ```
-
-    `xbom.json` is a standard CycloneDX document that carries the code-analysis detections alongside the declared packages. Every AI component in it has the `ai` property, so downstream tooling can filter on it.
-  </Step>
-
-  <Step title="Inspect detections directly (optional)">
-    You can review what `vet` found without generating a BOM. Query the database for matches tagged `ai`:
+  <Step title="List the AI SDKs found">
+    Query the database for matches tagged `ai`. Each result shows the file, the line, and the matched call:
 
     ```bash
     vet code query --db code.db --tag ai
@@ -81,6 +71,16 @@ Browse the [full signature set](https://github.com/safedep/vet/tree/main/signatu
     ```
   </Step>
 </Steps>
+
+## Generate the AI BOM
+
+To record the detections as a BOM, run a normal `vet` scan with the code analysis database:
+
+```bash
+vet scan -D ./src --code code.db --report-cdx xbom.json
+```
+
+`xbom.json` is a standard CycloneDX document that carries the code-analysis detections alongside the declared packages. Every AI component in it has the `ai` property, so downstream tooling can filter on it.
 
 ## Read the AI BOM
 

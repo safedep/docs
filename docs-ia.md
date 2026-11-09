@@ -152,7 +152,8 @@ Don't mix Diátaxis types within a single page.
 
 **Visibility & Governance** *(tab landing: `governance/overview`)*
 - Repository Scanning: `governance/vet/overview` *(landing)*, `governance/vet/quickstart`, `governance/vet/dependency-inventory`, `governance/vet/code-analysis`, `governance/vet/build-your-own-queries`, `governance/terraform-audit`, `governance/vet/mdm/overview`
-- Bill of Materials: `governance/xbom/overview` *(landing)*, `governance/xbom/quickstart`, `governance/cyclonedx-sbom`, `governance/vet/ai-bom`
+- Bill of Materials: `governance/xbom/overview` *(landing)*, `governance/xbom/quickstart`, `governance/cyclonedx-sbom`
+- AI Visibility: `governance/shadow-ai-detection`
 - CI/CD Integrations: `governance/integrations/overview` *(landing)*, `governance/integrations/github`, `governance/integrations/github-code-scanning`, `governance/integrations/gitlab`, `governance/integrations/bitbucket-app`, `governance/integrations/bitbucket`, `governance/integrations/defectdojo`
 - SafeDep Cloud: `governance/cloud/overview` *(landing)*
   - Set Up: `governance/cloud/quickstart`, `governance/cloud/authentication`, `governance/cloud/sync`, `governance/cloud/faq`
@@ -180,7 +181,7 @@ Don't mix Diátaxis types within a single page.
 - Changelog: `changelog/2026`
 
 Notes:
-- AI Agent Security is scoped to securing AI coding *agents*. AI SDKs inside your application are a supply-chain concern, so the AI BOM page sits in Visibility & Governance › Bill of Materials.
+- AI Agent Security is scoped to securing AI coding *agents*. AI SDKs inside your application are a supply-chain concern, so Shadow AI Detection (which also covers the AI BOM) sits in Visibility & Governance › AI Visibility. It keeps its own page and URL because people search for "shadow AI".
 - Threat Intel is the subscription-gated feed API (`FEATURE_THREAT_INTEL_FEED`). `threat-intel/schema` links out to the public `buf.build/safedep/api` module instead of restating field tables (R6). JFrog Xray stays here because it is gated on the feed add-on (see §8).
 
 Total: **113 pages** (counted from `docs.json`).

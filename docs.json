@@ -150,8 +150,14 @@
             "root": "governance/xbom/overview",
             "pages": [
               "governance/xbom/quickstart",
-              "governance/cyclonedx-sbom",
-              "governance/vet/ai-bom"
+              "governance/cyclonedx-sbom"
+            ]
+          },
+          {
+            "group": "AI Visibility",
+            "icon": "robot",
+            "pages": [
+              "governance/shadow-ai-detection"
             ]
           },
           {
@@ -425,11 +431,11 @@
     },
     {
       "source": "/vet/guides/shadow-ai-detection",
-      "destination": "/governance/vet/ai-bom"
+      "destination": "/governance/shadow-ai-detection"
     },
     {
       "source": "/ai-security/shadow-ai-detection",
-      "destination": "/governance/vet/ai-bom"
+      "destination": "/governance/shadow-ai-detection"
     },
     {
       "source": "/vet/guides/ai-tools-discovery",
@@ -572,10 +578,6 @@
       "destination": "/governance/cloud/quickstart"
     },
     {
-      "source": "/governance/shadow-ai-detection",
-      "destination": "/governance/vet/ai-bom"
-    },
-    {
       "source": "/governance/ai-governance",
       "destination": "/ai-security/overview"
     },
@@ -602,6 +604,10 @@
     {
       "source": "/reference/build-your-own-queries",
       "destination": "/governance/vet/build-your-own-queries"
+    },
+    {
+      "source": "/governance/vet/ai-bom",
+      "destination": "/governance/shadow-ai-detection"
     }
   ],
   "logo": {
