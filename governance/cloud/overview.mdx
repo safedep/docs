@@ -8,7 +8,7 @@ SafeDep Cloud is the software supply chain security platform built on SafeDep's 
 One developer needs only the tools. A team can deploy the tools by hand and write its own reporting. SafeDep Cloud does this work for a team or an organization:
 
 - **Control plane.** Connect the tools on developer machines, CI runners, and agent sandboxes to one tenant. [Endpoint Hub](/governance/cloud/endpoint-hub/overview) shows each endpoint and what the tools on it blocked or found.
-- **Data lake.** Keep package events, scan results, policy violations, and AI tool inventory in one place. Query them with [SQL](/reference/sql-query) from the console, the `safedep` CLI, or the API. An [AI agent](/governance/cloud/talk-to-safedep) can use the same queries to answer questions about your supply chain.
+- **Data lake.** Keep package events, scan results, policy violations, and AI tool inventory in one place. Query them with [SQL](/reference/sql-query) from the console, the `safedep` CLI, or the API. An [AI agent](/governance/cloud/endpoint-hub/agentic-investigation) can use the same queries to answer questions about your supply chain.
 - **Intelligence layer.** Run [on-demand scans](/package-security/scan/overview) of packages, extensions, and repositories, and get the [Threat Intel Feed](/threat-intel/overview).
 
 You own your data. The [SafeDep Cloud API](/reference/api-introduction) gives you full access to it, so you can build your own integrations. See the [pricing page](https://safedep.io/pricing) for what each plan includes.
@@ -36,7 +36,7 @@ You own your data. The [SafeDep Cloud API](/reference/api-introduction) gives yo
   <Card title="Cloud Policy" icon="scale-balanced" href="/governance/cloud/policy/overview">
     Block and trust packages, set the cooldown, and choose what fails a pull request check, for the whole tenant.
   </Card>
-  <Card title="Malware Analysis" icon="shield-halved" href="/governance/cloud/malware-analysis">
+  <Card title="Malware Analysis" icon="shield-halved" href="/package-security/scan/malware-lookup">
     Detect malicious packages in your dependencies with Cloud code analysis.
   </Card>
   <Card title="Plans & Pricing" icon="tag" href="https://safedep.io/pricing">

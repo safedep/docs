@@ -1,16 +1,24 @@
 ---
-title: "Agentic Endpoint Investigation"
+title: "Investigate with an AI Agent"
 sidebarTitle: "Ask an AI Agent"
-description: "Investigate package activity and AI tooling across your developer endpoints with an AI coding agent and the safedep CLI."
+description: "Ask your SafeDep Cloud tenant questions in plain English. An AI coding agent writes the SQL, runs it with the safedep CLI, and reports the answer."
 ---
 
-Your endpoints report their activity to [Endpoint Hub](/governance/cloud/endpoint-hub/overview): every package install [PMG](/package-security/pmg/overview) allowed or blocked, and the AI tooling `vet` discovered. When something needs investigation, you do not write queries yourself. You ask your AI coding agent. The agent turns your question into a tenant-scoped [SafeDep Cloud SQL](/reference/sql-query) query, runs it with the `safedep` CLI, and reports what it found.
+Ask your AI coding agent about your SafeDep Cloud tenant in plain English. The agent turns your question into a tenant-scoped [SafeDep Cloud SQL](/reference/sql-query) query, runs it with the `safedep` CLI, and reports what it found. You do not write the SQL or look up the schema.
 
-This guide gives you investigation playbooks: the question to ask, what the agent runs, and how to verify the answer.
+<iframe
+  width="100%"
+  height="315"
+  src="https://www.youtube.com/embed/-AVog8VLWes"
+  title="Talk to SafeDep"
+  frameBorder="0"
+  allowFullScreen
+></iframe>
 
 ## Before you start
 
-- Endpoints that sync data to your tenant. Set up [Package Guard sync](/governance/cloud/endpoint-hub/package-guard) for package events, and optionally [Inventory](/governance/cloud/endpoint-hub/inventory) for AI tooling.
+- A [SafeDep Cloud tenant](/governance/cloud/quickstart) with data synced from your tools. The agent can only answer what your tenant holds, so [connect at least one source](/governance/cloud/sync) first.
+- For the endpoint playbooks: endpoints that sync data to your tenant. Set up [Package Guard sync](/governance/cloud/endpoint-hub/package-guard) for package events, and optionally [Inventory](/governance/cloud/endpoint-hub/inventory) for AI tooling.
 - The `safedep` CLI, signed in with `safedep auth login`. See [Install the safedep CLI](/governance/cloud/quickstart#install-the-safedep-cli) and [Authentication](/governance/cloud/authentication).
 - An AI coding agent with the [SafeDep skill](/get-started/safedep-skill) installed.
 
@@ -30,7 +38,29 @@ Every query is scoped to your authenticated tenant. The agent reads data; it can
 
 For the query language, the full table list, and the query rules, see [SafeDep Cloud SQL](/reference/sql-query).
 
-## Playbooks
+## Ask a question
+
+Type your question the way you would ask a teammate:
+
+```text
+How many projects are being monitored?
+```
+
+The agent loads the SafeDep skill, writes the query, runs `safedep query exec`, and replies with the count.
+
+Questions that map cleanly to your synced data:
+
+| Ask | Reads from |
+|---|---|
+| How many projects are we monitoring? | Projects |
+| Which projects have critical vulnerabilities? | Projects, packages, vulnerabilities |
+| Any malicious packages blocked across dev endpoints last week? | [Package Guard events](/governance/cloud/endpoint-hub/package-guard) |
+| Which developer machines are running PMG? | [Endpoints](/governance/cloud/endpoint-hub/inventory) |
+| Which endpoints have not synced in 30 days? | Endpoints |
+
+## Endpoint playbooks
+
+Your endpoints report their activity to [Endpoint Hub](/governance/cloud/endpoint-hub/overview): every package install [PMG](/package-security/pmg/overview) allowed or blocked, and the AI tooling `vet` discovered. Each playbook gives the question to ask, the SQL the agent runs, and how to check the answer.
 
 ### Check exposure to a compromised package
 
@@ -135,7 +165,7 @@ Check the known malicious packages database first. Run a full scan only if
 I ask for a deep dive.
 ```
 
-The fast path checks SafeDep's [known malicious packages database](/governance/cloud/malware-analysis). It is free and answers in milliseconds:
+The fast path checks SafeDep's [known malicious packages database](/package-security/scan/malware-lookup). It is free and answers in milliseconds:
 
 ```bash
 vet scan --purl pkg:npm/left-pad-utils@2.1.0 --malware-query
@@ -193,7 +223,7 @@ If the agent's answer looks wrong, the query is the first place to look. A missi
   <Card title="Package Guard" icon="shield" href="/governance/cloud/endpoint-hub/package-guard">
     Sync package events from your endpoints.
   </Card>
-  <Card title="Talk to SafeDep" icon="comments" href="/governance/cloud/talk-to-safedep">
-    Ask your tenant questions in plain English.
+  <Card title="Endpoint Hub" icon="server" href="/governance/cloud/endpoint-hub/overview">
+    See package activity and AI tooling across your endpoints.
   </Card>
 </CardGroup>

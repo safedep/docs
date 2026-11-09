@@ -45,7 +45,7 @@ Supported ecosystems include `npm`, `PyPI`, `Maven`, `Go`, `RubyGems`, `Cargo`, 
 
 ## Generating exceptions
 
-Generate an exceptions file from a [JSON dump](/reference/build-your-own-queries) using a [CEL filter](/reference/filtering). For example, except packages that have no critical or high vulnerabilities:
+Generate an exceptions file from a [JSON dump](/governance/vet/build-your-own-queries) using a [CEL filter](/reference/filtering). For example, except packages that have no critical or high vulnerabilities:
 
 ```bash
 vet scan -D /path/to/repo --json-dump-dir /path/to/dump
@@ -92,7 +92,7 @@ With [vet-action](https://github.com/safedep/vet-action), commit the file (conve
   <Card title="Filtering" icon="filter" href="/reference/filtering">
     The CEL expressions used in `--exceptions-filter`.
   </Card>
-  <Card title="Build Your Own Queries" icon="magnifying-glass" href="/reference/build-your-own-queries">
+  <Card title="Build Your Own Queries" icon="magnifying-glass" href="/governance/vet/build-your-own-queries">
     The JSON dump and query workflow exceptions build on.
   </Card>
   <Card title="Policy as Code" icon="file-code" href="/reference/policy-as-code">

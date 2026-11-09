@@ -134,48 +134,56 @@ Don't mix Diátaxis types within a single page.
 
 ## 7. Authoritative tab → group → page map
 
-*Human-readable mirror of `docs.json`. Source of truth is `docs.json`.* Re-synced after the Phase 2 path migration, the Phase 3 sidebar restructure, and the net-new pages landed. A group's clickable landing (Mintlify `root`) is marked *(landing)*.
+*Human-readable mirror of `docs.json`. Source of truth is `docs.json`.* Regenerated from `docs.json` after the November 2026 sidebar cleanup and page merges. A group's clickable landing (Mintlify `root`) is marked *(landing)*.
 
 **Get Started**
 - Introduction: `introduction`, `get-started/choose-your-path`, `get-started/cli-tools`, `get-started/safedep-skill`
-- Core Concepts: `concepts/malicious-package`, `concepts/vulnerability`, `concepts/sbom`, `concepts/tenant`, `concepts/endpoint`
-  - Policy: `concepts/policy`, `concepts/policy-resolution`, `concepts/labels`, `concepts/package-rules`, `concepts/policy-revisions`, `concepts/cel`
+- Core Concepts: `concepts/malicious-package`, `concepts/vulnerability`, `concepts/sbom`, `concepts/tenant`, `concepts/endpoint`, `concepts/cel`
+  - Cloud Policy: `concepts/policy`, `concepts/policy-resolution`, `concepts/labels`, `concepts/package-rules`, `concepts/policy-revisions`
 
 **Package Security** *(tab landing: `package-security/overview`)*
-- Install-Time Package Blocking: `package-security/pmg/overview` *(landing)*, `package-security/pmg/quickstart`, `package-security/pmg/sandbox`, `package-security/pmg/network-policy`, `package-security/pmg/dependency-cooldown`, `package-security/pmg/cloud-policy`, `package-security/pmg/private-registries`, `package-security/pmg/system-install`, `package-security/pmg/kernel-enforcement`, `package-security/pmg/kubernetes`
-- MDM: `package-security/pmg/mdm/overview` *(landing)*, `package-security/pmg/mdm/jamf`, `package-security/pmg/mdm/jumpcloud`, `package-security/pmg/mdm/intune`
-- On-Demand Package Scanning: `package-security/scan/overview` *(landing)*, `package-security/scan/quickstart`, `package-security/scan/automation`
-- CI/CD Package Blocking: `package-security/pmg/github-actions`, `package-security/pmg/github-actions-network-policy`
+- Block at Install: `package-security/pmg/overview` *(landing)*, `package-security/pmg/quickstart`, `package-security/pmg/sandbox`, `package-security/pmg/network-policy`, `package-security/pmg/dependency-cooldown`, `package-security/pmg/cloud-policy`, `package-security/pmg/private-registries`
+- Deploy to a Fleet: `package-security/pmg/mdm/overview` *(landing)*, `package-security/pmg/mdm/jamf`, `package-security/pmg/mdm/jumpcloud`, `package-security/pmg/mdm/intune`, `package-security/pmg/system-install`, `package-security/pmg/kernel-enforcement`, `package-security/pmg/kubernetes`
+- Block in CI/CD: `package-security/pmg/github-actions` *(landing)*, `package-security/pmg/github-actions-network-policy`
+- Scan Before Use: `package-security/scan/overview` *(landing)*, `package-security/scan/quickstart`, `package-security/scan/automation`, `package-security/scan/malware-lookup`
 
-**AI Agent Security** *(tab landing: `ai-security/overview`)*: flat list, scoped to securing AI coding *agents*. The "AI as a software component" pages (Shadow AI in Code, AI Governance) moved to Visibility & Governance, since AI SDKs in your app are a supply-chain concern, not agent security. Order is discover → observe → augment → contain.
-- `ai-security/ai-tools-discovery`, `ai-security/gryph-overview`, `ai-security/mcp-server`, `ai-security/sandbox-coding-agents`
+**AI Agent Security** *(tab landing: `ai-security/overview`)*
+- Flat list: `ai-security/ai-tools-discovery`, `ai-security/gryph-overview`, `ai-security/mcp-server`, `ai-security/sandbox-coding-agents`
 
 **Visibility & Governance** *(tab landing: `governance/overview`)*
-- Repository Scanning: `governance/vet/overview` *(landing)*, `governance/vet/quickstart`, `governance/vet/dependency-inventory`, `governance/vet/dependency-usage`, `governance/vet/code-analysis`
-- MDM: `governance/vet/mdm/overview`
-- Bill of Materials: `governance/xbom/overview` *(landing)*, `governance/xbom/quickstart`, `governance/cyclonedx-sbom`
-- AI Visibility: `governance/ai-governance` *(landing)*, `governance/shadow-ai-detection`, `governance/vet/ai-bom`
-- CI/CD & Platform Integrations: `governance/integrations/overview` *(landing)*, `governance/integrations/github`, `governance/integrations/github-code-scanning`, `governance/integrations/gitlab`, `governance/integrations/bitbucket-app`, `governance/integrations/bitbucket`, `governance/integrations/defectdojo`, `governance/terraform-audit`
-- SafeDep Cloud: `governance/cloud/overview` *(landing)*, `governance/cloud/quickstart`, `governance/cloud/authentication`, `governance/cloud/usage-billing`, `governance/cloud/sync`, `governance/cloud/talk-to-safedep`, `governance/cloud/alerts`, `governance/cloud/crowdstrike-siem`, `governance/cloud/malware-analysis`
-  - Endpoint Hub: `governance/cloud/endpoint-hub/overview` *(landing)*, `governance/cloud/endpoint-hub/inventory`, `governance/cloud/endpoint-hub/inventory-catalog`, `governance/cloud/endpoint-hub/package-guard`, `governance/cloud/endpoint-hub/find-malicious-package`, `governance/cloud/endpoint-hub/ci-package-blocks`, `governance/cloud/endpoint-hub/mcp-advisor`, `governance/cloud/endpoint-hub/agentic-investigation`
-- Cloud Policy: `governance/cloud/policy/overview` *(landing)*, `governance/cloud/policy/quickstart`, `governance/cloud/policy/block-a-package`, `governance/cloud/policy/trust-a-package`, `governance/cloud/policy/set-a-cooldown`, `governance/cloud/policy/target-a-group`, `governance/cloud/policy/pull-request-checks`, `governance/cloud/policy/roll-back-a-change`, `governance/cloud/policy/explain-a-decision`, `governance/cloud/policy/audit-policy-changes`, `governance/cloud/package-exclusions` (deprecated: package rules replace it)
+- Repository Scanning: `governance/vet/overview` *(landing)*, `governance/vet/quickstart`, `governance/vet/dependency-inventory`, `governance/vet/code-analysis`, `governance/vet/build-your-own-queries`, `governance/terraform-audit`, `governance/vet/mdm/overview`
+- Bill of Materials: `governance/xbom/overview` *(landing)*, `governance/xbom/quickstart`, `governance/cyclonedx-sbom`, `governance/vet/ai-bom`
+- CI/CD Integrations: `governance/integrations/overview` *(landing)*, `governance/integrations/github`, `governance/integrations/github-code-scanning`, `governance/integrations/gitlab`, `governance/integrations/bitbucket-app`, `governance/integrations/bitbucket`, `governance/integrations/defectdojo`
+- SafeDep Cloud: `governance/cloud/overview` *(landing)*
+  - Set Up: `governance/cloud/quickstart`, `governance/cloud/authentication`, `governance/cloud/sync`, `governance/cloud/faq`
+  - Endpoint Hub: `governance/cloud/endpoint-hub/overview` *(landing)*, `governance/cloud/endpoint-hub/inventory`, `governance/cloud/endpoint-hub/package-guard`, `governance/cloud/endpoint-hub/find-malicious-package`, `governance/cloud/endpoint-hub/ci-package-blocks`, `governance/cloud/endpoint-hub/mcp-advisor`
+  - Investigate: `governance/cloud/endpoint-hub/agentic-investigation`, `governance/cloud/query-with-sql`
+  - Integrate: `governance/cloud/alerts`, `governance/cloud/crowdstrike-siem`
+  - Account: `governance/cloud/usage-billing`
+- Cloud Policy: `governance/cloud/policy/overview` *(landing)*, `governance/cloud/policy/quickstart`, `governance/cloud/policy/block-a-package`, `governance/cloud/policy/trust-a-package`, `governance/cloud/policy/set-a-cooldown`, `governance/cloud/policy/target-a-group`, `governance/cloud/policy/pull-request-checks`, `governance/cloud/policy/roll-back-a-change`, `governance/cloud/policy/explain-a-decision`, `governance/cloud/policy/audit-policy-changes`, `governance/cloud/package-exclusions`
 
-**Threat Intel** *(tab landing: `threat-intel/overview`)* — subscription-gated feed API (`FEATURE_THREAT_INTEL_FEED`). Product-level API guide; `threat-intel/schema` links out to the public `buf.build/safedep/api` module for the message/field/enum definitions (R6, don't hand-copy tables that drift). The module is public (a keyless `@buf/safedep_api.bufbuild_es` install resolves), so no in-page restatement is needed.
+**Threat Intel** *(tab landing: `threat-intel/overview`)*
 - Getting Started: `threat-intel/quickstart`, `threat-intel/concepts`
-- Consuming the Feed: `threat-intel/connecting`, `threat-intel/pagination`, `threat-intel/package-reports`, `threat-intel/campaigns`, `threat-intel/recipes`
+- Use the Feed: `threat-intel/connecting`, `threat-intel/pagination`, `threat-intel/package-reports`, `threat-intel/campaigns`, `threat-intel/recipes`
 - Integrations: `threat-intel/integrations/jfrog-xray`
-- Reference: `threat-intel/schema`, `threat-intel/errors`, `threat-intel/sdks`
+- Schema & Errors: `threat-intel/schema`, `threat-intel/errors`, `threat-intel/sdks`
 
 **Reference**
-- Query & Policy: `reference/filtering`, `reference/build-your-own-queries`, `reference/policy-as-code`, `reference/exceptions`, `reference/path-exclusion`, `reference/cloud-policy-settings`, `reference/cloud-policy-limits`
+- vet Query & Policy: `reference/filtering`, `reference/policy-as-code`, `reference/exceptions`, `reference/path-exclusion`
+- Cloud Policy: `reference/cloud-policy-settings`, `reference/cloud-policy-limits`
+- Endpoint Hub: `reference/endpoint-scan-catalog`
 - API & Automation: `reference/api-introduction`, `reference/endpoints`, `reference/insights-api-typescript`, `reference/sql-query`
 
 **Community & Support**
 - Community: `community`
-- Support: `faq`, `governance/cloud/faq`
-- Updates: `changelog/2026` (`/changelog` redirects to the current year)
+- Support: `governance/vet/faq`
+- Changelog: `changelog/2026`
 
-Total: **116 pages** (counted from `docs.json` after the Cloud Policy pages landed. The earlier total of 89 was stale.)
+Notes:
+- AI Agent Security is scoped to securing AI coding *agents*. AI SDKs inside your application are a supply-chain concern, so the AI BOM page sits in Visibility & Governance › Bill of Materials.
+- Threat Intel is the subscription-gated feed API (`FEATURE_THREAT_INTEL_FEED`). `threat-intel/schema` links out to the public `buf.build/safedep/api` module instead of restating field tables (R6). JFrog Xray stays here because it is gated on the feed add-on (see §8).
+
+Total: **113 pages** (counted from `docs.json`).
 
 ---
 

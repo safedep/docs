@@ -15,7 +15,7 @@ The reasoning: every scan draws down your plan's allowance, and with [on-demand 
 What this means in practice:
 
 - **Automation on a workstation works.** Scripts and AI agents running where a human has signed in (a developer machine, an agent sandbox with the CLI configured) submit scans normally. The CLI refreshes the session silently. Re-run `safedep auth login` when the refresh eventually expires.
-- **Headless CI cannot submit scans today.** There is no non-interactive credential for scan submission. If your pipeline needs an inline malicious-package gate, use the free fast-path lookup with [Vet](/governance/cloud/malware-analysis), which works with an API key or no account at all.
+- **Headless CI cannot submit scans today.** There is no non-interactive credential for scan submission. If your pipeline needs an inline malicious-package gate, use the free fast-path lookup with [Vet](/package-security/scan/malware-lookup), which works with an API key or no account at all.
 
 ## Machine-readable output
 

@@ -6,7 +6,7 @@ description: "Build an AI Bill of Materials from source code with vet's xBOM eng
 
 `vet` finds the AI libraries, SDKs, and agent frameworks your application actually calls. It scans source code, matches call sites against signatures for known AI SDKs, and writes each match into its [CycloneDX](/concepts/sbom) output as an extended Bill of Materials (xBOM). The AI components, each marked with an `ai` property and file and line evidence, are your AI BOM.
 
-Because the inventory comes from call sites, it shows what the code calls, not just what the manifests declare.
+Because the inventory comes from call sites, it shows what the code calls, not just what the manifests declare. Use it to find shadow AI: AI services that developers added to the code without a security review.
 
 Coverage tracks the AI ecosystem in current use:
 
@@ -39,6 +39,14 @@ Browse the [full signature set](https://github.com/safedep/vet/tree/main/signatu
       --lang python \
       --exclude ".*test.*" --exclude ".*__pycache__.*"
     ```
+
+    To also scan vendored or third-party dependency source, add `--import-dir`:
+
+    ```bash
+    vet code scan --db code.db \
+      --app ./src \
+      --import-dir ./vendor
+    ```
   </Step>
 
   <Step title="Write the CycloneDX BOM">
@@ -64,6 +72,12 @@ Browse the [full signature set](https://github.com/safedep/vet/tree/main/signatu
     vet code query --db code.db --tag ai --language python --limit 200
     vet code query --db code.db --vendor OpenAI
     vet code query --db code.db --file src/agents/
+    ```
+
+    Repeat `--tag` to filter on more than one tag:
+
+    ```bash
+    vet code query --db code.db --tag ai --tag crypto
     ```
   </Step>
 </Steps>
@@ -95,7 +109,26 @@ AI SDK calls detected in your code appear as standalone components with an `xbom
 
 `additionalContext` shows the matched call in the analyzer's namespace notation, with `//` separating the module path from the symbol. Detection follows calls, so an SDK that is imported but never called produces no component.
 
-If you scan vendored dependency source through `--import-dir`, `vet` attempts to attach those detections to the corresponding declared package instead of a standalone component. More AI SDKs and libraries are added to `vet` xBOM coverage over time.
+If you scan vendored dependency source through `--import-dir`, `vet` attempts to attach those detections to the corresponding declared package instead of a standalone component. The declared package then gets `source-code-analysis` evidence:
+
+```json
+{
+  "bom-ref": "pkg:pypi/openai@1.0.0",
+  "evidence": {
+    "identity": [
+      { "methods": [{ "technique": "source-code-analysis", "confidence": 1.0 }] }
+    ],
+    "occurrences": [
+      { "location": "src/ai.py", "line": 42, "additionalContext": "openai.OpenAI" }
+    ]
+  },
+  "properties": [
+    { "name": "ai", "value": "true" }
+  ]
+}
+```
+
+More AI SDKs and libraries are added to `vet` xBOM coverage over time.
 
 ### Filter the AI components
 
@@ -108,6 +141,10 @@ jq '.components[] | select(.properties[]? | .name == "ai" and .value == "true") 
 <Note>
 Providers reached through the OpenAI-compatible mode of the `openai` SDK (DeepSeek and Moonshot document this as their official path) appear as OpenAI usage, because the code calls the `openai` SDK.
 </Note>
+
+<Info>
+The signatures are community-maintained and embedded in `vet` at build time. Run `vet code validate` to verify that all signatures are well-formed.
+</Info>
 
 ## Run it in CI
 
@@ -130,5 +167,8 @@ Generate the BOM on each build and keep it as an artifact:
   </Card>
   <Card title="Code Analysis" icon="magnifying-glass" href="/governance/vet/code-analysis">
     The static analysis engine behind the xBOM.
+  </Card>
+  <Card title="Policy as Code" icon="shield" href="/reference/policy-as-code">
+    Enforce policies on detected components in CI/CD.
   </Card>
 </CardGroup>

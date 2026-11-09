@@ -109,7 +109,8 @@
             "root": "package-security/scan/overview",
             "pages": [
               "package-security/scan/quickstart",
-              "package-security/scan/automation"
+              "package-security/scan/automation",
+              "package-security/scan/malware-lookup"
             ]
           }
         ]
@@ -137,8 +138,8 @@
             "pages": [
               "governance/vet/quickstart",
               "governance/vet/dependency-inventory",
-              "governance/vet/dependency-usage",
               "governance/vet/code-analysis",
+              "governance/vet/build-your-own-queries",
               "governance/terraform-audit",
               "governance/vet/mdm/overview"
             ]
@@ -151,14 +152,6 @@
               "governance/xbom/quickstart",
               "governance/cyclonedx-sbom",
               "governance/vet/ai-bom"
-            ]
-          },
-          {
-            "group": "AI Visibility",
-            "icon": "robot",
-            "root": "governance/ai-governance",
-            "pages": [
-              "governance/shadow-ai-detection"
             ]
           },
           {
@@ -196,20 +189,18 @@
                 "root": "governance/cloud/endpoint-hub/overview",
                 "pages": [
                   "governance/cloud/endpoint-hub/inventory",
-                  "governance/cloud/endpoint-hub/inventory-catalog",
                   "governance/cloud/endpoint-hub/package-guard",
                   "governance/cloud/endpoint-hub/find-malicious-package",
                   "governance/cloud/endpoint-hub/ci-package-blocks",
-                  "governance/cloud/endpoint-hub/mcp-advisor",
-                  "governance/cloud/endpoint-hub/agentic-investigation"
+                  "governance/cloud/endpoint-hub/mcp-advisor"
                 ]
               },
               {
                 "group": "Investigate",
                 "icon": "magnifying-glass",
                 "pages": [
-                  "governance/cloud/talk-to-safedep",
-                  "governance/cloud/malware-analysis"
+                  "governance/cloud/endpoint-hub/agentic-investigation",
+                  "governance/cloud/query-with-sql"
                 ]
               },
               {
@@ -299,7 +290,6 @@
             "icon": "filter",
             "pages": [
               "reference/filtering",
-              "reference/build-your-own-queries",
               "reference/policy-as-code",
               "reference/exceptions",
               "reference/path-exclusion"
@@ -311,6 +301,13 @@
             "pages": [
               "reference/cloud-policy-settings",
               "reference/cloud-policy-limits"
+            ]
+          },
+          {
+            "group": "Endpoint Hub",
+            "icon": "server",
+            "pages": [
+              "reference/endpoint-scan-catalog"
             ]
           },
           {
@@ -340,7 +337,7 @@
             "group": "Support",
             "icon": "circle-question",
             "pages": [
-              "faq"
+              "governance/vet/faq"
             ]
           },
           {
@@ -420,19 +417,19 @@
     },
     {
       "source": "/vet/guides/ai-governance",
-      "destination": "/governance/ai-governance"
+      "destination": "/ai-security/overview"
     },
     {
       "source": "/ai-security/ai-governance",
-      "destination": "/governance/ai-governance"
+      "destination": "/ai-security/overview"
     },
     {
       "source": "/vet/guides/shadow-ai-detection",
-      "destination": "/governance/shadow-ai-detection"
+      "destination": "/governance/vet/ai-bom"
     },
     {
       "source": "/ai-security/shadow-ai-detection",
-      "destination": "/governance/shadow-ai-detection"
+      "destination": "/governance/vet/ai-bom"
     },
     {
       "source": "/vet/guides/ai-tools-discovery",
@@ -456,7 +453,7 @@
     },
     {
       "source": "/vet/guides/dependency-usage-identification",
-      "destination": "/governance/vet/dependency-usage"
+      "destination": "/governance/vet/code-analysis"
     },
     {
       "source": "/xbom/concepts/why-xbom",
@@ -516,7 +513,7 @@
     },
     {
       "source": "/cloud/endpoint-hub/inventory-catalog",
-      "destination": "/governance/cloud/endpoint-hub/inventory-catalog"
+      "destination": "/reference/endpoint-scan-catalog"
     },
     {
       "source": "/cloud/endpoint-hub/package-guard",
@@ -524,7 +521,7 @@
     },
     {
       "source": "/cloud/malware-analysis",
-      "destination": "/governance/cloud/malware-analysis"
+      "destination": "/package-security/scan/malware-lookup"
     },
     {
       "source": "/cloud/package-exclusions",
@@ -544,7 +541,7 @@
     },
     {
       "source": "/vet/advanced/build-your-own-queries",
-      "destination": "/reference/build-your-own-queries"
+      "destination": "/governance/vet/build-your-own-queries"
     },
     {
       "source": "/vet/advanced/policy-as-code",
@@ -573,6 +570,38 @@
     {
       "source": "/get-started/cloud-quickstart",
       "destination": "/governance/cloud/quickstart"
+    },
+    {
+      "source": "/governance/shadow-ai-detection",
+      "destination": "/governance/vet/ai-bom"
+    },
+    {
+      "source": "/governance/ai-governance",
+      "destination": "/ai-security/overview"
+    },
+    {
+      "source": "/governance/vet/dependency-usage",
+      "destination": "/governance/vet/code-analysis"
+    },
+    {
+      "source": "/governance/cloud/talk-to-safedep",
+      "destination": "/governance/cloud/endpoint-hub/agentic-investigation"
+    },
+    {
+      "source": "/governance/cloud/malware-analysis",
+      "destination": "/package-security/scan/malware-lookup"
+    },
+    {
+      "source": "/governance/cloud/endpoint-hub/inventory-catalog",
+      "destination": "/reference/endpoint-scan-catalog"
+    },
+    {
+      "source": "/faq",
+      "destination": "/governance/vet/faq"
+    },
+    {
+      "source": "/reference/build-your-own-queries",
+      "destination": "/governance/vet/build-your-own-queries"
     }
   ],
   "logo": {
