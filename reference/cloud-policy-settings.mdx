@@ -13,7 +13,7 @@ This page lists each setting of the [cloud policy](/governance/cloud/policy/over
 | `scan_gate.fail_on` | Severity | `critical`, `high`, `medium`, `low`, `info` | `high` | Not applicable | Enforces. `info` is partial. |
 | `scan_gate.fail_on_attacks` | Attack gate | `report`, `fail` | `fail` | Not applicable | `report` enforces. With `fail`, the check reports and does not fail yet. |
 | `scan_gate.licenses.deny` | License list | 0 to 500 license entries | The nine GPL and AGPL ids below | Not applicable | Enforces |
-| `scan_gate.licenses.allow` | License list | 0 to 500 license entries. No entries turns the allow list off. | Not set (off) | Not applicable | Enforces |
+| `scan_gate.licenses.allow` | License list | 0 to 500 license entries. No entries turns the allow list off. | Not set (off) | Not applicable | Enforces. Fails only a known license and `NONE`. |
 | `scan_gate.licenses.unknown` | Unknown license gate | `allow`, `report`, `fail` | `allow` | Not applicable | Enforces |
 
 Vet does not read the cloud policy yet.
@@ -24,13 +24,13 @@ Notes:
 - **`scan_gate.fail_on`.** The check fails on a vulnerability at or above this severity. A lower severity is stricter. The check ranks a vulnerability with no severity as `info`.
 - **`scan_gate.fail_on_attacks`.** What the check does with a finding of an attack control, such as a malware verdict that is not verified. Verified malware always fails the check, whatever the value. `fail` is stricter than `report`.
 - **`scan_gate.licenses.deny`.** A license on the list fails the check. An added entry is stricter, and a removed entry is looser. A list with no entries denies no license.
-- **`scan_gate.licenses.allow`.** With entries, a license that is not on the list fails the check. An added entry is looser, and a removed entry is stricter. A change that turns the list on is stricter, and a change that empties it is looser.
+- **`scan_gate.licenses.allow`.** With entries, a known license that is not on the list fails the check, and so does `NONE`. An unknown license is not a known license: `unknown` decides for it, and `unknown: allow` passes it. An added entry is looser, and a removed entry is stricter. A change that turns the list on is stricter, and a change that empties it is looser.
 - **`scan_gate.licenses.unknown`.** What the check does with a package whose license is unknown and that the lists do not fail. `allow` passes it, `report` shows it and does not fail, and `fail` fails the check. A later value in the list is stricter.
 - Each setting is mandatory in PMG: an environment variable or a flag does not override the cloud value.
 
-The SafeDep default policy (revision 2) denies `GPL-2.0`, `GPL-2.0-only`, `GPL-2.0-or-later`, `GPL-3.0`, `GPL-3.0-only`, `GPL-3.0-or-later`, `AGPL-3.0`, `AGPL-3.0-only` and `AGPL-3.0-or-later`.
-
 ## License gate
+
+The SafeDep default policy (revision 2) denies these nine ids: `GPL-2.0`, `GPL-2.0-only`, `GPL-2.0-or-later`, `GPL-3.0`, `GPL-3.0-only`, `GPL-3.0-or-later`, `AGPL-3.0`, `AGPL-3.0-only` and `AGPL-3.0-or-later`.
 
 Each list is one setting. A list that a layer sets replaces the list of the layer below, also the deny list of the SafeDep default policy. No layer merges two lists.
 
@@ -48,17 +48,29 @@ Each list is one setting. A list that a layer sets replaces the list of the laye
 | Unknown license | The package has no license data, its value is `NOASSERTION` or is not an SPDX expression, or its value is `NONE` and no allow list is set. `NONE` fails an allow list. |
 | Order | The deny list, then the allow list. `unknown` decides only for a package that the lists do not fail. |
 
+### Changes in default policy revision 2
+
+Before revision 2, the check compared each license value with the nine ids of the default deny list exactly. Revision 2 applies the rules above. So these licenses fail a check that passed before revision 2:
+
+- a listed id in another case, as `gpl-3.0-only`;
+- `GPL-2.0+` and `GPL-3.0+`, which match as `GPL-2.0-or-later` and `GPL-3.0-or-later`;
+- `GPL-2.0-only+` and `GPL-3.0-only+`, which match the same way;
+- an `AND` expression that holds a listed id, as `GPL-3.0-only AND MIT`;
+- an `OR` expression whose every choice is a listed id, as `GPL-2.0-only OR GPL-3.0-only`.
+
+`MIT OR GPL-3.0-only` and `GPL-2.0-only WITH Classpath-exception-2.0` still pass.
+
 The policy settings document shows a list in the form `deny: {licenses: [GPL-3.0-only]}`. An edit also accepts the bare list, as `deny: [GPL-3.0-only]`. `deny: {licenses: []}` sets a deny list with no entries. A `deny:` key with no list changes nothing.
 
 ### License findings
 
-| Finding | When | Text in the policy block | Name of the stored violation |
+| Finding | When | Text in the policy block | `rule_name` in `safedep query` |
 |---|---|---|---|
 | `license-denied` | The license fails the deny list | denied license `AGPL-3.0-only`, with the declared value when it differs, as (declared `AGPL-3.0`) | `risky-oss-licenses` |
 | `license-not-allowed` | The license fails the allow list | license `Apache-2.0` is not on the allow list | `license-not-allowed` |
 | `license-unknown` | The license is unknown, and `unknown` is `report` or `fail` | unknown license `NOASSERTION`, or no license data | `license-unknown` |
 
-A trust entry with the scope `license` waives each of these findings for the versions that it selects.
+A trust entry with the scope `license` waives each of these findings for the versions that it selects. A failing finding stores a policy violation. `safedep query` shows its name in the column `rule_name` of the table `component_policy_violations`. A denied license keeps the name `risky-oss-licenses` that the check used before the license gate.
 
 ## The policy settings document
 
