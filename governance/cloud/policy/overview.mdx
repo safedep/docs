@@ -13,7 +13,7 @@ The cloud policy is one [policy](/concepts/policy) for your tenant in SafeDep Cl
 
 - **Package rules.** Block a package for the whole tenant, or trust one package after a false positive. See [Package Rules](/concepts/package-rules).
 - **Dependency cooldown.** Hold back package versions that are younger than a minimum age.
-- **Pull request checks.** Choose the lowest vulnerability severity that fails a check.
+- **Pull request checks.** Choose the lowest vulnerability severity that fails a check, and the licenses that fail it.
 
 You can set a value for the whole tenant, or for a group of endpoints or projects with a policy override. See [Policy Resolution](/concepts/policy-resolution).
 
@@ -25,8 +25,11 @@ You can set a value for the whole tenant, or for a group of endpoints or project
 | Trust entries, scope `malware` | Enforces | Enforces | Not yet |
 | Trust entries, scope `cooldown` | Enforces | Not supported | Not yet |
 | Trust entries, scope `vulnerability` | Not applicable | Enforces | Not yet |
+| Trust entries, scope `vulnerability` with vulnerability ids (`named-vulnerability`) | Not applicable | Enforces | Not yet |
+| Trust entries, scope `license` | Not applicable | Enforces | Not yet |
 | Dependency cooldown (`package_admission.cooldown.min_age`) | Enforces | Not supported | Not yet |
 | Scan gate (`scan_gate.fail_on`, `scan_gate.fail_on_attacks`) | Not applicable | Enforces, with exceptions | Not yet |
+| License gate (`scan_gate.licenses.deny`, `scan_gate.licenses.allow`, `scan_gate.licenses.unknown`) | Not applicable | Enforces | Not yet |
 
 The [settings reference](/reference/cloud-policy-settings) gives the exceptions of each setting.
 
@@ -73,7 +76,7 @@ A package rule skips the draft: `safedep policy rule create` publishes at once. 
     Label endpoints and projects and write a policy override.
   </Card>
   <Card title="Fail Pull Request Checks" icon="code-pull-request" href="/governance/cloud/policy/pull-request-checks">
-    Choose the severities that fail a check for a group of projects.
+    Choose the severities and the licenses that fail a check.
   </Card>
   <Card title="Roll Back a Change" icon="clock-rotate-left" href="/governance/cloud/policy/roll-back-a-change">
     Restore a setting from an old revision.

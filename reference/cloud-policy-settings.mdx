@@ -12,6 +12,9 @@ This page lists each setting of the [cloud policy](/governance/cloud/policy/over
 | `package_admission.cooldown.min_age` | Duration | 0 to 365 days. `0` turns the cooldown off. | Not set | Enforces | Not supported |
 | `scan_gate.fail_on` | Severity | `critical`, `high`, `medium`, `low`, `info` | `high` | Not applicable | Enforces. `info` is partial. |
 | `scan_gate.fail_on_attacks` | Attack gate | `report`, `fail` | `fail` | Not applicable | `report` enforces. With `fail`, the check reports and does not fail yet. |
+| `scan_gate.licenses.deny` | License list | 0 to 500 license entries | The nine GPL and AGPL ids below | Not applicable | Enforces |
+| `scan_gate.licenses.allow` | License list | 0 to 500 license entries. No entries turns the allow list off. | Not set (off) | Not applicable | Enforces |
+| `scan_gate.licenses.unknown` | Unknown license gate | `allow`, `report`, `fail` | `allow` | Not applicable | Enforces |
 
 Vet does not read the cloud policy yet.
 
@@ -20,7 +23,42 @@ Notes:
 - **`package_admission.cooldown.min_age`.** The minimum age of a package version since its publish time. A longer age is stricter. PMG rounds the value up to whole days, and maps it to `dependency_cooldown.enabled` and `dependency_cooldown.days`. When no layer sets it, PMG uses its own config.
 - **`scan_gate.fail_on`.** The check fails on a vulnerability at or above this severity. A lower severity is stricter. The check ranks a vulnerability with no severity as `info`.
 - **`scan_gate.fail_on_attacks`.** What the check does with a finding of an attack control, such as a malware verdict that is not verified. Verified malware always fails the check, whatever the value. `fail` is stricter than `report`.
+- **`scan_gate.licenses.deny`.** A license on the list fails the check. An added entry is stricter, and a removed entry is looser. A list with no entries denies no license.
+- **`scan_gate.licenses.allow`.** With entries, a license that is not on the list fails the check. An added entry is looser, and a removed entry is stricter. A change that turns the list on is stricter, and a change that empties it is looser.
+- **`scan_gate.licenses.unknown`.** What the check does with a package whose license is unknown and that the lists do not fail. `allow` passes it, `report` shows it and does not fail, and `fail` fails the check. A later value in the list is stricter.
 - Each setting is mandatory in PMG: an environment variable or a flag does not override the cloud value.
+
+The SafeDep default policy (revision 2) denies `GPL-2.0`, `GPL-2.0-only`, `GPL-2.0-or-later`, `GPL-3.0`, `GPL-3.0-only`, `GPL-3.0-or-later`, `AGPL-3.0`, `AGPL-3.0-only` and `AGPL-3.0-or-later`.
+
+## License gate
+
+Each list is one setting. A list that a layer sets replaces the list of the layer below, also the deny list of the SafeDep default policy. No layer merges two lists.
+
+| Rule | Behavior |
+|---|---|
+| Entry | An SPDX license id, as `GPL-3.0-only`, an id with an exception, as `GPL-2.0-only WITH Classpath-exception-2.0`, or a `LicenseRef-` id. 1 to 128 characters. |
+| Entry check | SafeDep Cloud refuses an SPDX id that is not on the [SPDX License List](https://spdx.org/licenses/), an expression with `AND` or `OR`, two entries that differ only in case, and the vet set names `osi-approved`, `fsf-libre` and `osi-approved-or-fsf-libre`. |
+| Case | An SPDX id matches in any case. A `LicenseRef-` id matches exactly. |
+| Deprecated id | A deprecated id matches as its current id: `GPL-2.0` is `GPL-2.0-only`. `GPL-2.0+` and `GPL-2.0-only+` are `GPL-2.0-or-later`. |
+| Exception | An entry matches a license of the same form only. `GPL-2.0-only` does not match `GPL-2.0-only WITH Classpath-exception-2.0`. |
+| Or-later license | An `-or-later` license fails a deny list when the list names it, or names each version that it allows. It passes an allow list when the list names it or one of those versions. |
+| `OR` | The check decides each choice of the expression. The package passes when one choice fails no list. `MIT OR GPL-3.0-only` passes a deny list that holds `GPL-3.0-only`. |
+| `AND` | Every part must pass. `GPL-3.0-only AND MIT` fails a deny list that holds `GPL-3.0-only`. |
+| Many license values | The values of one package join with `AND`. |
+| Unknown license | The package has no license data, its value is `NOASSERTION` or is not an SPDX expression, or its value is `NONE` and no allow list is set. `NONE` fails an allow list. |
+| Order | The deny list, then the allow list. `unknown` decides only for a package that the lists do not fail. |
+
+The policy settings document shows a list in the form `deny: {licenses: [GPL-3.0-only]}`. An edit also accepts the bare list, as `deny: [GPL-3.0-only]`. `deny: {licenses: []}` sets a deny list with no entries. A `deny:` key with no list changes nothing.
+
+### License findings
+
+| Finding | When | Text in the policy block | Name of the stored violation |
+|---|---|---|---|
+| `license-denied` | The license fails the deny list | denied license `AGPL-3.0-only`, with the declared value when it differs, as (declared `AGPL-3.0`) | `risky-oss-licenses` |
+| `license-not-allowed` | The license fails the allow list | license `Apache-2.0` is not on the allow list | `license-not-allowed` |
+| `license-unknown` | The license is unknown, and `unknown` is `report` or `fail` | unknown license `NOASSERTION`, or no license data | `license-unknown` |
+
+A trust entry with the scope `license` waives each of these findings for the versions that it selects.
 
 ## The policy settings document
 
@@ -50,20 +88,25 @@ The document holds no package rules and keeps no comments.
 | Selector (PURL) | Required. A PURL, or a prefix that ends with `/*` or `.*`. | Required. One package. No prefix. | At most 512 characters |
 | Version range (`vers`) | Optional | Optional | The vers form, as `vers:npm/>=1.2.0\|<2.0.0`. Not with a version in the PURL. |
 | Effect | `block` | `trust` | |
-| Scopes | None | Required: `malware`, `cooldown`, `vulnerability` | |
+| Scopes | None | Required: `malware`, `cooldown`, `vulnerability`, `license`, or `named-vulnerability` alone | At most 8 |
+| Vulnerabilities | None | Required with the scope `named-vulnerability`, not allowed without it | 1 to 100 items. Each item is a vulnerability id and an optional justification. |
 | Reason | Required | Required | 1 to 1,000 characters. Tools receive it. |
 | Expiry | Optional | Required, at most 90 days from now | |
 | Ticket | Optional | Optional | At most 128 characters. Tools do not receive it. |
 | Requested by | Optional | Optional | At most 128 characters. Tools do not receive it. |
 | Attaches to | The policy base, or one policy override | The policy base, or one policy override | |
 
-A rule never changes its selector, its effect or its scopes. Its reason, expiry, ticket and requester can change.
+A rule never changes its selector, its effect, its scopes or its vulnerabilities. Its reason, expiry, ticket and requester can change.
+
+A vulnerability id has its published form, as `CVE-2024-3094` or `GHSA-jfh8-c2jp-5v3q`: 1 to 64 characters that match `^[A-Z][A-Z0-9]*-[A-Za-z0-9.:-]+$`. A rule names each id one time. Two ids that differ only in case count as the same id. The justification is one of the OpenVEX names `component_not_present`, `vulnerable_code_not_present`, `vulnerable_code_not_in_execute_path`, `vulnerable_code_cannot_be_controlled_by_adversary` and `inline_mitigations_already_exist`. The safedep CLI creates such a rule with `--scope vulnerability --vulnerability ID[:JUSTIFICATION]`.
 
 | Trust scope | Waives | PMG | Pull request check |
 |---|---|---|---|
 | `malware` | A malware verdict that is not verified | Enforces | Enforces |
 | `cooldown` | The dependency cooldown | Enforces | Not supported |
-| `vulnerability` | The vulnerability findings of a scan gate | Not applicable | Enforces |
+| `vulnerability` | Every vulnerability finding of a scan gate, also one that is published later | Not applicable | Enforces |
+| `named-vulnerability` | The vulnerability findings of a scan gate for the ids of the rule and their aliases | Not applicable | Enforces |
+| `license` | The license findings of a scan gate | Not applicable | Enforces |
 
 ## Related
 

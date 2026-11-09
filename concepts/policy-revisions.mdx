@@ -32,6 +32,7 @@ SafeDep Cloud computes the change direction of each change: it **tightens**, it 
 
 - A setting tightens when its new value is stricter, such as a longer cooldown or a lower severity for `scan_gate.fail_on`.
 - A setting that had no value before the change, or that has no value after it, loosens. SafeDep Cloud cannot know what a tool does when no layer sets the field. So the first cooldown that you set counts as a change that loosens.
+- A license id that a change adds to `scan_gate.licenses.deny` tightens, and an id that it removes loosens. For `scan_gate.licenses.allow` it is the other way: an added id loosens, and a removed id tightens. A change that turns on an allow list tightens, and a change that turns it off loosens.
 - A new block entry tightens. A new trust entry loosens.
 - A deleted block entry loosens. A deleted trust entry tightens.
 - A later expiry of a trust entry loosens. A new or earlier expiry of a block entry loosens, because it narrows the block.

@@ -1,6 +1,6 @@
 ---
-title: "Fail Pull Request Checks on Chosen Severities"
-description: "Use the cloud policy to choose which vulnerability severities fail the SafeDep pull request check for a group of projects, on GitHub and Bitbucket."
+title: "Fail Pull Request Checks on Severities and Licenses"
+description: "Use the cloud policy to choose the vulnerability severities and the licenses that fail the SafeDep pull request check, on GitHub and Bitbucket."
 ---
 
 The pull request check of the [SafeDep GitHub App](/governance/integrations/github) and the [Bitbucket app](/governance/integrations/bitbucket-app) reads the cloud policy of your tenant. Both apps use the same check, so one policy applies to repositories on both forges. There is no separate setting in each app.
@@ -15,11 +15,15 @@ The pull request check of the [SafeDep GitHub App](/governance/integrations/gith
 |---|---|
 | `scan_gate.fail_on` | Fails on a vulnerability at or above this severity: `critical`, `high`, `medium`, `low` or `info`. The SafeDep default policy sets `high`. |
 | `scan_gate.fail_on_attacks` | With `report`, the check reports a malware verdict that is not verified and does not fail on it. With `fail` (the default), the check also reports it and does not fail on it yet. |
+| `scan_gate.licenses.deny` | Fails on a package whose license is on the list. The SafeDep default policy denies nine GPL and AGPL ids. |
+| `scan_gate.licenses.allow` | With entries, fails on a package whose license is not on the list. With no entries, the allow list is off. The SafeDep default policy sets no allow list. |
+| `scan_gate.licenses.unknown` | What the check does with a package whose license is unknown: `allow`, `report` or `fail`. The SafeDep default policy sets `allow`. |
 | Block entries | Fail the check when the pull request adds a package that they select. |
-| Trust entries, scope `vulnerability` | Waive the vulnerabilities of the package that they select. |
+| Trust entries, scope `vulnerability` | Waive the vulnerabilities of the package that they select. With vulnerability ids, waive only those vulnerabilities. |
+| Trust entries, scope `license` | Waive the license findings of the package that they select. |
 | Trust entries, scope `malware` | Waive a malware verdict that is not verified. |
 
-Verified malware always fails the check. No setting and no trust entry changes that. The check also fails on a risky license, by a fixed rule of the check that the policy does not control yet. The check does not apply a dependency cooldown.
+Verified malware always fails the check. No setting and no trust entry changes that. The check does not apply a dependency cooldown.
 
 The check still applies the [Malicious Package Exclusions](/governance/cloud/package-exclusions) of your tenant. When an exclusion selects a package version, the check does not report an unverified malware verdict for that version. Verified malware still fails the check. PMG with `cloud.policy` on ignores exclusions.
 
@@ -69,16 +73,154 @@ The check still applies the [Malicious Package Exclusions](/governance/cloud/pac
 
 To set the gate for every project of the tenant, set `scan_gate.fail_on` in the policy base instead. To target one forge, select on `scm/forge`, as in `matchLabels: {scm/forge: bitbucket}`.
 
-## Waive one vulnerable package
+## How the license gate decides
 
-To pass a check that fails on a vulnerability that you accept, create a trust entry with the scope `vulnerability`:
+The check reads the license of each package that the pull request adds or updates. It applies the deny list first, then the allow list. The `unknown` setting decides only for a package that the lists do not fail.
+
+- An entry is an SPDX license id, as `GPL-3.0-only`, an id with an exception, as `GPL-2.0-only WITH Classpath-exception-2.0`, or a `LicenseRef-` id. SafeDep Cloud refuses an SPDX id that is not on the [SPDX License List](https://spdx.org/licenses/).
+- A list that a layer sets replaces the list of the layer below. A deny list in your policy base replaces the deny list of the SafeDep default policy. No layer merges two lists.
+- A package passes when one choice of an `OR` expression fails no list. So `MIT OR GPL-3.0-only` passes the default deny list. Every part of an `AND` expression must pass, so `GPL-3.0-only AND MIT` fails it.
+- A license is unknown when the package has no license data, when its value is `NOASSERTION` or is not an SPDX expression, and when its value is `NONE` and no allow list is set. A package that SafeDep does not know has no license data.
+
+The [settings reference](/reference/cloud-policy-settings#license-gate) gives the full match rules.
+
+### The license gate of the SafeDep default policy
+
+SafeDep default policy revision 2 denies these nine ids, sets no allow list, and sets `unknown` to `allow`:
+
+`GPL-2.0`, `GPL-2.0-only`, `GPL-2.0-or-later`, `GPL-3.0`, `GPL-3.0-only`, `GPL-3.0-or-later`, `AGPL-3.0`, `AGPL-3.0-only`, `AGPL-3.0-or-later`
+
+Before revision 2, the check compared each license value with these nine ids exactly. Revision 2 applies the SPDX rules. So these licenses now fail a check that passed before:
+
+- a listed id in another case, as `gpl-3.0-only`;
+- `GPL-2.0+` and `GPL-3.0+`, which compare as `GPL-2.0-or-later` and `GPL-3.0-or-later`;
+- `GPL-2.0-only+` and `GPL-3.0-only+`, which compare the same way;
+- an `AND` expression that holds a listed id, as `GPL-3.0-only AND MIT`;
+- an `OR` expression whose every choice is a listed id, as `GPL-2.0-only OR GPL-3.0-only`.
+
+`MIT OR GPL-3.0-only` and `GPL-2.0-only WITH Classpath-exception-2.0` still pass.
+
+## Deny a license
+
+<Note>
+  The license gate in `safedep policy edit`, the scope `license` and the `--vulnerability` flag need a safedep CLI release later than v0.10.0.
+</Note>
+
+1. Open the policy settings document:
+
+   ```bash
+   safedep policy edit -m "Deny SSPL"
+   ```
+
+2. Set the deny list in the policy base. Your list replaces the default list, so copy the nine default ids and add the new one:
+
+   ```yaml
+   base:
+     scan_gate:
+       licenses:
+         deny:
+           licenses:
+             - GPL-2.0
+             - GPL-2.0-only
+             - GPL-2.0-or-later
+             - GPL-3.0
+             - GPL-3.0-only
+             - GPL-3.0-or-later
+             - AGPL-3.0
+             - AGPL-3.0-only
+             - AGPL-3.0-or-later
+             - SSPL-1.0
+   ```
+
+3. Preview and publish the change with `safedep policy change show` and `safedep policy change publish`, as in [Fail on medium for a group of projects](#fail-on-medium-for-a-group-of-projects).
+
+An added id tightens the policy. A removed id loosens the policy, so the publish asks for a confirmation, and every Owner and Admin of the tenant gets an email about it. A deny list that leaves out an id of the list below it removes that id, so it also loosens the policy.
+
+To deny no license for a group of projects, set `deny: {licenses: []}` in a policy override.
+
+## Allow only some licenses
+
+Set an allow list for a group of projects. A package whose license is not on the list fails the check:
+
+```yaml
+overrides:
+  - name: distributed
+    priority: 300
+    description: Code that we ship to customers
+    selector:
+      matchLabels: {custom/distribution: external}
+    spec:
+      scan_gate:
+        licenses:
+          allow:
+            licenses: [MIT, Apache-2.0, BSD-2-Clause, BSD-3-Clause, ISC]
+```
+
+- The deny list still applies. A license on both lists fails the check.
+- A change that turns on an allow list tightens the policy. A change that adds an id to the list loosens it, and a change that removes an id tightens it.
+- To turn off the allow list of the policy base for a group, set `allow: {licenses: []}` in a policy override. The change loosens the policy.
+
+## Fail on an unknown license
+
+Set `unknown` to `report` to show these packages in the check without a failure, or to `fail` to fail on them:
+
+```yaml
+base:
+  scan_gate:
+    licenses:
+      unknown: report
+```
+
+<Warning>
+  With `unknown: fail`, the check fails on each pull request that adds a package whose license SafeDep does not know. Start with `report`, and read the reported packages before you set `fail`.
+</Warning>
+
+`fail` is stricter than `report`, and `report` is stricter than `allow`.
+
+## Waive the license findings of one package
+
+To pass a check that fails on a license that your team accepts, create a trust entry with the scope `license`:
+
+```bash
+safedep policy rule create --trust pkg:npm/acme-report-engine@2.0.0 --scope license \
+  --reason "Legal approved the license, LEG-12" --expires 90d
+```
+
+The trust entry waives every license finding of the versions that it selects: a denied license, a license that is not on the allow list, and an unknown license.
+
+## Waive one vulnerability of a package
+
+To accept one vulnerability and still fail on the other vulnerabilities of the package, name the vulnerability with `--vulnerability`:
+
+```bash
+safedep policy rule create --trust pkg:npm/minimist@1.2.5 --scope vulnerability \
+  --vulnerability CVE-2021-44906:vulnerable_code_not_in_execute_path \
+  --reason "We never pass user input to minimist, S-91" --expires 30d
+```
+
+- Write the id as its advisory publishes it, as `CVE-2024-3094` or `GHSA-jfh8-c2jp-5v3q`. The check also matches the aliases of the finding, so a CVE id waives the GHSA finding of the same vulnerability. The match ignores case.
+- Give `--vulnerability` more than once, or give a comma-separated list, to name more vulnerabilities. A trust entry names at most 100 vulnerabilities, each one time.
+- `--scope vulnerability` must be the only scope of the trust entry. Create another trust entry for the other scopes.
+- A vulnerability that SafeDep publishes later still fails the check.
+
+The text after the last `:` is an optional justification. It says why the vulnerability does not affect the package, with an [OpenVEX](https://github.com/openvex/spec) name:
+
+| Justification | Meaning |
+|---|---|
+| `component_not_present` | The vulnerable component is not present. |
+| `vulnerable_code_not_present` | The component is present, but the vulnerable code is not. |
+| `vulnerable_code_not_in_execute_path` | The vulnerable code is present, but your use of the code never runs it. |
+| `vulnerable_code_cannot_be_controlled_by_adversary` | The vulnerable code runs, but an attacker cannot control it. |
+| `inline_mitigations_already_exist` | Built-in protections prevent the exploit. |
+
+Without a justification, `--reason` is the only explanation.
+
+To waive every vulnerability of the package, also a vulnerability that SafeDep publishes later, give no `--vulnerability`:
 
 ```bash
 safedep policy rule create --trust pkg:npm/minimist@1.2.5 --scope vulnerability \
   --reason "Not reachable in our build, S-91" --expires 30d
 ```
-
-The trust entry waives every vulnerability of the versions that it selects, also a vulnerability that is published later.
 
 ## What the check shows
 
@@ -92,23 +234,35 @@ The block names the policy revision, each setting that the check read and the la
 ```markdown
 **SafeDep policy: failed**
 
-Policy: tenant revision 47 · SafeDep default policy revision 1
+Policy: tenant revision 47 · SafeDep default policy revision 2
 
 | Setting | Value | Set by | Coverage |
 | --- | --- | --- | --- |
 | `scan_gate.fail_on` | MEDIUM | policy override "payments" (selects `custom/criticality=high`) | ENFORCE |
+| `scan_gate.licenses.deny` | GPL-2.0, GPL-2.0-only, GPL-2.0-or-later, GPL-3.0, GPL-3.0-only, GPL-3.0-or-later, AGPL-3.0, AGPL-3.0-only, AGPL-3.0-or-later | SafeDep default policy | ENFORCE |
+| `scan_gate.licenses.allow` | off | no layer | ENFORCE |
+| `scan_gate.licenses.unknown` | ALLOW | SafeDep default policy | ENFORCE |
 
 | Package | Finding | Result | Rule |
 | --- | --- | --- | --- |
 | `left-padd 1.0.0` | block entry `r_9c1x4kq7dm` | Failing | "typosquat of left-pad" |
-| `lodash 4.17.20` | CVE-2021-23337 (high) | Failing | `scan_gate.fail_on` |
+| `lodash 4.17.20` | 2 vulnerabilities (2 high): CVE-2020-8203, CVE-2021-23337 | Failing | `scan_gate.fail_on` |
 | `minimist 1.2.5` | CVE-2021-44906 (critical) | Waived | trust entry `r_trust` (VULNERABILITY), expires 2026-12-03 |
 
-Fixed rule of the check: `risky-oss-licenses`
-
-Ask your security admin. They can run `safedep project policy show acme/payments-api`
+Ask your security admin. They can run `safedep project policy show --project-id prj_payments`
 ```
 
+License findings and waived named vulnerabilities show as these rows, also from the SafeDep test data:
+
+```markdown
+| `lodash 4.17.20` | denied license `AGPL-3.0-only` (declared `AGPL-3.0`) | Failing | `scan_gate.licenses.deny` |
+| `lodash 4.17.20` | license `Apache-2.0` is not on the allow list | Failing | `scan_gate.licenses.allow` |
+| `minimist 1.2.5` | unknown license `NOASSERTION` | Reported | `scan_gate.licenses.unknown` |
+| `lodash 4.17.20` | CVE-2020-8203 (high) | Waived | trust entry `r_named` (NAMED_VULNERABILITY), expires 2026-12-03, justification `vulnerable_code_not_in_execute_path` |
+```
+
+- A denied license shows the id on the deny list. When the package declares another spelling, the row also shows the declared value.
+- A waived named vulnerability shows its justification. With no justification, the row shows the reason of the trust entry.
 - A passing check shows no policy block.
 - On a public repository, the block shows the rule id of a package rule, not its reason.
 - When the tenant has no policy revision, the block names only the SafeDep default policy.
