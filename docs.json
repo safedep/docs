@@ -156,6 +156,7 @@
           {
             "group": "AI Visibility",
             "icon": "robot",
+            "root": "governance/ai-governance",
             "pages": [
               "governance/shadow-ai-detection"
             ]
@@ -423,11 +424,11 @@
     },
     {
       "source": "/vet/guides/ai-governance",
-      "destination": "/ai-security/overview"
+      "destination": "/governance/ai-governance"
     },
     {
       "source": "/ai-security/ai-governance",
-      "destination": "/ai-security/overview"
+      "destination": "/governance/ai-governance"
     },
     {
       "source": "/vet/guides/shadow-ai-detection",
@@ -576,10 +577,6 @@
     {
       "source": "/get-started/cloud-quickstart",
       "destination": "/governance/cloud/quickstart"
-    },
-    {
-      "source": "/governance/ai-governance",
-      "destination": "/ai-security/overview"
     },
     {
       "source": "/governance/vet/dependency-usage",
