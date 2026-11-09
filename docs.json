@@ -48,16 +48,16 @@
               "concepts/sbom",
               "concepts/tenant",
               "concepts/endpoint",
+              "concepts/cel",
               {
-                "group": "Policy",
+                "group": "Cloud Policy",
                 "icon": "scale-balanced",
                 "pages": [
                   "concepts/policy",
                   "concepts/policy-resolution",
                   "concepts/labels",
                   "concepts/package-rules",
-                  "concepts/policy-revisions",
-                  "concepts/cel"
+                  "concepts/policy-revisions"
                 ]
               }
             ]
@@ -70,7 +70,7 @@
         "pages": [
           "package-security/overview",
           {
-            "group": "Install-Time Package Blocking",
+            "group": "Block at Install",
             "icon": "box",
             "root": "package-security/pmg/overview",
             "pages": [
@@ -79,37 +79,37 @@
               "package-security/pmg/network-policy",
               "package-security/pmg/dependency-cooldown",
               "package-security/pmg/cloud-policy",
-              "package-security/pmg/private-registries",
+              "package-security/pmg/private-registries"
+            ]
+          },
+          {
+            "group": "Deploy to a Fleet",
+            "icon": "laptop",
+            "root": "package-security/pmg/mdm/overview",
+            "pages": [
+              "package-security/pmg/mdm/jamf",
+              "package-security/pmg/mdm/jumpcloud",
+              "package-security/pmg/mdm/intune",
               "package-security/pmg/system-install",
               "package-security/pmg/kernel-enforcement",
               "package-security/pmg/kubernetes"
             ]
           },
           {
-            "group": "MDM",
-            "icon": "laptop",
-            "root": "package-security/pmg/mdm/overview",
+            "group": "Block in CI/CD",
+            "icon": "shield-check",
+            "root": "package-security/pmg/github-actions",
             "pages": [
-              "package-security/pmg/mdm/jamf",
-              "package-security/pmg/mdm/jumpcloud",
-              "package-security/pmg/mdm/intune"
+              "package-security/pmg/github-actions-network-policy"
             ]
           },
           {
-            "group": "On-Demand Package Scanning",
+            "group": "Scan Before Use",
             "icon": "microscope",
             "root": "package-security/scan/overview",
             "pages": [
               "package-security/scan/quickstart",
               "package-security/scan/automation"
-            ]
-          },
-          {
-            "group": "CI/CD Package Blocking",
-            "icon": "shield-check",
-            "pages": [
-              "package-security/pmg/github-actions",
-              "package-security/pmg/github-actions-network-policy"
             ]
           }
         ]
@@ -138,13 +138,8 @@
               "governance/vet/quickstart",
               "governance/vet/dependency-inventory",
               "governance/vet/dependency-usage",
-              "governance/vet/code-analysis"
-            ]
-          },
-          {
-            "group": "MDM",
-            "icon": "laptop",
-            "pages": [
+              "governance/vet/code-analysis",
+              "governance/terraform-audit",
               "governance/vet/mdm/overview"
             ]
           },
@@ -154,7 +149,8 @@
             "root": "governance/xbom/overview",
             "pages": [
               "governance/xbom/quickstart",
-              "governance/cyclonedx-sbom"
+              "governance/cyclonedx-sbom",
+              "governance/vet/ai-bom"
             ]
           },
           {
@@ -162,12 +158,11 @@
             "icon": "robot",
             "root": "governance/ai-governance",
             "pages": [
-              "governance/shadow-ai-detection",
-              "governance/vet/ai-bom"
+              "governance/shadow-ai-detection"
             ]
           },
           {
-            "group": "CI/CD & Platform Integrations",
+            "group": "CI/CD Integrations",
             "icon": "plug",
             "root": "governance/integrations/overview",
             "pages": [
@@ -176,8 +171,7 @@
               "governance/integrations/gitlab",
               "governance/integrations/bitbucket-app",
               "governance/integrations/bitbucket",
-              "governance/integrations/defectdojo",
-              "governance/terraform-audit"
+              "governance/integrations/defectdojo"
             ]
           },
           {
@@ -185,14 +179,16 @@
             "icon": "cloud",
             "root": "governance/cloud/overview",
             "pages": [
-              "governance/cloud/quickstart",
-              "governance/cloud/authentication",
-              "governance/cloud/usage-billing",
-              "governance/cloud/sync",
-              "governance/cloud/talk-to-safedep",
-              "governance/cloud/alerts",
-              "governance/cloud/crowdstrike-siem",
-              "governance/cloud/malware-analysis",
+              {
+                "group": "Set Up",
+                "icon": "rocket",
+                "pages": [
+                  "governance/cloud/quickstart",
+                  "governance/cloud/authentication",
+                  "governance/cloud/sync",
+                  "governance/cloud/faq"
+                ]
+              },
               {
                 "group": "Endpoint Hub",
                 "icon": "server",
@@ -206,6 +202,29 @@
                   "governance/cloud/endpoint-hub/ci-package-blocks",
                   "governance/cloud/endpoint-hub/mcp-advisor",
                   "governance/cloud/endpoint-hub/agentic-investigation"
+                ]
+              },
+              {
+                "group": "Investigate",
+                "icon": "magnifying-glass",
+                "pages": [
+                  "governance/cloud/talk-to-safedep",
+                  "governance/cloud/malware-analysis"
+                ]
+              },
+              {
+                "group": "Integrate",
+                "icon": "plug",
+                "pages": [
+                  "governance/cloud/alerts",
+                  "governance/cloud/crowdstrike-siem"
+                ]
+              },
+              {
+                "group": "Account",
+                "icon": "credit-card",
+                "pages": [
+                  "governance/cloud/usage-billing"
                 ]
               }
             ]
@@ -243,7 +262,7 @@
             ]
           },
           {
-            "group": "Consuming the Feed",
+            "group": "Use the Feed",
             "icon": "arrows-rotate",
             "pages": [
               "threat-intel/connecting",
@@ -261,7 +280,7 @@
             ]
           },
           {
-            "group": "Reference",
+            "group": "Schema & Errors",
             "icon": "book",
             "pages": [
               "threat-intel/schema",
@@ -276,14 +295,20 @@
         "icon": "book",
         "groups": [
           {
-            "group": "Query & Policy",
+            "group": "vet Query & Policy",
             "icon": "filter",
             "pages": [
               "reference/filtering",
               "reference/build-your-own-queries",
               "reference/policy-as-code",
               "reference/exceptions",
-              "reference/path-exclusion",
+              "reference/path-exclusion"
+            ]
+          },
+          {
+            "group": "Cloud Policy",
+            "icon": "scale-balanced",
+            "pages": [
               "reference/cloud-policy-settings",
               "reference/cloud-policy-limits"
             ]
@@ -315,12 +340,11 @@
             "group": "Support",
             "icon": "circle-question",
             "pages": [
-              "faq",
-              "governance/cloud/faq"
+              "faq"
             ]
           },
           {
-            "group": "Updates",
+            "group": "Changelog",
             "icon": "newspaper",
             "pages": [
               "changelog/2026"

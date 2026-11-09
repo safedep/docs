@@ -1,5 +1,6 @@
 ---
 title: "Cloud Policy Settings"
+sidebarTitle: "Settings"
 description: "Reference for each setting of the SafeDep cloud policy: its path, type, values, SafeDep default and the tools that enforce it."
 ---
 
@@ -16,7 +17,7 @@ This page lists each setting of the [cloud policy](/governance/cloud/policy/over
 | `scan_gate.licenses.allow` | License list | 0 to 500 license entries. No entries turns the allow list off. | Not set (off) | Not applicable | Enforces. Fails only a known license and `NONE`. |
 | `scan_gate.licenses.unknown` | Unknown license gate | `allow`, `report`, `fail` | `allow` | Not applicable | Enforces |
 
-Vet does not read the cloud policy yet.
+Vet does not read the cloud policy yet. Vet in cloud mode still applies the deprecated [Malicious Package Exclusions](/governance/cloud/package-exclusions).
 
 Notes:
 
