@@ -249,25 +249,7 @@ Once data lands in your tenant, query it with `safedep query exec` or the web co
 
 ## Troubleshooting
 
-<AccordionGroup>
-  <Accordion title="Sync failures">
-    - Verify the API key and tenant configuration (`vet auth verify`)
-    - Check network connectivity to SafeDep Cloud
-    - Ensure project names don't contain invalid characters
-  </Accordion>
-
-  <Accordion title="Missing data">
-    - Confirm `--report-sync` and the project flags are set
-    - Check that the scan completed successfully
-    - Verify the project name and version identifiers match what you expect
-  </Accordion>
-
-  <Accordion title="Authentication issues">
-    - Verify the API key has sync permissions
-    - Check the tenant domain configuration
-    - Confirm credentials are set correctly in your CI/CD environment
-  </Accordion>
-</AccordionGroup>
+Run `vet auth verify` first. For sync errors and missing data, see [Cloud Troubleshooting](/governance/cloud/faq#data-sync-issues).
 
 <CardGroup cols={2}>
   <Card title="Cloud Quickstart" icon="rocket" href="/governance/cloud/quickstart">
