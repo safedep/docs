@@ -113,13 +113,14 @@ A rule never changes its selector, its effect, its scopes or its vulnerabilities
 
 A vulnerability id has its published form, as `CVE-2024-3094` or `GHSA-jfh8-c2jp-5v3q`: 1 to 64 characters that match `^[A-Z][A-Z0-9]*-[A-Za-z0-9.:-]+$`. A rule names each id one time. Two ids that differ only in case count as the same id. The justification is one of the OpenVEX names `component_not_present`, `vulnerable_code_not_present`, `vulnerable_code_not_in_execute_path`, `vulnerable_code_cannot_be_controlled_by_adversary` and `inline_mitigations_already_exist`. The safedep CLI creates such a rule with `--scope vulnerability --vulnerability ID[:JUSTIFICATION]`.
 
-| Trust scope | Waives | PMG | Pull request check |
+| Package rule | Effect | PMG | Pull request check |
 |---|---|---|---|
-| `malware` | A malware verdict that is not verified | Enforces | Enforces |
-| `cooldown` | The dependency cooldown | Enforces | Not supported |
-| `vulnerability` | Every vulnerability finding of a scan gate, also one that is published later | Not applicable | Enforces |
-| `named-vulnerability` | The vulnerability findings of a scan gate for the ids of the rule and their aliases | Not applicable | Enforces |
-| `license` | The license findings of a scan gate | Not applicable | Enforces |
+| Block entry | Blocks the package | Enforces | Enforces |
+| Trust entry, scope `malware` | Waives a malware verdict that is not verified | Enforces | Enforces |
+| Trust entry, scope `cooldown` | Waives the dependency cooldown | Enforces | Not supported |
+| Trust entry, scope `vulnerability` | Waives every vulnerability finding of a scan gate, also one that is published later | Not applicable | Enforces |
+| Trust entry, scope `named-vulnerability` | Waives the vulnerability findings of a scan gate for the ids of the rule and their aliases | Not applicable | Enforces |
+| Trust entry, scope `license` | Waives the license findings of a scan gate | Not applicable | Enforces |
 
 ## Related
 

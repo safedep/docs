@@ -70,9 +70,7 @@ safedep policy rule create --trust pkg:npm/my-internal-sdk --scope cooldown \
 
 ## What the cloud value changes in PMG
 
-When the policy sets the cooldown, PMG uses the cloud value instead of `dependency_cooldown.enabled` and `dependency_cooldown.days` in its config file and in `PMG_*` environment variables. PMG refuses `--skip-dependency-cooldown`. The skip list in the PMG config still applies.
-
-One exception: under `global_lockdown: true`, a managed config file that sets `dependency_cooldown.enabled` or `dependency_cooldown.days` keeps its value, and PMG reports the field as locked. See [Apply the Cloud Policy in PMG](/package-security/pmg/cloud-policy).
+The cloud value wins over the cooldown keys in the PMG config, the `PMG_*` environment variables and `--skip-dependency-cooldown`. The PMG skip list still applies. Under `global_lockdown: true`, a managed config file that sets a cooldown key keeps its value, and PMG reports the field as locked. For each PMG setting, see [Which settings the cloud policy changes](/package-security/pmg/cloud-policy#which-settings-the-cloud-policy-changes).
 
 ## Check the value on one endpoint
 

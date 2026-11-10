@@ -19,19 +19,11 @@ You can set a value for the whole tenant, or for a group of endpoints or project
 
 ## What enforces each part
 
-| Part of the policy | PMG | Pull request check | Vet |
-|---|---|---|---|
-| Block entries | Enforces | Enforces | Not yet |
-| Trust entries, scope `malware` | Enforces | Enforces | Not yet |
-| Trust entries, scope `cooldown` | Enforces | Not supported | Not yet |
-| Trust entries, scope `vulnerability` | Not applicable | Enforces | Not yet |
-| Trust entries, scope `vulnerability` with vulnerability ids (`named-vulnerability`) | Not applicable | Enforces | Not yet |
-| Trust entries, scope `license` | Not applicable | Enforces | Not yet |
-| Dependency cooldown (`package_admission.cooldown.min_age`) | Enforces | Not supported | Not yet |
-| Scan gate (`scan_gate.fail_on`, `scan_gate.fail_on_attacks`) | Not applicable | Enforces, with exceptions | Not yet |
-| License gate (`scan_gate.licenses.deny`, `scan_gate.licenses.allow`, `scan_gate.licenses.unknown`) | Not applicable | Enforces | Not yet |
+- **PMG** applies the package rules and the dependency cooldown.
+- **The pull request check** applies the package rules, the scan gate and the license gate.
+- **Vet** does not read the cloud policy yet.
 
-The [settings reference](/reference/cloud-policy-settings) gives the exceptions of each setting.
+For each setting and each trust scope, and the exceptions, see the [settings reference](/reference/cloud-policy-settings).
 
 ## Who can change the policy
 

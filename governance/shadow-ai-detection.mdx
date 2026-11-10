@@ -1,77 +1,115 @@
 ---
-title: Shadow AI in Code
-description: "Detect AI and LLM SDK usage in your codebase using static code analysis and generate an SBOM with AI component evidence"
+title: "Detect Shadow AI in Code"
+sidebarTitle: "Shadow AI Detection"
+description: "Find shadow AI in your code with vet: detect the AI SDKs your application calls, then generate an AI BOM in CycloneDX with file and line evidence."
 ---
 
-Shadow AI is the unauthorized use of AI services and SDKs within a codebase. Developers may integrate OpenAI, Anthropic, LangChain, or other AI services without security review, creating blind spots in your software supply chain.
+Shadow AI is AI services and SDKs that developers added to the code without a security review. `vet` finds the AI libraries, SDKs, and agent frameworks your application actually calls. It scans source code and matches call sites against signatures for known AI SDKs. Because the results come from call sites, they show what the code calls, not only what the manifests declare.
 
-This guide walks you through detecting Shadow AI using `vet`'s static code analysis, querying the results, and generating a CycloneDX SBOM enriched with AI component evidence.
+`vet` can then write each match into its [CycloneDX](/concepts/sbom) output as an extended Bill of Materials (xBOM). The AI components, each marked with an `ai` property and file and line evidence, are your AI BOM.
+
+Coverage tracks the AI ecosystem in current use:
+
+- **Model providers:** OpenAI, Anthropic, Google Gemini, xAI Grok, Mistral, Cohere, Groq, Ollama, AWS Bedrock, Hugging Face, and more
+- **Frameworks and agent SDKs:** LangChain, LangGraph, LlamaIndex, CrewAI, Vercel AI SDK, OpenAI Agents SDK, Claude Agent SDK, Pydantic AI, Spring AI, Semantic Kernel, and the Model Context Protocol (MCP) SDKs
+- **Languages:** Python, JavaScript, TypeScript, Java, and Go. Each SDK is covered in the languages it supports.
+
+Browse the [full signature set](https://github.com/safedep/vet/tree/main/signatures). AI is one xBOM category: the same scan also detects cryptographic, cloud, network, filesystem, and process usage (see the [vet xBOM documentation](https://github.com/safedep/vet/blob/main/docs/xbom.md)).
 
 ## Prerequisites
 
 - `vet` [installed](/governance/vet/quickstart)
 - Access to the source code you want to analyze
 
-## Workflow
+## Detect shadow AI
 
 <Steps>
-  <Step title="Scan source code">
-    Analyze your source code and build a code analysis database. Use `--app` to specify your application directories and `--import-dir` for vendored or third-party dependencies.
+  <Step title="Scan the source code">
+    The first pass parses your source files, matches them against the embedded signatures, and stores the results in a local SQLite database. Point `--app` at your own code:
+
+    ```bash
+    vet code scan --db code.db --app ./src
+    ```
+
+    Skip test and generated code with `--exclude` (a regular expression), and restrict languages with `--lang` when you want a faster scan:
+
+    ```bash
+    vet code scan --db code.db \
+      --app ./src \
+      --lang python \
+      --exclude ".*test.*" --exclude ".*__pycache__.*"
+    ```
+
+    To also scan vendored or third-party dependency source, add `--import-dir`:
 
     ```bash
     vet code scan --db code.db \
       --app ./src \
       --import-dir ./vendor
     ```
-
-    This parses source files, builds call graphs, and matches function calls against embedded signature patterns. Results are stored in a SQLite database.
-
-    <Tip>
-    Use `--exclude` to skip test files or generated code:
-    ```bash
-    vet code scan --db code.db \
-      --app ./src \
-      --exclude ".*test.*" --exclude ".*__pycache__.*"
-    ```
-    </Tip>
   </Step>
 
-  <Step title="Query for AI components">
-    Inspect what AI and LLM SDKs were detected using the `--tag ai` filter:
+  <Step title="List the AI SDKs found">
+    Query the database for matches tagged `ai`. Each result shows the file, the line, and the matched call:
 
     ```bash
     vet code query --db code.db --tag ai
     ```
 
-    This lists all signature matches tagged as AI, showing the file path, line number, and matched call pattern. You can also combine tags for a broader view:
-
-    ```bash
-    vet code query --db code.db --tag ai --tag ml
-    ```
-
-    To see more results or filter by language:
+    Narrow the results by language, vendor, or file path:
 
     ```bash
     vet code query --db code.db --tag ai --language python --limit 200
+    vet code query --db code.db --vendor OpenAI
+    vet code query --db code.db --file src/agents/
     ```
-  </Step>
 
-  <Step title="Generate SBOM with AI evidence">
-    Run `vet scan` with the code analysis database to produce a CycloneDX SBOM enriched with AI component evidence:
+    Repeat `--tag` to filter on more than one tag:
 
     ```bash
-    vet scan -D ./src --code code.db --report-cdx sbom.json
+    vet code query --db code.db --tag ai --tag crypto
     ```
-
-    The generated SBOM includes AI components as evidence-backed entries, making Shadow AI usage visible to downstream security and compliance tooling.
   </Step>
 </Steps>
 
-## Understanding the Output
+## Generate the AI BOM
 
-### Package-level AI usage
+To record the detections as a BOM, run a normal `vet` scan with the code analysis database:
 
-When an AI SDK is both declared as a dependency and used in code, it appears with `source-code-analysis` evidence:
+```bash
+vet scan -D ./src --code code.db --report-cdx xbom.json
+```
+
+`xbom.json` is a standard CycloneDX document that carries the code-analysis detections alongside the declared packages. Every AI component in it has the `ai` property, so downstream tooling can filter on it.
+
+## Read the AI BOM
+
+AI SDK calls detected in your code appear as standalone components with an `xbom:` bom-ref. The signature's vendor becomes the publisher, the `ai` property marks the component, and each occurrence records where the call sits in your source. This component records an Anthropic client constructed on line 3 of `src/app.py`:
+
+```json
+{
+  "bom-ref": "xbom:anthropic.client",
+  "type": "library",
+  "name": "Anthropic API - AI client",
+  "publisher": "Anthropic",
+  "evidence": {
+    "occurrences": [
+      {
+        "location": "src/app.py",
+        "line": 3,
+        "additionalContext": "anthropic//Anthropic"
+      }
+    ]
+  },
+  "properties": [
+    { "name": "ai", "value": "true" }
+  ]
+}
+```
+
+`additionalContext` shows the matched call in the analyzer's namespace notation, with `//` separating the module path from the symbol. Detection follows calls, so an SDK that is imported but never called produces no component.
+
+If you scan vendored dependency source through `--import-dir`, `vet` attempts to attach those detections to the corresponding declared package instead of a standalone component. The declared package then gets `source-code-analysis` evidence:
 
 ```json
 {
@@ -90,53 +128,47 @@ When an AI SDK is both declared as a dependency and used in code, it appears wit
 }
 ```
 
-### Application-level AI usage
+More AI SDKs and libraries are added to `vet` xBOM coverage over time.
 
-AI capabilities detected in first-party code (e.g., direct standard library HTTP calls to AI endpoints) appear as standalone xBOM components:
+### Filter the AI components
 
-```json
-{
-  "bom-ref": "xbom:anthropic.ai.claude",
-  "type": "library",
-  "name": "Anthropic Claude",
-  "publisher": "Anthropic",
-  "evidence": {
-    "occurrences": [
-      { "location": "src/chatbot.py", "line": 15, "additionalContext": "anthropic.Anthropic" }
-    ]
-  }
-}
+The `ai` property makes the AI BOM easy to extract from the full document. With `jq`:
+
+```bash
+jq '.components[] | select(.properties[]? | .name == "ai" and .value == "true") | .name' xbom.json
 ```
 
-The `ai` property tag lets you filter AI components from the SBOM programmatically.
-
-## What Gets Detected
-
-`vet` detects AI and LLM usage across **Python**, **JavaScript/TypeScript**, **Java**, and **Go**. The table shows some of the services. For the full list, see [Generate an AI BOM](/governance/vet/ai-bom).
-
-| Service | Examples |
-|---------|----------|
-| **OpenAI** | OpenAI client SDK |
-| **Anthropic** | Claude, Bedrock, VertexAI |
-| **LangChain** | LangChain framework |
-| **CrewAI** | CrewAI agents |
-| **Azure AI** | Azure AI services |
+<Note>
+Providers reached through the OpenAI-compatible mode of the `openai` SDK (DeepSeek and Moonshot document this as their official path) appear as OpenAI usage, because the code calls the `openai` SDK.
+</Note>
 
 <Info>
-Detection signatures are community-maintained and embedded into `vet` at build time. Run `vet code validate` to verify all signatures are well-formed.
+The signatures are community-maintained and embedded in `vet` at build time. Run `vet code validate` to verify that all signatures are well-formed.
 </Info>
 
+## Run it in CI
+
+Generate the BOM on each build and keep it as an artifact:
+
+```yaml
+- name: Build code analysis database
+  run: vet code scan --app ./src --db code.db
+
+- name: Generate xBOM with AI components
+  run: vet scan -D ./src --code code.db --report-cdx xbom.json
+```
+
 <CardGroup cols={2}>
-  <Card title="xBOM Concepts" icon="cube" href="/governance/xbom/overview">
-    Learn about extended Bill of Materials and signature-based detection
+  <Card title="CycloneDX SBOM" icon="file-code" href="/governance/cyclonedx-sbom">
+    Generate a standard CycloneDX SBOM with vet.
+  </Card>
+  <Card title="What is an SBOM?" icon="lightbulb" href="/concepts/sbom">
+    How CycloneDX BOMs and xBOMs relate.
   </Card>
   <Card title="Code Analysis" icon="magnifying-glass" href="/governance/vet/code-analysis">
-    Deeper dive into Vet's static code analysis capabilities
-  </Card>
-  <Card title="CycloneDX SBOM" icon="file-code" href="/governance/cyclonedx-sbom">
-    Generate and work with CycloneDX SBOMs
+    The static analysis engine behind the xBOM.
   </Card>
   <Card title="Policy as Code" icon="shield" href="/reference/policy-as-code">
-    Enforce policies against detected components in CI/CD
+    Enforce policies on detected components in CI/CD.
   </Card>
 </CardGroup>
