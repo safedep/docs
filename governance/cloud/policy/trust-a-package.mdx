@@ -27,7 +27,7 @@ The command warns that the rule loosens the policy, creates the rule and publish
 ## Choose the scope
 
 <Note>
-  The scope `license` and the `--vulnerability` flag need a safedep CLI release later than v0.10.0.
+  The `safedep policy` commands need a safedep CLI release later than v0.10.0. v0.10.0 does not have them.
 </Note>
 
 | Scope | Use it when | Where it applies |
@@ -38,7 +38,7 @@ The command warns that the rule loosens the policy, creates the rule and publish
 | `vulnerability` | A pull request check fails on the vulnerabilities of this package, and you accept every vulnerability of it, also one that SafeDep publishes later | The pull request check |
 | `license` | A pull request check fails on the license of this package, and your team accepts the license | The pull request check |
 
-Choose the narrowest scope. `--scope all` expands to the scopes that the CLI knows. In a safedep CLI release later than v0.10.0, these are `malware`, `cooldown`, `vulnerability` and `license`. A scope that a later release adds does not apply to this rule. `all` never names vulnerabilities.
+Choose the narrowest scope. `--scope all` expands to the scopes that the CLI knows: `malware`, `cooldown`, `vulnerability` and `license`. A scope that a later release adds does not apply to this rule. `all` never names vulnerabilities.
 
 A trust entry never waives a verdict of **verified** malware, whatever its scope. A trust entry also never skips the malware analysis. If a block entry selects the same package, the block entry wins.
 
@@ -58,6 +58,7 @@ safedep policy rule create --trust pkg:npm/minimist@1.2.5 --scope vulnerability 
 - Give `--vulnerability` more than once, or give a comma-separated list, to name more vulnerabilities. A trust entry names at most 100 vulnerabilities, each one time.
 - `--scope vulnerability` must be the only scope of the trust entry. Create another trust entry for the other scopes.
 - A vulnerability that SafeDep publishes later still fails the check.
+- `safedep policy rule create` does not accept `--scope named-vulnerability`. Use `--scope vulnerability` with `--vulnerability`.
 - `safedep policy rule list` and `safedep policy rule show` show the scope `named-vulnerability` with each id and its justification. To list these entries, run `safedep policy rule list --scope named-vulnerability`.
 
 The text after the last `:` is an optional justification. It says why the vulnerability does not affect the package, with an [OpenVEX](https://github.com/openvex/spec) name:

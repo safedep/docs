@@ -78,7 +78,7 @@ To set the gate for every project of the tenant, set `scan_gate.fail_on` in the 
 The check applies the deny list first, then the allow list, to the license of each package that the pull request adds or updates. For the match rules, see [License gate](/reference/cloud-policy-settings#license-gate).
 
 <Note>
-  The license gate in `safedep policy edit`, the scope `license` and the `--vulnerability` flag need a safedep CLI release later than v0.10.0.
+  The `safedep policy`, `safedep project label` and `safedep project policy` commands need a safedep CLI release later than v0.10.0. v0.10.0 does not have them.
 </Note>
 
 1. Open the policy settings document:
@@ -109,7 +109,7 @@ The check applies the deny list first, then the allow list, to the license of ea
 
 3. Preview and publish the change with `safedep policy change show` and `safedep policy change publish`, as in [Fail on medium for a group of projects](#fail-on-medium-for-a-group-of-projects).
 
-If your list leaves out an id of the default list, the change loosens the policy. The publish then asks for a confirmation, and every Owner and Admin of the tenant gets an email about it.
+If your list leaves out an id of the list below it (here, the default list), the change loosens the policy. The publish then asks for a confirmation, and every Owner and Admin of the tenant gets an email about it.
 
 To deny no license for a group of projects, set `deny: {licenses: []}` in a policy override.
 

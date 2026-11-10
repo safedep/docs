@@ -65,11 +65,13 @@ The policy settings document shows a list in the form `deny: {licenses: [GPL-3.0
 
 ### License findings
 
-| Finding | When | Text in the policy block | `rule_name` in `safedep query` |
-|---|---|---|---|
-| `license-denied` | The license fails the deny list | denied license `AGPL-3.0-only`, with the declared value when it differs, as (declared `AGPL-3.0`) | `risky-oss-licenses` |
-| `license-not-allowed` | The license fails the allow list | license `Apache-2.0` is not on the allow list | `license-not-allowed` |
-| `license-unknown` | The license is unknown, and `unknown` is `report` or `fail` | unknown license `NOASSERTION`, or no license data | `license-unknown` |
+| Finding | When | Text in the policy block | Rule cell | `rule_name` in `safedep query` |
+|---|---|---|---|---|
+| `license-denied` | The license fails the deny list | denied license `AGPL-3.0-only`, with the declared value when it differs, as (declared `AGPL-3.0`) | `scan_gate.licenses.deny` | `risky-oss-licenses` |
+| `license-not-allowed` | The license fails the allow list | license `Apache-2.0` is not on the allow list | `scan_gate.licenses.allow` | `license-not-allowed` |
+| `license-unknown` | The license is unknown, and `unknown` is `report` or `fail` | unknown license `NOASSERTION`, or no license data | `scan_gate.licenses.unknown` | `license-unknown` |
+
+The Result cell is `Failing`. With `unknown: report`, a `license-unknown` finding is `Reported`, and the check does not fail on it.
 
 A trust entry with the scope `license` waives each of these findings for the versions that it selects. A failing finding stores a policy violation. `safedep query` shows its name in the column `rule_name` of the table `component_policy_violations`. A denied license keeps the name `risky-oss-licenses` that the check used before the license gate.
 
