@@ -40,12 +40,7 @@ Both headers are required on every call. For authentication and authorization fa
 These are the same data-plane conventions used across SafeDep. For the shared header contract, OAuth endpoints, and rate limits, see the [API reference](/reference/api-introduction) and the [authentication guide](/governance/cloud/authentication).
 </Note>
 
-## JSON conventions
-
-- Field names are lowerCamelCase (`pageSize`, `reportId`, `publishedAt`).
-- Enum values are their string names (`ECOSYSTEM_NPM`, `THREAT_VERDICT_MALICIOUS`).
-- Timestamps are RFC 3339 UTC strings (`2026-08-01T00:00:00Z`).
-- A missing `withdrawn` means `false`, and a missing `iocs` means no indicators.
+The body uses lowerCamelCase field names and string enum names. For each JSON rule, see [JSON conventions](/threat-intel/schema#json-conventions).
 
 ## Set up your shell
 

@@ -90,15 +90,7 @@ In this tutorial you publish the first policy of your tenant with the safedep CL
 
     `pmg cloud login` asks for the tenant ID and the API key. `pmg cloud sync` fetches the policy at once.
 
-    If `pmg config set` prints `key not found`, your config file has no `cloud` section. Run `pmg config edit` and add this section to the file:
-
-    ```yaml
-    cloud:
-      enabled: true
-      policy: true
-    ```
-
-    Save the file and run `pmg cloud login` and `pmg cloud sync`. You can also run `pmg setup install` and then the `pmg config set` commands again. `pmg setup install` adds the missing keys of the PMG template to your config file. It also installs the PMG PATH shims, and on macOS and Linux the shell aliases.
+    If `pmg config set` prints `key not found`, see [Turn on the cloud policy on one machine](/package-security/pmg/cloud-policy#turn-on-the-cloud-policy-on-one-machine).
 
     Then run:
 

@@ -180,61 +180,16 @@ jobs:
           secret-files: pmg-ca=${{ env.PMG_CA_BUNDLE }}
 ```
 
-Without `docker/build-push-action`, pass the same secret to the Docker CLI:
+The build secret has the ID `pmg-ca`. To mount it in the Dockerfile, to pass the bundle to `docker run`, and to find the variable that each package manager reads, see [Trust inside a container](/package-security/pmg/kernel-enforcement#trust-inside-a-container).
 
-```bash
-docker build --secret id=pmg-ca,src=$PMG_CA_BUNDLE -t app:ci .
+A Docker action can read files in the workspace, at `/github/workspace`. Copy the bundle there in a step before the action:
+
+```yaml
+- run: cp "$PMG_CA_BUNDLE" pmg-ca.pem
+- uses: some/docker-action@v1
+  env:
+    NODE_EXTRA_CA_CERTS: /github/workspace/pmg-ca.pem
 ```
-
-In the Dockerfile, mount the secret in each `RUN` step that installs packages:
-
-```dockerfile Dockerfile
-FROM node:24-slim
-WORKDIR /app
-COPY package.json package-lock.json ./
-
-# The bundle is present only when the build gets the pmg-ca secret.
-# A build without the secret, such as a local build, uses the CAs of the image.
-RUN --mount=type=secret,id=pmg-ca,target=/run/secrets/pmg-ca.pem,mode=0444 \
-    if [ -f /run/secrets/pmg-ca.pem ]; then export NODE_EXTRA_CA_CERTS=/run/secrets/pmg-ca.pem; fi; \
-    npm ci
-
-COPY . .
-CMD ["node", "index.js"]
-```
-
-`mode=0444` is required. BuildKit mounts a secret that only root can read, and the install can run as a different user.
-
-Set the variable that your package manager reads:
-
-| Package manager | Variable |
-| --- | --- |
-| npm, pnpm | `NODE_EXTRA_CA_CERTS` |
-| pip | `PIP_CERT` |
-| uv, Go | `SSL_CERT_FILE` |
-| Cargo | `CARGO_HTTP_CAINFO` |
-
-To give the bundle to a container at runtime, mount it in the container:
-
-<Tabs>
-  <Tab title="docker run">
-    ```bash
-    docker run -v "$PWD":/app -w /app \
-      -v "$PMG_CA_BUNDLE":/pmg-ca.pem:ro -e NODE_EXTRA_CA_CERTS=/pmg-ca.pem \
-      node:24 npm ci
-    ```
-  </Tab>
-  <Tab title="Docker action">
-    A Docker action can read files in the workspace, at `/github/workspace`. Copy the bundle there in a step before the action:
-
-    ```yaml
-    - run: cp "$PMG_CA_BUNDLE" pmg-ca.pem
-    - uses: some/docker-action@v1
-      env:
-        NODE_EXTRA_CA_CERTS: /github/workspace/pmg-ca.pem
-    ```
-  </Tab>
-</Tabs>
 
 ## Job containers and Docker actions
 

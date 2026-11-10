@@ -170,8 +170,25 @@ Pass the file that `PMG_CA_BUNDLE` names into the container. It holds the PMG CA
     RUN --mount=type=secret,id=pmg-ca,target=/run/pmg-ca.pem,mode=0444 \
         NODE_EXTRA_CA_CERTS=/run/pmg-ca.pem npm ci
     ```
+
+    Mount the secret in each `RUN` step that installs packages. To keep a build without the secret working, such as a local build, set the variable only when the file is present:
+
+    ```dockerfile
+    RUN --mount=type=secret,id=pmg-ca,target=/run/pmg-ca.pem,mode=0444 \
+        if [ -f /run/pmg-ca.pem ]; then export NODE_EXTRA_CA_CERTS=/run/pmg-ca.pem; fi; \
+        npm ci
+    ```
   </Tab>
 </Tabs>
+
+Set the variable that your package manager reads:
+
+| Package manager | Variable |
+| --- | --- |
+| npm, pnpm | `NODE_EXTRA_CA_CERTS` |
+| pip | `PIP_CERT` |
+| uv, Go | `SSL_CERT_FILE` |
+| Cargo | `CARGO_HTTP_CAINFO` |
 
 ## Verify
 
