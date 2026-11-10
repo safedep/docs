@@ -27,7 +27,7 @@ Each trust entry names the trust scopes that it waives:
 - `malware`: a malware verdict that is not verified, such as a suspicious package.
 - `cooldown`: the dependency cooldown.
 - `vulnerability`: every vulnerability finding of a scan gate, also a vulnerability that is published after the admin creates the rule.
-- `named-vulnerability`: the vulnerability findings of a scan gate for a list of vulnerability ids and their aliases only. Each id can have an [OpenVEX](https://github.com/openvex/spec) justification. Every other vulnerability of the package still fails the gate. This scope is the only scope of its trust entry.
+- `named-vulnerability`: the vulnerability findings of a scan gate for a list of vulnerability ids only. See [Waive named vulnerabilities](/governance/cloud/policy/trust-a-package#waive-named-vulnerabilities).
 - `license`: every license finding of a scan gate: a denied license, a license that is not on the allow list, and an unknown license.
 
 Each tool applies only the scopes that fit its checks. A tool that does not know a scope ignores it, so an older tool never waives more than a trust entry names. See [Cloud Policy Settings](/reference/cloud-policy-settings#package-rule-fields) for the scopes that PMG and the pull request check apply.

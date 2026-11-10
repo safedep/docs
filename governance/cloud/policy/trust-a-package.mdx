@@ -71,11 +71,7 @@ The text after the last `:` is an optional justification. It says why the vulner
 | `vulnerable_code_cannot_be_controlled_by_adversary` | The vulnerable code runs, but an attacker cannot control it. |
 | `inline_mitigations_already_exist` | Built-in protections prevent the exploit. |
 
-Without a justification, `--reason` is the only explanation. In the policy block of the pull request check, a waived named vulnerability shows its justification. With no justification, the row shows the reason of the trust entry on a private repository:
-
-```markdown
-| `lodash 4.17.20` | CVE-2020-8203 (high) | Waived | trust entry `r_named` (NAMED_VULNERABILITY), expires 2026-12-03, justification `vulnerable_code_not_in_execute_path` |
-```
+Without a justification, `--reason` is the only explanation. In the policy block of the pull request check, a waived named vulnerability shows its justification. With no justification, the row shows the reason of the trust entry on a private repository.
 
 To waive every vulnerability of the package, also a vulnerability that SafeDep publishes later, give no `--vulnerability`:
 
