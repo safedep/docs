@@ -20,7 +20,7 @@ You can set a value for the whole tenant, or for a group of endpoints or project
 ## What enforces each part
 
 - **PMG** applies the package rules and the dependency cooldown.
-- **The pull request check** applies the package rules, the scan gate and the license gate.
+- **The pull request check** applies the package rules and the scan gate, with its license gate.
 - **Vet** does not read the cloud policy yet.
 
 For each setting and each trust scope, and the exceptions, see the [settings reference](/reference/cloud-policy-settings).

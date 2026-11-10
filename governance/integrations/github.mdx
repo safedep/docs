@@ -40,7 +40,7 @@ The check fails if any _Verified Malicious Package_, _Vulnerability_, or _Risky 
 
 ### Cloud Policy
 
-When the installation is linked to a SafeDep Cloud tenant on the Team or Enterprise plan, the check reads the [cloud policy](/governance/cloud/policy/overview) of the tenant. The policy decides the lowest vulnerability severity and the licenses that fail the check, and its block and trust entries apply to the packages of the pull request. Verified malware always fails the check. With no cloud policy, the SafeDep default policy applies: the check fails on `CRITICAL` and `HIGH` vulnerabilities and on nine GPL and AGPL licenses, as above.
+When the installation is linked to a SafeDep Cloud tenant on the Team or Enterprise plan, the check reads the [cloud policy](/governance/cloud/policy/overview) of the tenant. The policy decides the lowest vulnerability severity and the licenses that fail the check, and its block and trust entries apply to the packages of the pull request. Verified malware always fails the check. With no cloud policy, the SafeDep default policy applies: the check fails on `CRITICAL` and `HIGH` vulnerabilities and on the nine GPL and AGPL licenses in [Risky Licenses](#risky-licenses).
 
 A failing check shows a policy block in the comment and in the check run output. The block names the policy revision and the rule or setting that failed each finding. See [Fail Pull Request Checks](/governance/cloud/policy/pull-request-checks).
 

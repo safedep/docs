@@ -10,6 +10,10 @@ Use a trust entry when your team reviewed a package and decided that a verdict i
   This guide needs the SafeDep Cloud Team or Enterprise plan and the Admin role. See [pricing](https://safedep.io/pricing).
 </Note>
 
+<Note>
+  The `safedep policy` commands need a safedep CLI release later than v0.10.0. v0.10.0 does not have them.
+</Note>
+
 ## Create the trust entry
 
 ```bash
@@ -25,10 +29,6 @@ safedep policy rule create --trust pkg:pypi/foo@1.0.3 --scope malware \
 The command warns that the rule loosens the policy, creates the rule and publishes a new policy revision. Every Owner and Admin of the tenant gets an email about it.
 
 ## Choose the scope
-
-<Note>
-  The `safedep policy` commands need a safedep CLI release later than v0.10.0. v0.10.0 does not have them.
-</Note>
 
 | Scope | Use it when | Where it applies |
 |---|---|---|
@@ -61,7 +61,7 @@ safedep policy rule create --trust pkg:npm/minimist@1.2.5 --scope vulnerability 
 - `safedep policy rule create` does not accept `--scope named-vulnerability`. Use `--scope vulnerability` with `--vulnerability`.
 - `safedep policy rule list` and `safedep policy rule show` show the scope `named-vulnerability` with each id and its justification. To list these entries, run `safedep policy rule list --scope named-vulnerability`.
 
-The text after the last `:` is an optional justification. It says why the vulnerability does not affect the package, with an [OpenVEX](https://github.com/openvex/spec) name:
+The text after the last `:` is an optional justification, if it is one of the names below. So an id such as `RHSA-2024:1234` stays whole. It says why the vulnerability does not affect the package, with an [OpenVEX](https://github.com/openvex/spec) name:
 
 | Justification | Meaning |
 |---|---|
