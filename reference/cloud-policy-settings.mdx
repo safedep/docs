@@ -60,11 +60,12 @@ The document holds no package rules and keeps no comments.
 
 A rule never changes its selector, its effect or its scopes. Its reason, expiry, ticket and requester can change.
 
-| Trust scope | Waives | PMG | Pull request check |
+| Package rule | Effect | PMG | Pull request check |
 |---|---|---|---|
-| `malware` | A malware verdict that is not verified | Enforces | Enforces |
-| `cooldown` | The dependency cooldown | Enforces | Not supported |
-| `vulnerability` | The vulnerability findings of a scan gate | Not applicable | Enforces |
+| Block entry | Blocks the package | Enforces | Enforces |
+| Trust entry, scope `malware` | Waives a malware verdict that is not verified | Enforces | Enforces |
+| Trust entry, scope `cooldown` | Waives the dependency cooldown | Enforces | Not supported |
+| Trust entry, scope `vulnerability` | Waives the vulnerability findings of a scan gate | Not applicable | Enforces |
 
 ## Related
 

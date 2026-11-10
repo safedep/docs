@@ -69,21 +69,7 @@ For working pipeline configurations (GitHub Actions, GitLab, Jenkins, Azure DevO
 
 ## Troubleshooting
 
-### Identity not registered
-
-```
-ERRO[0001] Failed to execute whoami: rpc error: code = Unauthenticated desc = unauthenticated: Token auth failed: No user: record not found
-```
-
-Your identity is not registered with SafeDep Cloud. Sign up first: see the [quickstart](/governance/cloud/quickstart).
-
-### Tenant not found
-
-```
-ERRO[0001] Failed to execute query: rpc error: code = Unknown desc = failed to resolve tenant: record not found
-```
-
-No tenant is configured. Set it with `vet auth configure --tenant <tenant-domain>` or `vet cloud login --tenant <tenant-domain>`. If you've forgotten your tenant domain, run `vet cloud login` followed by `vet cloud whoami` to list the tenants you can access.
+For the fix of each error, such as `No user: record not found` or `failed to resolve tenant`, see [Cloud Troubleshooting](/governance/cloud/faq#authentication-errors).
 
 ### Checking credentials
 

@@ -9,7 +9,7 @@ An attacker who takes over a maintainer account publishes a malicious version. T
 The cooldown is on by default with a window of 2 days. It applies to npm, PyPI, Go, and Cargo packages.
 
 <Note>
-  The [cloud policy](/package-security/pmg/cloud-policy) of a SafeDep Cloud tenant can set the cooldown. When it does, the cloud value wins over `dependency_cooldown.enabled` and `dependency_cooldown.days` in the config file, over the `PMG_*` environment variables, and over `--skip-dependency-cooldown`, which PMG then refuses. One exception: under `global_lockdown: true`, a managed config file that sets one of these keys keeps its value. The skip list still applies. To exempt one package from the cloud cooldown, your security admin creates a [trust entry](/governance/cloud/policy/trust-a-package) with the scope `cooldown`.
+  The [cloud policy](/package-security/pmg/cloud-policy) of a SafeDep Cloud tenant can set the cooldown. Its value then wins over the config file, the environment variables and `--skip-dependency-cooldown`. See [Which settings the cloud policy changes](/package-security/pmg/cloud-policy#which-settings-the-cloud-policy-changes). To exempt one package from the cloud cooldown, your security admin creates a [trust entry](/governance/cloud/policy/trust-a-package) with the scope `cooldown`.
 </Note>
 
 ## Set the window
