@@ -54,12 +54,45 @@ safedep policy rule create --trust pkg:npm/minimist@1.2.5 --scope vulnerability 
   --reason "We never pass user input to minimist, S-91" --expires 30d
 ```
 
-- Each value is `ID[:JUSTIFICATION]`. The id has its published form, as `CVE-2024-3094` or `GHSA-jfh8-c2jp-5v3q`. The pull request check also matches the aliases of a finding, so a CVE id waives the GHSA finding of the same vulnerability.
-- The optional justification is one of the OpenVEX names `component_not_present`, `vulnerable_code_not_present`, `vulnerable_code_not_in_execute_path`, `vulnerable_code_cannot_be_controlled_by_adversary` or `inline_mitigations_already_exist`. Without it, `--reason` is the only explanation.
-- A trust entry names at most 100 vulnerabilities. `--scope vulnerability` must be its only scope.
+- Each value is `ID[:JUSTIFICATION]`. Write the id as its advisory publishes it, as `CVE-2024-3094` or `GHSA-jfh8-c2jp-5v3q`. The pull request check also matches the aliases of a finding, so a CVE id waives the GHSA finding of the same vulnerability. The match ignores case.
+- Give `--vulnerability` more than once, or give a comma-separated list, to name more vulnerabilities. A trust entry names at most 100 vulnerabilities, each one time.
+- `--scope vulnerability` must be the only scope of the trust entry. Create another trust entry for the other scopes.
+- A vulnerability that SafeDep publishes later still fails the check.
 - `safedep policy rule list` and `safedep policy rule show` show the scope `named-vulnerability` with each id and its justification. To list these entries, run `safedep policy rule list --scope named-vulnerability`.
 
-See [Waive one vulnerability of a package](/governance/cloud/policy/pull-request-checks#waive-one-vulnerability-of-a-package) for what each justification means.
+The text after the last `:` is an optional justification. It says why the vulnerability does not affect the package, with an [OpenVEX](https://github.com/openvex/spec) name:
+
+| Justification | Meaning |
+|---|---|
+| `component_not_present` | The vulnerable component is not present. |
+| `vulnerable_code_not_present` | The component is present, but the vulnerable code is not. |
+| `vulnerable_code_not_in_execute_path` | The vulnerable code is present, but your use of the code never runs it. |
+| `vulnerable_code_cannot_be_controlled_by_adversary` | The vulnerable code runs, but an attacker cannot control it. |
+| `inline_mitigations_already_exist` | Built-in protections prevent the exploit. |
+
+Without a justification, `--reason` is the only explanation. In the policy block of the pull request check, a waived named vulnerability shows its justification. With no justification, the row shows the reason of the trust entry on a private repository:
+
+```markdown
+| `lodash 4.17.20` | CVE-2020-8203 (high) | Waived | trust entry `r_named` (NAMED_VULNERABILITY), expires 2026-12-03, justification `vulnerable_code_not_in_execute_path` |
+```
+
+To waive every vulnerability of the package, also a vulnerability that SafeDep publishes later, give no `--vulnerability`:
+
+```bash
+safedep policy rule create --trust pkg:npm/minimist@1.2.5 --scope vulnerability \
+  --reason "Not reachable in our build, S-91" --expires 30d
+```
+
+## Waive license findings
+
+To pass a check that fails on a license that your team accepts, create a trust entry with the scope `license`:
+
+```bash
+safedep policy rule create --trust pkg:npm/acme-report-engine@2.0.0 --scope license \
+  --reason "Legal approved the license, LEG-12" --expires 90d
+```
+
+The trust entry waives every license finding of the versions that it selects: a denied license, a license that is not on the allow list, and an unknown license.
 
 ## Extend or end the trust
 
