@@ -11,64 +11,10 @@ CISA KEV, OpenSSF Scorecard, and more).
 
 ## Prerequisites
 
-[Install the CLI](https://github.com/safedep/cli#safedep-cli) and sign in to SafeDep Cloud:
-
-```bash
-safedep auth login
-safedep auth status   # confirm tenant and OAuth token
-```
+Install the `safedep` CLI and sign in. For the steps and a first query, see [Query Your Tenant with SQL](/governance/cloud/query-with-sql).
 
 SafeDep scopes every query to your tenant. You never write a tenant filter
 yourself.
-
-## Your first query
-
-Start by seeing what you can query. List the tables, then inspect one to view its
-columns, capability flags, and join edges:
-
-```bash
-safedep query schema list             # all tables + one-line descriptions
-safedep query schema show projects    # one table: columns, flags, joins
-```
-
-See [Discovering the schema](#discovering-the-schema) for the full set of schema
-commands.
-
-Now run a query. It is mostly SQL. Select some columns, filter with `WHERE`, sort
-with `ORDER BY`:
-
-```bash
-safedep query exec --sql "
-  SELECT projects.name
-  FROM projects
-  WHERE projects.origin_source = 'SOURCE_GITHUB'
-  ORDER BY projects.name"
-```
-
-```
-projects.name
-safedep/vet
-safedep/pmg
-safedep/control-tower
-...
-```
-
-Two things make this different from a generic database:
-
-1. **Write every column as `table.column`** using the real table name. No table
-   aliases, no bare column names. Result aliases via `AS` work
-   (`COUNT(...) AS n`, then `ORDER BY n`).
-2. **Every query must filter on an indexed column or a bounded time range.** Here
-   `projects.origin_source` is indexed, so the query is accepted. This rule keeps
-   queries cheap; the schema marks which columns are indexed.
-
-`safedep query exec` reads the statement from `--sql`, `--sql-file`, or stdin:
-
-```bash
-safedep query exec --sql "SELECT projects.name FROM projects WHERE projects.origin_source = 'SOURCE_GITHUB'"
-safedep query exec --sql-file ./query.sql
-echo "SELECT packages.name FROM packages WHERE packages.ecosystem = 'ECOSYSTEM_NPM'" | safedep query exec
-```
 
 ## How the data is organized
 
@@ -97,7 +43,7 @@ projects -> project_versions -> boms -> packages -> component_vulnerabilities ->
 
 | Feature | Notes |
 |---|---|
-| `SELECT` | Columns must be qualified `table.column`. |
+| `SELECT` | Columns must be qualified `table.column`, using the real table name. No table aliases, no bare column names. Result aliases with `AS` work (`COUNT(...) AS n`, then `ORDER BY n`). |
 | `WHERE` | `=`, `!=`, `<`, `<=`, `>`, `>=`, `AND`, `OR`. Enums filtered by name. |
 | `LIKE` | Prefix only: `'name%'`. Leading wildcards (`'%name'`) are rejected. |
 | `JOIN` | Needs an `ON` clause, but its contents are ignored: the catalog applies a predefined join. Only join tables connected by an edge. |
@@ -105,6 +51,8 @@ projects -> project_versions -> boms -> packages -> component_vulnerabilities ->
 | `HAVING` | Filter on aggregates after grouping. |
 | `ORDER BY` | Including by an aggregate alias. |
 | Aggregates | `count`, `sum`, `avg`, `min`, `max`. |
+
+Every query must filter on an indexed column or a bounded time range. The schema marks which columns are indexed.
 
 Not supported: subqueries, CTEs (`WITH`), `UNION` and set operations, window
 functions, casts, arbitrary functions, and multiple statements.
@@ -134,238 +82,6 @@ Each column carries capability flags that tell you what it can do:
 `schema get` also prints the join edges (which tables connect, and their
 cardinality) and the usage rules with example queries, so one call gives you
 everything needed to write a valid query.
-
-## Letting an AI agent write the queries
-
-Point your AI coding agent at the `safedep` CLI. The schema is self-describing
-and server errors come back verbatim, so the agent can discover tables, write a
-query, and self-correct on its own.
-
-Prompt:
-
-````text
-You can query SafeDep Cloud data with the `safedep` CLI (a constrained SQL
-dialect). Run `safedep query schema get -o json` to discover the tables,
-columns, rules, and join edges. Write a query, run it with
-`safedep query exec -o json --sql "<statement>"`, and self-correct from the
-verbatim server errors. Rules and worked examples:
-https://docs.safedep.io/reference/sql-query
-````
-
-## Examples
-
-<AccordionGroup>
-
-<Accordion title="Severity breakdown for one ecosystem">
-
-Anchor on the indexed `ecosystem` column (an `OR` across all severities would not
-satisfy the index rule):
-
-```bash
-safedep query exec --sql "
-  SELECT packages.ecosystem, vulnerabilities.severity_rating,
-         COUNT(DISTINCT vulnerabilities.vuln_id) AS num_vulns
-  FROM packages
-  JOIN component_vulnerabilities ON component_vulnerabilities.component_id = packages.id
-  JOIN vulnerabilities ON vulnerabilities.vuln_id = component_vulnerabilities.vulnerability_id
-  WHERE packages.ecosystem = 'ECOSYSTEM_NPM'
-  GROUP BY packages.ecosystem, vulnerabilities.severity_rating
-  ORDER BY num_vulns DESC"
-```
-
-</Accordion>
-
-<Accordion title="Top remediation targets by critical CVE count">
-
-```bash
-safedep query exec --sql "
-  SELECT packages.name, COUNT(DISTINCT vulnerabilities.vuln_id) AS critical_vulns
-  FROM packages
-  JOIN component_vulnerabilities ON component_vulnerabilities.component_id = packages.id
-  JOIN vulnerabilities ON vulnerabilities.vuln_id = component_vulnerabilities.vulnerability_id
-  WHERE vulnerabilities.severity_rating = 'CRITICAL'
-  GROUP BY packages.name
-  ORDER BY critical_vulns DESC" --limit 15
-```
-
-</Accordion>
-
-<Accordion title="Enrich critical CVEs with EPSS exploit prediction">
-
-EPSS is join-only enrichment, so anchor in the tenant `packages` table and join
-out. Sorting by EPSS surfaces the CVEs most likely to be exploited:
-
-```bash
-safedep query exec -o json --sql "
-  SELECT packages.name, vulnerabilities.cve_id, epss.epss, epss.percentile
-  FROM packages
-  JOIN component_vulnerabilities ON component_vulnerabilities.component_id = packages.id
-  JOIN vulnerabilities ON vulnerabilities.vuln_id = component_vulnerabilities.vulnerability_id
-  JOIN epss ON epss.cve = vulnerabilities.cve_id
-  WHERE vulnerabilities.severity_rating = 'CRITICAL'
-  ORDER BY epss.epss DESC"
-```
-
-```
-packages.name                         cve_id            epss     percentile
-org.springframework:spring-webmvc     CVE-2022-22965    0.944    0.99985
-org.apache.logging.log4j:log4j-core   CVE-2021-44228    0.944    0.99964
-next                                  CVE-2025-29927    0.921    0.99724
-```
-
-</Accordion>
-
-<Accordion title="Cross-reference inventory against CISA KEV">
-
-`kev` is the CISA Known Exploited Vulnerabilities catalog. Use a bounded range on
-the indexed `kev.date_added` to anchor the query:
-
-```bash
-safedep query exec --sql "
-  SELECT packages.name, packages.ecosystem, vulnerabilities.cve_id, vulnerabilities.severity_rating
-  FROM packages
-  JOIN component_vulnerabilities ON component_vulnerabilities.component_id = packages.id
-  JOIN vulnerabilities ON vulnerabilities.vuln_id = component_vulnerabilities.vulnerability_id
-  JOIN kev ON kev.cve_id = vulnerabilities.cve_id
-  WHERE kev.date_added >= '2018-01-01T00:00:00Z'
-  ORDER BY packages.name"
-```
-
-</Accordion>
-
-<Accordion title="Malware findings across your inventory">
-
-`is_malware` is not indexed, so anchor on the indexed `detected_at` timestamp:
-
-```bash
-safedep query exec --sql "
-  SELECT packages.name, packages.ecosystem, packages.version,
-         component_malicious_packages.is_malware,
-         component_malicious_packages.is_verified
-  FROM packages
-  JOIN component_malicious_packages ON component_malicious_packages.analysis_id = packages.id
-  WHERE component_malicious_packages.detected_at >= '2020-01-01T00:00:00Z'
-  ORDER BY packages.name"
-```
-
-</Accordion>
-
-<Accordion title="List declared licenses for your packages">
-
-Walk from packages through `component_licenses` to the global `licenses` catalog
-for SPDX metadata. Anchor on the indexed `packages.ecosystem`:
-
-```bash
-safedep query exec --sql "
-  SELECT packages.name, component_licenses.license_code, licenses.spdx_license_id
-  FROM packages
-  JOIN component_licenses ON component_licenses.license_code = packages.id
-  JOIN licenses ON licenses.license_code = component_licenses.license_code
-  WHERE packages.ecosystem = 'ECOSYSTEM_NPM'
-  ORDER BY packages.name"
-```
-
-</Accordion>
-
-<Accordion title="Your endpoint fleet, by most recent sync">
-
-`endpoints` are the machines and CI runners reporting to your tenant. The
-timestamp columns are indexed, so a bounded range anchors the query:
-
-```bash
-safedep query exec --sql "
-  SELECT endpoints.identifier, endpoints.endpoint_type, endpoints.trust_level, endpoints.last_sync_at
-  FROM endpoints
-  WHERE endpoints.last_sync_at >= '2025-01-01T00:00:00Z'
-  ORDER BY endpoints.last_sync_at DESC"
-```
-
-```
-endpoints.identifier      endpoint_type   trust_level   last_sync_at
-Vignesh                   0               1             2026-06-05T07:23:03Z
-CICD_GHA_SAFEDEP_CLI      0               1             2026-06-05T06:11:20Z
-macbookpro.lan            0               1             2026-06-04T08:54:03Z
-```
-
-The `endpoint_type` and `trust_level` enums are not groupable, so use `WHERE`
-filters and listings rather than `GROUP BY` for endpoints. SafeDep Cloud does not
-set `endpoint_type` yet, so every endpoint shows `0`. To find CI events, filter
-on `package_guard_events.ci_provider IS NOT NULL`.
-
-</Accordion>
-
-<Accordion title="Which endpoints have blocked any package">
-
-For "which endpoints..." questions you want a de-duplicated list, not one row per
-event, so use `SELECT DISTINCT`:
-
-```bash
-safedep query exec --sql "
-  SELECT DISTINCT endpoints.identifier
-  FROM package_guard_events
-  JOIN endpoints ON endpoints.id = package_guard_events.invocation_id
-  WHERE package_guard_events.package_action = 'PMG_PACKAGE_ACTION_BLOCKED'"
-```
-
-```
-endpoints.identifier
-macbookpro.lan
-pop-os
-Sahils-MacBook-Pro.local
-Vignesh
-```
-
-</Accordion>
-
-<Accordion title="What each endpoint blocked">
-
-Join Package Guard events to the endpoint that produced them, newest first, for a
-full audit trail:
-
-```bash
-safedep query exec --sql "
-  SELECT endpoints.identifier,
-         package_guard_events.package_name,
-         package_guard_events.package_ecosystem,
-         package_guard_events.tool_name,
-         package_guard_events.timestamp
-  FROM package_guard_events
-  JOIN endpoints ON endpoints.id = package_guard_events.invocation_id
-  WHERE package_guard_events.package_action = 'PMG_PACKAGE_ACTION_BLOCKED'
-  ORDER BY package_guard_events.timestamp DESC" --limit 50
-```
-
-```
-endpoints.identifier        package_name                     package_ecosystem   tool_name   timestamp
-pop-os                      speed5                           2                   pmg         2026-05-27T10:30:34Z
-pop-os                      lab-helper                       2                   pmg         2026-05-27T10:28:14Z
-Sahils-MacBook-Pro.local    martinez-polygon-clipping-tony   2                   pmg         2026-05-07T10:20:55Z
-Sahils-MacBook-Pro.local    prettier                         2                   pmg         2026-05-07T07:40:20Z
-Sahils-MacBook-Pro.local    fast-check                       2                   pmg         2026-05-07T07:39:50Z
-```
-
-The `package_ecosystem` enum renders as its stored number in table output
-(`2` = `ECOSYSTEM_NPM`, `3` = `ECOSYSTEM_PYPI`); use `-o json` for the enum name.
-
-</Accordion>
-
-<Accordion title="Shadow AI inventory: MCP servers observed across endpoints">
-
-`inventory_events` captures items discovered by `vet` on each endpoint. Filter on
-the indexed `item_kind` to find AI-related items:
-
-```bash
-safedep query exec --sql "
-  SELECT inventory_events.item_identity, inventory_events.app, endpoints.identifier
-  FROM inventory_events
-  JOIN endpoints ON endpoints.id = inventory_events.app
-  WHERE inventory_events.item_kind = 'INVENTORY_ITEM_KIND_MCP_SERVER'
-  ORDER BY inventory_events.item_identity" --limit 50
-```
-
-</Accordion>
-
-</AccordionGroup>
 
 ## Output modes
 
