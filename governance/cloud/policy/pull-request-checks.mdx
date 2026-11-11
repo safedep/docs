@@ -1,7 +1,7 @@
 ---
-title: "Fail Pull Request Checks on Chosen Severities"
+title: "Fail Pull Request Checks on Severities and Licenses"
 sidebarTitle: "Gate Pull Requests"
-description: "Use the cloud policy to choose which vulnerability severities fail the SafeDep pull request check for a group of projects, on GitHub and Bitbucket."
+description: "Use the cloud policy to choose the vulnerability severities and the licenses that fail the SafeDep pull request check, on GitHub and Bitbucket."
 ---
 
 The pull request check of the [SafeDep GitHub App](/governance/integrations/github) and the [Bitbucket app](/governance/integrations/bitbucket-app) reads the cloud policy of your tenant. Both apps use the same check, so one policy applies to repositories on both forges. There is no separate setting in each app.
@@ -14,13 +14,16 @@ The pull request check of the [SafeDep GitHub App](/governance/integrations/gith
 
 | Part of the policy | What the check does |
 |---|---|
-| `scan_gate.fail_on` | Fails on a vulnerability at or above this severity: `critical`, `high`, `medium`, `low` or `info`. The SafeDep default policy sets `high`. |
-| `scan_gate.fail_on_attacks` | With `report`, the check reports a malware verdict that is not verified and does not fail on it. With `fail` (the default), the check also reports it and does not fail on it yet. |
-| Block entries | Fail the check when the pull request adds a package that they select. |
-| Trust entries, scope `vulnerability` | Waive the vulnerabilities of the package that they select. |
-| Trust entries, scope `malware` | Waive a malware verdict that is not verified. |
+| `scan_gate.fail_on` | Fails on a vulnerability at or above this severity: `critical`, `high`, `medium`, `low` or `info`. |
+| `scan_gate.fail_on_attacks` | With `report`, the check reports a malware verdict that is not verified and does not fail on it. With `fail`, the check also reports it and does not fail on it yet. |
+| `scan_gate.licenses.deny` | Fails on a package whose license is on the list. |
+| `scan_gate.licenses.allow` | With entries, fails on a package whose known license is not on the list. With no entries, the allow list is off. |
+| `scan_gate.licenses.unknown` | What the check does with a package whose license is unknown: `allow`, `report` or `fail`. |
+| Package rules | A block entry fails the check. A trust entry waives the findings of its scopes. |
 
-Verified malware always fails the check. No setting and no trust entry changes that. The check also fails on a risky license, by a fixed rule of the check that the policy does not control yet. The check does not apply a dependency cooldown.
+For the SafeDep default of each setting and the scopes that the check applies, see [Cloud Policy Settings](/reference/cloud-policy-settings).
+
+Verified malware always fails the check. No setting and no trust entry changes that. The check does not apply a dependency cooldown.
 
 The check still applies the [Malicious Package Exclusions](/governance/cloud/package-exclusions) of your tenant. When an exclusion selects a package version, the check does not report an unverified malware verdict for that version. Verified malware still fails the check. PMG with `cloud.policy` on ignores exclusions.
 
@@ -70,16 +73,84 @@ The check still applies the [Malicious Package Exclusions](/governance/cloud/pac
 
 To set the gate for every project of the tenant, set `scan_gate.fail_on` in the policy base instead. To target one forge, select on `scm/forge`, as in `matchLabels: {scm/forge: bitbucket}`.
 
-## Waive one vulnerable package
+## Deny a license
 
-To pass a check that fails on a vulnerability that you accept, create a trust entry with the scope `vulnerability`:
+The check applies the deny list first, then the allow list, to the license of each package that the pull request adds or updates. For the match rules, see [License gate](/reference/cloud-policy-settings#license-gate).
 
-```bash
-safedep policy rule create --trust pkg:npm/minimist@1.2.5 --scope vulnerability \
-  --reason "Not reachable in our build, S-91" --expires 30d
+1. Open the policy settings document:
+
+   ```bash
+   safedep policy edit -m "Deny SSPL"
+   ```
+
+2. Set the deny list in the policy base. Your list replaces the default list, so copy the nine default ids and add the new one:
+
+   ```yaml
+   base:
+     scan_gate:
+       licenses:
+         deny:
+           licenses:
+             - GPL-2.0
+             - GPL-2.0-only
+             - GPL-2.0-or-later
+             - GPL-3.0
+             - GPL-3.0-only
+             - GPL-3.0-or-later
+             - AGPL-3.0
+             - AGPL-3.0-only
+             - AGPL-3.0-or-later
+             - SSPL-1.0
+   ```
+
+3. Preview and publish the change with `safedep policy change show` and `safedep policy change publish`, as in [Fail on medium for a group of projects](#fail-on-medium-for-a-group-of-projects).
+
+If your list leaves out an id of the list below it (here, the default list), the change loosens the policy. The publish then asks for a confirmation, and every Owner and Admin of the tenant gets an email about it.
+
+To deny no license for a group of projects, set `deny: {licenses: []}` in a policy override.
+
+## Allow only some licenses
+
+Set an allow list for a group of projects. A package with a known license that is not on the list fails the check:
+
+```yaml
+overrides:
+  - name: distributed
+    priority: 300
+    description: Code that we ship to customers
+    selector:
+      matchLabels: {custom/distribution: external}
+    spec:
+      scan_gate:
+        licenses:
+          allow:
+            licenses: [MIT, Apache-2.0, BSD-2-Clause, BSD-3-Clause, ISC]
 ```
 
-The trust entry waives every vulnerability of the versions that it selects, also a vulnerability that is published later.
+- The deny list still applies. A license on both lists fails the check.
+- A package with an unknown license still passes under `unknown: allow`. To allow only the listed licenses, also set `unknown: fail`. See [Fail on an unknown license](#fail-on-an-unknown-license).
+- To turn off the allow list of the policy base for a group, set `allow: {licenses: []}` in a policy override.
+
+For which change loosens the policy and which tightens it, see the [setting notes](/reference/cloud-policy-settings#policy-settings).
+
+## Fail on an unknown license
+
+Set `unknown` to `report` to show these packages in the check without a failure, or to `fail` to fail on them:
+
+```yaml
+base:
+  scan_gate:
+    licenses:
+      unknown: report
+```
+
+<Warning>
+  With `unknown: fail`, the check fails on each pull request that adds a package whose license SafeDep does not know. Start with `report`, and read the reported packages before you set `fail`.
+</Warning>
+
+## Waive a finding for one package
+
+To pass a check that fails on a license or a vulnerability that your team accepts, create a trust entry. See [Waive license findings](/governance/cloud/policy/trust-a-package#waive-license-findings) and [Waive named vulnerabilities](/governance/cloud/policy/trust-a-package#waive-named-vulnerabilities).
 
 ## What the check shows
 
@@ -93,22 +164,25 @@ The block names the policy revision, each setting that the check read and the la
 ```markdown
 **SafeDep policy: failed**
 
-Policy: tenant revision 47 · SafeDep default policy revision 1
+Policy: tenant revision 47 · SafeDep default policy revision 2
 
 | Setting | Value | Set by | Coverage |
 | --- | --- | --- | --- |
 | `scan_gate.fail_on` | MEDIUM | policy override "payments" (selects `custom/criticality=high`) | ENFORCE |
+| `scan_gate.licenses.deny` | GPL-2.0, GPL-2.0-only, GPL-2.0-or-later, GPL-3.0, GPL-3.0-only, GPL-3.0-or-later, AGPL-3.0, AGPL-3.0-only, AGPL-3.0-or-later | SafeDep default policy | ENFORCE |
+| `scan_gate.licenses.allow` | off | no layer | ENFORCE |
+| `scan_gate.licenses.unknown` | ALLOW | SafeDep default policy | ENFORCE |
 
 | Package | Finding | Result | Rule |
 | --- | --- | --- | --- |
 | `left-padd 1.0.0` | block entry `r_9c1x4kq7dm` | Failing | "typosquat of left-pad" |
-| `lodash 4.17.20` | CVE-2021-23337 (high) | Failing | `scan_gate.fail_on` |
+| `lodash 4.17.20` | 2 vulnerabilities (2 high): CVE-2020-8203, CVE-2021-23337 | Failing | `scan_gate.fail_on` |
 | `minimist 1.2.5` | CVE-2021-44906 (critical) | Waived | trust entry `r_trust` (VULNERABILITY), expires 2026-12-03 |
 
-Fixed rule of the check: `risky-oss-licenses`
-
-Ask your security admin. They can run `safedep project policy show acme/payments-api`
+Ask your security admin. They can run `safedep project policy show --project-id prj_payments`
 ```
+
+For the text of each license finding, see [License findings](/reference/cloud-policy-settings#license-findings).
 
 - A passing check shows no policy block.
 - On a public repository, the block shows the rule id of a package rule, not its reason.
@@ -116,7 +190,7 @@ Ask your security admin. They can run `safedep project policy show acme/payments
 
 ## When the check does not use your policy
 
-- **The repository has no project.** The check resolves the policy with the `scm/` labels of the repository. The policy base, the package rules of the policy base and the policy overrides that select `scm/` labels apply. A `custom/` label needs a project. Run `safedep project sync OWNER/REPOSITORY --source github`, or `--source bitbucket` for a Bitbucket repository.
+- **The repository has no project.** The check resolves the policy with the `scm/` labels of the repository. The policy base, the package rules of the policy base and the policy overrides that select `scm/` labels apply. A `custom/` label needs a project. See [Label projects](/governance/cloud/policy/target-a-group#label-projects).
 - **The installation is not linked to a tenant, or the plan of the tenant has no cloud policy.** The SafeDep default policy applies alone.
 - **SafeDep Cloud cannot read the policy.** The check retries, and then fails with an error. It never falls back to the default policy, because the default policy can be looser than yours.
 

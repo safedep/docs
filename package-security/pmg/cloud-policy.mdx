@@ -88,6 +88,8 @@ A fetch that fails keeps the cache. When you log out, PMG keeps the last policy.
 
 A trust entry of the policy never skips the malware analysis and never allows verified malware. See [Package Rules](/concepts/package-rules).
 
+PMG applies the trust scopes `malware` and `cooldown`. PMG does not apply the trust scopes `vulnerability`, `named-vulnerability` and `license`, or the license gate (`scan_gate.licenses`), because PMG has no vulnerability or license verdict.
+
 ## What a block looks like
 
 A block entry of the cloud policy stops the install with a message that names the rule and the revision. This example comes from the PMG tests:

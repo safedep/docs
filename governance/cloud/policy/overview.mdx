@@ -13,14 +13,14 @@ The cloud policy is one [policy](/concepts/policy) for your tenant in SafeDep Cl
 
 - **Package rules.** Block a package for the whole tenant, or trust one package after a false positive. See [Package Rules](/concepts/package-rules).
 - **Dependency cooldown.** Hold back package versions that are younger than a minimum age.
-- **Pull request checks.** Choose the lowest vulnerability severity that fails a check.
+- **Pull request checks.** Choose the lowest vulnerability severity that fails a check, and the licenses that fail it.
 
 You can set a value for the whole tenant, or for a group of endpoints or projects with a policy override. See [Policy Resolution](/concepts/policy-resolution).
 
 ## What enforces each part
 
 - **PMG** applies the package rules and the dependency cooldown.
-- **The pull request check** applies the package rules and the scan gate.
+- **The pull request check** applies the package rules and the scan gate, with its license gate.
 - **Vet** does not read the cloud policy yet.
 
 For each setting and each trust scope, and the exceptions, see the [settings reference](/reference/cloud-policy-settings).
@@ -68,7 +68,7 @@ A package rule skips the draft: `safedep policy rule create` publishes at once. 
     Label endpoints and projects and write a policy override.
   </Card>
   <Card title="Fail Pull Request Checks" icon="code-pull-request" href="/governance/cloud/policy/pull-request-checks">
-    Choose the severities that fail a check for a group of projects.
+    Choose the severities and the licenses that fail a check.
   </Card>
   <Card title="Roll Back a Change" icon="clock-rotate-left" href="/governance/cloud/policy/roll-back-a-change">
     Restore a setting from an old revision.
