@@ -10,7 +10,8 @@ Shadow AI is AI services and SDKs that developers added to the code without a se
 
 Coverage tracks the AI ecosystem in current use:
 
-- **Model providers:** OpenAI, Anthropic, Google Gemini, xAI Grok, Mistral, Cohere, Groq, Ollama, AWS Bedrock, Hugging Face, and more
+- **Model providers:** OpenAI, Anthropic, Google Gemini, xAI Grok, Mistral, Cohere, Groq, Ollama, AWS Bedrock, Azure OpenAI, Hugging Face, and more
+- **AI services:** Azure AI vision and translation
 - **Frameworks and agent SDKs:** LangChain, LangGraph, LlamaIndex, CrewAI, Vercel AI SDK, OpenAI Agents SDK, Claude Agent SDK, Pydantic AI, Spring AI, Semantic Kernel, and the Model Context Protocol (MCP) SDKs
 - **Languages:** Python, JavaScript, TypeScript, Java, and Go. Each SDK is covered in the languages it supports.
 
@@ -119,7 +120,7 @@ If you scan vendored dependency source through `--import-dir`, `vet` attempts to
       { "methods": [{ "technique": "source-code-analysis", "confidence": 1.0 }] }
     ],
     "occurrences": [
-      { "location": "src/ai.py", "line": 42, "additionalContext": "openai.OpenAI" }
+      { "location": "src/ai.py", "line": 42, "additionalContext": "openai//OpenAI" }
     ]
   },
   "properties": [

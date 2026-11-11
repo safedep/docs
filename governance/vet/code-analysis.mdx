@@ -141,7 +141,7 @@ To scan only JavaScript and TypeScript, use `--lang javascript --lang typescript
 
 ### Custom Database Locations
 
-Organize databases by project or environment:
+Organize databases by project, environment or scope:
 
 ```bash
 # Development environment
@@ -149,6 +149,9 @@ vet code scan --app ./src --db ./analysis/dev-code.db
 
 # Production analysis
 vet code scan --app ./dist --db ./analysis/prod-code.db
+
+# Maven or Gradle layout: production code only, without test code
+vet code scan --app src/main --db ./analysis/main-code.db
 ```
 
 ### Integration with CI/CD

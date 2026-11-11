@@ -62,7 +62,7 @@ func main() {
 	client := threatintelv1connect.NewThreatIntelServiceClient(
 		http.DefaultClient,
 		"https://api.safedep.io",
-		connect.WithInterceptors(auth("<api-key>", "your-company.safedep.io")),
+		connect.WithInterceptors(auth("<api-key>", "your-team.your-org.safedep.io")),
 	)
 
 	req := connect.NewRequest(&threatintelv1.ListPackageReportsRequest{
@@ -98,7 +98,7 @@ const transport = createConnectTransport({
   interceptors: [
     (next) => (req) => {
       req.header.set("Authorization", "<api-key>");
-      req.header.set("X-Tenant-ID", "your-company.safedep.io");
+      req.header.set("X-Tenant-ID", "your-team.your-org.safedep.io");
       return next(req);
     },
   ],

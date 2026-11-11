@@ -86,13 +86,13 @@ Direct API access uses the same authentication model as the CLI: an `authorizati
     # Submit a scan
     curl https://cloud.safedep.io/safedep.services.malysis.v1.PackageScanService/SubmitScan \
       -H "authorization: $SAFEDEP_ACCESS_TOKEN" \
-      -H "x-tenant-id: your-company.safedep.io" \
+      -H "x-tenant-id: your-team.your-org.safedep.io" \
       --json '{"target":{"package_version":{"package":{"ecosystem":"ECOSYSTEM_NPM","name":"express"},"version":"4.18.2"}}}'
 
     # Poll the scan by id
     curl https://cloud.safedep.io/safedep.services.malysis.v1.PackageScanService/GetScan \
       -H "authorization: $SAFEDEP_ACCESS_TOKEN" \
-      -H "x-tenant-id: your-company.safedep.io" \
+      -H "x-tenant-id: your-team.your-org.safedep.io" \
       --json '{"scan_id":"<scan-id>"}'
     ```
   </Tab>
@@ -103,7 +103,7 @@ Direct API access uses the same authentication model as the CLI: an `authorizati
     BASE = "https://cloud.safedep.io/safedep.services.malysis.v1.PackageScanService"
     HEADERS = {
         "authorization": ACCESS_TOKEN,          # OAuth2 session access token
-        "x-tenant-id": "your-company.safedep.io",
+        "x-tenant-id": "your-team.your-org.safedep.io",
     }
 
     submit = requests.post(f"{BASE}/SubmitScan", headers=HEADERS, json={

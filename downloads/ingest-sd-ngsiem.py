@@ -10,7 +10,7 @@ the sync can run on its own for testing.
 
 Environment:
     SAFEDEP_TOKEN          required. OAuth token from `safedep auth token`.
-    SAFEDEP_TENANT_ID      required. Tenant domain, e.g. your-company.safedep.io
+    SAFEDEP_TENANT_ID      required. Tenant domain, e.g. your-team.your-org.safedep.io
     SAFEDEP_CLOUD_URL      optional. Default https://cloud.safedep.io
     CROWDSTRIKE_HEC_URL    optional. HEC collector URL, e.g.
                            https://<cloud>/services/collector. Unset = log only.

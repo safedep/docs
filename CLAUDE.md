@@ -18,10 +18,10 @@ The documentation is organized into **7 tabs** — solution tabs at the core, pl
 3. **AI Agent Security** — discover, audit, and control what AI agents access and run (MCP, Gryph, vet AI discovery)
 4. **Visibility & Governance**: scan repos/SBOMs/CI/CD for risk; deploy fleet tooling; manage policy and cloud visibility (vet, xBom, SafeDep Cloud, Endpoint Hub, Endpoint Sync, Cloud Policy)
 5. **Threat Intel** — consume the malicious-package feed as an API: reports and campaigns (ThreatIntelService). Subscription-gated (`FEATURE_THREAT_INTEL_FEED`)
-6. **Reference** — exact syntax/APIs (vet query & policy, API & automation)
+6. **Reference** — exact syntax/APIs (vet query & policy, cloud policy, Endpoint Hub, API & automation)
 7. **Community & Support** — community resources, FAQ and the changelog
 
-> **Status:** the IA migration is complete. The 6-tab structure is live in `docs.json`, and all pages have moved to solution-aligned paths (`get-started/`, `concepts/`, `package-security/`, `ai-security/`, `governance/`, `reference/`). Old paths (`vet/`, `pmg/`, `cloud/`, `apps/`, `scan/`, `xbom/`, `api-reference/`) are **redirects** in `docs.json` `redirects[]`, not live files. When you add or move a page, add its redirect there too.
+> **Status:** the IA migration is complete. The 7-tab structure is live in `docs.json`, and all pages have moved to solution-aligned paths (`get-started/`, `concepts/`, `package-security/`, `ai-security/`, `governance/`, `threat-intel/`, `reference/`). Old paths (`vet/`, `pmg/`, `cloud/`, `apps/`, `scan/`, `xbom/`, `api-reference/`) are **redirects** in `docs.json` `redirects[]`, not live files. When you add or move a page, add its redirect there too.
 
 ### Governing Rules (how the IA evolves)
 
@@ -30,7 +30,7 @@ Every placement decision derives from these rules. Full rationale and page map: 
 - **R1 — One primary entry point.** New visitors meet a clear "What is SafeDep?" primer, not a tool catalog.
 - **R2 — Capability ladder, not persona gate.** The journey runs: individual dev → team → org-wide governance. Navigation doesn't pin users to a tier. Features requiring SafeDep Cloud are marked with a `<Note>` callout — no structural separation.
 - **R3 — Organize by solution, not by tool.** Tabs name the security outcome SafeDep delivers. Grammar test: "SafeDep solves ___" must complete naturally with the tab name.
-- **R4: Concepts are first-class, atomic, linkable.** Each concept gets one dedicated page under Get Started › Core Concepts (`concepts/`). The eleven that exist: `malicious-package`, `vulnerability`, `policy`, `policy-resolution`, `labels`, `package-rules`, `policy-revisions`, `cel`, `sbom`, `tenant`, `endpoint`. The policy concepts and `cel` sit in a nested "Policy" group, the last entry of Core Concepts, after the flat pages. **Malicious-package *protection* is a solution (the Package Security tab), not a concept.** The concept is the malicious package itself, and `concepts/malicious-package` carries the user-facing detection story (how SafeDep classifies a package as malicious). Malysis/Malbase are **not** concept pages. They are internal infrastructure (R6). The Malysis *pipeline* is never a product tab. A productized Threat Intelligence offering gets its own solution tab (shipped as the **Threat Intel** tab, `threat-intel/`; see `docs-ia.md` §8). The rule protects pipeline vs product.
+- **R4: Concepts are first-class, atomic, linkable.** Each concept gets one dedicated page under Get Started › Core Concepts (`concepts/`). The eleven that exist: `malicious-package`, `vulnerability`, `policy`, `policy-resolution`, `labels`, `package-rules`, `policy-revisions`, `cel`, `sbom`, `tenant`, `endpoint`. `policy` and `cel` are flat pages. The four cloud policy concepts (`policy-resolution`, `labels`, `package-rules`, `policy-revisions`) sit in a nested "Cloud Policy" group, the last entry of Core Concepts. **Malicious-package *protection* is a solution (the Package Security tab), not a concept.** The concept is the malicious package itself, and `concepts/malicious-package` carries the user-facing detection story (how SafeDep classifies a package as malicious). Malysis/Malbase are **not** concept pages. They are internal infrastructure (R6). The Malysis *pipeline* is never a product tab. A productized Threat Intelligence offering gets its own solution tab (shipped as the **Threat Intel** tab, `threat-intel/`; see `docs-ia.md` §8). The rule protects pipeline vs product.
 - **R5 — Progressive disclosure.** Tab depth is unlimited; groups handle it. A tab splits only when it covers fundamentally different security outcomes. The Reference tab is the only place for exhaustive lookup content.
 - **R6 — docs.safedep.io is the guide layer.** Product-level technical reference (CLI flags, type definitions) lives in individual product repos. This site covers concepts, how-tos, and integration guides.
 - **R7 — AI-agent consumability is first-class.** One concept per atomic page, predictable headings, stable URLs.
@@ -45,19 +45,19 @@ Every placement decision derives from these rules. Full rationale and page map: 
 |---|---|---|
 | Defines a concept/term used across docs | Get Started | Core Concepts |
 | Onboards a new user / routes entry points | Get Started | Introduction (product quickstarts co-locate with their product) |
-| Covers malicious package blocking (install-time or CI/CD) | Package Security | pmg / MDM / CI/CD Package Blocking |
-| Covers evaluating a package/extension/repo before use (on-demand scanning) | Package Security | On-Demand Package Scanning |
-| Covers AI agent discovery, audit, or control | AI Agent Security | AI Agent Observability / AI Coding Protection |
-| Covers scanning repos, SBOMs, CI/CD for risk | Visibility & Governance | Repository Scanning / Bill of Materials / CI/CD |
-| Covers deploying vet or running vet tasks across endpoint fleets | Visibility & Governance | MDM |
+| Covers malicious package blocking (install-time or CI/CD) | Package Security | Block at Install / Deploy to a Fleet / Block in CI/CD |
+| Covers evaluating a package/extension/repo before use (on-demand scanning) | Package Security | Scan Before Use |
+| Covers AI agent discovery, audit, or control | AI Agent Security | Flat page list (no groups) |
+| Covers scanning repos, SBOMs, CI/CD for risk | Visibility & Governance | Repository Scanning / Bill of Materials / CI/CD Integrations |
+| Covers deploying vet or running vet tasks across endpoint fleets | Visibility & Governance | Repository Scanning (`governance/vet/mdm/overview`) |
 | Covers endpoint inventory or org-wide access in SafeDep Cloud | Visibility & Governance | SafeDep Cloud / Endpoint Hub |
 | Changes a cloud policy setting, package rule or policy module | Visibility & Governance | Cloud Policy (one subgroup per capability when there is more than one) |
 | Connects or sets up a tool that enforces the cloud policy | That tool's outcome tab | The tool's group, with a card from Cloud Policy |
 | Is an independent capability with its own data and workflow that the policy only references (for example a catalog of approved components) | Visibility & Governance | Its own group |
-| Covers consuming the malicious-package feed (reports, campaigns, feed API) | Threat Intel | Getting Started / Consuming the Feed / Reference |
-| Is pure lookup (syntax, flags, API) | Reference | vet Query & Policy / API & Automation |
+| Covers consuming the malicious-package feed (reports, campaigns, feed API) | Threat Intel | Getting Started / Use the Feed / Schema & Errors |
+| Is pure lookup (syntax, flags, API) | Reference | vet Query & Policy / Cloud Policy / Endpoint Hub / API & Automation |
 | Is community/support | Community & Support | Community / Support |
-| Records what SafeDep shipped (changelog) | Community & Support | Updates (`changelog/<year>.mdx`: use the `writing-changelog` skill) |
+| Records what SafeDep shipped (changelog) | Community & Support | Changelog (`changelog/<year>.mdx`: use the `writing-changelog` skill) |
 
 A page appears in **exactly one** sidebar slot. To surface it from another tab, add an in-body `<Card>` — never a second nav entry.
 
@@ -71,7 +71,7 @@ All documentation follows the **Diátaxis framework** with four content types:
 
 1. **Tutorials** (`introduction.mdx`, `*/quickstart.mdx`) — Learning-oriented, hands-on. Live in Get Started or at the top of a solution tab.
 2. **How-to Guides** — Live in the relevant solution tab (Package Security / AI Agent Security / Visibility & Governance):
-   - CI/CD & Platform Integrations: GitHub, GitLab, Bitbucket, JFrog, DefectDojo
+   - CI/CD Integrations: GitHub, GitLab, Bitbucket, JFrog, DefectDojo
    - SBOM & Analysis: CycloneDX, dependency inventory, code analysis
    - API & Automation: TypeScript API usage, Terraform audits
 3. **Reference** (`reference/`) — Technical specifications and lookup. All live in the **Reference** tab.
@@ -211,7 +211,7 @@ Example — adding a new CI/CD integration guide:
   "tab": "Visibility & Governance",
   "groups": [
     {
-      "group": "CI/CD & Platform Integrations",
+      "group": "CI/CD Integrations",
       "pages": [
         "governance/integrations/overview",
         "governance/integrations/github-code-scanning",

@@ -1,7 +1,7 @@
 ---
 title: "Connecting"
 sidebarTitle: "Authentication & Requests"
-description: "Transport, base URL, request headers, authentication, and JSON conventions for the Threat Intel Feed API."
+description: "Transport, base URL, request headers, and authentication for the Threat Intel Feed API."
 ---
 
 The feed is a [ConnectRPC](https://connectrpc.com) service. You can call it three ways over one URL: the [**Connect protocol**](https://connectrpc.com/docs/protocol/), **gRPC**, or **gRPC-Web**. This page uses the Connect protocol with JSON, because any HTTP client can send it. For typed stubs in your language, see [SDKs](/threat-intel/sdks).
@@ -31,7 +31,7 @@ For example, `.../ThreatIntelService/ListPackageReports`.
 | Method | `POST` |
 | `Content-Type` | `application/json` |
 | `Authorization` | Your API key, sent **as-is**. No `Bearer` prefix. |
-| `X-Tenant-ID` | Your tenant domain, for example `your-company.safedep.io`. |
+| `X-Tenant-ID` | Your tenant domain, for example `your-team.your-org.safedep.io`. |
 | Body | The request message as JSON. Use `{}` for an empty message. |
 
 Both headers are required on every call. For authentication and authorization failures like `unauthenticated` and `permission_denied`, see [Errors & limits](/threat-intel/errors).
@@ -48,7 +48,7 @@ Set these once, then reuse them in every `curl`:
 
 ```bash
 export SAFEDEP_API_KEY="<your-api-key>"
-export SAFEDEP_TENANT_ID="your-company.safedep.io"
+export SAFEDEP_TENANT_ID="your-team.your-org.safedep.io"
 
 # Base URL of the service. Append the method name to it.
 export TI="https://api.safedep.io/safedep.services.threatintel.v1.ThreatIntelService"

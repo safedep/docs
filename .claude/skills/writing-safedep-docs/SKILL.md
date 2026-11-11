@@ -100,7 +100,7 @@ See `products.md` in this skill for: per-product one-liner, source repo path, do
 - **pmg** — install-time malicious package blocking → Package Security
 - **gryph** — AI coding agent observability / local audit trail (records what the agent does; does **not** block or sandbox) → AI Agent Security
 - **xBom** — standalone xBOM/SBOM generator via static code analysis → Visibility & Governance › Bill of Materials
-- **MCP** — SafeDep MCP server for AI coding tools → AI Agent Security › AI Coding Protection
+- **MCP** — SafeDep MCP server for AI coding tools → AI Agent Security (`ai-security/mcp-server`)
 - **vet-action** — GitHub Action; split by use-case (blocking → Package Security; scanning → Visibility & Governance)
 - **SafeDep Cloud / Endpoint Hub** — hosted control plane (closed-source) → Visibility & Governance. Public API surface: [`buf.build/safedep/api`](https://buf.build/safedep/api) — canonical schemas + generated SDKs; link to it, don't restate it (R6)
 - **Malysis** — intelligence layer; **never a product tab or sidebar group** (R4)

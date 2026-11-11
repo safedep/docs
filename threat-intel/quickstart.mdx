@@ -13,7 +13,7 @@ You need three things before your first request:
 |---|---|
 | Threat Intel Feed Add-On | Enabled on your account. |
 | An API key | Your data-plane key, created at [app.safedep.io/settings/api-keys](https://app.safedep.io/settings/api-keys). |
-| Your tenant domain | For example `your-company.safedep.io`. |
+| Your tenant domain | For example `your-team.your-org.safedep.io`. |
 
 ## Run your first query
 
@@ -21,7 +21,7 @@ You need three things before your first request:
 <Step title="Set your credentials">
 ```bash
 export SAFEDEP_API_KEY="<your-api-key>"
-export SAFEDEP_TENANT_ID="your-company.safedep.io"
+export SAFEDEP_TENANT_ID="your-team.your-org.safedep.io"
 
 # Base URL of the service.
 export TI="https://api.safedep.io/safedep.services.threatintel.v1.ThreatIntelService"
