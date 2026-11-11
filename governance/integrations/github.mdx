@@ -36,7 +36,7 @@ On every pull request, the app scans updated packages and reports on:
 
 When any report fails, the GitHub App **Check** fails and blocks the branch from merging.
 
-The check fails if any _Verified Malicious Package_, _Vulnerability_, or _Risky License_ is found.
+With the default policy, the check fails on a _Verified Malicious Package_, a `CRITICAL` or `HIGH` _Vulnerability_, or a _Risky License_. The [cloud policy](#cloud-policy) of a tenant can change the severities and the licenses.
 
 ### Cloud Policy
 

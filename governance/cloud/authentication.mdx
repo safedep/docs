@@ -3,7 +3,7 @@ title: Authentication
 description: "How SafeDep Cloud authentication works and how to authenticate the safedep CLI, vet, and CI/CD pipelines"
 ---
 
-Every tool that talks to SafeDep Cloud authenticates with two values: a **tenant domain** (for example `your-company.safedep.io`) and a credential. The credential type depends on which API plane the tool calls:
+Every tool that talks to SafeDep Cloud authenticates with two values: a **tenant domain** (for example `your-team.your-org.safedep.io`, shown by the **Tenant ID** button on the [API keys settings page](https://app.safedep.io/settings/api-keys)) and a credential. The credential type depends on which API plane the tool calls:
 
 - **Data plane** (`api.safedep.io`): package insights, known-malicious package queries, and sync. Authenticates with an **API key**.
 - **Control plane** (`cloud.safedep.io`): tenant, policy, and management operations, including SQL queries and [on-demand package scans](/package-security/scan/overview). Authenticates with a **JWT** from an OAuth2 login.
@@ -22,7 +22,7 @@ safedep auth status
 For non-interactive environments, log in with a static API key instead of the device flow:
 
 ```bash
-safedep auth login --api-key --tenant your-company.safedep.io
+safedep auth login --api-key --tenant your-team.your-org.safedep.io
 ```
 
 The key is read from `--api-key-value`, stdin (with `--from-stdin`), the `SAFEDEP_API_KEY` environment variable, or an interactive prompt, in that order. Work with multiple tenants using `--profile` and `safedep auth profile list`. See the [CLI command reference](https://github.com/safedep/cli/tree/main/docs/cmd) for all flags.
@@ -36,7 +36,7 @@ API-key login covers data-plane commands only. [On-demand package scanning](/pac
 vet uses an API key for scanning and [sync](/governance/cloud/sync):
 
 ```bash
-vet auth configure --tenant your-company.safedep.io
+vet auth configure --tenant your-team.your-org.safedep.io
 ```
 
 You will be prompted to enter the API key. Verify the connection:
@@ -48,7 +48,7 @@ vet auth verify
 Control plane commands under `vet cloud` use the OAuth2 device flow instead:
 
 ```bash
-vet cloud login --tenant your-company.safedep.io
+vet cloud login --tenant your-team.your-org.safedep.io
 vet cloud whoami
 ```
 
@@ -60,7 +60,7 @@ Tools read credentials from environment variables, so pipelines need no interact
 
 ```bash
 export SAFEDEP_API_KEY=your-api-key
-export SAFEDEP_TENANT_ID=your-company.safedep.io
+export SAFEDEP_TENANT_ID=your-team.your-org.safedep.io
 ```
 
 Store both as CI secrets. Across SafeDep docs, the secret names are `SAFEDEP_CLOUD_API_KEY` and `SAFEDEP_CLOUD_TENANT_DOMAIN`. [vet-action](https://github.com/safedep/vet-action) reads them through its `cloud-key` and `cloud-tenant` inputs instead of environment variables.

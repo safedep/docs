@@ -214,15 +214,19 @@ safedep query exec --sql "
 
 ```
 endpoints.identifier      endpoint_type   trust_level   last_sync_at
-Vignesh                   0               1             2026-06-05T07:23:03Z
-CICD_GHA_SAFEDEP_CLI      0               1             2026-06-05T06:11:20Z
+Vignesh                   1               1             2026-06-05T07:23:03Z
+CICD_GHA_SAFEDEP_CLI      2               1             2026-06-05T06:11:20Z
 macbookpro.lan            0               1             2026-06-04T08:54:03Z
 ```
 
 The `endpoint_type` and `trust_level` enums are not groupable, so use `WHERE`
-filters and listings rather than `GROUP BY` for endpoints. SafeDep Cloud does not
-set `endpoint_type` yet, so every endpoint shows `0`. To find CI events, filter
-on `package_guard_events.ci_provider IS NOT NULL`.
+filters and listings rather than `GROUP BY` for endpoints.
+
+SafeDep Cloud sets `endpoint_type` from the PMG session summary: `1` is a
+developer machine, `2` is a CI runner and `4` is a Kubernetes workload. An
+endpoint shows `0` until PMG sends a session summary with its runtime context.
+PMG detects only GitHub Actions as CI, so a job in another CI system shows `1`.
+To find CI events, filter on `package_guard_events.ci_provider IS NOT NULL`.
 
 </Accordion>
 
@@ -276,8 +280,9 @@ Sahils-MacBook-Pro.local    prettier                         2                  
 Sahils-MacBook-Pro.local    fast-check                       2                   pmg         2026-05-07T07:39:50Z
 ```
 
-The `package_ecosystem` enum renders as its stored number in table output
-(`2` = `ECOSYSTEM_NPM`, `3` = `ECOSYSTEM_PYPI`); use `-o json` for the enum name.
+The `package_ecosystem` enum shows its stored number in table and JSON output
+(`2` = `ECOSYSTEM_NPM`, `3` = `ECOSYSTEM_PYPI`). In a `WHERE` filter, use the
+enum name.
 
 </Accordion>
 
@@ -290,7 +295,7 @@ the indexed `item_kind` to find AI-related items:
 safedep query exec --sql "
   SELECT inventory_events.item_identity, inventory_events.app, endpoints.identifier
   FROM inventory_events
-  JOIN endpoints ON endpoints.id = inventory_events.app
+  JOIN endpoints ON endpoints.id = inventory_events.invocation_id
   WHERE inventory_events.item_kind = 'INVENTORY_ITEM_KIND_MCP_SERVER'
   ORDER BY inventory_events.item_identity" --limit 50
 ```

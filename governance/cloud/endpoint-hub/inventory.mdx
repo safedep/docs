@@ -31,13 +31,13 @@ Endpoint inventory shows what AI tooling is active across your endpoints (develo
     vet auth configure --tenant <your-tenant-domain>
     ```
 
-    The command asks for your **API key**. Then check the credentials:
+    The tenant domain looks like `your-team.your-org.safedep.io`. The **Tenant ID** button on the [API keys settings page](https://app.safedep.io/settings/api-keys) shows it. The command asks for your **API key**. Then check the credentials:
 
     ```bash
     vet auth verify
     ```
 
-    To use environment variables instead, or to fix an error, see [Authentication](/governance/cloud/authentication#vet).
+    To use environment variables instead, see [CI/CD pipelines](/governance/cloud/authentication#cicd-pipelines). To fix an error, see [Troubleshooting](/governance/cloud/authentication#troubleshooting).
   </Step>
 
   <Step title="Run an endpoint scan">
