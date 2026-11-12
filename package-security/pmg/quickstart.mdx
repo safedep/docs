@@ -27,9 +27,15 @@ After setup, you run `npm install` and `pip install` as before, and PMG checks e
         ```
       </Tab>
       <Tab title="Windows">
-        Download `pmg_Windows_x86_64.zip` from the [latest release](https://github.com/safedep/pmg/releases/latest). Extract `pmg.exe` and add its directory to your `PATH`.
+        Use the system install. Node.js from its MSI, winget, or Chocolatey goes on the machine `PATH`, ahead of a per-user setup. The system install puts the PMG shims first. From an administrator terminal, run:
 
-        To protect every user of the machine, use the MSI or Chocolatey from an administrator terminal instead. They run the machine-wide setup, so skip the next step. See [Windows machines](/package-security/pmg/system-install#windows-machines).
+        ```powershell
+        choco install pmg
+        ```
+
+        Chocolatey installs the PMG MSI, which runs the system setup for you. Skip the next step, and open a new terminal as your normal user. For the MSI without Chocolatey, see [Windows machines](/package-security/pmg/system-install#windows-machines).
+
+        With no administrator rights, download `pmg_Windows_x86_64.zip` from the [latest release](https://github.com/safedep/pmg/releases/latest). Extract `pmg.exe`, add its directory to your `PATH`, and do the next step.
       </Tab>
     </Tabs>
 
@@ -62,7 +68,7 @@ To run one command through PMG without the shims, add the `pmg` prefix, as in `p
 
 ## Troubleshooting
 
-- **The test package installs.** Run `type npm` on macOS or Linux, or `Get-Command npm` in PowerShell. If it resolves to the real package manager, run `pmg setup install` again and open a new terminal. On Windows, Node.js from the MSI, winget, or Chocolatey goes ahead of the per-user shims. Use the [Windows system install](/package-security/pmg/system-install#windows-machines) for it.
+- **The test package installs.** Run `type npm` on macOS or Linux, or `Get-Command npm` in PowerShell. If it resolves to the real package manager, run `pmg setup install` again and open a new terminal. On Windows with a per-user setup, use the [system install](/package-security/pmg/system-install#windows-machines) instead.
 - **PMG blocks a package that you trust.** Run the command again with `--verbose` to see the detection details. Report a false positive on [GitHub Issues](https://github.com/safedep/pmg/issues).
 
 For shells, WSL, and other Windows limits, see the [Windows support reference](https://github.com/safedep/pmg/blob/main/docs/windows-support.md).

@@ -36,7 +36,14 @@ The sandbox can also run an AI coding agent such as Claude Code, Codex or Pi. Se
 
 ## Supported package managers
 
-`npm`, `pnpm`, `yarn`, `bun`, `aube`, `npx`, `pnpx`, `aubx`, `aubr`, `pip`, `pipx`, `poetry`, `uv` and `uvx`. Support for `go` and `cargo` is experimental. On Windows, PMG does not support `aube`, `aubx` and `aubr` yet.
+| Ecosystem | Package managers | Runners | Status |
+|---|---|---|---|
+| npm | `npm`, `pnpm`, `yarn`, `bun`, `aube` | `npx`, `pnpx`, `aubx`, `aubr` | Supported |
+| PyPI | `pip`, `poetry`, `uv` | `pipx`, `uvx` | Supported |
+| Go | `go` | | Experimental |
+| Cargo | `cargo` | | Experimental |
+
+On Windows, PMG does not support `aube`, `aubx` and `aubr` yet.
 
 To check packages from an internal registry or mirror, see [Private Registries](/package-security/pmg/private-registries). For dependency resolution internals and CLI flags, see the [PMG repository](https://github.com/safedep/pmg).
 

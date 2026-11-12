@@ -4,10 +4,10 @@ sidebarTitle: "GitHub Actions"
 description: "Block malicious packages in GitHub Actions CI with one PMG action step, a job summary, and kernel enforcement."
 ---
 
-[PMG](https://github.com/safedep/pmg) runs as a persistent proxy in CI/CD. The `safedep/pmg` action starts it once per job. The proxy intercepts installs from every [supported package manager](https://github.com/safedep/pmg#supported-package-managers) and blocks each package flagged as malicious. At the end of the job, the action stops the proxy, writes a job summary, and fails the job when PMG blocked a package.
+[PMG](https://github.com/safedep/pmg) runs as a persistent proxy in CI/CD. The `safedep/pmg` action starts it once per job. The proxy intercepts installs from every [supported package manager](/package-security/pmg/overview#supported-package-managers) and blocks each package flagged as malicious. At the end of the job, the action stops the proxy, writes a job summary, and fails the job when PMG blocked a package.
 
 <Note>
-  In CI, PMG is non-interactive: flagged packages are always blocked, never prompted. For local development use the wrapped commands (`pmg npm install`) covered in the [PMG quickstart](/package-security/pmg/quickstart).
+  In CI, PMG does not ask for confirmation. It blocks each flagged package.
 </Note>
 
 ## Use the SafeDep PMG action
@@ -52,8 +52,13 @@ PMG blocks malicious packages using SafeDep's free community intelligence with o
 The blocks from every job then go to one tenant. To review them across all repositories, see [Review Package Blocks Across CI Pipelines](/governance/cloud/endpoint-hub/ci-package-blocks). This review needs the SafeDep Cloud Team or Enterprise plan. See [pricing](https://safedep.io/pricing).
 
 <Note>
-  Use `safedep/pmg@v0.34.0` or a later release tag. The post step, the job summary, and the `fail-on-violation`, `auto-stop` and `baseline` inputs need v0.34.0 and a runner that runs Node 24 actions. A self-hosted runner needs runner version 2.327.1 or later. The `v1` tag points at an older action without these inputs. GitHub warns about an unknown input and runs the job without it.
+  Pin `safedep/pmg` to `v0.34.0` or a later release tag. Do not use `v1`. It points at an older action.
 </Note>
+
+The post step, the job summary, and the `fail-on-violation`, `auto-stop` and `baseline` inputs need:
+
+- `safedep/pmg@v0.34.0` or later. An older tag ignores these inputs. GitHub only warns about an unknown input.
+- A runner that runs Node 24 actions. On a self-hosted runner, use runner version 2.327.1 or later.
 
 ### Upgrade from v0.33.0 or earlier
 

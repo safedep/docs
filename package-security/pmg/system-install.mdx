@@ -29,16 +29,35 @@ Use a system-wide install when one machine or image should protect every user ac
 
 ## Windows machines
 
-1. Download and extract `pmg_Windows_x86_64.zip` from a [v0.29.0 or later release](https://github.com/safedep/pmg/releases/latest). Earlier versions do not support Windows system install.
-2. Open PowerShell as administrator in the extracted directory, then install:
+Run one of these from an administrator terminal:
 
-   ```powershell
-   New-Item -ItemType Directory -Force "$env:ProgramFiles\safedep\pmg" | Out-Null
-   Copy-Item .\pmg.exe "$env:ProgramFiles\safedep\pmg\pmg.exe" -Force
-   & "$env:ProgramFiles\safedep\pmg\pmg.exe" setup install --system
-   ```
+<Tabs>
+  <Tab title="Chocolatey">
+    ```powershell
+    choco install pmg
+    ```
 
-3. Open a new terminal as your normal user and [verify the install](#verify).
+    The Chocolatey package installs the PMG MSI.
+  </Tab>
+  <Tab title="MSI">
+    Download `pmg_Windows_x86_64.msi` from a [v0.30.0 or later release](https://github.com/safedep/pmg/releases/latest), then run:
+
+    ```powershell
+    msiexec /i pmg_Windows_x86_64.msi /qn
+    ```
+  </Tab>
+  <Tab title="ZIP">
+    Download and extract `pmg_Windows_x86_64.zip` from a [v0.29.0 or later release](https://github.com/safedep/pmg/releases/latest). Earlier versions do not support Windows system install. In the extracted directory, run:
+
+    ```powershell
+    New-Item -ItemType Directory -Force "$env:ProgramFiles\safedep\pmg" | Out-Null
+    Copy-Item .\pmg.exe "$env:ProgramFiles\safedep\pmg\pmg.exe" -Force
+    & "$env:ProgramFiles\safedep\pmg\pmg.exe" setup install --system
+    ```
+  </Tab>
+</Tabs>
+
+The MSI and Chocolatey put `pmg.exe` in `%ProgramFiles%\safedep\pmg` and run `pmg setup install --system` for you. Upgrades replace the binary in place. Then open a new terminal as your normal user and [verify the install](#verify).
 
 System install puts shims ahead of machine-wide Node.js installations. A per-user install cannot do that.
 
