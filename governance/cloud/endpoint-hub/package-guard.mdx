@@ -104,11 +104,11 @@ Run these queries with [SQL in SafeDep Cloud](/governance/cloud/query-with-sql) 
 
 ### Sandbox allowances
 
-PMG records each `--sandbox-allow` and each project allowance of the [sandbox](/package-security/pmg/sandbox) as a sandbox override event. This query lists the endpoints that use an override, and the number of sessions on each:
+PMG records the `--sandbox-allow` flags of a run as one sandbox override event, and the saved project allowances of the [sandbox](/package-security/pmg/sandbox) as one more. PMG sends SafeDep Cloud one event for each set of allowances, each day, on each endpoint. This query lists the endpoints that use an override, and the number of reported runs on each:
 
 ```sql
 SELECT endpoints.identifier,
-       COUNT(DISTINCT package_guard_events.invocation_id) AS sessions
+       COUNT(DISTINCT package_guard_events.invocation_id) AS reported_runs
 FROM package_guard_events
 JOIN endpoints ON endpoints.id = package_guard_events.invocation_id
 WHERE package_guard_events.event_type = 'PMG_EVENT_TYPE_SANDBOX_OVERRIDE'
@@ -117,11 +117,11 @@ GROUP BY endpoints.identifier
 
 ### Sandbox denials
 
-PMG v0.34.0 and later also send what the sandbox blocked. After each sandboxed run with a denial, PMG records one sandbox violation event. The event lists each denied file, program, or host, with a count. This query finds the endpoints where the sandbox blocked something:
+PMG v0.34.0 and later also send what the sandbox blocked. After each sandboxed run with a denial, PMG records one sandbox violation event. The event lists each denied file, program, or host, with a count. PMG sends SafeDep Cloud one event for each set of denials, each day, on each endpoint. This query finds the endpoints where the sandbox blocked something:
 
 ```sql
 SELECT endpoints.identifier,
-       COUNT(DISTINCT package_guard_events.invocation_id) AS sessions
+       COUNT(DISTINCT package_guard_events.invocation_id) AS reported_runs
 FROM package_guard_events
 JOIN endpoints ON endpoints.id = package_guard_events.invocation_id
 WHERE package_guard_events.event_type = 'PMG_EVENT_TYPE_SANDBOX_VIOLATION'

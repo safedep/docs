@@ -45,7 +45,7 @@ jobs:
 
 In server mode, put the action before the language setup steps, so the proxy sees the traffic of every later step. Use one `safedep/pmg` step per job. A second step fails, and the proxy of the first step keeps running.
 
-By default, the action runs the proxy in server mode. On a GitHub hosted runner, it also turns on [kernel enforcement](#enforce-in-the-kernel). Set `server-mode: false` to use the PMG shims instead. With shims, the job has no job summary and no kernel enforcement, and the `safedep/pmg` step goes after `setup-node` or `setup-python`, not before. Set `timeout-minutes` on the job. A proxy that stops serving holds the job until the timeout.
+By default, the action runs the proxy in server mode. On a GitHub hosted runner, it also turns on [kernel enforcement](#enforce-in-the-kernel). Set `server-mode: false` to use the PMG shims instead. `sandbox: true` also selects the shims. With shims, the job has no job summary and no kernel enforcement, and the `safedep/pmg` step goes after `setup-node` or `setup-python`, not before. Set `timeout-minutes` on the job. A proxy that stops serving holds the job until the timeout.
 
 PMG blocks malicious packages using SafeDep's free community intelligence with or without credentials. Add the optional `api-key` and `tenant-id` to connect the run to [SafeDep Cloud](/governance/cloud/overview), so block events sync to [Endpoint Hub](/governance/cloud/endpoint-hub/overview) before the runner is destroyed. Set both inputs or neither: the action fails when you set only one.
 

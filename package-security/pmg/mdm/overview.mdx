@@ -66,7 +66,7 @@ cloud:
 ```
 
 - `cloud.enabled` and `cloud.policy` turn on the cloud policy.
-- `global_lockdown: true` stops users, environment variables and flags from changing the PMG config.
+- `global_lockdown: true` stops users from changing the managed config with most `PMG_*` environment variables, the policy flags such as `--sandbox`, and project allowances.
 - Do not set the dependency cooldown in this file. Under `global_lockdown`, a key that the managed `config.yml` sets wins over the cloud policy. So `dependency_cooldown.enabled` or `dependency_cooldown.days` in this file stops your security admin from changing the cooldown in SafeDep Cloud. PMG reports the field as locked, and `safedep endpoint policy show` shows the exception.
 
 Users cannot change the managed config. To turn off all cloud content on the fleet, ship `cloud.policy: false`. The cloud policy needs the SafeDep Cloud Team or Enterprise plan. See [pricing](https://safedep.io/pricing).
