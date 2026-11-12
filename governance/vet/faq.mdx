@@ -173,10 +173,9 @@ Common causes:
 
 <AccordionGroup>
   <Accordion title="Skip directories you do not need">
-    Large dependency trees slow the scan. Use path exclusions to skip directories:
+    Large dependency trees slow the scan. vet already skips `.git` and `node_modules`. Use path exclusions to skip other directories:
     ```bash
     vet scan -D . \
-      --exclude 'node_modules/*' \
       --exclude 'test/*' \
       --exclude 'docs/*' \
       --exclude 'examples/*'

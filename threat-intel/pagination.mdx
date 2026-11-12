@@ -1,10 +1,10 @@
 ---
 title: "Pagination & sync"
 sidebarTitle: "Pagination & Sync"
-description: "Cursor pagination for every list RPC, and the incremental-pull pattern that keeps a local mirror of the Threat Intel Feed in sync."
+description: "Cursor pagination for the report and campaign list RPCs, and the incremental-pull pattern that keeps a local mirror of the Threat Intel Feed in sync."
 ---
 
-Every list RPC uses the same cursor pagination, plus a `since` filter for incremental sync. Use `pageSize` and `pageToken` to page through results, `sortOrder` to pick the direction, and `since` to fetch only what changed after a timestamp.
+`ListPackageReports`, `ListCampaigns` and `GetCampaignPackageReports` use the same cursor pagination. `ListPackageReports` and `ListCampaigns` also take a `since` filter for incremental sync. Use `pageSize` and `pageToken` to page through results, `sortOrder` to pick the direction, and `since` to fetch only what changed after a timestamp.
 
 ## Cursor pagination
 

@@ -9,7 +9,7 @@ The SafeDep MCP server lets your AI coding agent check a package against SafeDep
 <Info>SafeDep MCP has a free tier. See [pricing](https://safedep.io/pricing) for details.</Info>
 
 <Note>
-With SafeDep Cloud, the packages your agents check through the MCP server appear per endpoint under [MCP Advisor](/governance/cloud/endpoint-hub/mcp-advisor) in Endpoint Hub, with the verdict each one got.
+With SafeDep Cloud, the packages that your agents check appear under [MCP Advisor](/governance/cloud/endpoint-hub/mcp-advisor) in Endpoint Hub, with the verdict for each one. Only the SafeDep CLI adds the endpoint ID to the agent config. After a manual setup, SafeDep Cloud records the checks for the tenant, not for each endpoint.
 </Note>
 
 ## Quick Start
@@ -35,6 +35,12 @@ With SafeDep Cloud, the packages your agents check through the MCP server appear
         ```
       </Tab>
     </Tabs>
+
+    To also add SafeDep to the config of one project, add `--workspace <project-dir>`. Antigravity has no project config. To sign in again, add `--force`.
+
+    <Warning>
+    The project config holds your API key. For Cursor, Gemini CLI, OpenCode and VS Code, the file is in the project directory. Do not commit it to Git.
+    </Warning>
 
     ![SafeDep MCP setup via CLI](/images/safedep-mcp-setup.png)
 
