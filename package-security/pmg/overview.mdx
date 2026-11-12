@@ -26,9 +26,12 @@ With the [cloud policy](/package-security/pmg/cloud-policy) turned on, PMG also 
 | Capability | macOS | Linux | Windows |
 |---|---|---|---|
 | Threat intelligence and dependency cooldown | Yes | Yes | Yes |
-| Sandbox and network policy | Yes (Seatbelt) | Yes (Landlock or Bubblewrap) | No |
+| Sandbox | Yes (Seatbelt) | Yes (Landlock or Bubblewrap) | No |
+| Network policy | Yes | Yes | Foreground proxy only |
 | Persistent proxy in the background | Yes | Yes | Foreground only |
 | Kernel enforcement | No | Yes | No |
+
+On Windows, PMG applies the network policy only through a `pmg proxy start --profile` proxy in the foreground, not to each install. See [Network policy](https://github.com/safedep/pmg/blob/main/docs/persistent-proxy.md#network-policy) in the persistent proxy guide.
 
 For CI runners and shared Linux hosts, see [PMG in GitHub Actions](/package-security/pmg/github-actions) and [Kernel Enforcement](/package-security/pmg/kernel-enforcement).
 
