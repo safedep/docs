@@ -186,7 +186,7 @@ Results appear in the pull request as a comment from the SafeDep app, and the fu
 
 ## Set the gate with the cloud policy
 
-The check reads the [cloud policy](/governance/cloud/policy/overview) of your tenant when the tenant has the Team or Enterprise plan. The policy decides the lowest vulnerability severity that fails the check, and its block and trust entries apply to the packages of the pull request. Verified malware always fails the check. With no cloud policy, the SafeDep default policy applies: the check fails on critical and high vulnerabilities. The GitHub App reads the same policy, so one policy covers both forges. To target Bitbucket projects only, select on the `scm/forge=bitbucket` label.
+The check reads the [cloud policy](/governance/cloud/policy/overview) of your tenant when the tenant has the Team or Enterprise plan. The policy decides the lowest vulnerability severity and the licenses that fail the check, and its block and trust entries apply to the packages of the pull request. Verified malware always fails the check. With no cloud policy, the SafeDep default policy applies: the check fails on critical and high vulnerabilities and on nine GPL and AGPL licenses. The GitHub App reads the same policy, so one policy covers both forges. To target Bitbucket projects only, select on the `scm/forge=bitbucket` label.
 
 The check sets the build status of the commit. A failing check shows a policy block at the top of the pull request comment. The block names the policy revision and the rule or setting that failed each finding. See [Fail Pull Request Checks](/governance/cloud/policy/pull-request-checks).
 

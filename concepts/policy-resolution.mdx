@@ -13,7 +13,7 @@ A subject is a thing that the policy resolves for: an [endpoint](/concepts/endpo
 
 Resolution stacks three layers of policy settings, from low to high:
 
-1. **The SafeDep default policy.** SafeDep defines it and gives it its own revision number. No tenant can change it. It holds policy settings only, never package rules. Today it sets `scan_gate.fail_on` to `high` and `scan_gate.fail_on_attacks` to `fail`, the gate that the pull request check used before the cloud policy existed.
+1. **The SafeDep default policy.** SafeDep defines it and gives it its own revision number. No tenant can change it. It holds policy settings only, never package rules. Today it sets `scan_gate.fail_on` to `high` and `scan_gate.fail_on_attacks` to `fail`, the gate that the pull request check used before the cloud policy existed. Its license gate denies nine GPL and AGPL license ids, sets no allow list, and allows a package with an unknown license.
 2. **The policy base.** It applies to every endpoint and every project of the tenant.
 3. **Policy overrides.** Each policy override has a name, a label selector, a unique priority, and the settings that it changes. It applies only to the subjects that its selector matches. A policy override can also have an expiry, after which it matches no subject.
 

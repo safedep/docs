@@ -28,7 +28,7 @@ Collect these before you start:
   export SAFEDEP_TOKEN=$(safedep auth token)
   ```
 
-- `SAFEDEP_TENANT_ID`: your SafeDep tenant domain, for example `your-company.safedep.io`.
+- `SAFEDEP_TENANT_ID`: your SafeDep tenant domain, for example `your-team.your-org.safedep.io`.
 - `CROWDSTRIKE_HEC_URL`: your CrowdStrike HEC ingest URL, for example `https://<your-cloud>/services/collector`.
 - `CROWDSTRIKE_HEC_TOKEN`: your CrowdStrike HEC token.
 
@@ -44,7 +44,7 @@ Set the environment variables and run the script:
 
 ```bash
 export SAFEDEP_TOKEN=$(safedep auth token)
-export SAFEDEP_TENANT_ID=your-company.safedep.io
+export SAFEDEP_TENANT_ID=your-team.your-org.safedep.io
 export CROWDSTRIKE_HEC_URL=https://<your-cloud>/services/collector
 export CROWDSTRIKE_HEC_TOKEN=<your-hec-ingest-token>
 
@@ -141,7 +141,7 @@ Cooldown events carry a `cooldown` object instead of the malware fields:
 | Variable | Required | Default | Description |
 |---|---|---|---|
 | `SAFEDEP_TOKEN` | yes | - | SafeDep OAuth token. Get it with `safedep auth token`. |
-| `SAFEDEP_TENANT_ID` | yes | - | Tenant domain, e.g. `your-company.safedep.io`. |
+| `SAFEDEP_TENANT_ID` | yes | - | Tenant domain, e.g. `your-team.your-org.safedep.io`. |
 | `SAFEDEP_CLOUD_URL` | no | `https://cloud.safedep.io` | SafeDep Cloud base URL. |
 | `CROWDSTRIKE_HEC_URL` | no | (unset) | HEC collector URL, e.g. `https://<cloud>/services/collector`. Unset means log only. |
 | `CROWDSTRIKE_HEC_TOKEN` | no | (unset) | HEC ingest token. Required when `CROWDSTRIKE_HEC_URL` is set. |

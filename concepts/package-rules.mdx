@@ -22,9 +22,17 @@ A prefix has no version. To limit a prefix to some versions, add a range. A wide
 
 A trust entry waives the verdicts of its trust scopes for one package. It selects one package, with an optional version or range. It cannot use a prefix: in most ecosystems anyone can publish under a prefix, so a prefix would also trust packages that do not exist yet and that no one reviewed.
 
-Each trust entry names the trust scopes that it waives: `malware` (a malware verdict that is not verified, such as a suspicious package), `cooldown` (the dependency cooldown) or `vulnerability` (the vulnerability findings of a scan gate). Each tool applies only the scopes that fit its checks. See [Cloud Policy Settings](/reference/cloud-policy-settings#package-rule-fields) for the scopes that PMG and the pull request check apply.
+Each trust entry names the trust scopes that it waives:
 
-A trust entry never waives a scope that it does not name. A client that offers "all scopes" expands it to the scopes that exist when the admin creates the rule. So a scope that a later release adds never widens a rule that exists.
+- `malware`: a malware verdict that is not verified, such as a suspicious package.
+- `cooldown`: the dependency cooldown.
+- `vulnerability`: every vulnerability finding of a scan gate, also a vulnerability that is published after the admin creates the rule.
+- `named-vulnerability`: the vulnerability findings of a scan gate for a list of vulnerability ids only. See [Waive named vulnerabilities](/governance/cloud/policy/trust-a-package#waive-named-vulnerabilities).
+- `license`: every license finding of a scan gate: a denied license, a license that is not on the allow list, and an unknown license.
+
+Each tool applies only the scopes that fit its checks. A tool that does not know a scope ignores it, so an older tool never waives more than a trust entry names. See [Cloud Policy Settings](/reference/cloud-policy-settings#package-rule-fields) for the scopes that PMG and the pull request check apply.
+
+A trust entry never waives a scope that it does not name. A client that offers "all scopes" expands it to the scopes that exist when the admin creates the rule. So a scope that a later release adds never widens a rule that exists. "All scopes" leaves out `named-vulnerability`, because that scope needs vulnerability ids.
 
 A trust entry needs a reason and an expiry. The expiry is at most 90 days from now. A trust entry never skips the malware analysis.
 
@@ -46,7 +54,7 @@ When a tool cannot order a version, a block entry with a range still selects it,
 
 A rule attaches to the policy base, and then it applies to every endpoint and project of the tenant. Or it attaches to one policy override, and then it applies only to the subjects that the policy override matches.
 
-Package rules are not in the policy settings document. Each rule command of the safedep CLI publishes at once, as one new [policy revision](/concepts/policy-revisions). So a run that publishes the settings document cannot delete a block that an on-call responder added. A rule never changes its selector, effect or scopes. To change them, delete the rule and create another.
+Package rules are not in the policy settings document. Each rule command of the safedep CLI publishes at once, as one new [policy revision](/concepts/policy-revisions). So a run that publishes the settings document cannot delete a block that an on-call responder added. A rule never changes its selector, effect, scopes or vulnerability ids. To change them, delete the rule and create another.
 
 The tools apply package rules on the endpoint and in the pull request check. The malware analysis does not apply them: it gives the same verdict to every tenant and holds no tenant data.
 

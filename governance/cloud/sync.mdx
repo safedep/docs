@@ -117,7 +117,7 @@ vet-action sets project identification from the repository: the project name is 
 
 ### Sync from other CI systems
 
-The pattern is the same on any CI system: provide `SAFEDEP_API_KEY` and `SAFEDEP_TENANT_ID` as environment variables and run `vet scan` with the `--report-sync` flags. See [CI/CD & Platform Integrations](/governance/integrations/overview) for the full GitLab and Bitbucket guides.
+The pattern is the same on any CI system: provide `SAFEDEP_API_KEY` and `SAFEDEP_TENANT_ID` as environment variables and run `vet scan` with the `--report-sync` flags. See [CI/CD Integrations](/governance/integrations/overview) for the full GitLab and Bitbucket guides.
 
 <Tabs>
   <Tab title="GitLab CI">
@@ -249,7 +249,7 @@ Once data lands in your tenant, query it with `safedep query exec` or the web co
 
 ## Troubleshooting
 
-Run `vet auth verify` first. For sync errors and missing data, see [Cloud Troubleshooting](/governance/cloud/faq#data-sync-issues).
+Run `vet auth verify` first. For sync errors and missing data, see [Data Sync Issues](/governance/cloud/faq#data-sync-issues). For network, tenant domain and CI/CD secret errors, see the other sections of [Cloud Troubleshooting](/governance/cloud/faq).
 
 <CardGroup cols={2}>
   <Card title="Cloud Quickstart" icon="rocket" href="/governance/cloud/quickstart">

@@ -48,12 +48,12 @@
               "concepts/sbom",
               "concepts/tenant",
               "concepts/endpoint",
+              "concepts/policy",
               "concepts/cel",
               {
                 "group": "Cloud Policy",
                 "icon": "scale-balanced",
                 "pages": [
-                  "concepts/policy",
                   "concepts/policy-resolution",
                   "concepts/labels",
                   "concepts/package-rules",

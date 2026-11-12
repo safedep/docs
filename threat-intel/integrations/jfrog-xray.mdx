@@ -30,10 +30,10 @@ To preview the feed without JFrog credentials, run it with [`--dry-run`](#dry-ru
   <Step title="Authenticate with SafeDep">
     ```bash
     # Option 1: API key login (--api-key is a flag; pass the value with --api-key-value)
-    safedep auth login --tenant your-tenant.safedep.io --api-key --api-key-value YOUR_API_KEY
+    safedep auth login --tenant your-team.your-org.safedep.io --api-key --api-key-value YOUR_API_KEY
 
     # Option 2: Environment variables (read directly by safedep; no login command needed)
-    export SAFEDEP_TENANT_ID=your-tenant.safedep.io
+    export SAFEDEP_TENANT_ID=your-team.your-org.safedep.io
     export SAFEDEP_API_KEY=YOUR_API_KEY
     ```
   </Step>

@@ -22,7 +22,7 @@ Tables come in two kinds:
 
 - **Tenant tables** hold *your* data: `projects`, `project_versions`, `boms`,
   `packages`, `endpoints`, the `component_*` finding tables, and the event tables
-  (`inventory_events`, `package_guard_events`).
+  (`inventory_events`, `package_guard_events`, `package_guard_sandbox_violations`).
 - **Join-only enrichment tables** hold *global* reference data shared across all
   tenants: `vulnerabilities`, `epss`, `kev`, `licenses`, `malware_analysis`,
   `open_source_packages`, `open_source_projects`, `scorecards`,
@@ -50,7 +50,7 @@ projects -> project_versions -> boms -> packages -> component_vulnerabilities ->
 | `GROUP BY` | Only columns flagged `groupable`. |
 | `HAVING` | Filter on aggregates after grouping. |
 | `ORDER BY` | Including by an aggregate alias. |
-| Aggregates | `count`, `sum`, `avg`, `min`, `max`. |
+| Aggregates | `count`, `sum`, `avg`, `min`, `max`. `count(*)` is rejected: use `count(column)`. |
 
 Every query must filter on an indexed column or a bounded time range. The schema marks which columns are indexed.
 
@@ -101,10 +101,13 @@ JSON shape:
   "columns": [ { "name": "packages.name", "type": "STRING" } ],
   "rows": [ { "packages.name": "django" } ],
   "count": 1,
-  "next_page_token": "",
+  "next_page_token": "<token>",
+  "generated_at": "2026-11-11T10:00:00Z",
   "stats": { "estimated_cost": 1243.7, "estimated_rows": 1, "elapsed_ms": 9 }
 }
 ```
+
+The JSON has `next_page_token` only when a next page exists. The last page has no token.
 
 ## Pagination
 
@@ -112,9 +115,11 @@ Pagination is caller-driven; the CLI does not auto-iterate. Fetch the first page
 then re-run the same query with the returned token:
 
 ```bash
-TOK=$(safedep query exec -o json --sql "SELECT packages.name FROM packages WHERE packages.ecosystem = 'ECOSYSTEM_NPM'" | jq -r .next_page_token)
+TOK=$(safedep query exec -o json --sql "SELECT packages.name FROM packages WHERE packages.ecosystem = 'ECOSYSTEM_NPM'" | jq -r '.next_page_token // empty')
 safedep query exec --sql "SELECT packages.name FROM packages WHERE packages.ecosystem = 'ECOSYSTEM_NPM'" --page-token "$TOK"
 ```
+
+If `TOK` is empty, the first page was the last page.
 
 ## Troubleshooting
 
