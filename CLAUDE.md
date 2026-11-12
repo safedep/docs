@@ -45,7 +45,7 @@ Every placement decision derives from these rules. Full rationale and page map: 
 |---|---|---|
 | Defines a concept/term used across docs | Get Started | Core Concepts |
 | Onboards a new user / routes entry points | Get Started | Introduction (product quickstarts co-locate with their product) |
-| Covers malicious package blocking (install-time or CI/CD) | Package Security | Block at Install / Deploy to a Fleet / Block in CI/CD |
+| Covers malicious package blocking (install-time or CI/CD) | Package Security | Block at Install / Deploy to a Fleet / Block in CI and Servers |
 | Covers evaluating a package/extension/repo before use (on-demand scanning) | Package Security | Scan Before Use |
 | Covers AI agent discovery, audit, or control | AI Agent Security | Flat page list (no groups) |
 | Covers scanning repos, SBOMs, CI/CD for risk | Visibility & Governance | Repository Scanning / Bill of Materials / CI/CD Integrations |
