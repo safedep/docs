@@ -75,11 +75,11 @@
             "root": "package-security/pmg/overview",
             "pages": [
               "package-security/pmg/quickstart",
+              "package-security/pmg/dependency-cooldown",
               "package-security/pmg/sandbox",
               "package-security/pmg/network-policy",
-              "package-security/pmg/dependency-cooldown",
-              "package-security/pmg/cloud-policy",
-              "package-security/pmg/private-registries"
+              "package-security/pmg/private-registries",
+              "package-security/pmg/cloud-policy"
             ]
           },
           {
@@ -89,18 +89,18 @@
             "pages": [
               "package-security/pmg/mdm/jamf",
               "package-security/pmg/mdm/jumpcloud",
-              "package-security/pmg/mdm/intune",
-              "package-security/pmg/system-install",
-              "package-security/pmg/kernel-enforcement",
-              "package-security/pmg/kubernetes"
+              "package-security/pmg/mdm/intune"
             ]
           },
           {
-            "group": "Block in CI/CD",
+            "group": "Block in CI and Servers",
             "icon": "shield-check",
             "root": "package-security/pmg/github-actions",
             "pages": [
-              "package-security/pmg/github-actions-network-policy"
+              "package-security/pmg/github-actions-network-policy",
+              "package-security/pmg/kernel-enforcement",
+              "package-security/pmg/system-install",
+              "package-security/pmg/kubernetes"
             ]
           },
           {

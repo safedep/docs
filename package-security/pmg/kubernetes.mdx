@@ -23,36 +23,9 @@ You need a SafeDep Cloud API key and tenant ID only when you want to send events
 
 ## Build a PMG-enabled image
 
-Install PMG in each image that runs package manager commands.
+Install PMG in each image that runs package manager commands. Follow [Docker images](/package-security/pmg/system-install#docker-images), and pin the PMG image to v0.28.0 or later.
 
-```dockerfile
-FROM ghcr.io/safedep/pmg:v0.28.0 AS pmg
-
-FROM node:22-bookworm
-
-COPY --from=pmg /usr/local/bin/pmg /usr/local/bin/pmg
-RUN pmg setup install --system
-
-ENV PATH="/usr/local/lib/pmg/bin:$PATH"
-
-RUN mkdir -p /app && chown node:node /app
-WORKDIR /app
-USER node
-
-COPY --chown=node:node package*.json ./
-RUN npm ci
-
-COPY --chown=node:node . .
-CMD ["node", "index.js"]
-```
-
-<Note>
-  This example shows the minimum PMG version that supports Kubernetes identity. Check the [PMG releases](https://github.com/safedep/pmg/releases) for the current stable version. Replace `v0.28.0` before you build the image.
-</Note>
-
-The `PATH` value routes package manager commands through PMG. Keep the PMG shim directory before the real package manager directory.
-
-The `npm ci` command in this example runs during the image build. PMG protects it as a Docker build command. PMG uses Kubernetes identity only for commands that run after Kubernetes starts the container.
+A package install that runs during the image build, such as `RUN npm ci`, is a Docker build command for PMG. PMG uses Kubernetes identity only for commands that run after Kubernetes starts the container.
 
 <Warning>
   Do not set `PMG_CLOUD_ENDPOINT_ID` in an image that runs on Kubernetes. This value overrides the automatic Kubernetes workload identity.

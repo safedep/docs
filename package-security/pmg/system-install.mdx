@@ -44,7 +44,7 @@ System install puts shims ahead of machine-wide Node.js installations. A per-use
 
 System install sets the required ownership and permissions. Run it before editing the managed config as administrator. See the [system-install reference](https://github.com/safedep/pmg/blob/main/docs/system-install.md#configuration) for permission requirements and troubleshooting.
 
-For fleets, the [Windows MDM scripts](/package-security/pmg/mdm/overview) perform these steps and deploy your config. For shell and interception limits, see [Windows coverage](/package-security/pmg/quickstart#windows-coverage).
+For fleets, the [Windows MDM scripts](/package-security/pmg/mdm/overview) perform these steps and deploy your config. For shell and interception limits, see the [Windows support reference](https://github.com/safedep/pmg/blob/main/docs/windows-support.md).
 
 ## Docker images
 
@@ -318,7 +318,7 @@ This leaves the PMG binary in place. To remove it too, run `sudo rm /usr/local/b
 
 ## Troubleshooting
 
-Try running `pmg setup doctor` first. The cases below apply to Linux. For Windows, see [Windows coverage](/package-security/pmg/quickstart#windows-coverage).
+Try running `pmg setup doctor` first. The cases below apply to Linux. For Windows, see the [Windows support reference](https://github.com/safedep/pmg/blob/main/docs/windows-support.md).
 
 <AccordionGroup>
   <Accordion title="npm or pip resolves outside the shim directory">
