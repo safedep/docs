@@ -3,50 +3,11 @@ title: "Deploy PMG with MDM"
 description: "Install PMG on macOS, Linux, and Windows fleets through Jamf, JumpCloud, Intune, or another MDM."
 ---
 
-import PmgMdmCloudPolicy from '/snippets/pmg-mdm-cloud-policy.mdx';
-
 Install or remove PMG on macOS, Linux, and Windows fleets through your MDM. On macOS and Linux, the scripts install the binary machine-wide and configure each local user. On Windows, they run `pmg setup install --system` once to put administrator-owned shims first on the machine `PATH`.
 
 <Note>
   The [MDM scripts README](https://github.com/safedep/pmg/blob/main/scripts/mdm/README.md) in the PMG repo is the source of truth. Scripts and supported MDMs are updated there first.
 </Note>
-
-Run the scripts as root on macOS and Linux, or as SYSTEM or an administrator on Windows. For a single machine or golden image with no MDM agent, such as a shared VM, CI runner, or Docker image, use [system install](/package-security/pmg/system-install) instead.
-
-PMG blocks packages without Cloud credentials. MDM deploys can also sync data to [SafeDep Cloud](/governance/cloud/quickstart). With Cloud credentials configured, the install script attempts `pmg cloud sync` after setup. On Windows, this runs for logged-on users only. A successful sync adds the device to [Endpoint Hub](/governance/cloud/endpoint-hub/overview) without waiting for a package manager event.
-
-Cloud sync from an MDM fleet needs the SafeDep Cloud Enterprise plan. See [pricing](https://safedep.io/pricing). To use Cloud sync, you need an API key and Tenant ID from [app.safedep.io/settings/api-keys](https://app.safedep.io/settings/api-keys). To repeat the sync without installing or configuring PMG again, pass `--cloud-sync-only` to the install script. Use this option only for users who already have PMG and cloud sync enabled. Run the normal installer to configure new users. On Windows, run it after those users sign in to store their Cloud credentials.
-
-## Supported MDMs
-
-Jamf, Mosyle, and Kandji use the [macOS scripts](https://github.com/safedep/pmg/tree/main/scripts/mdm/macos). [JumpCloud](/package-security/pmg/mdm/jumpcloud) and [Intune](/package-security/pmg/mdm/intune) also support Linux and Windows deployments. Use multi-file scripts when your MDM can ship sibling files, or standalone scripts when it accepts one script per policy.
-
-## Scripts
-
-- **Multi-file** (Jamf, JumpCloud, Intune Win32 apps): deploy the shared lib for your platform alongside the install or uninstall script. The entry scripts source the shared lib at runtime and fail without it.
-- **Standalone** (Intune): use a prebuilt installer, or generate one with managed config and optional Cloud credentials embedded, then upload that one script.
-
-Do not assign an install policy and an uninstall policy to the same devices at the same time.
-
-For managed config, ship `config.yml` beside the scripts or embed it with the standalone generator's `--config` option. Keep your other policy settings in the file. The installer replaces the managed config with the bundled file.
-
-On Windows, Cloud credentials must be accompanied by a config with `cloud.enabled: true`. This applies to runtime and embedded credentials. The system install always creates a managed config, which `pmg config set cloud.enabled true` cannot change. On macOS and Linux, the installer enables sync automatically when credentials are supplied and no managed config exists. If you supply a managed config, set `cloud.enabled: true` in it.
-
-For Windows standalone scripts with runtime credentials, keep `--config` and omit `--embed-cloud-credentials` when generating the installer. See [Globally Managed Configuration](https://github.com/safedep/pmg/blob/main/docs/config.md#globally-managed-configuration).
-
-<Note>
-  A successful MDM install status does not confirm Cloud sync. If a Windows endpoint does not appear in Endpoint Hub, check `pmg config get cloud.enabled` and run `pmg cloud sync` in a logged-on user's session with credentials configured. Cloud login and sync failures do not fail the normal installer.
-</Note>
-
-Windows deployment requires PMG v0.29.0 or later. See the [MDM scripts README](https://github.com/safedep/pmg/blob/main/scripts/mdm/README.md) for platform requirements and cleanup limitations.
-
-The MDM scripts do not install a persistent MITM CA (`pmg setup cert install`). On macOS this needs interactive Keychain authorization, so it cannot run through MDM: have each user run it in their own session when needed. On Linux, PMG's ephemeral CA is usually enough. Run `pmg setup cert install --system` as your normal user only if a tool needs a persistent CA in the system trust store. Windows package managers use the injected ephemeral CA, except Go, which needs a user-run `pmg setup cert install`.
-
-## Manage settings from the cloud policy
-
-<PmgMdmCloudPolicy />
-
-## Next steps
 
 <CardGroup cols={3}>
   <Card title="Jamf" icon="apple" href="/package-security/pmg/mdm/jamf">
@@ -59,3 +20,53 @@ The MDM scripts do not install a persistent MITM CA (`pmg setup cert install`). 
     Standalone scripts for all three platforms, or a Windows Win32 app.
   </Card>
 </CardGroup>
+
+Mosyle and Kandji use the [macOS scripts](https://github.com/safedep/pmg/tree/main/scripts/mdm/macos), as Jamf does. For a single machine or golden image with no MDM agent, such as a shared VM, CI runner, or Docker image, use [system install](/package-security/pmg/system-install) instead.
+
+## Scripts
+
+Run the scripts as root on macOS and Linux, or as SYSTEM or an administrator on Windows. Windows deployment requires PMG v0.29.0 or later. See the [MDM scripts README](https://github.com/safedep/pmg/blob/main/scripts/mdm/README.md) for platform requirements and cleanup limitations.
+
+- **Multi-file** (Jamf, JumpCloud, Intune Win32 apps): deploy the shared lib for your platform alongside the install or uninstall script. The entry scripts source the shared lib at runtime and fail without it. Use them when your MDM can ship sibling files.
+- **Standalone** (Intune): use a prebuilt installer, or generate one with managed config and optional Cloud credentials embedded, then upload that one script. Use them when your MDM accepts one script per policy.
+
+Do not assign an install policy and an uninstall policy to the same devices at the same time.
+
+For managed config, ship `config.yml` beside the scripts or embed it with the standalone generator's `--config` option. Keep your other policy settings in the file. The installer replaces the managed config with the bundled file.
+
+## Cloud sync
+
+PMG blocks packages without Cloud credentials. MDM deploys can also sync data to [SafeDep Cloud](/governance/cloud/quickstart). With Cloud credentials configured, the install script attempts `pmg cloud sync` after setup. On Windows, this runs for logged-on users only. A successful sync adds the device to [Endpoint Hub](/governance/cloud/endpoint-hub/overview) without waiting for a package manager event. Installs sync to [Package Guard](/governance/cloud/endpoint-hub/package-guard).
+
+Cloud sync from an MDM fleet needs the SafeDep Cloud Enterprise plan. See [pricing](https://safedep.io/pricing). To use Cloud sync, you need an API key and Tenant ID from [app.safedep.io/settings/api-keys](https://app.safedep.io/settings/api-keys).
+
+On Windows, Cloud credentials must be accompanied by a config with `cloud.enabled: true`. This applies to runtime and embedded credentials. The system install always creates a managed config, which `pmg config set cloud.enabled true` cannot change. On macOS and Linux, the installer enables sync automatically when credentials are supplied and no managed config exists. If you supply a managed config, set `cloud.enabled: true` in it.
+
+For Windows standalone scripts with runtime credentials, keep `--config` and omit `--embed-cloud-credentials` when generating the installer. See [Globally Managed Configuration](https://github.com/safedep/pmg/blob/main/docs/config.md#globally-managed-configuration).
+
+To repeat the sync without installing or configuring PMG again, pass `--cloud-sync-only` to the install script. Use this option only for users who already have PMG and cloud sync enabled. Run the normal installer to configure new users. On Windows, run it after those users sign in to store their Cloud credentials.
+
+<Note>
+  A successful MDM install status does not confirm Cloud sync. If a Windows endpoint does not appear in Endpoint Hub, check `pmg config get cloud.enabled` and run `pmg cloud sync` in a logged-on user's session with credentials configured. Cloud login and sync failures do not fail the normal installer.
+</Note>
+
+## Certificates
+
+The MDM scripts do not install a persistent MITM CA (`pmg setup cert install`). On macOS this needs interactive Keychain authorization, so it cannot run through MDM: have each user run it in their own session when needed. On Linux, PMG's ephemeral CA is usually enough. Run `pmg setup cert install --system` as your normal user only if a tool needs a persistent CA in the system trust store. Windows package managers use the injected ephemeral CA, except Go, which needs a user-run `pmg setup cert install`.
+
+## Manage settings from the cloud policy
+
+With the [cloud policy](/package-security/pmg/cloud-policy), your security admin changes the package rules and the dependency cooldown of PMG in SafeDep Cloud, with no new MDM package. To use it on the fleet, change the managed `config.yml` that you ship with the scripts:
+
+```yaml config.yml
+global_lockdown: true
+cloud:
+  enabled: true
+  policy: true
+```
+
+- `cloud.enabled` and `cloud.policy` turn on the cloud policy.
+- `global_lockdown: true` stops users from changing the managed config with most `PMG_*` environment variables, the policy flags such as `--sandbox`, and project allowances.
+- Do not set the dependency cooldown in this file. Under `global_lockdown`, a key that the managed `config.yml` sets wins over the cloud policy. So `dependency_cooldown.enabled` or `dependency_cooldown.days` in this file stops your security admin from changing the cooldown in SafeDep Cloud. PMG reports the field as locked, and `safedep endpoint policy show` shows the exception.
+
+Users cannot change the managed config. To turn off all cloud content on the fleet, ship `cloud.policy: false`. The cloud policy needs the SafeDep Cloud Team or Enterprise plan. See [pricing](https://safedep.io/pricing).

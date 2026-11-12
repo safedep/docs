@@ -29,34 +29,47 @@ Use a system-wide install when one machine or image should protect every user ac
 
 ## Windows machines
 
-1. Download and extract `pmg_Windows_x86_64.zip` from a [v0.29.0 or later release](https://github.com/safedep/pmg/releases/latest). Earlier versions do not support Windows system install.
-2. Open PowerShell as administrator in the extracted directory, then install:
+Run one of these from an administrator terminal:
 
-   ```powershell
-   New-Item -ItemType Directory -Force "$env:ProgramFiles\safedep\pmg" | Out-Null
-   Copy-Item .\pmg.exe "$env:ProgramFiles\safedep\pmg\pmg.exe" -Force
-   & "$env:ProgramFiles\safedep\pmg\pmg.exe" setup install --system
-   ```
+<Tabs>
+  <Tab title="Chocolatey">
+    ```powershell
+    choco install pmg
+    ```
 
-3. Open a new terminal as your normal user and verify:
+    The Chocolatey package installs the PMG MSI.
+  </Tab>
+  <Tab title="MSI">
+    Download `pmg_Windows_x86_64.msi` from a [v0.30.0 or later release](https://github.com/safedep/pmg/releases/latest), then run:
 
-   ```powershell
-   Get-Command npm
-   pmg setup doctor
-   npm install --no-cache --prefer-online safedep-test-pkg@0.1.3
-   ```
+    ```powershell
+    msiexec /i pmg_Windows_x86_64.msi /qn
+    ```
+  </Tab>
+  <Tab title="ZIP">
+    Download and extract `pmg_Windows_x86_64.zip` from a [v0.29.0 or later release](https://github.com/safedep/pmg/releases/latest). Earlier versions do not support Windows system install. In the extracted directory, run:
 
-`npm` should resolve under `%ProgramFiles%\safedep\pmg\bin`, and PMG must block the test package. System install puts shims ahead of machine-wide Node.js installations. A per-user install cannot do that.
+    ```powershell
+    New-Item -ItemType Directory -Force "$env:ProgramFiles\safedep\pmg" | Out-Null
+    Copy-Item .\pmg.exe "$env:ProgramFiles\safedep\pmg\pmg.exe" -Force
+    & "$env:ProgramFiles\safedep\pmg\pmg.exe" setup install --system
+    ```
+  </Tab>
+</Tabs>
+
+The MSI and Chocolatey put `pmg.exe` in `%ProgramFiles%\safedep\pmg` and run `pmg setup install --system` for you. Upgrades replace the binary in place. Then open a new terminal as your normal user and [verify the install](#verify).
+
+System install puts shims ahead of machine-wide Node.js installations. A per-user install cannot do that.
 
 System install sets the required ownership and permissions. Run it before editing the managed config as administrator. See the [system-install reference](https://github.com/safedep/pmg/blob/main/docs/system-install.md#configuration) for permission requirements and troubleshooting.
 
-For fleets, the [Windows MDM scripts](/package-security/pmg/mdm/overview) perform these steps and deploy your config. For shell and interception limits, see [Windows coverage](/package-security/pmg/quickstart#windows-coverage).
+For fleets, the [Windows MDM scripts](/package-security/pmg/mdm/overview) perform these steps and deploy your config. For shell and interception limits, see the [Windows support reference](https://github.com/safedep/pmg/blob/main/docs/windows-support.md).
 
 ## Docker images
 
 PMG must be installed inside the image: PMG on the Docker host cannot see installs that run during `docker build`.
 
-The easiest path is to copy the PMG binary from the [published PMG container image](https://github.com/safedep/pmg/pkgs/container/pmg) into your application image.
+Copy the PMG binary from the [published PMG container image](https://github.com/safedep/pmg/pkgs/container/pmg) into your application image. For reproducible builds, pin the image to a release tag in place of `latest`.
 
 Compared to a Linux VM, a Dockerfile needs two adjustments:
 
@@ -129,17 +142,20 @@ Every `RUN npm install` or `RUN pip install` after the `ENV PATH` line now goes 
 
 ## Verify
 
-On Linux, run in a VM shell or inside a container (`docker run --rm -it <image> sh`):
+On Linux, run these steps in a VM shell or inside a container (`docker run --rm -it <image> sh`). On Windows, run them in a new terminal as your normal user.
 
-```bash
-pmg setup doctor  # validates config, shims, PATH, and binary integrity
-```
+1. On Windows only, run `Get-Command npm`. It must show a path under `%ProgramFiles%\safedep\pmg\bin`.
+2. Check the config, the shims, the PATH and the binary integrity:
 
-Then prove the protection end to end with a known test package. PMG must block it:
+   ```bash
+   pmg setup doctor
+   ```
 
-```bash
-npm install --no-cache --prefer-online safedep-test-pkg@0.1.3
-```
+3. Install a known test package. PMG must block it:
+
+   ```bash
+   npm install --no-cache --prefer-online safedep-test-pkg@0.1.3
+   ```
 
 ## Configuration
 
@@ -185,10 +201,8 @@ ENV PMG_CLOUD_ENDPOINT_ID="my-golden-image"
 
 Containers report a generated hostname per run, so without `PMG_CLOUD_ENDPOINT_ID` every run registers as a new endpoint. A stable name is what you will recognize in Endpoint Hub.
 
-The credentials exist only where you run `docker`, as shell exports or CI secrets. They never go in the Dockerfile.
-
 <Warning>
-  Never bake credentials into an image with `ENV SAFEDEP_API_KEY=...`. `ENV` values persist in the image metadata, and anyone who pulls the image can read them.
+  Do not put the credentials in the Dockerfile, for example with `ENV SAFEDEP_API_KEY=...`. `ENV` values persist in the image metadata, and anyone who pulls the image can read them. Keep the credentials where you run `docker`, as shell exports or CI secrets.
 </Warning>
 
 **In the running container**, pass them through at start:
@@ -198,10 +212,6 @@ docker run -e SAFEDEP_API_KEY -e SAFEDEP_TENANT_ID my-image
 ```
 
 Compose `environment:` entries and Kubernetes Secret references work the same way. If the container is short-lived, a CI job for example, run `pmg cloud sync` before it exits so buffered events are not destroyed with it.
-
-<Note>
-  For reproducible builds, pin PMG to a release tag from the [published PMG container image](https://github.com/safedep/pmg/pkgs/container/pmg).
-</Note>
 
 **During `docker build`**, install steps need no credentials: PMG buffers each event locally. Deliver the buffer in one final `RUN` step, with the credentials mounted as BuildKit secrets. Mount them directly as environment variables so PMG can use its standard `SAFEDEP_API_KEY` and `SAFEDEP_TENANT_ID` credential resolver:
 
@@ -327,7 +337,7 @@ This leaves the PMG binary in place. To remove it too, run `sudo rm /usr/local/b
 
 ## Troubleshooting
 
-Try running `pmg setup doctor` first. The cases below apply to Linux. For Windows, see [Windows coverage](/package-security/pmg/quickstart#windows-coverage).
+Try running `pmg setup doctor` first. The cases below apply to Linux. For Windows, see the [Windows support reference](https://github.com/safedep/pmg/blob/main/docs/windows-support.md).
 
 <AccordionGroup>
   <Accordion title="npm or pip resolves outside the shim directory">

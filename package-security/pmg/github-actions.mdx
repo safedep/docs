@@ -4,63 +4,17 @@ sidebarTitle: "GitHub Actions"
 description: "Block malicious packages in GitHub Actions CI with one PMG action step, a job summary, and kernel enforcement."
 ---
 
-[PMG](https://github.com/safedep/pmg) runs as a persistent proxy in CI/CD. The `safedep/pmg` action starts it once per job. The proxy intercepts installs from every [supported package manager](https://github.com/safedep/pmg#supported-package-managers) and blocks each package flagged as malicious. At the end of the job, the action stops the proxy, writes a job summary, and fails the job when PMG blocked a package.
+[PMG](https://github.com/safedep/pmg) runs as a persistent proxy in CI/CD. The `safedep/pmg` action starts it once per job. The proxy intercepts installs from every [supported package manager](/package-security/pmg/overview#supported-package-managers) and blocks each package flagged as malicious. At the end of the job, the action stops the proxy, writes a job summary, and fails the job when PMG blocked a package.
 
 <Note>
-  In CI, PMG is non-interactive: flagged packages are always blocked, never prompted. For local development use the wrapped commands (`pmg npm install`) covered in the [PMG quickstart](/package-security/pmg/quickstart).
+  In CI, PMG does not ask for confirmation. It blocks each flagged package.
 </Note>
 
 ## Use the SafeDep PMG action
 
-Add one `safedep/pmg` step right after `actions/checkout`. The job needs no other PMG step.
+Add one `safedep/pmg` step right after `actions/checkout`. The job needs no other PMG step. This workflow installs dependencies through PMG on every pull request:
 
-```yaml
-- uses: actions/checkout@v6
-
-- uses: safedep/pmg@v0.34.0
-  with:
-    api-key: ${{ secrets.SAFEDEP_API_KEY }}
-    tenant-id: ${{ secrets.SAFEDEP_TENANT_ID }}
-
-- run: npm ci   # intercepted automatically
-```
-
-Put the action before the language setup steps, so the proxy sees the traffic of every later step. Use one `safedep/pmg` step per job. A second step fails, and the proxy of the first step keeps running.
-
-By default, the action runs the proxy in server mode. On a GitHub hosted runner, it also turns on [kernel enforcement](#enforce-in-the-kernel). Set `timeout-minutes` on the job. A proxy that stops serving holds the job until the timeout.
-
-PMG blocks malicious packages using SafeDep's free community intelligence with or without credentials. Add the optional `api-key` and `tenant-id` to connect the run to [SafeDep Cloud](/governance/cloud/overview), so block events sync to [Endpoint Hub](/governance/cloud/endpoint-hub/overview) before the runner is destroyed.
-
-<Note>
-  Use `safedep/pmg@v0.34.0` or a later release tag. The post step, the job summary, and the `fail-on-violation`, `auto-stop` and `baseline` inputs need v0.34.0 and a runner that runs Node 24 actions. A self-hosted runner needs runner version 2.327.1 or later. The `v1` tag points at an older action without these inputs. GitHub warns about an unknown input and runs the job without it.
-</Note>
-
-### Upgrade from v0.33.0 or earlier
-
-Earlier releases needed a `pmg proxy stop --fail-on-violation` step at the end of the job. From v0.34.0, the post step of the action does this work. Remove the stop step. Server mode is the default, so the job no longer needs `server-mode: true`.
-
-A job that keeps its own stop step must set `auto-stop: false`. Otherwise the post step finds no proxy and fails the job, because a stop step could hide a block.
-
-## What happens at the end of the job
-
-The action has a post step. GitHub runs it at the end of the job, also when an earlier step fails and when the job is cancelled. The post step:
-
-1. Stops the proxy. With `api-key`, the proxy sends its last events to SafeDep Cloud.
-2. Proposes a network profile from the hosts that the job reached. See [Allow Only Known Hosts in GitHub Actions](/package-security/pmg/github-actions-network-policy).
-3. Writes the job summary. The summary shows the verdict, the number of blocked packages, each denied connection, and each destination host. The run also gets an annotation when PMG blocked a package, and one for each denial.
-4. Fails the job when PMG blocked a package or the network policy denied a connection.
-
-The `fail-on-violation`, `auto-stop`, and `baseline` inputs change the post step. See [Inputs](#inputs).
-
-<Warning>
-  On a public repository, anyone can read the job summary. It lists the hosts that the job reached. Set `baseline: false` to leave them out. A denied connection still shows in the summary, with its host.
-</Warning>
-
-## Example workflow
-
-A full workflow that installs dependencies through PMG on every pull request:
-
-```yaml install-dependencies.yml expandable
+```yaml install-dependencies.yml
 name: Install Dependencies
 on:
   pull_request:
@@ -82,21 +36,54 @@ jobs:
           api-key: ${{ secrets.SAFEDEP_API_KEY }}
           tenant-id: ${{ secrets.SAFEDEP_TENANT_ID }}
 
-      # Your usual language setup and install
       - uses: actions/setup-node@v6
         with:
           node-version: "24"
 
-      - run: npm ci
+      - run: npm ci   # intercepted automatically
 ```
 
-## See blocks from every pipeline
+In server mode, put the action before the language setup steps, so the proxy sees the traffic of every later step. Use one `safedep/pmg` step per job. A second step fails, and the proxy of the first step keeps running.
 
-With the `api-key` and `tenant-id` inputs, the blocks from every job go to one tenant. To review them across all repositories, see [Review Package Blocks Across CI Pipelines](/governance/cloud/endpoint-hub/ci-package-blocks).
+By default, the action runs the proxy in server mode. On a GitHub hosted runner, it also turns on [kernel enforcement](#enforce-in-the-kernel). Set `server-mode: false` to use the PMG shims instead. `sandbox: true` also selects the shims. With shims, the job has no job summary and no kernel enforcement, and the `safedep/pmg` step goes after `setup-node` or `setup-python`, not before. Set `timeout-minutes` on the job. A proxy that stops serving holds the job until the timeout.
+
+PMG blocks malicious packages using SafeDep's free community intelligence with or without credentials. Add the optional `api-key` and `tenant-id` to connect the run to [SafeDep Cloud](/governance/cloud/overview), so block events sync to [Endpoint Hub](/governance/cloud/endpoint-hub/overview) before the runner is destroyed. Set both inputs or neither: the action fails when you set only one.
+
+The blocks from every job then go to one tenant. To review them across all repositories, see [Review Package Blocks Across CI Pipelines](/governance/cloud/endpoint-hub/ci-package-blocks). This review needs the SafeDep Cloud Team or Enterprise plan. See [pricing](https://safedep.io/pricing).
 
 <Note>
-  This needs the SafeDep Cloud Team or Enterprise plan. See [pricing](https://safedep.io/pricing).
+  Pin `safedep/pmg` to `v0.34.0` or a later release tag. Do not use `v1`. It points at an older action.
 </Note>
+
+The post step, the job summary, and the `fail-on-violation`, `auto-stop` and `baseline` inputs need:
+
+- `safedep/pmg@v0.34.0` or later. An older tag ignores these inputs. GitHub only warns about an unknown input.
+- A runner that runs Node 24 actions. On a self-hosted runner, use runner version 2.327.1 or later.
+
+### Upgrade from v0.33.0 or earlier
+
+Earlier releases needed a `pmg proxy stop --fail-on-violation` step at the end of the job. From v0.34.0, the post step of the action does this work. Remove the stop step. Server mode is the default, so the job no longer needs `server-mode: true`.
+
+A job that keeps its own stop step must set `auto-stop: false`. Otherwise the post step finds no proxy and fails the job, because a stop step could hide a block.
+
+## What happens at the end of the job
+
+The action has a post step. GitHub runs it at the end of the job, also when an earlier step fails and when the job is cancelled. The post step:
+
+1. Stops the proxy. With `api-key`, the proxy sends its last events to SafeDep Cloud.
+2. Proposes a network profile from the hosts that the job reached. See [Allow Only Known Hosts in GitHub Actions](/package-security/pmg/github-actions-network-policy).
+3. Writes the job summary. The summary shows the verdict, the number of blocked packages, each denied connection, and each destination host. The run also gets an annotation when PMG blocked a package, and one for each denial.
+4. Fails the job when PMG blocked a package or the network policy denied a connection.
+
+Three inputs change the post step:
+
+- `fail-on-violation: false` reports a block and does not fail the job. When PMG cannot stop the proxy, for example after a crash, the job fails with every setting.
+- `auto-stop: false` leaves the stop to a step of the job.
+- `baseline: false` leaves the proposed network profile and the list of destination hosts out of the job summary.
+
+<Warning>
+  On a public repository, anyone can read the job summary. It lists the hosts that the job reached. Set `baseline: false` to leave them out. A denied connection still shows in the summary, with its host.
+</Warning>
 
 ## Enforce in the kernel
 
@@ -137,13 +124,13 @@ The action installs the PMG CA into the system trust store, starts the proxy as 
 
 The runner is not exempt. Its connections to GitHub go through the proxy, which passes them through with the real certificate. If the proxy stops serving but keeps running, the runner cannot report. GitHub then cancels the job after its `timeout-minutes`, and the post step does not run. The GitHub default is 360 minutes, so set a shorter timeout on every job.
 
-The `enforce-*` inputs set the policy without a config file. See [Inputs](#inputs). With `enforce: auto`, an `enforce-*` input fails the job where the action cannot enforce, so a runner change does not turn enforcement off without notice. For the policy keys and what enforcement does not cover, see [Kernel Enforcement on Linux](/package-security/pmg/kernel-enforcement).
+The `enforce-*` inputs set the policy without a config file. Each takes a list, separated by commas or new lines, that adds to the same list in the config. With `enforce: auto`, an `enforce-*` input fails the job where the action cannot enforce, so a runner change does not turn enforcement off without notice. For the policy keys and what enforcement does not cover, see [Kernel Enforcement on Linux](/package-security/pmg/kernel-enforcement).
 
 To refuse every host that the job does not need, add a network policy. See [Allow Only Known Hosts in GitHub Actions](/package-security/pmg/github-actions-network-policy).
 
 ### Protect Docker builds and containers
 
-With `enforce-namespaces: redirect`, PMG also checks the packages that a container installs. This includes the `RUN` steps of `docker build`, `docker run`, and Docker actions.
+With `enforce-namespaces: redirect`, PMG also checks the packages that a container installs. This includes the `RUN` steps of `docker build`, `docker run`, and Docker actions. The input takes `ignore` (the default), `redirect` or `auto`. `redirect` fails the job when the runner cannot redirect the containers. `auto` redirects them where the runner can.
 
 PMG reads the registry traffic with its own CA. A container that does not trust this CA fails the TLS handshake. The action exports the path of a CA bundle as `PMG_CA_BUNDLE`. The bundle holds the PMG CA and the public root CAs, so the other hosts still work. Give this file to each container that installs packages.
 
@@ -232,54 +219,11 @@ The action needs a POSIX shell and common tools in the image, such as busybox, p
 
 To run the proxy as a service on the host, see [Kernel Enforcement on Linux](/package-security/pmg/kernel-enforcement). On that host, remove the `safedep/pmg` step from the workflows. One host proxy serves all jobs, so the jobs get no post step, no job summary, and no verdict for each job. The host proxy routes only the processes on the host. A job container, a Docker action, or a `docker run` step goes around it unless the proxy redirects containers and each container trusts the PMG CA. See [Kernel Enforcement on Linux](/package-security/pmg/kernel-enforcement).
 
-## Action inputs and outputs
+## Inputs and outputs
 
-### Inputs
+For each input of the action, its default and the `PMG_*` variable that it sets, see [Inputs](https://github.com/safedep/pmg/blob/main/docs/github-action.md#inputs) in the PMG action documentation. It also covers the inputs that this page does not use, such as `paranoid`, `cooldown-days`, `sandbox` and `config-file`. The description of each input is in [`action.yml`](https://github.com/safedep/pmg/blob/main/action.yml). An input that you set overrides the same key in the `config-file`.
 
-An input that maps to a `PMG_*` variable or to a config key has no effect when you leave it empty. PMG then uses the value from `config-file`, or its own default.
-
-| Input | Default | Effect |
-| --- | --- | --- |
-| `version` | `latest` | The PMG release to install, for example `v0.34.0`, or `latest`. |
-| `cache` | `false` | Set `true` to keep the PMG binary in the runner tool cache. The action checks the cached file against the release checksum on each run. |
-| `api-key` | Empty | The SafeDep Cloud API key. Set it with `tenant-id`, from a secret. With both inputs, the proxy sends its events to SafeDep Cloud. The action fails when you set only one of them. |
-| `tenant-id` | Empty | The SafeDep Cloud tenant ID. Set it with `api-key`. |
-| `endpoint-id` | `gha/<owner>/<repo>` | The name of the runner in SafeDep Cloud. Applies only with `api-key` and `tenant-id`. |
-| `server-mode` | Empty (server mode) | Set `false` to use the PMG shims instead of the proxy. With shims, the job has no job summary and no kernel enforcement. `sandbox: true` also selects shims. |
-| `fail-on-violation` | `true` | Fail the job at its end when PMG blocked a package or the network policy denied a connection. Set `false` to report a block without a failed job. When PMG cannot stop the proxy, for example after a crash, the job fails with every setting. |
-| `auto-stop` | `true` | Stop the proxy in the post step. Set `false` when a step of the job stops the proxy. |
-| `baseline` | `true` | Show the proposed network profile and the list of destination hosts in the job summary. Set `false` to leave them out. |
-| `enforce` | `auto` | Kernel enforcement: `auto`, `true`, or `false`. See [Enforce in the kernel](#enforce-in-the-kernel). |
-| `enforce-ports` | Empty | With enforcement, more destination ports that the kernel routes through the proxy. |
-| `enforce-exempt-users` | Empty | With enforcement, users that the kernel never routes. |
-| `enforce-exempt-executables` | Empty | With enforcement, programs that connect directly, as absolute paths or globs. |
-| `enforce-skip-destinations` | Empty | With enforcement, CIDR prefixes that the kernel never routes. |
-| `enforce-namespaces` | `ignore` | With enforcement, what happens to the containers that steps start: `ignore`, `redirect`, or `auto`. `redirect` fails the job when the runner cannot redirect them. `auto` redirects them where the runner can. See [Protect Docker builds and containers](#protect-docker-builds-and-containers). |
-| `network-profile` | Empty | The network profile that the proxy applies, as a path in the repository or a built-in name. Turns on server mode, and fails with `server-mode: false`. See [Allow Only Known Hosts in GitHub Actions](/package-security/pmg/github-actions-network-policy). |
-| `network-mode` | `audit` | With `network-profile`, what the proxy does with a denied destination: `audit` or `enforce`. |
-| `expose-to-job-network` | `false` | In a job with a job container, bind the proxy to the address of the job container on the job network. The action fails when the job has no job container. Ignored with `enforce: true`. See [Job containers and Docker actions](#job-containers-and-docker-actions). |
-| `paranoid` | `false` | Set `true` to block suspicious packages as well as malicious ones. Sets `PMG_PARANOID`. |
-| `cooldown-enabled` | `true` | Set `false` to allow package versions that were published recently. Sets `PMG_DEPENDENCY_COOLDOWN_ENABLED`. |
-| `cooldown-days` | `2` | The number of days that a new package version stays blocked. Sets `PMG_DEPENDENCY_COOLDOWN_DAYS`. |
-| `sandbox` | `false` | Set `true` to run package managers in an OS sandbox. Applies only with shims, so it turns off server mode unless `server-mode` is `true`. The action also relaxes the AppArmor limit on user namespaces on the runner. Sets `PMG_SANDBOX_ENABLED`. |
-| `sandbox-driver` | `landlock` | The sandbox backend: `landlock` or `bubblewrap`. With `bubblewrap`, the action installs it with `apt-get`. Sets `PMG_SANDBOX_DRIVER`. |
-| `verbosity` | `normal` | The PMG output level: `silent`, `normal`, or `verbose`. Sets `PMG_VERBOSITY`. |
-| `disable-telemetry` | `false` | Set `true` to stop anonymous PMG telemetry. Sets `PMG_DISABLE_TELEMETRY`. |
-| `skip-event-logging` | `false` | Set `true` to stop writing audit events to the local event log. This also removes the proposed network profile from the job summary. Sets `PMG_SKIP_EVENT_LOGGING`. |
-| `config-file` | Empty | The path of a PMG `config.yml` in the repository. The action copies it to the PMG config directory before PMG starts. An input that you set overrides the same key in the file. |
-
-The `enforce-*` inputs take a list, separated by commas or new lines. Each list adds to the same list in the config.
-
-The `proxy-mode` input is removed. The value `false` fails the job. Any other value gives a warning.
-
-### Outputs
-
-| Output | Value |
-| --- | --- |
-| `version` | The PMG release that the action installed, for example `v0.34.0`. |
-| `bin-dir` | The directory that holds the `pmg` binary on the runner. |
-
-To read an output, give the step an `id`:
+The action has two outputs: `version`, the PMG release that it installed, and `bin-dir`, the directory that holds the `pmg` binary. To read an output, give the step an `id`:
 
 ```yaml
 - uses: safedep/pmg@v0.34.0
@@ -288,7 +232,7 @@ To read an output, give the step an `id`:
 - run: echo "PMG ${{ steps.pmg.outputs.version }} is in ${{ steps.pmg.outputs.bin-dir }}"
 ```
 
-### Supported runners
+## Supported runners
 
 The action supports Linux runners on x86_64 and arm64. On a macOS or Windows runner, the action fails.
 
@@ -317,10 +261,10 @@ For the proxy lifecycle, certificate trust, bind address, and cloud event sync, 
   <Card title="Kernel Enforcement on Linux" icon="lock" href="/package-security/pmg/kernel-enforcement">
     Route every process and container on the runner through PMG.
   </Card>
-  <Card title="PMG" icon="box" href="/package-security/pmg/overview">
-    How PMG blocks malicious packages at install time.
+  <Card title="Shared Hosts and Images" icon="server" href="/package-security/pmg/system-install">
+    Install PMG for all users on a shared VM, a runner image or a Docker image.
   </Card>
-  <Card title="Malicious Package" icon="virus" href="/concepts/malicious-package">
-    How SafeDep detects malicious packages.
+  <Card title="PMG in Kubernetes" icon="cubes" href="/package-security/pmg/kubernetes">
+    Block package installs inside Kubernetes workloads.
   </Card>
 </CardGroup>

@@ -1,73 +1,72 @@
 ---
 title: "PMG"
-description: "PMG wraps your package managers and blocks malicious packages at install time, before any code runs. Free, open source, no account required."
+description: "PMG blocks malicious packages at install time with threat intelligence, a dependency cooldown and an optional sandbox. Free and open source."
 ---
 
-[PMG](https://github.com/safedep/pmg) (Package Manager Guard) blocks malicious packages at install time. It wraps the package managers you already use, so every `npm install` or `pip install` is checked against SafeDep's malware intelligence before any code runs. It is free, open source, and needs no account or API key.
+[PMG](https://github.com/safedep/pmg) (Package Manager Guard) blocks malicious packages before they install. It wraps the package managers that you and your AI coding agents already use, so `npm install` and `pip install` do not change. Each install goes through the protection layers below.
 
-PMG runs on macOS, Linux, and Windows. Native Windows interception uses `.cmd` PATH shims in PowerShell and `cmd.exe`. Windows has no sandbox or background proxy daemon. See the [Windows setup guidance](/package-security/pmg/quickstart#windows).
+PMG is free and open source under Apache 2.0. It uses SafeDep's free community API, with no account or API key.
 
-## What PMG does
+## How PMG protects an install
 
-- **Blocks before code runs:** catches malicious packages at install time, not after they are already in your environment.
-- **No workflow change:** wraps your existing package managers. You and your AI coding agents run the same commands.
-- **Deep dependency analysis:** resolves and checks the full transitive dependency tree, not just the package you asked for.
-- **No account needed:** uses SafeDep's free community API. Apache 2.0 licensed, no signup or API key.
+Threat intelligence blocks known malware. For malware that is not known yet, the dependency cooldown and the sandbox limit what a new compromise can do.
 
-## How it works
+| Layer | What it stops | Default |
+|---|---|---|
+| Threat intelligence | A known [malicious package](/concepts/malicious-package). PMG checks the full transitive dependency tree, not only the package you named. | On |
+| [Dependency cooldown](/package-security/pmg/dependency-cooldown) | A version published in the last 2 days, when a new compromise is most likely to get through. | On |
+| [Sandbox](/package-security/pmg/sandbox) | An install script that reads credential files, secret environment variables or the SSH agent, or writes to Git hooks. | Off |
+| [Network policy](/package-security/pmg/network-policy) | An install that connects to a host that is not on the list, such as an attacker's server. | Off. Audit mode when you turn it on. |
+| [Kernel enforcement](/package-security/pmg/kernel-enforcement) | A process that tries to bypass the PMG proxy. | Off. On by default in the GitHub action on GitHub-hosted runners. |
 
-PMG intercepts each install command, resolves the dependency tree, and checks every package against SafeDep's [malicious package intelligence](/concepts/malicious-package) before allowing the install to proceed. Known malicious packages are blocked outright. A [dependency cooldown](/package-security/pmg/dependency-cooldown), on by default, also skips package versions published inside a recent time window, when a freshly compromised release is most likely to slip through.
+With the [cloud policy](/package-security/pmg/cloud-policy) turned on, PMG also applies the block entries, trust entries and cooldown of your SafeDep Cloud tenant. The cloud policy needs the Team or Enterprise plan.
 
-It supports `npm`, `pnpm`, `yarn`, `bun`, `aube`, `npx`, `pnpx`, `aubx`, `aubr`, `pip`, `pipx`, `poetry`, `uv`, and `uvx`. Support for `go` and `cargo` is experimental. For dependency-resolution internals and CLI flags, see the [PMG repository](https://github.com/safedep/pmg).
+## Platform support
 
-On macOS and Linux, PMG can also run each install in a [sandbox](/package-security/pmg/sandbox) that blocks credential reads, and apply a [network policy](/package-security/pmg/network-policy) that limits the hosts an install can reach.
+| Capability | macOS | Linux | Windows |
+|---|---|---|---|
+| Threat intelligence and dependency cooldown | Yes | Yes | Yes |
+| Sandbox | Yes (Seatbelt) | Yes (Landlock or Bubblewrap) | No |
+| Network policy | Yes | Yes | Foreground proxy only |
+| Persistent proxy in the background | Yes | Yes | Foreground only |
+| Kernel enforcement | No | Yes | No |
 
-On a CI runner or a shared Linux host, PMG can also run as one persistent proxy that every package manager uses. With [kernel enforcement](/package-security/pmg/kernel-enforcement), the Linux kernel routes every process through that proxy, and a process cannot opt out. The containers that the host starts can be routed too.
+On Windows, PMG applies the network policy only through a `pmg proxy start --profile` proxy in the foreground, not to each install. See [Network policy](https://github.com/safedep/pmg/blob/main/docs/persistent-proxy.md#network-policy) in the persistent proxy guide.
+
+For CI runners and shared Linux hosts, see [PMG in GitHub Actions](/package-security/pmg/github-actions) and [Kernel Enforcement](/package-security/pmg/kernel-enforcement).
+
+The sandbox can also run an AI coding agent such as Claude Code, Codex or Pi. See [Sandbox Your AI Coding Agent](/ai-security/sandbox-coding-agents).
+
+## Supported package managers
+
+| Ecosystem | Package managers | Runners | Status |
+|---|---|---|---|
+| npm | `npm`, `pnpm`, `yarn`, `bun`, `aube` | `npx`, `pnpx`, `aubx`, `aubr` | Supported |
+| PyPI | `pip`, `poetry`, `uv` | `pipx`, `uvx` | Supported |
+| Go | `go` | | Experimental |
+| Cargo | `cargo` | | Experimental |
+
+On Windows, PMG does not support `aube`, `aubx` and `aubr` yet.
+
+To check packages from an internal registry or mirror, see [Private Registries](/package-security/pmg/private-registries). For dependency resolution internals and CLI flags, see the [PMG repository](https://github.com/safedep/pmg).
 
 <Note>
-  Connect PMG to [SafeDep Cloud](/governance/cloud/overview) and the installs it checks sync to [Endpoint Hub](/governance/cloud/endpoint-hub/overview) as Package Guard events, a timeline of package activity across your team's endpoints. Local blocking works the same with or without an account.
+  Connect PMG to [SafeDep Cloud](/governance/cloud/overview) and the installs it checks sync to [Endpoint Hub](/governance/cloud/endpoint-hub/overview) as Package Guard events, a timeline of package activity across your team's endpoints. Local blocking works the same with or without an account. To send malicious and cooldown blocks to Slack or a webhook, see [Alerts](/governance/cloud/alerts).
 </Note>
 
 ## Get started
 
 <CardGroup cols={2}>
   <Card title="PMG Quickstart" icon="rocket" href="/package-security/pmg/quickstart">
-    Install PMG and protect your package managers in minutes.
+    Install PMG and see it block a malicious package.
   </Card>
-  <Card title="Stop Install Scripts from Reading Your Secrets" icon="box" href="/package-security/pmg/sandbox">
-    Run package installs in the PMG sandbox.
+  <Card title="Dependency Cooldown" icon="hourglass" href="/package-security/pmg/dependency-cooldown">
+    Hold back newly published versions.
   </Card>
-  <Card title="Limit the Hosts a Package Install Can Reach" icon="network-wired" href="/package-security/pmg/network-policy">
-    Allow an install to reach only the hosts it needs.
+  <Card title="Sandbox" icon="lock" href="/package-security/pmg/sandbox">
+    Stop install scripts from reading your secrets.
   </Card>
-  <Card title="Hold Back Newly Published Package Versions" icon="clock" href="/package-security/pmg/dependency-cooldown">
-    Set the dependency cooldown window and exempt packages.
-  </Card>
-  <Card title="Use PMG with a Private Registry or Mirror" icon="server" href="/package-security/pmg/private-registries">
-    Check packages from an internal registry.
-  </Card>
-  <Card title="PMG in GitHub Actions" icon="github" href="/package-security/pmg/github-actions">
-    Block malicious packages in CI and limit the hosts a job can reach.
-  </Card>
-  <Card title="Sandbox Your AI Coding Agent" icon="robot" href="/ai-security/sandbox-coding-agents">
-    Run Claude Code, Codex, or Pi in the PMG sandbox.
-  </Card>
-  <Card title="Deploy on Kubernetes" icon="cubes" href="/package-security/pmg/kubernetes">
-    Protect package installs in Kubernetes workloads and group events by workload.
-  </Card>
-  <Card title="Kernel Enforcement on Linux" icon="lock" href="/package-security/pmg/kernel-enforcement">
-    Make the kernel route every process and container on a Linux host through PMG.
-  </Card>
-  <Card title="Deploy with MDM" icon="laptop" href="/package-security/pmg/mdm/overview">
-    Install PMG on macOS, Linux, and Windows fleets through your MDM.
-  </Card>
-  <Card title="Malicious Package" icon="lightbulb" href="/concepts/malicious-package">
-    How SafeDep detects malicious packages across registries.
-  </Card>
-  <Card title="PMG on GitHub" icon="github" href="https://github.com/safedep/pmg">
-    Source, full documentation, and CI usage.
-  </Card>
-  <Card title="Alert on PMG blocks" icon="bell" href="/governance/cloud/alerts">
-    Stream malicious and cooldown blocks from SafeDep Cloud to Slack or any webhook.
+  <Card title="Network Policy" icon="network-wired" href="/package-security/pmg/network-policy">
+    Limit the hosts that an install can reach.
   </Card>
 </CardGroup>

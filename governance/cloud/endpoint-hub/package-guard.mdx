@@ -98,6 +98,65 @@ After syncing, open [app.safedep.io](https://app.safedep.io), select **Endpoint 
 
 <img src="/images/pmg-cloud-sync.png" alt="SafeDep Cloud Endpoint Hub page showing package events" />
 
+## Query the PMG controls
+
+Run these queries with [SQL in SafeDep Cloud](/governance/cloud/query-with-sql) to see the PMG controls on every endpoint of your team. They need the Team or Enterprise plan. See [pricing](https://safedep.io/pricing).
+
+### Sandbox allowances
+
+PMG records the `--sandbox-allow` flags of a run as one sandbox override event, and the saved project allowances of the [sandbox](/package-security/pmg/sandbox) as one more. PMG sends SafeDep Cloud one event for each set of allowances, each day, on each endpoint. This query lists the endpoints that use an override, and the number of reported runs on each:
+
+```sql
+SELECT endpoints.identifier,
+       COUNT(DISTINCT package_guard_events.invocation_id) AS reported_runs
+FROM package_guard_events
+JOIN endpoints ON endpoints.id = package_guard_events.invocation_id
+WHERE package_guard_events.event_type = 'PMG_EVENT_TYPE_SANDBOX_OVERRIDE'
+GROUP BY endpoints.identifier
+```
+
+### Sandbox denials
+
+PMG v0.34.0 and later also send what the sandbox blocked. After each sandboxed run with a denial, PMG records one sandbox violation event. The event lists each denied file, program, or host, with a count. PMG sends SafeDep Cloud one event for each set of denials, each day, on each endpoint. This query finds the endpoints where the sandbox blocked something:
+
+```sql
+SELECT endpoints.identifier,
+       COUNT(DISTINCT package_guard_events.invocation_id) AS reported_runs
+FROM package_guard_events
+JOIN endpoints ON endpoints.id = package_guard_events.invocation_id
+WHERE package_guard_events.event_type = 'PMG_EVENT_TYPE_SANDBOX_VIOLATION'
+GROUP BY endpoints.identifier
+```
+
+### Network policy decisions
+
+PMG records each destination that the [network policy](/package-security/pmg/network-policy) refuses, or in audit mode would refuse. Use the result to find a host that the policy must allow, or a package that tried to reach an unknown host:
+
+```sql
+SELECT endpoints.identifier,
+       package_guard_events.hostname,
+       package_guard_events.timestamp
+FROM package_guard_events
+JOIN endpoints ON endpoints.id = package_guard_events.invocation_id
+WHERE package_guard_events.event_type = 'PMG_EVENT_TYPE_NETWORK_POLICY_DECISION'
+ORDER BY package_guard_events.timestamp DESC
+```
+
+### Cooldown holds
+
+This query lists each version that the [dependency cooldown](/package-security/pmg/dependency-cooldown) held back, on the endpoints and CI runners of your team. A package that the cooldown holds back on many endpoints can be one of your own packages. To exempt it, see [Exempt a package](/package-security/pmg/dependency-cooldown#exempt-a-package).
+
+```sql
+SELECT endpoints.identifier,
+       package_guard_events.package_name,
+       package_guard_events.package_version,
+       package_guard_events.timestamp
+FROM package_guard_events
+JOIN endpoints ON endpoints.id = package_guard_events.invocation_id
+WHERE package_guard_events.package_action = 'PMG_PACKAGE_ACTION_COOLDOWN_BLOCKED'
+ORDER BY package_guard_events.timestamp DESC
+```
+
 ## Next steps
 
 <CardGroup cols={2}>
