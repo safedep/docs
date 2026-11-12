@@ -1,6 +1,6 @@
 ---
 title: Community
-description: "Join the SafeDep and Vet user community for support and discussions"
+description: "Join the SafeDep community on Discord and GitHub to get help with vet, PMG, Gryph, xBom and SafeDep Cloud."
 ---
 
 Discord is the main SafeDep community. Ask questions, discuss features and get release announcements there.
@@ -11,12 +11,9 @@ Discord is the main SafeDep community. Ask questions, discuss features and get r
 
 ## Other channels
 
-<CardGroup cols={2}>
-  <Card title="GitHub Discussions" icon="github" href="https://github.com/safedep/vet/discussions">
-    Discuss Vet usage and request features
-  </Card>
-  <Card title="GitHub Issues" icon="bug" href="https://github.com/safedep/vet/issues">
-    Report bugs in Vet
+<CardGroup cols={3}>
+  <Card title="GitHub" icon="github" href="https://github.com/safedep">
+    Report bugs and request features
   </Card>
   <Card title="LinkedIn" icon="linkedin" href="https://linkedin.com/company/safedep">
     Follow SafeDep for company updates
@@ -26,12 +23,22 @@ Discord is the main SafeDep community. Ask questions, discuss features and get r
   </Card>
 </CardGroup>
 
+Each open source tool has its own GitHub repository:
+
+| Tool | Repository |
+|---|---|
+| vet | [safedep/vet](https://github.com/safedep/vet) |
+| PMG | [safedep/pmg](https://github.com/safedep/pmg) |
+| Gryph | [safedep/gryph](https://github.com/safedep/gryph) |
+| xBom | [safedep/xbom](https://github.com/safedep/xbom) |
+| SafeDep CLI | [safedep/cli](https://github.com/safedep/cli) |
+
 Use the right channel for your topic:
 
 - General questions: Discord general channel
 - Support requests: Discord help channel
-- Bug reports: GitHub issues
-- Feature requests: GitHub discussions
+- Bug reports: GitHub issues in the repository of the tool
+- Feature requests: GitHub discussions for vet and PMG, and GitHub issues for the other tools
 
 ## Ask for help
 
@@ -39,18 +46,26 @@ Include these details in your question. Remove sensitive information first.
 
 - What you want to do, the command you ran, and the expected and actual result
 - Your operating system and its version
-- Your Vet version, from `vet version`
+- The tool version, from `vet version`, `pmg version`, `gryph version` or `xbom version`
 - The related manifest or configuration files
 - The error message and the debug log, in code blocks
 
-To get the debug log:
+To get more detailed log output:
 
 ```bash
-# Show debug logs in the terminal
+# vet: show the debug log in the terminal, or write it to a file
 vet scan -D /path/to/repo -l- -d
-
-# Write the debug log to a file that you can share
 vet scan -D /path/to/repo -l /tmp/vet.log -d
+
+# PMG: show the debug log, and write the logs to a file
+pmg --debug --log /tmp/pmg.log npm install <package>
+
+# Gryph: show verbose output, or check the installation
+gryph --verbose <command>
+gryph doctor
+
+# xBom: show verbose output
+xbom --verbose <command>
 ```
 
 ## Contribute
@@ -61,8 +76,8 @@ Before you open an issue, search the existing issues. Use the issue templates, a
   <Card title="Documentation" icon="book" href="https://github.com/safedep/docs">
     Correct, clarify or add to these docs
   </Card>
-  <Card title="Code Contributions" icon="code" href="https://github.com/safedep/vet/blob/main/CONTRIBUTING.md">
-    Contribute bug fixes, features, or performance improvements
+  <Card title="Code Contributions" icon="code" href="https://github.com/safedep">
+    Read the CONTRIBUTING.md of the tool repository, then send bug fixes, features or performance improvements
   </Card>
 </CardGroup>
 
@@ -72,16 +87,15 @@ Before you open an issue, search the existing issues. Use the issue templates, a
   <Card title="Changelog" icon="list" href="/changelog/2026">
     What SafeDep shipped
   </Card>
-  <Card title="Vet Releases" icon="tag" href="https://github.com/safedep/vet/releases">
-    Vet releases and version history
-  </Card>
-  <Card title="Security Policy" icon="shield-check" href="https://github.com/safedep/vet/security/policy">
+  <Card title="Security Policy" icon="shield-check" href="https://github.com/safedep/.github/blob/main/SECURITY.md">
     How to report security vulnerabilities
   </Card>
 </CardGroup>
 
+For the version history of a tool, see the releases page of its repository.
+
 ## Contact
 
 - **General support**: [support@safedep.io](mailto:support@safedep.io)
-- **Security issues**: Follow the [security policy](https://github.com/safedep/vet/security/policy)
+- **Security issues**: [security@safedep.io](mailto:security@safedep.io)
 - **Business inquiries**: [hello@safedep.io](mailto:hello@safedep.io)
