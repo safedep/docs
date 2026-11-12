@@ -33,10 +33,10 @@
 ## gryph
 
 - **One-liner (from repo description):** Security layer for AI coding agents. Works with Claude Code, Cursor, Windsurf, Gemini CLI, OpenCode, Pi Agent and more.
-- **What it is:** An **observability / audit** layer for AI coding agents. It *records* what an agent reads, writes, and runs into a **local** audit log. It does **not** block, sandbox, or enforce. Do **not** describe it as a "sandbox", "fence", "guardrail", or anything implying enforcement (the fleet review caught exactly this overstatement). Commands: `gryph logs` (recent activity), `gryph query` (filter the log), `gryph sessions` (list sessions). There is no "replay" feature.
+- **What it is:** An **audit and policy** layer for AI coding agents. It *records* what an agent reads, writes, and runs into a **local** audit log. Since v0.8.0, a YAML policy can `block`, `warn`, `guidance` (the YAML value, not `guide`), `escalate`, `defer` or `allow` each action. The policy is **off by default** (`gryph config set policy.enabled true`). Gryph is **not** a sandbox: it does not isolate the agent process (that is PMG, see `ai-security/sandbox-coding-agents`). Commands: `gryph logs` (recent activity), `gryph query` (filter the log), `gryph sessions` and `gryph session <id>` (list and show sessions), `gryph policy init|edit|validate|test`.
 - **Public repo:** `github.com/safedep/gryph`
 - **Docs home:** **AI Agent Security**. R8 landing page is live at `ai-security/gryph-overview`.
-- **Key concepts surfaced:** AI agent observability, local audit trail. Different from MCP (Gryph *observes* the agent at runtime; MCP exposes SafeDep tools *to* the agent).
+- **Key concepts surfaced:** AI agent observability, local audit trail, agent action policy. Different from MCP (Gryph *observes and can block* the agent at runtime; MCP exposes SafeDep tools *to* the agent).
 - **Where to read up-to-date facts:** `README.md`, `CLAUDE.md`, `AGENTS.md` in the gryph repo; `cli/` and `cmd/` for surface; `agent/` for supported agents.
 
 ---
@@ -47,7 +47,7 @@
 - **What it is:** Not a separate repo — lives inside the vet repo at `mcp/`.
 - **Docs home:** **AI Agent Security** (`ai-security/mcp-server`). Hosted endpoint: `mcp.safedep.io`. The `safedep` CLI configures it via `safedep setup mcp install`.
 - **Where to read up-to-date facts:** `mcp/` in the vet repo; `safedep-cli` for the `setup mcp` flow.
-- **Distinction:** MCP = give SafeDep *to* the AI tool (the agent can ask "is this package safe?"). Gryph = *observe and record* what the AI tool does. Different products, both under AI Agent Security, never conflate them.
+- **Distinction:** MCP = give SafeDep *to* the AI tool (the agent can ask "is this package safe?"). Gryph = *observe and record* what the AI tool does, and optionally block an action with a policy. Different products, both under AI Agent Security, never conflate them.
 
 ---
 

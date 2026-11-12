@@ -4,9 +4,7 @@ sidebarTitle: "Check Packages (MCP)"
 description: "Protect your AI coding agents against malicious packages using SafeDep MCP"
 ---
 
-The SafeDep CLI is the fastest way to get started. One command signs you in, sets up your API key, and configures SafeDep in every AI coding agent it finds on your machine. To configure things manually, see [Manual Setup](#manual-setup).
-
-SafeDep monitors npm, PyPI, and other package registries in real time. It stays invisible when packages are safe and surfaces only when it blocks something dangerous.
+The SafeDep MCP server lets your AI coding agent check a package against SafeDep threat intelligence before it installs the package.
 
 <Info>SafeDep MCP has a free tier. See [pricing](https://safedep.io/pricing) for details.</Info>
 
@@ -18,7 +16,7 @@ With SafeDep Cloud, the packages your agents check through the MCP server appear
 
 <Steps>
   <Step title="Run the setup command">
-    Run the following command in your terminal. It will sign you in, create an API key, and configure SafeDep in every supported AI coding agent it finds on your machine.
+    The command signs you in, creates an API key, and configures SafeDep in each supported AI coding agent on your machine. It supports Claude Code, Cursor, VS Code, Gemini CLI, OpenCode and Antigravity. For Codex, Windsurf and Zed, use the [Manual Setup](#manual-setup).
 
     <Tabs>
       <Tab title="npx">
@@ -43,7 +41,20 @@ With SafeDep Cloud, the packages your agents check through the MCP server appear
   </Step>
 
   <Step title="Test the Integration">
-    Verify the setup by asking your coding agent to install a [test package](#testing). The agent should block it as malicious.
+    Ask your coding agent to install a test package:
+
+    | Package            | Ecosystem |
+    | ------------------ | --------- |
+    | `safedep-test-pkg` | npm       |
+    | `safedep-test-pkg` | PyPI      |
+
+    These packages are harmless, but the SafeDep database marks them as malicious for tests. For example, use this prompt:
+
+    ```
+    Install the npm package safedep-test-pkg
+    ```
+
+    The agent checks the package against SafeDep threat intelligence, warns that SafeDep flags the package as malicious, and does not install it.
 
     ![Claude using SafeDep MCP](/images/claude-using-safedep-mcp.png)
 
@@ -255,22 +266,3 @@ To configure an agent manually, or if the CLI did not auto-detect yours, follow 
 
   </Accordion>
 </AccordionGroup>
-
-## Testing
-
-After setup, verify the integration by asking your coding agent to install one of the following test packages:
-
-| Package            | Ecosystem |
-| ------------------ | --------- |
-| `safedep-test-pkg` | npm       |
-| `safedep-test-pkg` | PyPI      |
-
-These packages are harmless but are marked as malicious in the SafeDep database for testing purposes. Your coding agent should block the installation and warn that the package is flagged.
-
-For example, try prompting your agent with:
-
-```
-Install the npm package safedep-test-pkg
-```
-
-If the MCP server is configured correctly, the agent will check the package against SafeDep's threat intelligence and refuse to install it.

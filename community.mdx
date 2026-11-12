@@ -3,140 +3,77 @@ title: Community
 description: "Join the SafeDep and Vet user community for support and discussions"
 ---
 
-Connect with other users, get support, and follow development.
-
-## Discord Community
-
-Discord is the primary community hub. Join to:
-
-- Ask questions and get answers from members and maintainers
-- Discuss features and use cases
-- Get announcements about new releases
-- Connect with other security professionals using Vet and SafeDep
+Discord is the main SafeDep community. Ask questions, discuss features and get release announcements there.
 
 <Card title="Join SafeDep Discord" icon="discord" href="https://discord.gg/kAGEj25dCn">
   **Join the server:** https://discord.gg/kAGEj25dCn
 </Card>
 
-<img src="/images/safedep-discord.png" alt="SafeDep Discord Community" />
-
-## Other Community Channels
+## Other channels
 
 <CardGroup cols={2}>
   <Card title="GitHub Discussions" icon="github" href="https://github.com/safedep/vet/discussions">
-    Join conversations about Vet development and usage
+    Discuss Vet usage and request features
   </Card>
   <Card title="GitHub Issues" icon="bug" href="https://github.com/safedep/vet/issues">
-    Report bugs, request features, or contribute to development
+    Report bugs in Vet
   </Card>
   <Card title="LinkedIn" icon="linkedin" href="https://linkedin.com/company/safedep">
-    Follow SafeDep for company updates and industry insights
+    Follow SafeDep for company updates
   </Card>
   <Card title="Twitter/X" icon="twitter" href="https://x.com/safedepio">
     Get quick updates and security tips
   </Card>
 </CardGroup>
 
-## Getting Help
+Use the right channel for your topic:
 
-### Before Asking Questions
+- General questions: Discord general channel
+- Support requests: Discord help channel
+- Bug reports: GitHub issues
+- Feature requests: GitHub discussions
 
-1. **Check the documentation** - Search the guides and API reference
-2. **Review existing issues** - Your question may already be answered
-3. **Try debugging steps** - Use debug logs to gather more information
+## Ask for help
 
-### How to Ask Effective Questions
+Include these details in your question. Remove sensitive information first.
 
-<AccordionGroup>
-  <Accordion title="Provide Context">
-    - What are you trying to accomplish?
-    - What command did you run?
-    - What was the expected vs actual behavior?
-  </Accordion>
-  
-  <Accordion title="Include Details">
-    - Operating system and version
-    - Vet version (`vet version`)
-    - Relevant configuration files
-    - Error messages and logs
-  </Accordion>
-  
-  <Accordion title="Share Code/Commands">
-    - Use code blocks for commands and outputs
-    - Include relevant parts of manifests or config files
-    - Sanitize any sensitive information
-  </Accordion>
-</AccordionGroup>
+- What you want to do, the command you ran, and the expected and actual result
+- Your operating system and its version
+- Your Vet version, from `vet version`
+- The related manifest or configuration files
+- The error message and the debug log, in code blocks
 
-### Debug Information
+To get the debug log:
 
 ```bash
-# Get version information
-vet version
-
-# Enable debug logging and verbose output
+# Show debug logs in the terminal
 vet scan -D /path/to/repo -l- -d
 
-# Log to file for sharing
+# Write the debug log to a file that you can share
 vet scan -D /path/to/repo -l /tmp/vet.log -d
 ```
 
-## Contributing
+## Contribute
 
-### Ways to Contribute
+Before you open an issue, search the existing issues. Use the issue templates, and follow the [code of conduct](https://github.com/safedep/.github/blob/main/CODE_OF_CONDUCT.md).
 
 <CardGroup cols={2}>
-  <Card title="Report Issues" icon="exclamation-triangle" href="https://github.com/safedep/vet/issues">
-    Help improve Vet by reporting bugs and issues you encounter
-  </Card>
-  <Card title="Feature Requests" icon="lightbulb" href="https://github.com/safedep/vet/discussions">
-    Suggest new features or improvements
-  </Card>
   <Card title="Documentation" icon="book" href="https://github.com/safedep/docs">
-    Help improve documentation with corrections, clarifications, or new content
+    Correct, clarify or add to these docs
   </Card>
   <Card title="Code Contributions" icon="code" href="https://github.com/safedep/vet/blob/main/CONTRIBUTING.md">
     Contribute bug fixes, features, or performance improvements
   </Card>
 </CardGroup>
 
-### Contribution Guidelines
-
-Before contributing:
-
-1. **Check existing issues** to avoid duplicates
-2. **Follow the code of conduct** in all interactions
-3. **Use issue templates** when reporting bugs or requesting features
-4. **Test your changes** thoroughly before submitting
-
-## Community Guidelines
-
-### Code of Conduct
-
-- **Be respectful** in all interactions
-- **Help others** learn and grow
-- **Stay on topic** in discussions
-- **No spam or self-promotion** without prior approval
-- **Report inappropriate behavior** to moderators
-
-Use the right channel for your topic:
-
-- General questions: Discord general channel
-- Bug reports: GitHub issues
-- Feature requests: GitHub discussions
-- Support requests: Discord help channel
-
 ## Resources
 
 <CardGroup cols={2}>
-  <Card title="Documentation" icon="book" href="/introduction">
-    Complete documentation for Vet and SafeDep Cloud
+  <Card title="Changelog" icon="list" href="/changelog/2026">
+    What SafeDep shipped
   </Card>
-  <Card title="Examples Repository" icon="code" href="https://github.com/safedep/vet/tree/main/examples">
-    Sample configurations and use cases
-  </Card>
-  <Card title="Changelog" icon="list" href="https://github.com/safedep/vet/releases">
-    Latest releases and version history
+  <Card title="Vet Releases" icon="tag" href="https://github.com/safedep/vet/releases">
+    Vet releases and version history
   </Card>
   <Card title="Security Policy" icon="shield-check" href="https://github.com/safedep/vet/security/policy">
     How to report security vulnerabilities
@@ -148,4 +85,3 @@ Use the right channel for your topic:
 - **General support**: [support@safedep.io](mailto:support@safedep.io)
 - **Security issues**: Follow the [security policy](https://github.com/safedep/vet/security/policy)
 - **Business inquiries**: [hello@safedep.io](mailto:hello@safedep.io)
-

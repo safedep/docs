@@ -3,7 +3,7 @@ title: Path Exclusion
 description: "Exclude specific directories and files from security scans using pattern matching"
 ---
 
-`vet` supports path exclusions when scanning a directory: use the `--exclude` flag to skip path patterns within the target. Path exclusions are available only for the `scan` command.
+Use the `--exclude` flag of `vet scan` to skip path patterns in the target directory. This page covers `vet scan`. The `--exclude` flag of `vet code scan` takes Go regular expressions, not the glob patterns below.
 
 ## Basic Usage
 
@@ -28,114 +28,17 @@ vet scan -D /path/to/target \
 Exclusion patterns use [glob matching](https://github.com/bmatcuk/doublestar) (the `doublestar` library), not regular expressions. Use `*` to match within a single path segment and `**` to match across directories.
 </Info>
 
-## Common Exclusion Patterns
+## Common Patterns
 
-### Documentation and Build Artifacts
+Give each pattern to its own `--exclude` flag.
 
-```bash
-vet scan -D . \
-    --exclude 'docs/*' \
-    --exclude 'build/*' \
-    --exclude 'dist/*' \
-    --exclude 'target/*' \
-    --exclude '*.generated.*'
-```
-
-### Test Files and Directories
-
-```bash
-vet scan -D . \
-    --exclude 'test/*' \
-    --exclude 'tests/*' \
-    --exclude '*_test.go' \
-    --exclude '*.test.js' \
-    --exclude 'spec/*'
-```
-
-### Version Control and Dependencies
-
-```bash
-vet scan -D . \
-    --exclude '.git/*' \
-    --exclude 'node_modules/*' \
-    --exclude 'vendor/*' \
-    --exclude '.venv/*' \
-    --exclude '__pycache__/*'
-```
-
-### Development Tools
-
-```bash
-vet scan -D . \
-    --exclude '.idea/*' \
-    --exclude '.vscode/*' \
-    --exclude '*.log' \
-    --exclude 'tmp/*' \
-    --exclude 'temp/*'
-```
-
-## Advanced Pattern Examples
-
-### File Extension Exclusions
-
-```bash
-# Exclude specific file types
-vet scan -D . \
-    --exclude '**/*.md' \
-    --exclude '**/*.txt' \
-    --exclude '**/*.png' \
-    --exclude '**/*.jpg'
-```
-
-### Environment-Specific Exclusions
-
-```bash
-# Development environment
-vet scan -D . \
-    --exclude 'dev-tools/**' \
-    --exclude 'local-config/**' \
-    --exclude '**/*.dev.*'
-
-# Production build
-vet scan -D . \
-    --exclude 'test/*' \
-    --exclude 'examples/*' \
-    --exclude 'dev-dependencies/*'
-```
-
-### Complex Pattern Matching
-
-```bash
-# Exclude multiple similar patterns
-vet scan -D . \
-    --exclude '**/test/**' \
-    --exclude '**/tests/**' \
-    --exclude '**/spec/**' \
-    --exclude '**/mocks/**'
-```
-
-## Makefile Integration
-
-```makefile
-# Makefile with different scan targets
-.PHONY: scan-prod scan-dev scan-all
-
-scan-prod:
-	vet scan -D . \
-		--exclude 'test/*' \
-		--exclude 'dev-tools/*' \
-		--exclude 'docs/*' \
-		--report-json production-scan.json
-
-scan-dev:
-	vet scan -D . \
-		--exclude 'node_modules/*' \
-		--exclude '.git/*' \
-		--report-json development-scan.json
-
-scan-all:
-	vet scan -D . \
-		--exclude '.git/*' \
-		--report-json complete-scan.json
-```
-
+| To skip | Patterns |
+|---|---|
+| Documentation and build output | `docs/*`, `build/*`, `dist/*`, `target/*`, `*.generated.*` |
+| Tests | `test/*`, `tests/*`, `spec/*`, `*_test.go`, `*.test.js` |
+| Version control and installed dependencies | `.git/*`, `node_modules/*`, `vendor/*`, `.venv/*`, `__pycache__/*` |
+| Editor and temporary files | `.idea/*`, `.vscode/*`, `*.log`, `tmp/*`, `temp/*` |
+| File types in every directory | `**/*.md`, `**/*.txt`, `**/*.png`, `**/*.jpg` |
+| Development-only files | `dev-tools/**`, `local-config/**`, `**/*.dev.*` |
+| Code that does not ship to production | `test/*`, `examples/*`, `dev-dependencies/*` |
+| Test and mock directories at any depth | `**/test/**`, `**/tests/**`, `**/spec/**`, `**/mocks/**` |

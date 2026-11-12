@@ -16,12 +16,9 @@ Pass a `pagination` object in the request:
 | `pageToken` | string | The `nextPageToken` from the previous response. Omit for the first page. |
 | `sortOrder` | enum | `SORT_ORDER_ASCENDING` (default) or `SORT_ORDER_DESCENDING`. |
 
-Quick uses:
+Use `"pageSize": 100` for a bulk backfill, and a smaller value to browse. Use `SORT_ORDER_DESCENDING` only to see the newest reports first. Keep the default ascending order for sync.
 
-- `pageSize`: `"pageSize": 100` for a bulk backfill; a smaller value for interactive browsing.
-- `sortOrder`: `"sortOrder": "SORT_ORDER_DESCENDING"` to see the newest reports first. Keep the default ascending for sync.
-- `pageToken`: pass the previous response's `nextPageToken` to get the next page.
-- `since` (a filter, not part of `pagination`): `"filters": {"since": "2026-08-01T00:00:00Z"}` to fetch only what changed after that time.
+`since` is a filter, not part of `pagination`. For example, `"filters": {"since": "2026-08-01T00:00:00Z"}` fetches only what changed after that time.
 
 The response carries the cursor for the next page:
 

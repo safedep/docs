@@ -102,35 +102,6 @@ Vet supports:
 
 ## Scanning and Analysis
 
-### Why is my scan taking so long?
-
-Common causes:
-
-<AccordionGroup>
-  <Accordion title="Large dependency trees">
-    Use path exclusions to skip irrelevant directories:
-    ```bash
-    vet scan -D . --exclude 'node_modules/*' --exclude 'test/*'
-    ```
-  </Accordion>
-  
-  <Accordion title="Network latency">
-    The scan fetches metadata from external sources. Slow internet can impact performance.
-  </Accordion>
-  
-  <Accordion title="Malware analysis">
-    Malware detection with `--malware-query` is a fast lookup against SafeDep's
-    known malicious packages database and adds negligible overhead:
-    ```bash
-    vet scan -D . --malware-query
-    ```
-  </Accordion>
-  
-  <Accordion title="First-time caching">
-    Initial scans may be slower as Vet builds local caches.
-  </Accordion>
-</AccordionGroup>
-
 ### No vulnerabilities found - is this correct?
 
 If Vet reports no vulnerabilities:
@@ -198,35 +169,49 @@ Common causes:
 
 ## Performance and Optimization
 
-### How can I speed up my scans?
+### Why is my scan slow, and how do I speed it up?
 
 <AccordionGroup>
-  <Accordion title="Use Path Exclusions">
-    Skip irrelevant directories:
+  <Accordion title="Skip directories you do not need">
+    Large dependency trees slow the scan. Use path exclusions to skip directories:
     ```bash
     vet scan -D . \
+      --exclude 'node_modules/*' \
       --exclude 'test/*' \
       --exclude 'docs/*' \
       --exclude 'examples/*'
     ```
   </Accordion>
-  
-  <Accordion title="Scan Specific Manifests">
-    Target only relevant package files:
+
+  <Accordion title="Scan specific manifests">
+    Scan only the package files that you need:
     ```bash
     vet scan -M package-lock.json -M requirements.txt
     ```
   </Accordion>
-  
-  <Accordion title="Use JSON Dump Workflow">
-    Cache enriched data for repeated analysis:
+
+  <Accordion title="Reuse enriched data">
+    Save the enriched data once, then query it many times:
     ```bash
     vet scan -D . --json-dump-dir /tmp/cache
     vet query --from /tmp/cache --filter 'your-filter'
     ```
   </Accordion>
-  
-  <Accordion title="Parallel Processing">
+
+  <Accordion title="Network latency">
+    The scan fetches metadata from external sources. A slow internet connection makes the scan slower.
+  </Accordion>
+
+  <Accordion title="First-time caching">
+    Initial scans may be slower while Vet builds local caches.
+  </Accordion>
+
+  <Accordion title="Malware analysis">
+    Malware detection with `--malware-query` is on by default. It is a fast lookup against SafeDep's
+    known malicious packages database and adds negligible overhead.
+  </Accordion>
+
+  <Accordion title="Many projects">
     For multiple projects, run scans in parallel or use CI/CD matrix builds.
   </Accordion>
 </AccordionGroup>
