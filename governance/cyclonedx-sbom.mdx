@@ -6,6 +6,8 @@ description: "Generate a Software Bill of Materials (SBOM) with security metadat
 
 `vet` supports [CycloneDX v1.6](https://cyclonedx.org/docs/1.6/json) SBOM generation. The generated SBOM lists all packages and their dependencies, including security metadata: detected vulnerabilities, malware, and license information.
 
+Vet writes CycloneDX only. To scan an SPDX SBOM, see [Scan an SBOM](/governance/vet/dependency-inventory).
+
 ## Quick Start
 
 Generate an SBOM with a custom application name:
@@ -16,42 +18,18 @@ vet scan -D /path/to/project \
   --report-cdx-app-name myproject
 ```
 
-<Note>
-The `--report-cdx-app-name` parameter is optional. If omitted, Vet will use a default application name.
-</Note>
+`--report-cdx-app-name` is optional. With `-D`, the default name is the last element of the `-D` path, so `-D .` gives the name `.`. With `--lockfiles`, the default name is `vet-scanned-project`.
 
 ## What's Included in the SBOM
 
-The generated CycloneDX SBOM contains:
+- **Package inventory:** all direct and transitive dependencies, and the dependency graph
+- **Vulnerabilities:** known vulnerabilities from OSV and other sources, with CVSS ratings
+- **Licenses:** the license identifiers of each component
+- **Malware:** the results of malicious package analysis, as `vulnerabilities` entries
 
-<CardGroup cols={2}>
-  <Card title="Package Inventory" icon="box">
-    Complete list of all direct and transitive dependencies
-  </Card>
-  <Card title="Vulnerability Data" icon="shield-exclamation">
-    Known vulnerabilities from OSV database and other sources
-  </Card>
-  <Card title="License Information" icon="scale-balanced">
-    License identifiers and compliance data for each component
-  </Card>
-  <Card title="Malware Detection" icon="virus">
-    Results from malware analysis and threat detection
-  </Card>
-</CardGroup>
+To also add the AI SDKs and services that your code calls, run `vet code scan` first, then scan with `--code` and its database. See [Detect Shadow AI in Code](/governance/shadow-ai-detection).
 
-## Advanced Usage
-
-### Custom Application Metadata
-
-Provide detailed metadata about your application:
-
-```bash
-vet scan -D /path/to/project \
-  --report-cdx myapp-v1.2.3.cdx.json \
-  --report-cdx-app-name "MyApplication"
-```
-
-### Combined with Other Reports
+## Combined with Other Reports
 
 Generate multiple report formats simultaneously:
 
@@ -63,7 +41,7 @@ vet scan -D /path/to/project \
   --report-cdx-app-name "production-app"
 ```
 
-### Integration with CI/CD
+## Integration with CI/CD
 
 <Tabs>
   <Tab title="GitHub Actions">
@@ -93,9 +71,13 @@ vet scan -D /path/to/project \
   </Tab>
   
   <Tab title="GitLab CI">
+    The vet image starts `vet` as its entrypoint. Set an empty entrypoint so that GitLab can run the script.
+
     ```yaml
     generate-sbom:
-      image: ghcr.io/safedep/vet:latest
+      image:
+        name: ghcr.io/safedep/vet:latest
+        entrypoint: [""]
       script:
         - vet scan -D . --report-cdx sbom.cdx.json --report-cdx-app-name "$CI_PROJECT_NAME"
       artifacts:
@@ -105,6 +87,8 @@ vet scan -D /path/to/project \
           - sbom.cdx.json
         expire_in: 30 days
     ```
+
+    The `cyclonedx` report needs GitLab Ultimate. On other tiers, keep only `paths`.
   </Tab>
 </Tabs>
 
@@ -119,64 +103,22 @@ vet scan -D /path/to/project \
   </Card>
 </CardGroup>
 
-## SBOM Analysis and Consumption
+## Validate and Convert the SBOM
 
-### Viewing SBOM Content
-
-Install the [CycloneDX CLI](https://github.com/CycloneDX/cyclonedx-cli) (a .NET global tool) to validate and convert your SBOM:
+Use the [CycloneDX CLI](https://github.com/CycloneDX/cyclonedx-cli) to validate the SBOM or convert it to XML. Install it with `brew install cyclonedx/cyclonedx/cyclonedx-cli`, or run its container image:
 
 ```bash
-dotnet tool install --global CycloneDX
+# Validate against CycloneDX 1.6. The CLI defaults to 1.7.
+docker run --rm -v "$PWD:/data" cyclonedx/cyclonedx-cli \
+  validate --input-file /data/sbom.cdx.json --input-version v1_6 --fail-on-errors
 
-# Validate SBOM
-cyclonedx validate --input-file sbom.cdx.json
-
-# Convert to other formats
-cyclonedx convert --input-file sbom.cdx.json --output-file sbom.xml --output-format xml
+# Convert to XML
+docker run --rm -v "$PWD:/data" cyclonedx/cyclonedx-cli \
+  convert --input-file /data/sbom.cdx.json --output-file /data/sbom.xml \
+  --output-format xml --output-version v1_6
 ```
 
-### Integration with Security Tools
-
-Many security tools can consume CycloneDX SBOMs:
-
-- **Dependency Track**: Import SBOMs for vulnerability monitoring
-- **FOSSA**: License compliance analysis
-- **Snyk**: Security scanning and monitoring
-- **JFrog Xray**: Artifact analysis and security scanning
-
-## Naming Convention
-
-Use a consistent pattern for SBOM filenames:
-
-```
-{app-name}-{version}-{environment}.cdx.json
-myapp-1.2.3-production.cdx.json
-```
-
-## Troubleshooting
-
-<AccordionGroup>
-  <Accordion title="Large SBOM Files">
-    For projects with many dependencies, SBOMs can become large. Consider:
-    - Filtering out development dependencies in production SBOMs
-    - Using compressed storage formats
-    - Implementing SBOM splitting for microservices
-  </Accordion>
-  
-  <Accordion title="Missing Components">
-    If components are missing from your SBOM:
-    - Ensure all package manifest files are included in the scan
-    - Check that Vet supports your package manager
-    - Verify dependencies are properly declared in manifest files
-  </Accordion>
-  
-  <Accordion title="Validation Errors">
-    If SBOM validation fails:
-    - Check the CycloneDX schema version compatibility
-    - Verify all required fields are present
-    - Use cyclonedx-cli for detailed validation errors
-  </Accordion>
-</AccordionGroup>
+Tools such as Dependency-Track can import the SBOM to monitor it for new vulnerabilities.
 
 <CardGroup cols={2}>
   <Card title="CycloneDX Documentation" icon="book" href="https://cyclonedx.org/docs/1.6/json/">
@@ -185,7 +127,7 @@ myapp-1.2.3-production.cdx.json
   <Card title="Vet Repository" icon="github" href="https://github.com/safedep/vet">
     Explore Vet's complete SBOM generation capabilities
   </Card>
-  <Card title="Dependency Inventory" icon="list" href="/governance/vet/dependency-inventory">
-    Learn how to create accurate dependency inventories
+  <Card title="Scan an SBOM" icon="list" href="/governance/vet/dependency-inventory">
+    Scan an SBOM that your build tool generates
   </Card>
 </CardGroup>

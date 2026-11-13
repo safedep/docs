@@ -4,7 +4,7 @@ sidebarTitle: "GitHub Actions"
 description: "Integrate Vet with GitHub Actions and Code Scanning for automated security alerts."
 ---
 
-GitHub supports [uploading SARIF](https://docs.github.com/en/code-security/code-scanning/integrating-with-code-scanning/sarif-support-for-code-scanning) reports for repository and organization-wide visibility of security events. `vet` exports policy violation reports as SARIF for upload to GitHub Code Scanning.
+GitHub supports [uploading SARIF](https://docs.github.com/en/code-security/reference/code-scanning/sarif-files/sarif-support) reports for repository and organization-wide visibility of security events. `vet` exports its findings as SARIF for upload to GitHub Code Scanning.
 
 ## Quick Setup with GitHub Action
 
@@ -24,8 +24,9 @@ on:
 
 permissions:
   contents: read
-  security-events: write
+  issues: write
   pull-requests: write
+  security-events: write
 
 jobs:
   vet-scan:
@@ -42,29 +43,44 @@ jobs:
 
       - name: Upload SARIF
         if: steps.vet.outputs.report != ''
-        uses: github/codeql-action/upload-sarif@v3
+        uses: github/codeql-action/upload-sarif@v4
         with:
           sarif_file: ${{ steps.vet.outputs.report }}
           category: vet
 ```
 
 <Info>
-SARIF reports work when you enable GitHub Code Scanning in your repository. [Learn more](https://docs.github.com/en/code-security/code-scanning/enabling-code-scanning)
+SARIF reports work when you enable GitHub Code Scanning in your repository. [Learn more](https://docs.github.com/en/code-security/how-tos/find-and-fix-code-vulnerabilities/configure-code-scanning)
 </Info>
+
+The action supports the `push`, `pull_request` and `pull_request_target` events:
+
+- **On a push,** the action scans the repository and writes the SARIF report.
+- **On a pull request,** the action scans only the manifests that the pull request changes, and writes the SARIF report. The check fails when a package breaks the policy. If the pull request changes no manifest, the `report` output is empty, so the upload step does not run.
+
+For production workflows, pin each third-party action to a full commit SHA instead of a tag. The [example workflow](https://github.com/safedep/vet-action/blob/main/example/vet-ci.yml) pins `actions/checkout` this way.
 
 ### Advanced Configuration
 
-To use a custom policy:
+To use a custom policy, set `policy-v2`. It takes precedence over `policy`, which takes an older filter suite file:
 
 ```yaml
 - name: Run vet with custom policy
   id: vet
   uses: safedep/vet-action@v1
   with:
-    policy: '.github/vet/policy.yml'
+    policy-v2: '.github/vet/policy.yml'
   env:
     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 ```
+
+Other inputs that you often need:
+
+- `enable-comments-proxy: true`: comments on a pull request from a forked repository. The `GITHUB_TOKEN` of a fork cannot comment.
+- `exclude`: a comma-separated list of path patterns that the scan skips.
+- `cloud: true`, with `cloud-key` and `cloud-tenant`: syncs the policy and the report with SafeDep Cloud, and turns on malware analysis.
+
+For every input, see [Configuration](https://github.com/safedep/vet-action#configuration) in the vet-action README.
 
 ## Manual SARIF Generation
 
@@ -75,38 +91,20 @@ vet scan -D /path/to/project --report-sarif /path/to/report.sarif
 ```
 
 <Note>
-By default the SARIF report includes vulnerabilities and malware findings. To also report policy violations, pass a policy with `--policy` or `--policy-suite` during the scan.
+By default the SARIF report includes vulnerabilities and malware findings. To also report policy violations, pass a policy with `--policy` or `--policy-suite` during the scan. To leave out vulnerabilities or malware, set `--report-sarif-vulns=false` or `--report-sarif-malware=false`.
 </Note>
 
 ## Viewing Results
 
-Once uploaded, policy violations appear in the GitHub Security tab, giving a centralized view across repositories.
+Once uploaded, the findings appear in the GitHub Security tab, giving a centralized view across repositories.
 
 <img src="/images/vet-github-code-scanning-alerts.png" alt="GitHub Code Scanning Alerts" />
 
 ## Pull Request Integration
 
-The GitHub Action adds a comment to pull requests when security issues are found:
+On each pull request that changes a manifest, the GitHub Action adds a comment with the vet report. On the next run, it updates the same comment.
 
 <img src="/images/vet-github-action-pr.png" alt="vet GitHub Action PR comment" />
-
-## Best Practices
-
-<AccordionGroup>
-  <Accordion title="Pin third-party actions to commit SHAs">
-    For production workflows, pin third-party GitHub Actions to a full commit SHA rather than a mutable tag. This protects against tag-moving attacks, where a compromised upstream action could inject malicious code.
-
-    ```yaml
-    # Instead of:
-    uses: actions/checkout@v4
-
-    # Pin to a specific commit SHA:
-    uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
-    ```
-
-    The [actions/checkout](https://github.com/actions/checkout/releases) and [github/codeql-action](https://github.com/github/codeql-action/releases) release pages list the commit SHA for each release. `safedep/vet-action` uses [semantic versioning tags](https://github.com/safedep/vet-action/releases) maintained directly by SafeDep.
-  </Accordion>
-</AccordionGroup>
 
 ## Troubleshooting
 

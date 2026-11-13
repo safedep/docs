@@ -7,20 +7,10 @@ description: "Vet is a free, open-source SCA scanner that finds malicious, vulne
 
 ## What Vet does
 
-<CardGroup cols={2}>
-  <Card title="Automated analysis" icon="robot">
-    Replace manual dependency reviews with policy-driven analysis.
-  </Card>
-  <Card title="Policy as code" icon="file-code">
-    Define and version security policy with [CEL](/concepts/cel).
-  </Card>
-  <Card title="CI/CD integration" icon="code-branch">
-    Run in any CI tool or your local workflow.
-  </Card>
-  <Card title="Trusted data" icon="shield-check">
-    Built on OSV, OpenSSF Scorecard, deps.dev, and SafeDep malware intelligence.
-  </Card>
-</CardGroup>
+- **Scans many sources.** A directory, a lockfile or an SBOM. Vet also scans container images, GitHub repositories and organizations, one package by its PURL, VS Code extensions, Homebrew packages and Agent Skills.
+- **Uses SafeDep package intelligence.** Vulnerabilities from OSV, OpenSSF Scorecard data and malicious package analysis.
+- **Enforces policy as code.** Write and version the policy with [CEL](/concepts/cel). Vet can fail a build when a package breaks the policy.
+- **Writes the report that you need.** SARIF, JSON, Markdown, CSV, HTML, CycloneDX, GitLab, Bitbucket Code Insights and DefectDojo. Vet can also sync the results to SafeDep Cloud.
 
 ## Get started
 
@@ -28,8 +18,17 @@ description: "Vet is a free, open-source SCA scanner that finds malicious, vulne
   <Card title="Vet Quickstart" icon="rocket" href="/governance/vet/quickstart">
     Scan your first project in minutes.
   </Card>
-  <Card title="Dependency Inventory" icon="boxes-stacked" href="/governance/vet/dependency-inventory">
-    Generate an accurate dependency inventory.
+  <Card title="GitHub Actions" icon="github" href="/governance/integrations/github-code-scanning">
+    Scan each pull request and send the results to GitHub Code Scanning.
+  </Card>
+  <Card title="Generate an SBOM" icon="file-lines" href="/governance/cyclonedx-sbom">
+    Write a CycloneDX SBOM with the security findings.
+  </Card>
+  <Card title="Scan an SBOM" icon="boxes-stacked" href="/governance/vet/dependency-inventory">
+    Scan an SBOM that your build tool generates.
+  </Card>
+  <Card title="Detect Shadow AI in Code" icon="robot" href="/governance/shadow-ai-detection">
+    Make an AI BOM of the AI SDKs and services that your code uses.
   </Card>
   <Card title="Code Analysis" icon="magnifying-glass" href="/governance/vet/code-analysis">
     Prioritize findings by which dependencies your code actually uses.

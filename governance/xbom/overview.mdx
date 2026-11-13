@@ -5,22 +5,11 @@ description: "xBom generates a Bill of Materials enriched with AI and SaaS usage
 
 Modern applications reach far beyond declared dependencies: AI SDKs, ML models, and third-party SaaS APIs. Traditional BOM tools only read manifest files like `requirements.txt` or `pom.xml`. [xBom](https://github.com/safedep/xbom) analyzes your source code to find what your application actually uses, for a more accurate [SBOM](/concepts/sbom).
 
-## What xBom does
+xBom finds evidence of AI SDKs, cloud APIs and cryptography in Python, Java, Go and JavaScript code. It writes a standard CycloneDX BOM. Community signatures detect each component. The signatures are built into xBom, so to add one, contribute it to the xBom repository.
 
-<CardGroup cols={2}>
-  <Card title="Beyond manifests" icon="magnifying-glass">
-    Finds real evidence of AI SDKs, cloud APIs, and crypto in your code, not just declared packages.
-  </Card>
-  <Card title="Extensible signatures" icon="fingerprint">
-    Community-driven signatures detect components; add your own for proprietary tools.
-  </Card>
-  <Card title="CycloneDX output" icon="file-lines">
-    Produces standard CycloneDX BOMs for compliance and tooling.
-  </Card>
-  <Card title="Multi-ecosystem" icon="layer-group">
-    Supports Python, Java, Go, and JavaScript.
-  </Card>
-</CardGroup>
+<Note>
+  For an AI BOM, use [vet](/governance/shadow-ai-detection). Vet uses the same code analysis with more signatures, and writes the AI BOM and the dependency SBOM in one CycloneDX file.
+</Note>
 
 ## Get started
 
@@ -28,8 +17,8 @@ Modern applications reach far beyond declared dependencies: AI SDKs, ML models, 
   <Card title="xBom Quickstart" icon="rocket" href="/governance/xbom/quickstart">
     Generate your first xBOM.
   </Card>
-  <Card title="CycloneDX SBOM" icon="file-lines" href="/governance/cyclonedx-sbom">
-    Generate a standard SBOM with Vet.
+  <Card title="Detect Shadow AI in Code" icon="robot" href="/governance/shadow-ai-detection">
+    Make an AI BOM with vet.
   </Card>
   <Card title="What is an SBOM?" icon="lightbulb" href="/concepts/sbom">
     SBOM versus xBOM, explained.

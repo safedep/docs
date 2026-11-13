@@ -188,7 +188,9 @@ terraform-init:
 
 terraform-audit:
   stage: audit
-  image: ghcr.io/safedep/vet:latest
+  image:
+    name: ghcr.io/safedep/vet:latest
+    entrypoint: [""]
   script:
     - vet scan -D . --report-sync --report-sync-project $CI_PROJECT_PATH --report-sync-project-version $CI_COMMIT_REF_NAME
   dependencies:

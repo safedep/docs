@@ -3,25 +3,17 @@ title: "Endpoint Hub"
 description: "Visibility into AI tooling and package activity across your developer machines, CI runners, and agent sandboxes"
 ---
 
-Endpoint Hub gives you visibility into what is running across your **endpoints**: developer machines, CI runners, and agent sandboxes. It brings together three views in SafeDep Cloud: **Inventory** (the AI tooling found on each endpoint), **Package Guard** (package installs and usage over time), and **MCP Advisor** (packages your AI coding agents vetted through the SafeDep MCP server). Each view is powered by a SafeDep tool that reports activity to the cloud.
+Endpoint Hub shows what runs on your **endpoints**: developer machines, CI runners, and agent sandboxes. Each endpoint in SafeDep Cloud gets data from three sources:
 
-## What Endpoint Hub covers
+- **Inventory:** the AI tooling on the endpoint, such as coding agents, MCP servers, Agent Skills, CLI tools and IDE extensions. `vet endpoint scan` finds them and syncs them.
+- **Package Guard:** a timeline of package installs. [PMG](/package-security/pmg/quickstart) records them and syncs them.
+- **MCP Advisor:** the packages that your AI coding agents checked through the [SafeDep MCP server](/ai-security/mcp-server), with each verdict. An endpoint shows these checks only when the agent config has the endpoint ID, which `safedep setup mcp install` adds.
 
-### Inventory
+To open an endpoint, select **Endpoints** in the [app.safedep.io](https://app.safedep.io) sidebar. Without SafeDep Cloud credentials, vet and PMG still run, and no data leaves the machine.
 
-Inventory shows the AI tooling active on each endpoint: coding agents, MCP servers, Agent Skills, CLI tools, and IDE extensions. It is powered by `vet endpoint scan`, which discovers these locally and delivers them to SafeDep Cloud when credentials are configured.
-
-### Package Guard
-
-Package Guard shows package installs and usage across your endpoints as a timeline of events. It runs on [PMG](/package-security/pmg/quickstart), the open-source Package Manager Guard CLI that intercepts package manager commands and syncs the activity to SafeDep Cloud.
-
-### MCP Advisor
-
-MCP Advisor shows the packages your AI coding agents checked through the [SafeDep MCP server](/ai-security/mcp-server) and the verdict each one received. SafeDep records an advisory each time an agent vets a package.
-
-## How it works
-
-Inventory and Package Guard follow the same model: an open source CLI runs on the endpoint and, once SafeDep Cloud credentials are configured, syncs its findings to your tenant. MCP Advisor needs no sync, since the MCP server records advisories as agents use it. You browse each endpoint under **Endpoint Hub** in the [app.safedep.io](https://app.safedep.io) sidebar. Without SafeDep Cloud credentials, the local tools still run and no data leaves the machine.
+<Note>
+Endpoint Hub needs the SafeDep Cloud **Team** or **Enterprise** plan. See [pricing](https://safedep.io/pricing).
+</Note>
 
 ## Get started
 
@@ -40,5 +32,11 @@ Inventory and Package Guard follow the same model: an open source CLI runs on th
   </Card>
   <Card title="Review Package Blocks Across CI Pipelines" icon="github" href="/governance/cloud/endpoint-hub/ci-package-blocks">
     See what PMG blocked on your CI runners
+  </Card>
+  <Card title="Ask an AI Agent" icon="comments" href="/governance/cloud/endpoint-hub/agentic-investigation">
+    Ask questions about your endpoints in plain English
+  </Card>
+  <Card title="Query with SQL" icon="database" href="/governance/cloud/query-with-sql">
+    Query the endpoint events of your tenant with SQL
   </Card>
 </CardGroup>

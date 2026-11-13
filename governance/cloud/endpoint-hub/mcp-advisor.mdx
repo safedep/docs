@@ -6,7 +6,7 @@ description: "Review the packages your AI coding agents checked through the Safe
 MCP Advisor lists the packages your AI coding agents checked through the [SafeDep MCP server](/ai-security/mcp-server) and the verdict each one got. Once the MCP server is set up, SafeDep records an advisory each time an agent vets a package, with no extra configuration.
 
 <Note>
-MCP Advisor is a SafeDep Cloud feature and requires [endpoint sync](/governance/cloud/sync). If your endpoint has no **Advisor** tab, it is not enabled for your tenant yet. Contact the [SafeDep team](/community) to join early access.
+MCP Advisor is a SafeDep Cloud feature. An endpoint shows the checks only when the agent config has the endpoint ID. `safedep setup mcp install` adds it. After a manual setup, SafeDep Cloud records the checks for the tenant, not for an endpoint. MCP Advisor needs the Team or Enterprise plan.
 </Note>
 
 ## Prerequisites
@@ -21,8 +21,8 @@ The SafeDep CLI is the fastest way to configure the MCP server: `npx @safedep/cl
 ## View advisories
 
 <Steps>
-  <Step title="Open Endpoint Hub">
-    Go to [app.safedep.io](https://app.safedep.io) and select **Endpoint Hub** in the sidebar.
+  <Step title="Open Endpoints">
+    Go to [app.safedep.io](https://app.safedep.io) and select **Endpoints** in the sidebar.
   </Step>
   <Step title="Pick an endpoint">
     Choose the endpoint from the list.
