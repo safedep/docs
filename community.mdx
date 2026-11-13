@@ -1,151 +1,104 @@
 ---
 title: Community
-description: "Join the SafeDep and Vet user community for support and discussions"
+description: "Join the SafeDep community on Discord and GitHub to get help with vet, PMG, Gryph, xBom and SafeDep Cloud."
 ---
 
-Connect with other users, get support, and follow development.
-
-## Discord Community
-
-Discord is the primary community hub. Join to:
-
-- Ask questions and get answers from members and maintainers
-- Discuss features and use cases
-- Get announcements about new releases
-- Connect with other security professionals using Vet and SafeDep
+Discord is the main SafeDep community. Ask questions, discuss features and get release announcements there.
 
 <Card title="Join SafeDep Discord" icon="discord" href="https://discord.gg/kAGEj25dCn">
   **Join the server:** https://discord.gg/kAGEj25dCn
 </Card>
 
-<img src="/images/safedep-discord.png" alt="SafeDep Discord Community" />
+## Other channels
 
-## Other Community Channels
-
-<CardGroup cols={2}>
-  <Card title="GitHub Discussions" icon="github" href="https://github.com/safedep/vet/discussions">
-    Join conversations about Vet development and usage
-  </Card>
-  <Card title="GitHub Issues" icon="bug" href="https://github.com/safedep/vet/issues">
-    Report bugs, request features, or contribute to development
+<CardGroup cols={3}>
+  <Card title="GitHub" icon="github" href="https://github.com/safedep">
+    Report bugs and request features
   </Card>
   <Card title="LinkedIn" icon="linkedin" href="https://linkedin.com/company/safedep">
-    Follow SafeDep for company updates and industry insights
+    Follow SafeDep for company updates
   </Card>
   <Card title="Twitter/X" icon="twitter" href="https://x.com/safedepio">
     Get quick updates and security tips
   </Card>
 </CardGroup>
 
-## Getting Help
+Each open source tool has its own GitHub repository:
 
-### Before Asking Questions
-
-1. **Check the documentation** - Search the guides and API reference
-2. **Review existing issues** - Your question may already be answered
-3. **Try debugging steps** - Use debug logs to gather more information
-
-### How to Ask Effective Questions
-
-<AccordionGroup>
-  <Accordion title="Provide Context">
-    - What are you trying to accomplish?
-    - What command did you run?
-    - What was the expected vs actual behavior?
-  </Accordion>
-  
-  <Accordion title="Include Details">
-    - Operating system and version
-    - Vet version (`vet version`)
-    - Relevant configuration files
-    - Error messages and logs
-  </Accordion>
-  
-  <Accordion title="Share Code/Commands">
-    - Use code blocks for commands and outputs
-    - Include relevant parts of manifests or config files
-    - Sanitize any sensitive information
-  </Accordion>
-</AccordionGroup>
-
-### Debug Information
-
-```bash
-# Get version information
-vet version
-
-# Enable debug logging and verbose output
-vet scan -D /path/to/repo -l- -d
-
-# Log to file for sharing
-vet scan -D /path/to/repo -l /tmp/vet.log -d
-```
-
-## Contributing
-
-### Ways to Contribute
-
-<CardGroup cols={2}>
-  <Card title="Report Issues" icon="exclamation-triangle" href="https://github.com/safedep/vet/issues">
-    Help improve Vet by reporting bugs and issues you encounter
-  </Card>
-  <Card title="Feature Requests" icon="lightbulb" href="https://github.com/safedep/vet/discussions">
-    Suggest new features or improvements
-  </Card>
-  <Card title="Documentation" icon="book" href="https://github.com/safedep/docs">
-    Help improve documentation with corrections, clarifications, or new content
-  </Card>
-  <Card title="Code Contributions" icon="code" href="https://github.com/safedep/vet/blob/main/CONTRIBUTING.md">
-    Contribute bug fixes, features, or performance improvements
-  </Card>
-</CardGroup>
-
-### Contribution Guidelines
-
-Before contributing:
-
-1. **Check existing issues** to avoid duplicates
-2. **Follow the code of conduct** in all interactions
-3. **Use issue templates** when reporting bugs or requesting features
-4. **Test your changes** thoroughly before submitting
-
-## Community Guidelines
-
-### Code of Conduct
-
-- **Be respectful** in all interactions
-- **Help others** learn and grow
-- **Stay on topic** in discussions
-- **No spam or self-promotion** without prior approval
-- **Report inappropriate behavior** to moderators
+| Tool | Repository |
+|---|---|
+| vet | [safedep/vet](https://github.com/safedep/vet) |
+| PMG | [safedep/pmg](https://github.com/safedep/pmg) |
+| Gryph | [safedep/gryph](https://github.com/safedep/gryph) |
+| xBom | [safedep/xbom](https://github.com/safedep/xbom) |
+| SafeDep CLI | [safedep/cli](https://github.com/safedep/cli) |
 
 Use the right channel for your topic:
 
 - General questions: Discord general channel
-- Bug reports: GitHub issues
-- Feature requests: GitHub discussions
 - Support requests: Discord help channel
+- Bug reports: GitHub issues in the repository of the tool
+- Feature requests: GitHub discussions for vet and PMG, and GitHub issues for the other tools
+
+## Ask for help
+
+Include these details in your question. Remove sensitive information first.
+
+- What you want to do, the command you ran, and the expected and actual result
+- Your operating system and its version
+- The tool version, from `vet version`, `pmg version`, `gryph version`, `xbom version` or `safedep version`
+- The related manifest or configuration files
+- The error message and the debug log, in code blocks
+
+To get more detailed log output:
+
+```bash
+# vet: show the debug log in the terminal, or write it to a file
+vet scan -D /path/to/repo -l- -d
+vet scan -D /path/to/repo -l /tmp/vet.log -d
+
+# PMG: show the debug log, and write the logs to a file
+pmg --debug --log /tmp/pmg.log npm install <package>
+
+# Gryph: show verbose output, or check the installation
+gryph --verbose <command>
+gryph doctor
+
+# xBom: show verbose output
+xbom --verbose <command>
+
+# SafeDep CLI: show verbose error details
+safedep --verbose <command>
+```
+
+## Contribute
+
+Before you open an issue, search the existing issues. Use the issue template if the repository has one, and follow the [code of conduct](https://github.com/safedep/.github/blob/main/CODE_OF_CONDUCT.md).
+
+<CardGroup cols={2}>
+  <Card title="Documentation" icon="book" href="https://github.com/safedep/docs">
+    Correct, clarify or add to these docs
+  </Card>
+  <Card title="Code Contributions" icon="code" href="https://github.com/safedep">
+    Read the CONTRIBUTING.md of the tool repository, then send bug fixes, features or performance improvements
+  </Card>
+</CardGroup>
 
 ## Resources
 
 <CardGroup cols={2}>
-  <Card title="Documentation" icon="book" href="/introduction">
-    Complete documentation for Vet and SafeDep Cloud
+  <Card title="Changelog" icon="list" href="/changelog/2026">
+    What SafeDep shipped
   </Card>
-  <Card title="Examples Repository" icon="code" href="https://github.com/safedep/vet/tree/main/examples">
-    Sample configurations and use cases
-  </Card>
-  <Card title="Changelog" icon="list" href="https://github.com/safedep/vet/releases">
-    Latest releases and version history
-  </Card>
-  <Card title="Security Policy" icon="shield-check" href="https://github.com/safedep/vet/security/policy">
+  <Card title="Security Policy" icon="shield-check" href="https://github.com/safedep/.github/blob/main/SECURITY.md">
     How to report security vulnerabilities
   </Card>
 </CardGroup>
 
+For the version history of a tool, see the releases page of its repository.
+
 ## Contact
 
 - **General support**: [support@safedep.io](mailto:support@safedep.io)
-- **Security issues**: Follow the [security policy](https://github.com/safedep/vet/security/policy)
+- **Security issues**: [security@safedep.io](mailto:security@safedep.io)
 - **Business inquiries**: [hello@safedep.io](mailto:hello@safedep.io)
-

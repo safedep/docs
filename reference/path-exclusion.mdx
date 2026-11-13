@@ -3,14 +3,17 @@ title: Path Exclusion
 description: "Exclude specific directories and files from security scans using pattern matching"
 ---
 
-`vet` supports path exclusions when scanning a directory: use the `--exclude` flag to skip path patterns within the target. Path exclusions are available only for the `scan` command.
+Use the `--exclude` flag of `vet scan` to skip paths that match a pattern. This page covers `vet scan`. The `--exclude` flag of `vet code scan` takes Go regular expressions, not the glob patterns below.
+
+vet always skips the `.git` and `node_modules` directories. You do not need to exclude them.
 
 ## Basic Usage
 
-Exclude a single path pattern during directory scanning:
+vet resolves a relative pattern against the current directory, not against the `-D` target. Run vet from the target directory:
 
 ```bash
-vet scan -D /path/to/target --exclude 'docs/*'
+cd /path/to/target
+vet scan -D . --exclude 'docs/*'
 ```
 
 ## Multiple Exclusions
@@ -18,124 +21,33 @@ vet scan -D /path/to/target --exclude 'docs/*'
 Specify multiple path patterns for exclusion:
 
 ```bash
-vet scan -D /path/to/target \
+vet scan -D . \
     --exclude 'docs/*' \
     --exclude 'sub/dir/path/*' \
-    --exclude '*.test.js'
+    --exclude 'build/*'
 ```
 
 <Info>
 Exclusion patterns use [glob matching](https://github.com/bmatcuk/doublestar) (the `doublestar` library), not regular expressions. Use `*` to match within a single path segment and `**` to match across directories.
 </Info>
 
-## Common Exclusion Patterns
+`--exclude` also applies to the files that you give with `-M` and `--lockfiles`.
 
-### Documentation and Build Artifacts
+## Common Patterns
 
-```bash
-vet scan -D . \
-    --exclude 'docs/*' \
-    --exclude 'build/*' \
-    --exclude 'dist/*' \
-    --exclude 'target/*' \
-    --exclude '*.generated.*'
-```
+<Warning>
+When a pattern matches a file, vet also skips the other files in the same directory. If the file is at the top of the scanned directory, vet scans nothing and shows no error. Until vet fixes this, exclude directories, not files, or check the number of scanned manifests.
+</Warning>
 
-### Test Files and Directories
+Give each pattern to its own `--exclude` flag. A pattern without `**/` matches only at the top of the current directory.
 
-```bash
-vet scan -D . \
-    --exclude 'test/*' \
-    --exclude 'tests/*' \
-    --exclude '*_test.go' \
-    --exclude '*.test.js' \
-    --exclude 'spec/*'
-```
-
-### Version Control and Dependencies
-
-```bash
-vet scan -D . \
-    --exclude '.git/*' \
-    --exclude 'node_modules/*' \
-    --exclude 'vendor/*' \
-    --exclude '.venv/*' \
-    --exclude '__pycache__/*'
-```
-
-### Development Tools
-
-```bash
-vet scan -D . \
-    --exclude '.idea/*' \
-    --exclude '.vscode/*' \
-    --exclude '*.log' \
-    --exclude 'tmp/*' \
-    --exclude 'temp/*'
-```
-
-## Advanced Pattern Examples
-
-### File Extension Exclusions
-
-```bash
-# Exclude specific file types
-vet scan -D . \
-    --exclude '**/*.md' \
-    --exclude '**/*.txt' \
-    --exclude '**/*.png' \
-    --exclude '**/*.jpg'
-```
-
-### Environment-Specific Exclusions
-
-```bash
-# Development environment
-vet scan -D . \
-    --exclude 'dev-tools/**' \
-    --exclude 'local-config/**' \
-    --exclude '**/*.dev.*'
-
-# Production build
-vet scan -D . \
-    --exclude 'test/*' \
-    --exclude 'examples/*' \
-    --exclude 'dev-dependencies/*'
-```
-
-### Complex Pattern Matching
-
-```bash
-# Exclude multiple similar patterns
-vet scan -D . \
-    --exclude '**/test/**' \
-    --exclude '**/tests/**' \
-    --exclude '**/spec/**' \
-    --exclude '**/mocks/**'
-```
-
-## Makefile Integration
-
-```makefile
-# Makefile with different scan targets
-.PHONY: scan-prod scan-dev scan-all
-
-scan-prod:
-	vet scan -D . \
-		--exclude 'test/*' \
-		--exclude 'dev-tools/*' \
-		--exclude 'docs/*' \
-		--report-json production-scan.json
-
-scan-dev:
-	vet scan -D . \
-		--exclude 'node_modules/*' \
-		--exclude '.git/*' \
-		--report-json development-scan.json
-
-scan-all:
-	vet scan -D . \
-		--exclude '.git/*' \
-		--report-json complete-scan.json
-```
-
+| To skip | Patterns |
+|---|---|
+| Documentation and build output | `docs/*`, `build/*`, `dist/*`, `target/*`, `**/*.generated.*` |
+| Tests | `test/*`, `tests/*`, `spec/*`, `**/*_test.go`, `**/*.test.js` |
+| Installed dependencies | `vendor/*`, `.venv/*`, `**/__pycache__` |
+| Editor and temporary files | `.idea/*`, `.vscode/*`, `**/*.log`, `tmp/*`, `temp/*` |
+| File types in every directory | `**/*.md`, `**/*.txt`, `**/*.png`, `**/*.jpg` |
+| Development-only files | `dev-tools/**`, `local-config/**`, `**/*.dev.*` |
+| Code that does not ship to production | `test/*`, `examples/*`, `dev-dependencies/*` |
+| Test and mock directories at any depth | `**/test/**`, `**/tests/**`, `**/spec/**`, `**/mocks/**` |
