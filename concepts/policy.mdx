@@ -8,7 +8,7 @@ A policy turns your supply chain rules into data that SafeDep tools apply to eac
 
 ## The cloud policy
 
-The cloud policy is one policy for each [tenant](/concepts/tenant). It lives in SafeDep Cloud, and an Admin of the tenant changes it with the [safedep CLI](/get-started/cli-tools). A change reaches every endpoint and every pull request check of the tenant with no new MDM package.
+The cloud policy is one policy for each [tenant](/concepts/tenant). It lives in SafeDep Cloud, and an Owner or an Admin of the tenant changes it with the [safedep CLI](/get-started/cli-tools). A change reaches every endpoint and every pull request check of the tenant with no new MDM package.
 
 The cloud policy holds two kinds of content:
 
@@ -25,7 +25,7 @@ These tools enforce the cloud policy:
 
 ## Policy as code
 
-Policy as code is a Vet filter suite: a YAML file of [CEL](/concepts/cel) rules that you keep in a repository. Vet evaluates each package of a scan against the rules, including transitive dependencies, and you decide what a match does. During a local scan, Vet can exit with a non-zero code when a package matches a rule. In CI/CD, [vet-action](https://github.com/safedep/vet-action) takes the policy file in its `policy` input.
+Policy as code is a Vet filter suite: a YAML file of [CEL](/concepts/cel) rules that you keep in a repository. Vet evaluates each package of a scan against the rules, including transitive dependencies, and you decide what a match does. During a local scan, Vet can exit with a non-zero code when a package matches a rule. In CI/CD, [vet-action](/governance/integrations/github-code-scanning) takes a filter suite in its `policy` input, or a v2 policy file in its `policy-v2` input.
 
 See [Policy as Code](/reference/policy-as-code) for the syntax and examples.
 

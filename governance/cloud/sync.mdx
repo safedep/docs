@@ -127,7 +127,10 @@ The pattern is the same on any CI system: provide `SAFEDEP_API_KEY` and `SAFEDEP
 
     security-scan:
       stage: security
-      image: ghcr.io/safedep/vet:latest
+      image:
+        name: ghcr.io/safedep/vet:latest
+        # The image starts vet. Clear the entrypoint so that GitLab can run the script.
+        entrypoint: [""]
       script:
         - vet scan -D . --report-sync --report-sync-project $CI_PROJECT_PATH --report-sync-project-version $CI_COMMIT_REF_NAME
       variables:

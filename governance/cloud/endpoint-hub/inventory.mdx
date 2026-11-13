@@ -20,6 +20,7 @@ Endpoint inventory shows what AI tooling is active across your endpoints (develo
 
 - `vet` [installed](/governance/vet/quickstart)
 - A SafeDep Cloud account with an API key and tenant domain (see [Cloud quickstart](/governance/cloud/quickstart))
+- The SafeDep Cloud **Team** or **Enterprise** plan for Endpoint Hub and SQL queries. See [pricing](https://safedep.io/pricing).
 
 ## Enable inventory sync
 
@@ -68,9 +69,13 @@ Endpoint inventory shows what AI tooling is active across your endpoints (develo
   </Step>
 
   <Step title="View inventory in SafeDep Cloud">
-    Open [app.safedep.io](https://app.safedep.io), select **Endpoint Hub** in the sidebar, and pick your endpoint. Your endpoint appears in the list by your machine's hostname. Open the **Inventory** tab to see discovered items.
+    Open [app.safedep.io](https://app.safedep.io), select **Endpoints** in the sidebar, and pick your endpoint. Your endpoint appears in the list by your machine's hostname. Open the **AI Tools** tab. It lists the coding agents, MCP servers, and other AI tools from the last scan.
 
-    <img src="/images/endpoint-hub/endpoint-hub-inventory.png" alt="SafeDep Cloud Endpoint Hub Inventory tab" />
+    <img src="/images/cloud/endpoint-ai-tools.png" alt="AI Tools tab of an endpoint in SafeDep Cloud with two coding agents and three MCP servers" />
+
+    To see each discovered item as an event of a scan, open the **Inventory Events** tab.
+
+    <img src="/images/endpoint-hub/endpoint-hub-inventory.png" alt="Inventory Events tab of an endpoint in SafeDep Cloud" />
 
     <Tip>
       If your endpoint is not listed, confirm credentials with `vet auth verify` and re-run the scan.
@@ -90,11 +95,7 @@ Endpoint inventory shows what AI tooling is active across your endpoints (develo
 
 ## Review AI tools across your team
 
-Open an endpoint in **Endpoints** and select **AI Tools**. The tab lists the coding agents, MCP servers, and other AI tools from the last scan.
-
-<img src="/images/cloud/endpoint-ai-tools.png" alt="AI Tools tab of an endpoint in SafeDep Cloud with two coding agents and three MCP servers" />
-
-To see one kind of tool on all endpoints, run a query. This query lists the MCP servers:
+To see one kind of tool on all endpoints, run a [SQL query](/governance/cloud/query-with-sql). This query lists the MCP servers:
 
 ```sql
 SELECT endpoints.identifier,
@@ -104,10 +105,6 @@ FROM inventory_events
 JOIN endpoints ON endpoints.id = inventory_events.invocation_id
 WHERE inventory_events.item_kind = 'INVENTORY_ITEM_KIND_MCP_SERVER'
 ```
-
-<Note>
-  Endpoint Hub and SQL queries need the SafeDep Cloud Team or Enterprise plan. See [pricing](https://safedep.io/pricing).
-</Note>
 
 ## Next steps
 

@@ -268,10 +268,13 @@ Common causes:
   </Accordion>
   
   <Accordion title="Use Warning Mode">
-    The action does not fail the build by default, so you can surface findings without blocking while you tune policies. Just leave `paranoid` off (its default is `false`):
+    The action fails the pull request check when a package breaks the policy. To report the findings without blocking the merge while you tune the policy, set `continue-on-error: true` on the step. The action still adds its pull request comment.
     ```yaml
-    with:
-      paranoid: false
+    - name: Run vet
+      uses: safedep/vet-action@v1
+      continue-on-error: true
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     ```
   </Accordion>
 </AccordionGroup>

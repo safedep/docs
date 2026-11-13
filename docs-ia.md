@@ -151,8 +151,8 @@ Don't mix Diátaxis types within a single page.
 - Flat list: `ai-security/ai-tools-discovery`, `ai-security/gryph-overview`, `ai-security/mcp-server`, `ai-security/sandbox-coding-agents`
 
 **Visibility & Governance** *(tab landing: `governance/overview`)*
-- Repository Scanning: `governance/vet/overview` *(landing)*, `governance/vet/quickstart`, `governance/vet/dependency-inventory`, `governance/vet/code-analysis`, `governance/vet/build-your-own-queries`, `governance/terraform-audit`, `governance/vet/mdm/overview`
-- Bill of Materials: `governance/xbom/overview` *(landing)*, `governance/xbom/quickstart`, `governance/cyclonedx-sbom`
+- Repository Scanning: `governance/vet/overview` *(landing)*, `governance/vet/quickstart`, `governance/vet/code-analysis`, `governance/vet/build-your-own-queries`, `governance/terraform-audit`, `governance/vet/mdm/overview`
+- Bill of Materials: `governance/xbom/overview` *(landing)*, `governance/cyclonedx-sbom`, `governance/vet/dependency-inventory`, `governance/xbom/quickstart`
 - AI Visibility: `governance/ai-governance` *(landing)*, `governance/shadow-ai-detection`
 - CI/CD Integrations: `governance/integrations/overview` *(landing)*, `governance/integrations/github`, `governance/integrations/github-code-scanning`, `governance/integrations/gitlab`, `governance/integrations/bitbucket-app`, `governance/integrations/bitbucket`, `governance/integrations/defectdojo`
 - SafeDep Cloud: `governance/cloud/overview` *(landing)*

@@ -167,7 +167,10 @@ filters:
   <Tab title="GitLab CI">
     ```yaml
     security-scan:
-      image: ghcr.io/safedep/vet:latest
+      image:
+        name: ghcr.io/safedep/vet:latest
+        # The image starts vet. Clear the entrypoint so that GitLab can run the script.
+        entrypoint: [""]
       script:
         - vet scan -D . 
             --filter-suite security-policy.yml

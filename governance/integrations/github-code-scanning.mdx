@@ -4,13 +4,17 @@ sidebarTitle: "GitHub Actions"
 description: "Integrate Vet with GitHub Actions and Code Scanning for automated security alerts."
 ---
 
-GitHub supports [uploading SARIF](https://docs.github.com/en/code-security/code-scanning/integrating-with-code-scanning/sarif-support-for-code-scanning) reports for repository and organization-wide visibility of security events. `vet` exports policy violation reports as SARIF for upload to GitHub Code Scanning.
+GitHub supports [uploading SARIF](https://docs.github.com/en/code-security/reference/code-scanning/sarif-files/sarif-support) reports for repository and organization-wide visibility of security events. `vet` exports its findings as SARIF for upload to GitHub Code Scanning.
 
 ## Quick Setup with GitHub Action
 
 `vet` has a dedicated GitHub Action, which is the recommended approach for most teams.
 
 ### Basic Configuration
+
+<Info>
+The SARIF upload needs GitHub Code Scanning on in your repository. See [Configure code scanning](https://docs.github.com/en/code-security/how-tos/find-and-fix-code-vulnerabilities/configure-code-scanning).
+</Info>
 
 Create `.github/workflows/vet.yml` in your repository:
 
@@ -24,13 +28,15 @@ on:
 
 permissions:
   contents: read
-  security-events: write
+  issues: write
   pull-requests: write
+  security-events: write
 
 jobs:
   vet-scan:
     runs-on: ubuntu-latest
     steps:
+      # In production, pin each action to a full commit SHA.
       - name: Checkout
         uses: actions/checkout@v4
 
@@ -42,29 +48,43 @@ jobs:
 
       - name: Upload SARIF
         if: steps.vet.outputs.report != ''
-        uses: github/codeql-action/upload-sarif@v3
+        uses: github/codeql-action/upload-sarif@v4
         with:
           sarif_file: ${{ steps.vet.outputs.report }}
           category: vet
 ```
 
-<Info>
-SARIF reports work when you enable GitHub Code Scanning in your repository. [Learn more](https://docs.github.com/en/code-security/code-scanning/enabling-code-scanning)
-</Info>
+The action supports the `push`, `pull_request` and `pull_request_target` events.
+
+- **On a push,** the action scans the repository and writes the SARIF report.
+- **On a pull request,** the action scans only the packages that the pull request adds or changes in its manifests. When a package breaks the policy, the check fails and the SARIF upload step does not run. If the pull request changes no manifest, the `report` output is empty, so the upload step does not run.
+
+The [example workflow](https://github.com/safedep/vet-action/blob/main/example/vet-ci.yml) pins `actions/checkout` to a commit SHA.
+
+To report the findings without blocking the merge, for example while you tune the policy, set `continue-on-error: true` on the vet step. The action still adds its pull request comment.
 
 ### Advanced Configuration
 
-To use a custom policy:
+To use a custom policy, set `policy-v2` to a policy file in the [v2 format](https://github.com/safedep/vet/blob/main/samples/policy-v2.yml). It takes precedence over `policy`, which takes an older [filter suite](/reference/policy-as-code) file. Without either input, the action uses its default policy.
 
 ```yaml
 - name: Run vet with custom policy
   id: vet
   uses: safedep/vet-action@v1
   with:
-    policy: '.github/vet/policy.yml'
+    policy-v2: '.github/vet/policy.yml'
   env:
     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 ```
+
+Other inputs that you often need:
+
+- `enable-comments-proxy: true`: comments on a pull request from a forked repository. The `GITHUB_TOKEN` of a fork cannot comment.
+- `exclude`: a comma-separated list of path patterns that the scan skips.
+- `cloud: true`, with `cloud-key` and `cloud-tenant`: syncs the report with SafeDep Cloud, and queries the malware data with your tenant API key instead of the community API. See [Sync from GitHub Actions](/governance/cloud/sync#sync-from-github-actions).
+- `paranoid: true`: in cloud mode, also treats as malicious the packages that the malware analysis marks with medium confidence or higher, before SafeDep verifies them.
+
+For every input, see [Configuration](https://github.com/safedep/vet-action#configuration) in the vet-action README.
 
 ## Manual SARIF Generation
 
@@ -75,38 +95,20 @@ vet scan -D /path/to/project --report-sarif /path/to/report.sarif
 ```
 
 <Note>
-By default the SARIF report includes vulnerabilities and malware findings. To also report policy violations, pass a policy with `--policy` or `--policy-suite` during the scan.
+By default the SARIF report includes vulnerabilities and malware findings. To also report policy violations, pass a policy with `--policy` or `--policy-suite` during the scan. To leave out vulnerabilities or malware, set `--report-sarif-vulns=false` or `--report-sarif-malware=false`.
 </Note>
 
 ## Viewing Results
 
-Once uploaded, policy violations appear in the GitHub Security tab, giving a centralized view across repositories.
+Once uploaded, the findings appear in the GitHub Security tab, giving a centralized view across repositories.
 
 <img src="/images/vet-github-code-scanning-alerts.png" alt="GitHub Code Scanning Alerts" />
 
 ## Pull Request Integration
 
-The GitHub Action adds a comment to pull requests when security issues are found:
+On each pull request that changes a manifest, the GitHub Action adds a comment with the vet report. On the next run, it updates the same comment.
 
 <img src="/images/vet-github-action-pr.png" alt="vet GitHub Action PR comment" />
-
-## Best Practices
-
-<AccordionGroup>
-  <Accordion title="Pin third-party actions to commit SHAs">
-    For production workflows, pin third-party GitHub Actions to a full commit SHA rather than a mutable tag. This protects against tag-moving attacks, where a compromised upstream action could inject malicious code.
-
-    ```yaml
-    # Instead of:
-    uses: actions/checkout@v4
-
-    # Pin to a specific commit SHA:
-    uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
-    ```
-
-    The [actions/checkout](https://github.com/actions/checkout/releases) and [github/codeql-action](https://github.com/github/codeql-action/releases) release pages list the commit SHA for each release. `safedep/vet-action` uses [semantic versioning tags](https://github.com/safedep/vet-action/releases) maintained directly by SafeDep.
-  </Accordion>
-</AccordionGroup>
 
 ## Troubleshooting
 
@@ -121,6 +123,12 @@ The GitHub Action adds a comment to pull requests when security issues are found
 </AccordionGroup>
 
 <CardGroup cols={2}>
+  <Card title="Sync to SafeDep Cloud" icon="cloud" href="/governance/cloud/sync#sync-from-github-actions">
+    Send the scan results of each run to SafeDep Cloud
+  </Card>
+  <Card title="Policy as Code" icon="file-shield" href="/reference/policy-as-code">
+    Write the filter suite that the action enforces
+  </Card>
   <Card title="vet-action Repository" icon="github" href="https://github.com/safedep/vet-action">
     View the complete documentation and examples
   </Card>

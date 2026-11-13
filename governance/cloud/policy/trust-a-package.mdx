@@ -7,7 +7,7 @@ description: "Create a trust entry in the cloud policy to waive a malware, coold
 Use a trust entry when your team reviewed a package and decided that a verdict is wrong for your tenant. A trust entry waives the verdicts of its scopes for one package until it expires. It replaces [Malicious Package Exclusions](/governance/cloud/package-exclusions). PMG with the cloud policy ignores exclusions. The pull request check still applies them.
 
 <Note>
-  This guide needs the SafeDep Cloud Team or Enterprise plan and the Admin role. See [pricing](https://safedep.io/pricing).
+  This guide needs the SafeDep Cloud Team or Enterprise plan and the Owner or Admin role. See [pricing](https://safedep.io/pricing).
 </Note>
 
 ## Create the trust entry
@@ -122,7 +122,7 @@ Trust entries with the scope `malware` replace Malicious Package Exclusions. Saf
 | Reason | `--reason` |
 | Expires At | `--expires`. A trust entry needs an expiry of at most 90 days. |
 
-PMG with `cloud.policy` on ignores the exclusions and applies only the trust entries. The pull request check still applies the exclusions.
+PMG with `cloud.policy` on ignores the exclusions and applies only the trust entries. The pull request check still applies the exclusions. For every tool that applies them, see [Malicious Package Exclusions](/governance/cloud/package-exclusions).
 
 ## Next steps
 
