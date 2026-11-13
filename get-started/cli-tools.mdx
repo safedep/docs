@@ -17,8 +17,8 @@ SafeDep ships several command-line tools. Each one solves a different supply-cha
   <Card title="Audit what my AI coding agent does" icon="robot" href="/ai-security/gryph-overview">
     Use **Gryph** to record every file read, write, and command your AI coding agent runs. It keeps a local audit log you can query, and a policy can block risky actions.
   </Card>
-  <Card title="Generate a Bill of Materials" icon="boxes-stacked" href="/governance/xbom/quickstart">
-    Use **xBom** to inventory dependencies plus AI and SaaS usage detected from your source code, as a CycloneDX BOM.
+  <Card title="Generate a Bill of Materials" icon="boxes-stacked" href="/governance/cyclonedx-sbom">
+    Use **vet** to write a CycloneDX BOM of your dependencies, plus the AI SDKs and cloud APIs that your code calls.
   </Card>
   <Card title="Deep-scan a package before using it" icon="microscope" href="/package-security/scan/overview">
     Use **safedep package scan** to run an on-demand malware analysis of any package, IDE extension, or GitHub repository. Needs a SafeDep Cloud paid plan or trial.
@@ -35,7 +35,7 @@ SafeDep ships several command-line tools. Each one solves a different supply-cha
 | **Vet** | Detect malicious and vulnerable dependencies in code and CI/CD | No (Cloud optional) | Yes |
 | **PMG** | Block malicious packages at install time on the dev machine | No | Yes |
 | **Gryph** | Local audit trail for AI coding agents | No (fully local) | Yes |
-| **xBom** | Generate a BOM enriched with AI and SaaS usage from source code | No | Yes |
+| **xBom** | Generate a BOM of the AI, cloud and crypto components found in source code | No | Yes |
 | **safedep** | On-demand package scanning, plus managing and querying SafeDep Cloud from the terminal | Yes (SafeDep Cloud) | Yes |
 
 <Note>
@@ -91,7 +91,7 @@ For every install method, current versions, and the full command surface, see ea
     Set up an audit trail for your AI coding agents.
   </Card>
   <Card title="xBom Quickstart" icon="boxes-stacked" href="/governance/xbom/quickstart">
-    Generate an enriched Bill of Materials from your code.
+    Generate a BOM of the AI, cloud and crypto components in your code.
   </Card>
   <Card title="SafeDep Cloud Quickstart" icon="cloud" href="/governance/cloud/quickstart">
     Onboard to the hosted platform for org-wide visibility.

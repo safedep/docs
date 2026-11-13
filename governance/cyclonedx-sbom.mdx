@@ -6,9 +6,9 @@ description: "Generate a Software Bill of Materials (SBOM) with security metadat
 
 `vet` supports [CycloneDX v1.6](https://cyclonedx.org/docs/1.6/json) SBOM generation. The generated SBOM lists all packages and their dependencies, including security metadata: detected vulnerabilities, malware, and license information.
 
-Vet writes CycloneDX only. To scan an SPDX SBOM, see [Scan an SBOM](/governance/vet/dependency-inventory).
+Vet writes CycloneDX, not SPDX. To scan an SBOM that another tool wrote, including SPDX, see [Scan an SBOM](/governance/vet/dependency-inventory).
 
-## Quick Start
+## Generate the SBOM
 
 Generate an SBOM with a custom application name:
 
@@ -20,16 +20,16 @@ vet scan -D /path/to/project \
 
 `--report-cdx-app-name` is optional. With `-D`, the default name is the last element of the `-D` path, so `-D .` gives the name `.`. With `--lockfiles`, the default name is `vet-scanned-project`.
 
-## What's Included in the SBOM
+## What the SBOM includes
 
 - **Package inventory:** all direct and transitive dependencies, and the dependency graph
 - **Vulnerabilities:** known vulnerabilities from OSV and other sources, with CVSS ratings
 - **Licenses:** the license identifiers of each component
 - **Malware:** the results of malicious package analysis, as `vulnerabilities` entries
 
-To also add the AI SDKs and services that your code calls, run `vet code scan` first, then scan with `--code` and its database. See [Detect Shadow AI in Code](/governance/shadow-ai-detection).
+To also add the AI SDKs and services that your code calls, see [Generate the AI BOM](/governance/shadow-ai-detection#generate-the-ai-bom).
 
-## Combined with Other Reports
+## Write other reports in the same scan
 
 Generate multiple report formats simultaneously:
 
@@ -41,7 +41,7 @@ vet scan -D /path/to/project \
   --report-cdx-app-name "production-app"
 ```
 
-## Integration with CI/CD
+## Generate the SBOM in CI/CD
 
 <Tabs>
   <Tab title="GitHub Actions">
@@ -92,17 +92,6 @@ vet scan -D /path/to/project \
   </Tab>
 </Tabs>
 
-## Sample SBOMs
-
-<CardGroup cols={2}>
-  <Card title="Chat Server SBOM" icon="download" href="/downloads/chat-server.cdx.json">
-    Example SBOM for a Node.js chat application
-  </Card>
-  <Card title="Express.js SBOM" icon="download" href="/downloads/express.cdx.json">
-    Example SBOM for an Express.js web application
-  </Card>
-</CardGroup>
-
 ## Validate and Convert the SBOM
 
 Use the [CycloneDX CLI](https://github.com/CycloneDX/cyclonedx-cli) to validate the SBOM or convert it to XML. Install it with `brew install cyclonedx/cyclonedx/cyclonedx-cli`, or run its container image:
@@ -119,6 +108,19 @@ docker run --rm -v "$PWD:/data" cyclonedx/cyclonedx-cli \
 ```
 
 Tools such as Dependency-Track can import the SBOM to monitor it for new vulnerabilities.
+
+## Sample SBOMs
+
+<CardGroup cols={2}>
+  <Card title="Chat Server SBOM" icon="download" href="/downloads/chat-server.cdx.json">
+    Example SBOM for a Node.js chat application
+  </Card>
+  <Card title="Express.js SBOM" icon="download" href="/downloads/express.cdx.json">
+    Example SBOM for an Express.js web application
+  </Card>
+</CardGroup>
+
+## Next steps
 
 <CardGroup cols={2}>
   <Card title="CycloneDX Documentation" icon="book" href="https://cyclonedx.org/docs/1.6/json/">

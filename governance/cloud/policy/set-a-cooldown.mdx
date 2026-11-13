@@ -7,7 +7,7 @@ description: "Set the minimum age of a package version for every PMG endpoint of
 The [PMG dependency cooldown](/package-security/pmg/dependency-cooldown) holds back package versions that are younger than a set age. The cloud policy sets this age for every PMG endpoint of your tenant with no change to each machine.
 
 <Note>
-  This guide needs the SafeDep Cloud Team or Enterprise plan and the Admin role. See [pricing](https://safedep.io/pricing). Each endpoint needs PMG with [`cloud.policy` on](/package-security/pmg/cloud-policy).
+  This guide needs the SafeDep Cloud Team or Enterprise plan and the Owner or Admin role. See [pricing](https://safedep.io/pricing). Each endpoint needs PMG with [`cloud.policy` on](/package-security/pmg/cloud-policy).
 </Note>
 
 The setting is `package_admission.cooldown.min_age`. PMG applies it. The pull request check does not apply a cooldown yet.

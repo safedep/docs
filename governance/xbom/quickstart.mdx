@@ -4,10 +4,10 @@ sidebarTitle: "Generate an xBOM"
 description: "Get started with SafeDep xBom, an open source Bill of Materials generator enriched with AI and SaaS usage detected from source code."
 ---
 
-**xBom** generates a Bill of Materials (BOM) enriched with AI components, SaaS integrations, and more. It uses static code analysis to find these in your code, not just your declared dependencies.
+**xBom** generates a Bill of Materials (BOM) of the AI components, cloud services and cryptography that your code uses. It finds them with static code analysis, not from your declared dependencies.
 
 <Note>
-  For an AI BOM, use [vet](/governance/shadow-ai-detection). Vet uses the same code analysis with more signatures, and writes the AI BOM and the dependency SBOM in one CycloneDX file.
+  For an SBOM or an AI BOM, use vet: see [Generate an SBOM](/governance/cyclonedx-sbom) and [Detect Shadow AI in Code](/governance/shadow-ai-detection). Vet uses the same code analysis with more signatures, and writes the AI BOM and the dependency SBOM in one CycloneDX file. Use xBom when you want only the components that code analysis finds, without a dependency scan.
 </Note>
 
 ## Installation
@@ -23,7 +23,11 @@ brew install safedep/tap/xbom
 **Pre-built binary:**
 Download a **[pre-built binary](https://github.com/safedep/xbom/releases)** for your operating system from the GitHub releases page.
 
-**Container image:** `ghcr.io/safedep/xbom`.
+**Container image:** the image starts `xbom` as its entrypoint. Mount the code into the container:
+
+```bash
+docker run --rm -v "$PWD:/src" ghcr.io/safedep/xbom generate --dir /src --bom /src/bom.cdx.json
+```
 
 ## Generating Your First BOM
 
@@ -39,7 +43,7 @@ The output is an SBOM in **[CycloneDX v1.6 JSON format](https://cyclonedx.org/do
 
 ## Supported Languages
 
-xBom supports Python, Java, Go and JavaScript.
+xBom supports Python and Java. JavaScript support is partial.
 
 ## Supported BOM Types
 

@@ -12,6 +12,10 @@ GitHub supports [uploading SARIF](https://docs.github.com/en/code-security/refer
 
 ### Basic Configuration
 
+<Info>
+The SARIF upload needs GitHub Code Scanning on in your repository. See [Configure code scanning](https://docs.github.com/en/code-security/how-tos/find-and-fix-code-vulnerabilities/configure-code-scanning).
+</Info>
+
 Create `.github/workflows/vet.yml` in your repository:
 
 ```yaml
@@ -32,6 +36,7 @@ jobs:
   vet-scan:
     runs-on: ubuntu-latest
     steps:
+      # In production, pin each action to a full commit SHA.
       - name: Checkout
         uses: actions/checkout@v4
 
@@ -49,20 +54,18 @@ jobs:
           category: vet
 ```
 
-<Info>
-SARIF reports work when you enable GitHub Code Scanning in your repository. [Learn more](https://docs.github.com/en/code-security/how-tos/find-and-fix-code-vulnerabilities/configure-code-scanning)
-</Info>
-
-The action supports the `push`, `pull_request` and `pull_request_target` events:
+The action supports the `push`, `pull_request` and `pull_request_target` events.
 
 - **On a push,** the action scans the repository and writes the SARIF report.
-- **On a pull request,** the action scans only the manifests that the pull request changes, and writes the SARIF report. The check fails when a package breaks the policy. If the pull request changes no manifest, the `report` output is empty, so the upload step does not run.
+- **On a pull request,** the action scans only the packages that the pull request adds or changes in its manifests. When a package breaks the policy, the check fails and the SARIF upload step does not run. If the pull request changes no manifest, the `report` output is empty, so the upload step does not run.
 
-For production workflows, pin each third-party action to a full commit SHA instead of a tag. The [example workflow](https://github.com/safedep/vet-action/blob/main/example/vet-ci.yml) pins `actions/checkout` this way.
+The [example workflow](https://github.com/safedep/vet-action/blob/main/example/vet-ci.yml) pins `actions/checkout` to a commit SHA.
+
+To report the findings without blocking the merge, for example while you tune the policy, set `continue-on-error: true` on the vet step. The action still adds its pull request comment.
 
 ### Advanced Configuration
 
-To use a custom policy, set `policy-v2`. It takes precedence over `policy`, which takes an older filter suite file:
+To use a custom policy, set `policy-v2` to a policy file in the [v2 format](https://github.com/safedep/vet/blob/main/samples/policy-v2.yml). It takes precedence over `policy`, which takes an older [filter suite](/reference/policy-as-code) file. Without either input, the action uses its default policy.
 
 ```yaml
 - name: Run vet with custom policy
@@ -78,7 +81,8 @@ Other inputs that you often need:
 
 - `enable-comments-proxy: true`: comments on a pull request from a forked repository. The `GITHUB_TOKEN` of a fork cannot comment.
 - `exclude`: a comma-separated list of path patterns that the scan skips.
-- `cloud: true`, with `cloud-key` and `cloud-tenant`: syncs the policy and the report with SafeDep Cloud, and turns on malware analysis.
+- `cloud: true`, with `cloud-key` and `cloud-tenant`: syncs the report with SafeDep Cloud, and queries the malware data with your tenant API key instead of the community API. See [Sync from GitHub Actions](/governance/cloud/sync#sync-from-github-actions).
+- `paranoid: true`: in cloud mode, also treats as malicious the packages that the malware analysis marks with medium confidence or higher, before SafeDep verifies them.
 
 For every input, see [Configuration](https://github.com/safedep/vet-action#configuration) in the vet-action README.
 
@@ -119,6 +123,12 @@ On each pull request that changes a manifest, the GitHub Action adds a comment w
 </AccordionGroup>
 
 <CardGroup cols={2}>
+  <Card title="Sync to SafeDep Cloud" icon="cloud" href="/governance/cloud/sync#sync-from-github-actions">
+    Send the scan results of each run to SafeDep Cloud
+  </Card>
+  <Card title="Policy as Code" icon="file-shield" href="/reference/policy-as-code">
+    Write the filter suite that the action enforces
+  </Card>
   <Card title="vet-action Repository" icon="github" href="https://github.com/safedep/vet-action">
     View the complete documentation and examples
   </Card>

@@ -1,24 +1,24 @@
 ---
 title: "xBom"
-description: "xBom generates a Bill of Materials enriched with AI and SaaS usage by analyzing your source code, not just manifests."
+description: "xBom generates a Bill of Materials of the AI, cloud and crypto components that it finds in your source code."
 ---
 
-Modern applications reach far beyond declared dependencies: AI SDKs, ML models, and third-party SaaS APIs. Traditional BOM tools only read manifest files like `requirements.txt` or `pom.xml`. [xBom](https://github.com/safedep/xbom) analyzes your source code to find what your application actually uses, for a more accurate [SBOM](/concepts/sbom).
+Modern applications reach far beyond declared dependencies: AI SDKs, ML models, and third-party SaaS APIs. Traditional BOM tools only read manifest files like `requirements.txt` or `pom.xml`. [xBom](https://github.com/safedep/xbom) analyzes your source code to find what your application actually uses, and writes it as a BOM. To compare it with an [SBOM](/concepts/sbom), see the concept page.
 
-xBom finds evidence of AI SDKs, cloud APIs and cryptography in Python, Java, Go and JavaScript code. It writes a standard CycloneDX BOM. Community signatures detect each component. The signatures are built into xBom, so to add one, contribute it to the xBom repository.
+xBom finds evidence of AI SDKs, cloud APIs and cryptography in Python and Java code, with partial JavaScript support. It writes a standard CycloneDX BOM. Community signatures detect each component. The signatures are built into xBom, so to add one, contribute it to the xBom repository.
 
 <Note>
-  For an AI BOM, use [vet](/governance/shadow-ai-detection). Vet uses the same code analysis with more signatures, and writes the AI BOM and the dependency SBOM in one CycloneDX file.
+  For an SBOM or an AI BOM, use vet: see [Generate an SBOM](/governance/cyclonedx-sbom) and [Detect Shadow AI in Code](/governance/shadow-ai-detection). Vet uses the same code analysis with more signatures, and writes the AI BOM and the dependency SBOM in one CycloneDX file. Use xBom when you want only the components that code analysis finds, without a dependency scan.
 </Note>
 
 ## Get started
 
 <CardGroup cols={2}>
+  <Card title="Generate an SBOM" icon="file-lines" href="/governance/cyclonedx-sbom">
+    Write a CycloneDX SBOM with vet.
+  </Card>
   <Card title="xBom Quickstart" icon="rocket" href="/governance/xbom/quickstart">
     Generate your first xBOM.
-  </Card>
-  <Card title="Detect Shadow AI in Code" icon="robot" href="/governance/shadow-ai-detection">
-    Make an AI BOM with vet.
   </Card>
   <Card title="What is an SBOM?" icon="lightbulb" href="/concepts/sbom">
     SBOM versus xBOM, explained.

@@ -1,14 +1,17 @@
 ---
-title: Dependency Inventory
-sidebarTitle: "Scan an SBOM"
-description: "Generate accurate dependency inventories using package managers and SBOM tools"
+title: Scan an SBOM
+description: "Generate a CycloneDX SBOM with your build tool, then scan it with vet for malicious and vulnerable packages"
 ---
 
 Package managers such as Maven, Gradle, and npm have the most accurate view of library dependencies. They resolve exact versions and can generate an SBOM for `vet` to scan with higher fidelity.
 
-Vet also reads `pom.xml` and `gradle.lockfile` directly. Generate an SBOM when you need the dependencies that the build tool resolves.
+Vet also reads manifests and lockfiles directly, such as `package-lock.json`, `requirements.txt`, `pom.xml` and `gradle.lockfile`. Generate an SBOM when you need the dependencies that the build tool resolves.
 
 ## Generate the SBOM
+
+<Warning>
+Vet reads CycloneDX 1.0 to 1.6. It cannot read a CycloneDX 1.7 SBOM. Set the build tool to write 1.6.
+</Warning>
 
 <Tabs>
   <Tab title="Gradle">
@@ -42,7 +45,7 @@ Vet also reads `pom.xml` and `gradle.lockfile` directly. Generate an SBOM when y
   </Tab>
 
   <Tab title="Maven">
-    Add the [CycloneDX Maven plugin](https://github.com/CycloneDX/cyclonedx-maven-plugin). Keep the schema at 1.6. Later versions of the plugin default to 1.7.
+    Add the [CycloneDX Maven plugin](https://github.com/CycloneDX/cyclonedx-maven-plugin). Keep `schemaVersion` set to 1.6, because a later version of the plugin can default to 1.7.
 
     ```xml
     <plugin>
@@ -87,19 +90,19 @@ Vet also reads `pom.xml` and `gradle.lockfile` directly. Generate an SBOM when y
 
     ```bash
     pip install cyclonedx-bom
-    cyclonedx-py environment -o sbom.json
+    cyclonedx-py environment --pyproject pyproject.toml -o sbom.json
     ```
+
+    Pass `--pyproject` so that the SBOM has a root component. Vet cannot read an SBOM without one.
   </Tab>
 </Tabs>
 
 ## Scan the SBOM with Vet
 
-<Warning>
-Vet reads CycloneDX 1.0 to 1.6. It cannot read a CycloneDX 1.7 SBOM.
-</Warning>
+Set `--lockfiles` to the SBOM path from the step above: `build/reports/cyclonedx/bom.json` for Gradle, `target/bom.json` for Maven, or `sbom.json` for npm and Python.
 
 ```bash
-vet scan --lockfiles build/reports/cyclonedx/bom.json \
+vet scan --lockfiles path/to/bom.json \
          --lockfile-as bom-cyclonedx \
          --report-markdown=report.md
 ```
@@ -108,24 +111,24 @@ Vet reads the SBOM as XML when the file name ends in `.xml`, and as JSON for any
 
 <img src="/images/vet-cyclonedx-scan-demo.png" alt="vet CycloneDX scan demonstration" />
 
-To scan an SPDX SBOM, use `--lockfile-as bom-spdx`:
+To scan an SPDX SBOM, use `--lockfile-as bom-spdx`. Vet reads SPDX JSON only.
 
 ```bash
 vet scan --lockfiles sbom.spdx.json --lockfile-as bom-spdx
 ```
 
-To list every format that `--lockfile-as` accepts, run `vet scan parsers`.
+To list the formats that `--lockfile-as` accepts, run `vet scan parsers`. To also list the experimental formats, add `--experimental`.
 
 ## CI/CD Integration
 
 <Tabs>
   <Tab title="GitHub Actions">
     ```yaml
-    name: Dependency Inventory Scan
+    name: SBOM Scan
     on: [push, pull_request]
     
     jobs:
-      inventory-scan:
+      sbom-scan:
         runs-on: ubuntu-latest
         steps:
           - uses: actions/checkout@v4

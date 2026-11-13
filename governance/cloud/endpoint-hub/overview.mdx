@@ -3,13 +3,13 @@ title: "Endpoint Hub"
 description: "Visibility into AI tooling and package activity across your developer machines, CI runners, and agent sandboxes"
 ---
 
-Endpoint Hub shows what runs on your **endpoints**: developer machines, CI runners, and agent sandboxes. Each endpoint in SafeDep Cloud gets data from three sources:
+Endpoint Hub shows what runs on your [endpoints](/concepts/endpoint): developer machines, CI runners, and agent sandboxes. Each endpoint in SafeDep Cloud has three views:
 
-- **Inventory:** the AI tooling on the endpoint, such as coding agents, MCP servers, Agent Skills, CLI tools and IDE extensions. `vet endpoint scan` finds them and syncs them.
-- **Package Guard:** a timeline of package installs. [PMG](/package-security/pmg/quickstart) records them and syncs them.
-- **MCP Advisor:** the packages that your AI coding agents checked through the [SafeDep MCP server](/ai-security/mcp-server), with each verdict. An endpoint shows these checks only when the agent config has the endpoint ID, which `safedep setup mcp install` adds.
+- **Inventory** (the **AI Tools** and **Inventory Events** tabs): the AI tooling on the endpoint, such as coding agents, MCP servers, Agent Skills, CLI tools and IDE extensions. `vet endpoint scan` finds them and syncs them.
+- **Package Guard** (the **Package Events** tab): a timeline of package installs. [PMG](/package-security/pmg/quickstart) records them and syncs them.
+- **MCP Advisor** (the **Advisor** tab): the packages that your AI coding agents checked through the [SafeDep MCP server](/ai-security/mcp-server), with each verdict.
 
-To open an endpoint, select **Endpoints** in the [app.safedep.io](https://app.safedep.io) sidebar. Without SafeDep Cloud credentials, vet and PMG still run, and no data leaves the machine.
+To open an endpoint, select **Endpoints** in the [app.safedep.io](https://app.safedep.io) sidebar. Without SafeDep Cloud credentials, vet and PMG still run, and nothing syncs to SafeDep Cloud.
 
 <Note>
 Endpoint Hub needs the SafeDep Cloud **Team** or **Enterprise** plan. See [pricing](https://safedep.io/pricing).

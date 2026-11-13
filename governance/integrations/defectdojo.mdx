@@ -169,6 +169,7 @@ filters:
     security-scan:
       image:
         name: ghcr.io/safedep/vet:latest
+        # The image starts vet. Clear the entrypoint so that GitLab can run the script.
         entrypoint: [""]
       script:
         - vet scan -D . 

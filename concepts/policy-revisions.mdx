@@ -8,7 +8,7 @@ Each change to the cloud [policy](/concepts/policy) goes through the same steps.
 
 ## Policy changes
 
-A policy change is a draft on the server. It starts from a base revision, the head revision when you created it. It can edit the policy settings document, add package rule operations, or both. Nothing applies until an Admin publishes it.
+A policy change is a draft on the server. It starts from a base revision, the head revision when you created it. It can edit the policy settings document, add package rule operations, or both. Nothing applies until an Owner or an Admin publishes it.
 
 `safedep policy edit` opens the policy settings document of the tenant in your editor: the policy base and every policy override. When you save the file, the command creates a policy change. Package rules are not in this document. The rule commands, such as `safedep policy rule create`, create a change and publish it in one step.
 
@@ -18,16 +18,16 @@ The document keeps no YAML comments. Write the reason for a value in the `descri
 
 `safedep policy change show` compares an open change with the head revision. It shows:
 
-- each field that changes, in the policy base and in each policy override, with its old value, its new value and its change direction;
-- each change to a policy override itself, such as a new selector or priority;
-- the package rule operations;
-- the number of projects and endpoints that the change reaches. The count includes only endpoints that synced in the last 30 days;
-- policy coverage: for each new value, how many of those subjects enforce it, enforce it in part, only report it, or do not support it;
+- each field that changes, in the policy base and in each policy override, with its old value, its new value and its change direction
+- each change to a policy override itself, such as a new selector or priority
+- the package rule operations
+- the number of projects and endpoints that the change reaches, counting only the endpoints that synced in the last 30 days
+- policy coverage: for each new value, how many of those subjects enforce it, enforce it in part, only report it, or do not support it
 - warnings, for example when:
-  - a block entry selects every package of an ecosystem;
-  - a policy override that loosens selects on a label that an endpoint can send;
-  - a rollback drops fields of a policy override;
-  - a change edits or deletes a rule that is not at head.
+  - a block entry selects every package of an ecosystem
+  - a policy override that loosens selects on a label that an endpoint can send
+  - a rollback drops fields of a policy override
+  - a change edits or deletes a rule that is not at head
 
 In this release, only the pull request check reports policy coverage, so the coverage counts include projects only.
 

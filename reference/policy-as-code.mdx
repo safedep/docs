@@ -53,7 +53,7 @@ vet scan -D /path/to/project \
 | `--filter-suite <file>` | Evaluate packages against the filter suite in `<file>`. |
 | `--filter-fail` | Exit non-zero if any package matches, for CI/CD gating. |
 
-In CI/CD with [vet-action](/governance/integrations/github-code-scanning), pass the file via the `policy` input and set `paranoid: true` to fail the build on a violation.
+In CI/CD with [vet-action](/governance/integrations/github-code-scanning), pass the file in the `policy` input. The action fails the pull request check on a violation.
 
 ## Evaluation
 

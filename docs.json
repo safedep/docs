@@ -137,7 +137,6 @@
             "root": "governance/vet/overview",
             "pages": [
               "governance/vet/quickstart",
-              "governance/vet/dependency-inventory",
               "governance/vet/code-analysis",
               "governance/vet/build-your-own-queries",
               "governance/terraform-audit",
@@ -149,8 +148,9 @@
             "icon": "list-check",
             "root": "governance/xbom/overview",
             "pages": [
-              "governance/xbom/quickstart",
-              "governance/cyclonedx-sbom"
+              "governance/cyclonedx-sbom",
+              "governance/vet/dependency-inventory",
+              "governance/xbom/quickstart"
             ]
           },
           {
