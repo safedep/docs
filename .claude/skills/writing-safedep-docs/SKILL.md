@@ -96,14 +96,14 @@ Pitch each page at one assumed reader. Never write "if you're a developer, do X;
 See `products.md` in this skill for: per-product one-liner, source repo path, docs home, key concepts, where to fetch up-to-date CLI/API details.
 
 **Quick map:**
-- **vet** — repository scanning + filtering / queries → Visibility & Governance
-- **pmg** — install-time malicious package blocking → Package Security
+- **vet**: scans repositories, and filters or queries the results. Tab: Visibility & Governance.
+- **pmg**: blocks malicious packages at install time. Tab: Package Security.
 - **gryph**: records the file reads, file writes and commands of an AI coding agent in a local audit log. An optional policy can block an action. The policy is off by default. Gryph is **not** a sandbox. Tab: AI Agent Security.
-- **xBom** — standalone xBOM/SBOM generator via static code analysis → Visibility & Governance › Bill of Materials
-- **MCP** — SafeDep MCP server for AI coding tools → AI Agent Security (`ai-security/mcp-server`)
-- **vet-action** — GitHub Action; split by use-case (blocking → Package Security; scanning → Visibility & Governance)
-- **SafeDep Cloud / Endpoint Hub** — hosted control plane (closed-source) → Visibility & Governance. Public API surface: [`buf.build/safedep/api`](https://buf.build/safedep/api) — canonical schemas + generated SDKs; link to it, don't restate it (R6)
-- **Malysis** — intelligence layer; **never a product tab or sidebar group** (R4)
+- **xBom**: a standalone tool that makes an xBOM or SBOM with static code analysis. Tab: Visibility & Governance, group Bill of Materials.
+- **MCP**: the SafeDep MCP server for AI coding tools. Tab: AI Agent Security, page `ai-security/mcp-server`.
+- **vet-action**: a GitHub Action. Split its pages by use case. A page about blocking goes to Package Security. A page about scanning goes to Visibility & Governance.
+- **SafeDep Cloud and Endpoint Hub**: the hosted control plane, closed source. Tab: Visibility & Governance. The public API is at [`buf.build/safedep/api`](https://buf.build/safedep/api), with the canonical schemas and the generated SDKs. Link to it. Do not repeat it (R6).
+- **Malysis**: the intelligence layer. It is **never** a product tab or a sidebar group (R4).
 
 ## Workflow: writing a new page
 
