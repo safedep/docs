@@ -25,7 +25,7 @@ These tools enforce the cloud policy:
 
 ## Policy as code
 
-Policy as code is a Vet filter suite: a YAML file of [CEL](/concepts/cel) rules that you keep in a repository. Vet evaluates each package of a scan against the rules, including transitive dependencies, and you decide what a match does. During a local scan, Vet can exit with a non-zero code when a package matches a rule. In CI/CD, [vet-action](/governance/integrations/github-code-scanning) takes a filter suite in its `policy` input, or a v2 policy file in its `policy-v2` input.
+Policy as code is a Vet filter suite. A filter suite is a YAML file of [CEL](/concepts/cel) rules that you keep in a repository. Vet evaluates each package of a scan against the rules, including transitive dependencies, and you decide what a match does. During a local scan, Vet can exit with a non-zero code when a package matches a rule. In CI/CD, [vet-action](/governance/integrations/github-code-scanning) takes a filter suite in its `policy` input, or a v2 policy file in its `policy-v2` input.
 
 See [Policy as Code](/reference/policy-as-code) for the syntax and examples.
 
@@ -47,16 +47,16 @@ See [Policy as Code](/reference/policy-as-code) for the syntax and examples.
     Manage the cloud policy of your tenant.
   </Card>
   <Card title="Policy Resolution" icon="layer-group" href="/concepts/policy-resolution">
-    How the layers of the cloud policy merge for one endpoint or project.
+    See how policy layers merge for one endpoint or project.
   </Card>
   <Card title="Policy as Code" icon="file-code" href="/reference/policy-as-code">
     Write and structure Vet policy files.
   </Card>
   <Card title="CEL" icon="code" href="/concepts/cel">
-    The expression syntax of policy as code.
+    Write CEL expressions for policy as code.
   </Card>
   <Card title="Malicious Package" icon="shield-virus" href="/concepts/malicious-package">
-    The intelligence that policies act on.
+    See how SafeDep finds malicious packages.
   </Card>
   <Card title="JFrog Xray Blocking" icon="shield-halved" href="/threat-intel/integrations/jfrog-xray">
     Enforce package blocking in JFrog Xray.

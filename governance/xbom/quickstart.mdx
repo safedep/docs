@@ -7,7 +7,7 @@ description: "Get started with SafeDep xBom, an open source Bill of Materials ge
 **xBom** generates a Bill of Materials (BOM) of the AI components, cloud services and cryptography that your code uses. It finds them with static code analysis, not from your declared dependencies.
 
 <Note>
-  For an SBOM or an AI BOM, use vet: see [Generate an SBOM](/governance/cyclonedx-sbom) and [Detect Shadow AI in Code](/governance/shadow-ai-detection). Vet uses the same code analysis with more signatures, and writes the AI BOM and the dependency SBOM in one CycloneDX file. Use xBom when you want only the components that code analysis finds, without a dependency scan.
+  For an SBOM or an AI BOM, use vet. See [Generate an SBOM](/governance/cyclonedx-sbom) and [Detect Shadow AI in Code](/governance/shadow-ai-detection). Vet uses the same code analysis with more signatures, and writes the AI BOM and the dependency SBOM in one CycloneDX file. Use xBom when you want only the components that code analysis finds, without a dependency scan.
 </Note>
 
 ## Installation
@@ -23,7 +23,8 @@ brew install safedep/tap/xbom
 **Pre-built binary:**
 Download a **[pre-built binary](https://github.com/safedep/xbom/releases)** for your operating system from the GitHub releases page.
 
-**Container image:** the image starts `xbom` as its entrypoint. Mount the code into the container:
+**Container image:**
+Mount your code into the container:
 
 ```bash
 docker run --rm -v "$PWD:/src" ghcr.io/safedep/xbom generate --dir /src --bom /src/bom.cdx.json
@@ -87,15 +88,15 @@ export XBOM_DISABLE_TELEMETRY=true
 
 <CardGroup cols={2}>
   <Card title="xBom" icon="boxes-stacked" href="/governance/xbom/overview">
-    What xBom is and how it works.
+    See what xBom does.
   </Card>
   <Card title="What is an SBOM?" icon="lightbulb" href="/concepts/sbom">
-    SBOM versus xBOM, explained.
+    Compare an SBOM with an xBOM.
   </Card>
   <Card title="CycloneDX SBOM" icon="file-lines" href="/governance/cyclonedx-sbom">
     Generate a standard SBOM with Vet.
   </Card>
   <Card title="xBom on GitHub" icon="github" href="https://github.com/safedep/xbom">
-    Source and signature contributions.
+    Read the code and add signatures.
   </Card>
 </CardGroup>

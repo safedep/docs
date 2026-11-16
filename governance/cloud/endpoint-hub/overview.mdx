@@ -3,11 +3,11 @@ title: "Endpoint Hub"
 description: "Visibility into AI tooling and package activity across your developer machines, CI runners, and agent sandboxes"
 ---
 
-Endpoint Hub shows what runs on your [endpoints](/concepts/endpoint): developer machines, CI runners, and agent sandboxes. Each endpoint in SafeDep Cloud has three views:
+Endpoint Hub shows what runs on your [endpoints](/concepts/endpoint), such as developer machines, CI runners and agent sandboxes. Each endpoint in SafeDep Cloud has three views.
 
-- **Inventory** (the **AI Tools** and **Inventory Events** tabs): the AI tooling on the endpoint, such as coding agents, MCP servers, Agent Skills, CLI tools and IDE extensions. `vet endpoint scan` finds them and syncs them.
-- **Package Guard** (the **Package Events** tab): a timeline of package installs. [PMG](/package-security/pmg/quickstart) records them and syncs them.
-- **MCP Advisor** (the **Advisor** tab): the packages that your AI coding agents checked through the [SafeDep MCP server](/ai-security/mcp-server), with each verdict.
+- **Inventory** lists the AI tooling on the endpoint, such as coding agents, MCP servers, Agent Skills, CLI tools and IDE extensions. `vet endpoint scan` finds them and syncs them. They appear in the **AI Tools** and **Inventory Events** tabs.
+- **Package Guard** shows a timeline of package installs. [PMG](/package-security/pmg/quickstart) records them and syncs them. They appear in the **Package Events** tab.
+- **MCP Advisor** lists the packages that your AI coding agents checked through the [SafeDep MCP server](/ai-security/mcp-server), with the verdict of each one. They appear in the **Advisor** tab.
 
 To open an endpoint, select **Endpoints** in the [app.safedep.io](https://app.safedep.io) sidebar. Without SafeDep Cloud credentials, vet and PMG still run, and nothing syncs to SafeDep Cloud.
 

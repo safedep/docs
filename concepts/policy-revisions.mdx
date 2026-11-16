@@ -22,7 +22,7 @@ The document keeps no YAML comments. Write the reason for a value in the `descri
 - each change to a policy override itself, such as a new selector or priority
 - the package rule operations
 - the number of projects and endpoints that the change reaches, counting only the endpoints that synced in the last 30 days
-- policy coverage: for each new value, how many of those subjects enforce it, enforce it in part, only report it, or do not support it
+- policy coverage, which is how many of those subjects enforce each new value, enforce it in part, only report it, or do not support it
 - warnings, for example when:
   - a block entry selects every package of an ecosystem
   - a policy override that loosens selects on a label that an endpoint can send
@@ -48,7 +48,7 @@ A change loosens when any part of it loosens.
 
 ## Publish and revisions
 
-`safedep policy change publish` makes a new policy revision from an open change. A revision is immutable, and revision numbers only go up. Every policy write needs the Owner or Admin role: a change, a publish and each rule command. A publish that loosens the policy also needs a confirmation: the command asks in a terminal, and needs `--yes` in a script. The delete of a block entry asks too.
+`safedep policy change publish` makes a new policy revision from an open change. A revision is immutable, and revision numbers only go up. Every policy write, such as a change, a publish or a rule command, needs the Owner or Admin role. A publish that loosens the policy asks you to confirm. In a script, pass `--yes`. The delete of a block entry asks too.
 
 After a publish, each pull request check uses the new revision at once. Each endpoint applies it after its next policy fetch.
 
@@ -93,9 +93,9 @@ Each admin action writes one audit event in the same transaction as the action: 
     Restore a setting from an old revision.
   </Card>
   <Card title="Policy Resolution" icon="layer-group" href="/concepts/policy-resolution">
-    How a revision becomes the policy of one subject.
+    See how the policy resolves for one subject.
   </Card>
   <Card title="Cloud Policy Limits" icon="gauge" href="/reference/cloud-policy-limits">
-    Publishes in a day, open changes and retention.
+    See the publish, change and retention limits.
   </Card>
 </CardGroup>

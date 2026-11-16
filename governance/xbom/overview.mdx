@@ -8,7 +8,7 @@ Modern applications reach far beyond declared dependencies: AI SDKs, ML models, 
 xBom finds evidence of AI SDKs, cloud APIs and cryptography in Python and Java code, with partial JavaScript support. It writes a standard CycloneDX BOM. Community signatures detect each component. The signatures are built into xBom, so to add one, contribute it to the xBom repository.
 
 <Note>
-  For an SBOM or an AI BOM, use vet: see [Generate an SBOM](/governance/cyclonedx-sbom) and [Detect Shadow AI in Code](/governance/shadow-ai-detection). Vet uses the same code analysis with more signatures, and writes the AI BOM and the dependency SBOM in one CycloneDX file. Use xBom when you want only the components that code analysis finds, without a dependency scan.
+  For an SBOM or an AI BOM, use vet. See [Generate an SBOM](/governance/cyclonedx-sbom) and [Detect Shadow AI in Code](/governance/shadow-ai-detection). Vet uses the same code analysis with more signatures, and writes the AI BOM and the dependency SBOM in one CycloneDX file. Use xBom when you want only the components that code analysis finds, without a dependency scan.
 </Note>
 
 ## Get started
@@ -21,7 +21,7 @@ xBom finds evidence of AI SDKs, cloud APIs and cryptography in Python and Java c
     Generate your first xBOM.
   </Card>
   <Card title="What is an SBOM?" icon="lightbulb" href="/concepts/sbom">
-    SBOM versus xBOM, explained.
+    Compare an SBOM with an xBOM.
   </Card>
   <Card title="Contribute signatures" icon="github" href="https://github.com/safedep/xbom/blob/main/CONTRIBUTING.md#contributing-signatures">
     Add detections for new components.

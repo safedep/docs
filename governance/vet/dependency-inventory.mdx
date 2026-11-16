@@ -99,7 +99,7 @@ Vet reads CycloneDX 1.0 to 1.6. It cannot read a CycloneDX 1.7 SBOM. Set the bui
 
 ## Scan the SBOM with Vet
 
-Set `--lockfiles` to the SBOM path from the step above: `build/reports/cyclonedx/bom.json` for Gradle, `target/bom.json` for Maven, or `sbom.json` for npm and Python.
+Set `--lockfiles` to the SBOM path from the step above. Gradle writes `build/reports/cyclonedx/bom.json`, Maven writes `target/bom.json`, and npm and Python write `sbom.json`.
 
 ```bash
 vet scan --lockfiles path/to/bom.json \
@@ -196,10 +196,10 @@ To keep a record for audits, store the SBOM with each release, for example as `r
 
 <CardGroup cols={2}>
   <Card title="CycloneDX Gradle Plugin" icon="gradle" href="https://github.com/CycloneDX/cyclonedx-gradle-plugin">
-    Complete documentation for the Gradle plugin
+    Read the Gradle plugin docs
   </Card>
   <Card title="CycloneDX Maven Plugin" icon="maven" href="https://github.com/CycloneDX/cyclonedx-maven-plugin">
-    Maven plugin documentation and examples
+    Read the Maven plugin docs
   </Card>
   <Card title="SBOM Generation Guide" icon="file-export" href="/governance/cyclonedx-sbom">
     Learn more about generating SBOMs with Vet

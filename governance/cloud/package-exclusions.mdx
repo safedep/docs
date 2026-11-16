@@ -26,7 +26,7 @@ These tools apply exclusions:
 Each exclusion has an ecosystem, a package name, a version, a reason and an optional expiry date.
 
 - **Version:** SafeDep Cloud matches the version exactly. Version `0` is a special value that means all versions, not the literal version `0`. When an exact-version exclusion and an all-versions exclusion both match, the exact version wins.
-- **Expiry:** the expiry must be in the future. After it, the exclusion stops applying.
+- **Expiry:** The expiry date must be in the future. After it, the exclusion stops applying.
 - **Verified malware:** SafeDep Cloud refuses an exclusion for a package that it has verified as malicious. If SafeDep verifies a package after you exclude it, the exclusion stops applying, and so does an all-versions exclusion.
 
 ## Create an Exclusion
@@ -64,7 +64,7 @@ You can also start from a malicious package result. Its header shows **Create Ex
 
 ## Manage Exclusions
 
-The exclusions table shows the ecosystem, name, version, reason, status and expiry date of each exclusion. Filter it by ecosystem, name, version, expiry date or status: **Active**, **Expired** or **Expires Soon**. Use the row menu to edit or delete an exclusion. An edit can change the version, the reason, the expiry date and the package identity.
+The exclusions table shows the ecosystem, name, version, reason, status and expiry date of each exclusion. Filter it by ecosystem, name, version, expiry date or status. The status is **Active**, **Expired** or **Expires Soon**. Use the row menu to edit or delete an exclusion. An edit can change the version, the reason, the expiry date and the package identity.
 
 <img
   src="/images/exclusions/exclusions-page-row-actions.png"
