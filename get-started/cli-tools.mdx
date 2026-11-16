@@ -1,6 +1,6 @@
 ---
 title: SafeDep CLI Tools
-description: "Which SafeDep command-line tool to use: Vet, PMG, Gryph, and the safedep CLI, and how they fit together."
+description: "Pick a SafeDep command-line tool from Vet, PMG, Gryph, and the safedep CLI, and see how they fit together."
 ---
 
 SafeDep ships several command-line tools. Each one solves a different supply-chain problem, and they run independently, so you install only what you need. This page helps you pick the right tool and points you to its setup guide.
@@ -12,7 +12,7 @@ SafeDep ships several command-line tools. Each one solves a different supply-cha
     Use **Vet** to scan repositories, lockfiles, and SBOMs for malicious packages, known vulnerabilities, and policy violations. It is the engine behind SafeDep's CI/CD scanning.
   </Card>
   <Card title="Block malicious installs on my machine" icon="shield-halved" href="/package-security/pmg/quickstart">
-    Use **PMG**, a guard around `npm`, `pip`, and other package managers that blocks known-malicious packages before they install. No account or API key required.
+    Use **PMG**, a guard around `npm`, `pip`, and other package managers that blocks known-malicious packages before they install. It needs no account or API key.
   </Card>
   <Card title="Audit what my AI coding agent does" icon="robot" href="/ai-security/gryph-overview">
     Use **Gryph** to record every file read, write, and command your AI coding agent runs. It keeps a local audit log you can query, and a policy can block risky actions.
@@ -21,10 +21,10 @@ SafeDep ships several command-line tools. Each one solves a different supply-cha
     Use **vet** to write a CycloneDX BOM of your dependencies, plus the AI SDKs and cloud APIs that your code calls.
   </Card>
   <Card title="Deep-scan a package before using it" icon="microscope" href="/package-security/scan/overview">
-    Use **safedep package scan** to run an on-demand malware analysis of any package, IDE extension, or GitHub repository. Needs a SafeDep Cloud paid plan or trial.
+    Use **safedep package scan** to run an on-demand malware analysis of any package, IDE extension, or GitHub repository. It needs a SafeDep Cloud paid plan or trial.
   </Card>
   <Card title="Work with SafeDep Cloud" icon="cloud" href="https://github.com/safedep/cli">
-    Use **safedep**, the unified CLI for SafeDep Cloud: authentication, on-demand package scanning, endpoint telemetry queries, and AI agent hardening. It is new and still evolving.
+    Use **safedep**, the unified CLI for SafeDep Cloud. It covers authentication, on-demand package scanning, endpoint telemetry queries, and AI agent hardening. It is new and still evolving.
   </Card>
 </CardGroup>
 
@@ -46,7 +46,7 @@ Vet, PMG, and Gryph are free, open source, and work with no SafeDep account. The
 
 - **Vet** is the scanning engine. It analyzes dependencies and produces risk reports, queries, and SBOMs. It runs standalone or syncs results to SafeDep Cloud.
 - **PMG** and **Gryph** are standalone, single-purpose guards. PMG works at package-install time, Gryph around AI coding agents. Neither needs Vet or a SafeDep account.
-- **safedep** is an emerging unified CLI that brings SafeDep Cloud's workflows (auth, [on-demand package scanning](/package-security/scan/overview), endpoint telemetry, agent hardening) to the terminal. It does not re-implement local scanning: repository analysis stays in Vet, and on-demand package analysis runs in SafeDep Cloud.
+- **safedep** is an emerging unified CLI that brings SafeDep Cloud's workflows (auth, [on-demand package scanning](/package-security/scan/overview), endpoint telemetry, agent hardening) to the terminal. It does not re-implement local scanning. Repository analysis stays in Vet, and on-demand package analysis runs in SafeDep Cloud.
 
 <Info>
 These tools have no "v1 to v2" relationship. `safedep` is a new Cloud-focused CLI, not a replacement for `vet`. Vet stays the standalone scanner and the recommended starting point for most users.
@@ -54,7 +54,7 @@ These tools have no "v1 to v2" relationship. `safedep` is a new Cloud-focused CL
 
 ## Install
 
-Each tool is on the SafeDep Homebrew tap. Vet, PMG, Gryph, and safedep are also published to npm; Vet, PMG, Gryph, and xBom ship as pre-built binaries. The most common installs:
+Each tool is on the SafeDep Homebrew tap. Vet, PMG, Gryph, and safedep are also published to npm. Vet, PMG, Gryph, and xBom ship as pre-built binaries. The most common installs:
 
 <Tabs>
   <Tab title="Homebrew">
@@ -76,7 +76,7 @@ Each tool is on the SafeDep Homebrew tap. Vet, PMG, Gryph, and safedep are also 
   </Tab>
 </Tabs>
 
-For every install method, current versions, and the full command surface, see each tool's repository: [Vet](https://github.com/safedep/vet), [PMG](https://github.com/safedep/pmg), [Gryph](https://github.com/safedep/gryph), [safedep](https://github.com/safedep/cli).
+For every install method, current versions, and the full command surface, see the [Vet](https://github.com/safedep/vet), [PMG](https://github.com/safedep/pmg), [Gryph](https://github.com/safedep/gryph), and [safedep](https://github.com/safedep/cli) repositories.
 
 ## Next steps
 

@@ -35,7 +35,7 @@ Before you publish a policy override, you can list the projects and endpoints th
 
 ## When a label change applies
 
-A label change makes no policy revision. It applies when the subject resolves next: at the next policy fetch of an endpoint, or at the next pull request check of a project. Each label change writes an audit event.
+A label change makes no policy revision. It applies when the subject resolves next. For an endpoint, that is the next policy fetch. For a project, it is the next pull request check. Each label change writes an audit event.
 
 ## Which labels you can trust
 
@@ -51,12 +51,12 @@ A subject has at most 32 `custom/` labels. A `custom/` value has at most 63 char
 
 <CardGroup cols={2}>
   <Card title="Policy Resolution" icon="layer-group" href="/concepts/policy-resolution">
-    How the matched policy overrides merge.
+    See how the matched policy overrides merge.
   </Card>
   <Card title="Target a Group" icon="bullseye" href="/governance/cloud/policy/target-a-group">
     Label endpoints and projects and write a policy override for them.
   </Card>
   <Card title="Endpoint" icon="server" href="/concepts/endpoint">
-    The machines and runners that report to your tenant.
+    Learn about the machines and runners that report to your tenant.
   </Card>
 </CardGroup>

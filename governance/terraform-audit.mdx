@@ -62,7 +62,7 @@ Use SafeDep Cloud SQL queries to analyze your Terraform provider inventory. See 
 
 ### Find Unofficial Terraform Providers
 
-Query for providers that are not officially maintained by HashiCorp:
+Query for providers that are not officially maintained by HashiCorp.
 
 Providers are surfaced as packages in your synced inventory, joined to the global Terraform provider registry. Anchor the query on an indexed column (here `projects.origin_source`) and join out to `terraform_providers`:
 
@@ -205,7 +205,7 @@ terraform-audit:
 
 Terraform provider tier (official, partner, community) lives in SafeDep Cloud's query layer, not in Vet's local `--filter-suite` engine, which evaluates package-level signals (vulnerabilities, licenses, OpenSSF Scorecard) and has no notion of provider tiers. To enforce provider policies, query the synced inventory and fail the build on disallowed providers.
 
-The **Check for Unofficial Providers** step in the GitHub Actions example above demonstrates this pattern: it queries `terraform_providers.tier` and exits non-zero when any non-official provider is present. Adapt that query to encode your approved-provider rules.
+The **Check for Unofficial Providers** step in the GitHub Actions example above demonstrates this pattern. It queries `terraform_providers.tier` and exits non-zero when any non-official provider is present. Adapt that query to encode your approved-provider rules.
 
 ## Schema Exploration
 

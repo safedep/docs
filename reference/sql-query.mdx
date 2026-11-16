@@ -4,8 +4,8 @@ sidebarTitle: "Cloud SQL"
 description: "Run SQL-like queries against your SafeDep Cloud data with the safedep CLI."
 ---
 
-The `safedep query` command runs SQL-like queries against SafeDep Cloud's analytics surface:
-the packages, projects, endpoints, events, and security findings collected across
+The `safedep query` command runs SQL-like queries against SafeDep Cloud's analytics surface.
+This surface holds the packages, projects, endpoints, events, and security findings collected across
 your tenant, enriched with global threat intelligence (vulnerabilities, EPSS,
 CISA KEV, OpenSSF Scorecard, and more).
 
@@ -20,15 +20,15 @@ yourself.
 
 Tables come in two kinds:
 
-- **Tenant tables** hold *your* data: `projects`, `project_versions`, `boms`,
+- **Tenant tables** hold *your* data. They are `projects`, `project_versions`, `boms`,
   `packages`, `endpoints`, the `component_*` finding tables, and the event tables
   (`inventory_events`, `package_guard_events`, `package_guard_sandbox_violations`).
 - **Join-only enrichment tables** hold *global* reference data shared across all
-  tenants: `vulnerabilities`, `epss`, `kev`, `licenses`, `malware_analysis`,
+  tenants. They are `vulnerabilities`, `epss`, `kev`, `licenses`, `malware_analysis`,
   `open_source_packages`, `open_source_projects`, `scorecards`,
   `scorecard_checks`, `terraform_providers`.
 
-The most important rule: **every query must reference at least one tenant table.**
+The most important rule is that **every query must reference at least one tenant table.**
 You reach an enrichment table only by joining out from a tenant table.
 
 A typical query walks from a first-party project, through its bill of materials,
@@ -46,16 +46,16 @@ projects -> project_versions -> boms -> packages -> component_vulnerabilities ->
 | `SELECT` | Columns must be qualified `table.column`, using the real table name. No table aliases, no bare column names. Result aliases with `AS` work (`COUNT(...) AS n`, then `ORDER BY n`). |
 | `WHERE` | `=`, `!=`, `<`, `<=`, `>`, `>=`, `AND`, `OR`. Enums filtered by name. |
 | `LIKE` | Prefix only: `'name%'`. Leading wildcards (`'%name'`) are rejected. |
-| `JOIN` | Needs an `ON` clause, but its contents are ignored: the catalog applies a predefined join. Only join tables connected by an edge. |
+| `JOIN` | Needs an `ON` clause, but its contents are ignored, because the catalog applies a predefined join. Only join tables connected by an edge. |
 | `GROUP BY` | Only columns flagged `groupable`. |
 | `HAVING` | Filter on aggregates after grouping. |
 | `ORDER BY` | Including by an aggregate alias. |
-| Aggregates | `count`, `sum`, `avg`, `min`, `max`. `count(*)` is rejected: use `count(column)`. |
+| Aggregates | `count`, `sum`, `avg`, `min`, `max`. `count(*)` is rejected. Use `count(column)`. |
 
 Every query must filter on an indexed column or a bounded time range. The schema marks which columns are indexed.
 
-Not supported: subqueries, CTEs (`WITH`), `UNION` and set operations, window
-functions, casts, arbitrary functions, and multiple statements.
+Subqueries, CTEs (`WITH`), `UNION` and set operations, window functions,
+casts, arbitrary functions, and multiple statements are not supported.
 
 ## Discovering the schema
 
@@ -85,8 +85,8 @@ everything needed to write a valid query.
 
 ## Output modes
 
-Select with `-o` / `--output`. When omitted, the CLI auto-detects the format: a
-rendered table for an interactive terminal, plain text when piped.
+Select with `-o` / `--output`. When omitted, the CLI auto-detects the format. It
+renders a table for an interactive terminal and plain text when piped.
 
 | Mode | Use it for |
 |---|---|
@@ -111,7 +111,7 @@ The JSON has `next_page_token` only when a next page exists. The last page has n
 
 ## Pagination
 
-Pagination is caller-driven; the CLI does not auto-iterate. Fetch the first page,
+Pagination is caller-driven. The CLI does not auto-iterate. Fetch the first page,
 then re-run the same query with the returned token:
 
 ```bash
@@ -127,7 +127,7 @@ If `TOK` is empty, the first page was the last page.
 |---|---|---|
 | `queries must reference at least one tenant table` | Query starts from a join-only enrichment table. | Anchor `FROM` on a tenant table (for example `packages`) and join out. |
 | `query must filter on an indexed column or a bounded time range` | No effective indexed filter, or an `OR` across all enum values. | Add an equality filter on an indexed column, or a bounded timestamp range. |
-| `column "X" is not groupable` | `GROUP BY` on a non-groupable column. | Group only by `groupable` columns; use `SELECT DISTINCT` for "which" questions. |
+| `column "X" is not groupable` | `GROUP BY` on a non-groupable column. | Group only by `groupable` columns. Use `SELECT DISTINCT` for "which" questions. |
 | `column "X" is not aggregatable` | `sum`/`avg`/`min`/`max` on a column without the flag. | Use `count(column)`, or aggregate only `aggregatable` columns. |
 | `LIKE` pattern rejected | Leading wildcard (`'%name'`). | Use a prefix pattern (`'name%'`). |
 | Duplicate rows | Join fan-out from `many_to_one` edges. | Use `COUNT(DISTINCT ...)` or de-duplicate client-side. |
@@ -135,7 +135,7 @@ If `TOK` is empty, the first page was the last page.
 
 <CardGroup cols={2}>
   <Card title="SafeDep Cloud Overview" icon="cloud" href="/governance/cloud/overview">
-    What SafeDep Cloud collects to build the data you query.
+    See what SafeDep Cloud collects to build the data you query.
   </Card>
   <Card title="Authentication" icon="key" href="/governance/cloud/authentication">
     Sign in with `safedep auth login` before running queries.
@@ -144,6 +144,6 @@ If `TOK` is empty, the first page was the last page.
     Filter findings locally with Vet's CEL query language.
   </Card>
   <Card title="API & Automation" icon="code" href="/reference/api-introduction">
-    Programmatic access to SafeDep's APIs.
+    Get programmatic access to SafeDep's APIs.
   </Card>
 </CardGroup>

@@ -57,7 +57,7 @@ Two things make this different from a generic database:
    (`COUNT(...) AS n`, then `ORDER BY n`).
 2. **Every query must filter on an indexed column or a bounded time range.** Here
    `projects.origin_source` is indexed, so the query is accepted. This rule keeps
-   queries cheap; the schema marks which columns are indexed.
+   queries cheap. The schema marks which columns are indexed.
 
 `safedep query exec` reads the statement from `--sql`, `--sql-file`, or stdin:
 
@@ -222,7 +222,7 @@ macbookpro.lan            0               1             2026-06-04T08:54:03Z
 The `endpoint_type` and `trust_level` enums are not groupable, so use `WHERE`
 filters and listings rather than `GROUP BY` for endpoints.
 
-SafeDep Cloud sets `endpoint_type` from the PMG session summary: `1` is a
+SafeDep Cloud sets `endpoint_type` from the PMG session summary. `1` is a
 developer machine, `2` is a CI runner and `4` is a Kubernetes workload. An
 endpoint shows `0` until PMG sends a session summary with its runtime context.
 PMG detects only GitHub Actions as CI, so a job in another CI system shows `1`.
@@ -306,7 +306,7 @@ safedep query exec --sql "
 
 <CardGroup cols={2}>
   <Card title="SafeDep Cloud SQL" icon="database" href="/reference/sql-query">
-    Tables, supported SQL, schema flags, output modes, and errors.
+    See the tables, supported SQL, schema flags, output modes, and errors.
   </Card>
   <Card title="Investigate with an AI Agent" icon="comments" href="/governance/cloud/endpoint-hub/agentic-investigation">
     Ask questions in plain English and let an agent write the SQL.

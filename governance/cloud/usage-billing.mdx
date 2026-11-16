@@ -28,16 +28,16 @@ The output shows, per metered feature:
 - **Period end**: when the allowance resets.
 - **Overage**: units consumed beyond the allowance this period, and their billed value, when on-demand billing is enabled.
 
-It also shows the account-level state: whether on-demand billing is enabled, whether a payment method is on file, and the payment posture.
+It also shows three account-level values. These are whether on-demand billing is enabled, whether a payment method is on file, and the payment posture.
 
 ## What happens at the allowance limit
 
-- **On-demand billing disabled** (the default): requests beyond the allowance are denied until the period resets or you add seats.
-- **On-demand billing enabled**: usage beyond the allowance is billed per unit, up to a monthly spending cap.
+- **On-demand billing disabled** (the default): Requests beyond the allowance are denied until the period resets or you add seats.
+- **On-demand billing enabled**: Usage beyond the allowance is billed per unit, up to a monthly spending cap.
 
 ## Enable on-demand billing
 
-Prerequisites: an active paid subscription with a payment method on file. Add a payment method through the billing portal if needed:
+You need an active paid subscription with a payment method on file. Add a payment method through the billing portal if needed:
 
 ```bash
 safedep subscription portal open
@@ -73,9 +73,9 @@ safedep subscription portal open
 
 <CardGroup cols={2}>
   <Card title="On-Demand Package Scanning" icon="microscope" href="/package-security/scan/overview">
-    The metered feature this page's allowances apply to.
+    See the metered feature that these allowances apply to.
   </Card>
   <Card title="Pricing" icon="tag" href="https://safedep.io/pricing">
-    Plans, per-seat allowances, and unit prices.
+    See plans, per-seat allowances, and unit prices.
   </Card>
 </CardGroup>

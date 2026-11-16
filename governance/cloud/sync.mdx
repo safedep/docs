@@ -13,7 +13,7 @@ Your SafeDep Cloud tenant receives data from more than one tool. Each source syn
 | [`vet endpoint scan`](#sync-ai-tool-inventory) | AI tools, coding agents, MCP servers, and Agent Skills found on endpoints | [Endpoint Hub › Inventory](/governance/cloud/endpoint-hub/inventory) |
 | [GitHub App](/governance/integrations/github) | Pull request scan results from repositories it is installed on | Projects |
 
-Every source needs SafeDep Cloud credentials: a tenant domain and an API key. New to Cloud? Start with the [quickstart](/governance/cloud/quickstart).
+Every source needs SafeDep Cloud credentials, a tenant domain and an API key. New to Cloud? Start with the [quickstart](/governance/cloud/quickstart).
 
 This page covers `vet scan` sync in full. PMG and endpoint inventory sync have their own setup guides, summarized below.
 
@@ -88,7 +88,7 @@ vet scan -D . \
   --report-sync-project-version main
 ```
 
-`--policy-suite` takes a v2 policy file (see the [example in the vet repository](https://github.com/safedep/vet/blob/main/samples/policy-v2.yml)); `--filter-fail` exits non-zero on a violation. The older `--filter-suite` format is documented in the [policy reference](/reference/policy-as-code).
+`--policy-suite` takes a v2 policy file (see the [example in the vet repository](https://github.com/safedep/vet/blob/main/samples/policy-v2.yml)). `--filter-fail` exits non-zero on a violation. The older `--filter-suite` format is documented in the [policy reference](/reference/policy-as-code).
 
 ### Review violations across projects
 
@@ -113,11 +113,11 @@ Select **Policy Violations** in [app.safedep.io](https://app.safedep.io). The pa
     cloud-tenant: ${{ secrets.SAFEDEP_CLOUD_TENANT_DOMAIN }}
 ```
 
-vet-action sets project identification from the repository: the project name is `${{ github.repository }}` and the version is `${{ github.ref_name }}`.
+vet-action sets project identification from the repository. The project name is `${{ github.repository }}` and the version is `${{ github.ref_name }}`.
 
 ### Sync from other CI systems
 
-The pattern is the same on any CI system: provide `SAFEDEP_API_KEY` and `SAFEDEP_TENANT_ID` as environment variables and run `vet scan` with the `--report-sync` flags. See [CI/CD Integrations](/governance/integrations/overview) for the full GitLab and Bitbucket guides.
+The pattern is the same on any CI system. Provide `SAFEDEP_API_KEY` and `SAFEDEP_TENANT_ID` as environment variables and run `vet scan` with the `--report-sync` flags. See [CI/CD Integrations](/governance/integrations/overview) for the full GitLab and Bitbucket guides.
 
 <Tabs>
   <Tab title="GitLab CI">
@@ -232,7 +232,7 @@ The pattern is the same on any CI system: provide `SAFEDEP_API_KEY` and `SAFEDEP
 
 [PMG](/package-security/pmg/overview) intercepts package manager commands on the endpoint and records each install as an event. With cloud sync enabled, PMG drains its local event log to your tenant automatically after each invocation, and `pmg cloud sync` pushes events immediately.
 
-Setup, login, and auto-sync tuning live on the Package Guard page:
+Setup, login, and auto-sync tuning live on the Package Guard page.
 
 <Card title="Package Guard" icon="shield" href="/governance/cloud/endpoint-hub/package-guard" horizontal>
   Enable PMG cloud sync and view package events in Endpoint Hub

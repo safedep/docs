@@ -1,14 +1,14 @@
 ---
 title: "Recipes"
 sidebarTitle: "Example Scripts"
-description: "Working scripts for the Threat Intel Feed: mirror the whole feed, keep it current, poll for new malicious packages, and expand a campaign."
+description: "Working scripts for the Threat Intel Feed that mirror the whole feed, keep it current, poll for new malicious packages, and expand a campaign."
 ---
 
 Copy-paste recipes that combine the RPCs. Each one uses the environment variables from [Connecting](/threat-intel/connecting#set-up-your-shell).
 
 ## Mirror the whole feed, then keep it current
 
-This keeps a full local copy of the feed and keeps it current. Two phases: first backfill every report by paging from the start, then on each later run pull only what changed since the newest `updatedAt` you stored.
+This keeps a full local copy of the feed and keeps it current. It has two phases. First, backfill every report by paging from the start. Then, on each later run, pull only what changed since the newest `updatedAt` you stored.
 
 ```bash
 # 1. Full backfill: page ascending until nextPageToken is empty.
@@ -64,5 +64,5 @@ curl -sS "$TI/GetCampaignPackageReports" \
 ```
 
 <Tip>
-After the backfill, the steady state is always the same: `ListPackageReports` with `filters.since` set to your high-water mark. See [Pagination & sync](/threat-intel/pagination).
+After the backfill, the steady state is always the same. Call `ListPackageReports` with `filters.since` set to your high-water mark. See [Pagination & sync](/threat-intel/pagination).
 </Tip>

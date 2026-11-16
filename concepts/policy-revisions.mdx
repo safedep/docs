@@ -1,7 +1,7 @@
 ---
 title: Policy Revisions and Changes
 sidebarTitle: "Revisions"
-description: "How a change to the cloud policy goes from a draft to a published revision: preview, change direction, stale changes, rollback, notices and audit."
+description: "How a change to the cloud policy goes from a draft to a published revision, with the preview, change direction, stale changes, rollback, notices and audit."
 ---
 
 Each change to the cloud [policy](/concepts/policy) goes through the same steps. You write a draft, you read a preview of its effect, and you publish it. The publish makes a new policy revision. This page explains each step.
@@ -10,7 +10,7 @@ Each change to the cloud [policy](/concepts/policy) goes through the same steps.
 
 A policy change is a draft on the server. It starts from a base revision, the head revision when you created it. It can edit the policy settings document, add package rule operations, or both. Nothing applies until an Owner or an Admin publishes it.
 
-`safedep policy edit` opens the policy settings document of the tenant in your editor: the policy base and every policy override. When you save the file, the command creates a policy change. Package rules are not in this document. The rule commands, such as `safedep policy rule create`, create a change and publish it in one step.
+`safedep policy edit` opens the policy settings document of the tenant in your editor. The document holds the policy base and every policy override. When you save the file, the command creates a policy change. Package rules are not in this document. The rule commands, such as `safedep policy rule create`, create a change and publish it in one step.
 
 The document keeps no YAML comments. Write the reason for a value in the `description` of the policy override, or in `base_description` for the policy base.
 
@@ -33,11 +33,11 @@ In this release, only the pull request check reports policy coverage, so the cov
 
 ## Change direction
 
-SafeDep Cloud computes the change direction of each change: it **tightens**, it **loosens**, or it is **neutral**. It compares the resolved policy before and after the change, for each group of subjects that the change reaches.
+SafeDep Cloud computes the change direction of each change. Each change **tightens**, **loosens**, or is **neutral**. It compares the resolved policy before and after the change, for each group of subjects that the change reaches.
 
 - A setting tightens when its new value is stricter, such as a longer cooldown or a lower severity for `scan_gate.fail_on`.
 - A setting other than a license list that had no value before the change, or that has no value after it, loosens. SafeDep Cloud cannot know what a tool does when no layer sets the field. So the first cooldown that you set counts as a change that loosens.
-- A license id that a change adds to `scan_gate.licenses.deny` tightens, and an id that it removes loosens. For `scan_gate.licenses.allow` it is the other way: an added id loosens, and a removed id tightens. A change that turns on an allow list tightens, and a change that turns it off loosens.
+- A license id that a change adds to `scan_gate.licenses.deny` tightens, and an id that it removes loosens. For `scan_gate.licenses.allow` it is the other way. An added id loosens, and a removed id tightens. A change that turns on an allow list tightens, and a change that turns it off loosens.
 - A new block entry tightens. A new trust entry loosens.
 - A deleted block entry loosens. A deleted trust entry tightens.
 - A later expiry of a trust entry loosens. A new or earlier expiry of a block entry loosens, because it narrows the block.
@@ -81,7 +81,7 @@ The email names the tenant, the revision, the person who published it, the chang
 
 ## Audit events
 
-Each admin action writes one audit event in the same transaction as the action: each change, publish, rule operation and label change. An action that fails writes no event, and a publish that fails sends no email. See [Audit Policy Changes](/governance/cloud/policy/audit-policy-changes).
+Each admin action, such as a change, a publish, a rule operation or a label change, writes one audit event in the same transaction as the action. An action that fails writes no event, and a publish that fails sends no email. See [Audit Policy Changes](/governance/cloud/policy/audit-policy-changes).
 
 ## Related
 

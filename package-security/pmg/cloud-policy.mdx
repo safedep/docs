@@ -4,7 +4,7 @@ sidebarTitle: "Cloud Policy"
 description: "Turn on cloud.policy so that PMG applies the block entries, trust entries and dependency cooldown of your SafeDep Cloud tenant."
 ---
 
-With the `cloud.policy` setting on, PMG applies the [cloud policy](/governance/cloud/policy/overview) of your tenant: its block entries, its trust entries and its dependency cooldown. Your security admin changes the policy in SafeDep Cloud, and PMG gets the change with no new config on each machine.
+With the `cloud.policy` setting on, PMG applies the block entries, the trust entries and the dependency cooldown of the [cloud policy](/governance/cloud/policy/overview) of your tenant. Your security admin changes the policy in SafeDep Cloud, and PMG gets the change with no new config on each machine.
 
 <Note>
   The cloud policy needs the SafeDep Cloud Team or Enterprise plan. See [pricing](https://safedep.io/pricing). Without `cloud.policy`, PMG works as before and blocks malicious packages with no account.
@@ -79,7 +79,7 @@ A fetch that fails keeps the cache. When you log out, PMG keeps the last policy.
 
 | PMG setting | With the cloud policy |
 |---|---|
-| `dependency_cooldown.enabled`, `dependency_cooldown.days` | When the policy sets the cooldown, its value wins over the config file and the `PMG_*` environment variables. PMG refuses `--skip-dependency-cooldown`. PMG rounds the value up to whole days. Exception: under `global_lockdown`, a managed config file that sets one of these keys keeps its value. |
+| `dependency_cooldown.enabled`, `dependency_cooldown.days` | When the policy sets the cooldown, its value wins over the config file and the `PMG_*` environment variables. PMG refuses `--skip-dependency-cooldown`. PMG rounds the value up to whole days. As an exception, under `global_lockdown`, a managed config file that sets one of these keys keeps its value. |
 | `dependency_cooldown.skip` | Still applies. |
 | `blocked_packages` | Still applies, together with the block entries of the policy. |
 | `trusted_packages`, the `PMG_INSECURE_INSTALLATION` environment variable | Still apply, but a block entry of the policy wins over them. Under `global_lockdown`, PMG ignores `PMG_INSECURE_INSTALLATION`. |
@@ -111,15 +111,15 @@ PMG keeps the policy cache in the folder of the user, so a user can change the c
 
 <CardGroup cols={2}>
   <Card title="Cloud Policy" icon="scale-balanced" href="/governance/cloud/policy/overview">
-    What the cloud policy controls and who can change it.
+    See what the cloud policy controls and who can change it.
   </Card>
   <Card title="Hold Back Newly Published Versions" icon="hourglass" href="/package-security/pmg/dependency-cooldown">
-    The dependency cooldown of PMG.
+    See how the PMG dependency cooldown works.
   </Card>
   <Card title="Deploy PMG with MDM" icon="laptop" href="/package-security/pmg/mdm/overview">
     Ship the managed config file to a fleet.
   </Card>
   <Card title="PMG configuration" icon="gear" href="https://github.com/safedep/pmg/blob/main/docs/config.md#cloud-policy">
-    The config reference in the PMG repository.
+    Read the config reference in the PMG repository.
   </Card>
 </CardGroup>

@@ -18,7 +18,7 @@ A paginated feed of reports. The default order is ascending (oldest change first
 | `filters.since` | timestamp | Only reports with `updatedAt` strictly after this. |
 | `filters.ecosystem` | enum | One [`Ecosystem`](/threat-intel/schema) value. |
 | `filters.verdict` | enum | `THREAT_VERDICT_SUSPICIOUS` or `THREAT_VERDICT_MALICIOUS`. |
-| `filters.withdrawn` | bool | Omit to include withdrawn reports (default); `false` excludes them; `true` returns only them. |
+| `filters.withdrawn` | bool | Omit to include withdrawn reports (default). `false` excludes them. `true` returns only them. |
 
 All filters combine with AND. The feed includes withdrawn reports by default, so you learn about retractions.
 

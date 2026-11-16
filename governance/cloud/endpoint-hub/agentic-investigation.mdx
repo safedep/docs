@@ -18,7 +18,7 @@ Ask your AI coding agent about your SafeDep Cloud tenant in plain English. The a
 ## Before you start
 
 - A [SafeDep Cloud tenant](/governance/cloud/quickstart) with data synced from your tools. The agent can only answer what your tenant holds, so [connect at least one source](/governance/cloud/sync) first.
-- For the endpoint playbooks: endpoints that sync data to your tenant. Set up [Package Guard sync](/governance/cloud/endpoint-hub/package-guard) for package events, and optionally [Inventory](/governance/cloud/endpoint-hub/inventory) for AI tooling.
+- For the endpoint playbooks, endpoints that sync data to your tenant. Set up [Package Guard sync](/governance/cloud/endpoint-hub/package-guard) for package events, and optionally [Inventory](/governance/cloud/endpoint-hub/inventory) for AI tooling.
 - The `safedep` CLI, signed in with `safedep auth login`. See [Install the safedep CLI](/governance/cloud/quickstart#install-the-safedep-cli) and [Authentication](/governance/cloud/authentication).
 - An AI coding agent with the [SafeDep skill](/get-started/safedep-skill) installed.
 
@@ -34,7 +34,7 @@ The agent works in a loop:
 2. It writes a query and runs it with `safedep query exec`.
 3. If the server rejects the query, the error says why. The agent corrects the query and retries.
 
-Every query is scoped to your authenticated tenant. The agent reads data; it cannot change it. Each answer traces back to a real query, so you can ask the agent to show the SQL it ran. The query language has no relative dates, so for questions like "in the last 30 days" the agent computes the cutoff timestamp from today's date. The playbooks below include the SQL the agent runs, collapsed by default since you do not need it to investigate. Expand it when you want to see or verify the details.
+Every query is scoped to your authenticated tenant. The agent reads data, but it cannot change it. Each answer traces back to a real query, so you can ask the agent to show the SQL it ran. The query language has no relative dates, so for questions like "in the last 30 days" the agent computes the cutoff timestamp from today's date. The playbooks below include the SQL the agent runs, collapsed by default since you do not need it to investigate. Expand it when you want to see or verify the details.
 
 For the query language, the full table list, and the query rules, see [SafeDep Cloud SQL](/reference/sql-query).
 
@@ -60,7 +60,7 @@ Questions that map cleanly to your synced data:
 
 ## Endpoint playbooks
 
-Your endpoints report their activity to [Endpoint Hub](/governance/cloud/endpoint-hub/overview): every package install [PMG](/package-security/pmg/overview) allowed or blocked, and the AI tooling `vet` discovered. Each playbook gives the question to ask, the SQL the agent runs, and how to check the answer.
+Your endpoints report their activity to [Endpoint Hub](/governance/cloud/endpoint-hub/overview). They report every package install that [PMG](/package-security/pmg/overview) allowed or blocked, and the AI tooling that `vet` discovered. Each playbook gives the question to ask, the SQL the agent runs, and how to check the answer.
 
 ### Check exposure to a compromised package
 
@@ -138,7 +138,7 @@ The related `PMG_EVENT_TYPE_SANDBOX_OVERRIDE` event records sandbox policy overr
 
 ### Find endpoints that stopped reporting
 
-An endpoint that stopped syncing is a blind spot: it still installs packages, and you no longer see them.
+An endpoint that stopped syncing is a blind spot. It still installs packages, and you no longer see them.
 
 ```text
 Which endpoints have not synced in the last 30 days?
@@ -157,7 +157,7 @@ An endpoint can stop reporting for good reasons, such as a decommissioned laptop
 
 ### Get a current verdict on a suspect package
 
-Package Guard events record the decision PMG made at install time. Verdicts change: a package that passed last month may be known malware today. To judge a package during an investigation, get a current verdict. Two paths exist, and the agent should take the fast one first:
+Package Guard events record the decision PMG made at install time. Verdicts change. A package that passed last month may be known malware today. To judge a package during an investigation, get a current verdict. Two paths exist, and the agent should take the fast one first:
 
 ```text
 An endpoint installed left-pad-utils 2.1.0 from npm last week. Is it safe?
@@ -171,7 +171,7 @@ The fast path checks SafeDep's [known malicious packages database](/package-secu
 vet scan --purl pkg:npm/left-pad-utils@2.1.0 --malware-query
 ```
 
-The slow path is an [on-demand package scan](/package-security/scan/overview): a full malware analysis of the exact version. It takes minutes and draws down your plan's scan allowance. Use it when the database has no verdict and the package deserves a deep dive:
+The slow path is an [on-demand package scan](/package-security/scan/overview), a full malware analysis of the exact version. It takes minutes and draws down your plan's scan allowance. Use it when the database has no verdict and the package deserves a deep dive:
 
 ```bash
 safedep package scan run "pkg:npm/left-pad-utils@2.1.0" -o json
@@ -201,21 +201,21 @@ Other item kinds cover coding agents, IDE extensions, and Agent Skills.
 
 ## Ask narrow questions
 
-Results return one page at a time, up to 100 rows. Do not ask the agent to dump a table and search the output. Ask a narrow question, and let the agent filter server-side: a package name, a time range, one endpoint, one event type. When you need totals, ask for counts; the agent aggregates with `GROUP BY` instead of paging through rows.
+Results return one page at a time, up to 100 rows. Do not ask the agent to dump a table and search the output. Ask a narrow question, and let the agent filter server-side, such as on a package name, a time range, one endpoint, or one event type. When you need totals, ask for counts. The agent aggregates with `GROUP BY` instead of paging through rows.
 
 ## Verify the answer
 
 Every agent answer maps to a query you can run yourself:
 
 1. Ask the agent to show the SQL it ran.
-2. Run it: `safedep query exec --sql "<statement>"`.
+2. Run it with `safedep query exec --sql "<statement>"`.
 3. Compare the result with the agent's summary.
 
 If the agent's answer looks wrong, the query is the first place to look. A missing time bound or a wrong enum value changes the result silently.
 
 <CardGroup cols={2}>
   <Card title="SafeDep Cloud SQL" icon="database" href="/reference/sql-query">
-    The query language, full table list, and query rules.
+    See the query language, full table list, and query rules.
   </Card>
   <Card title="Install the SafeDep Skill" icon="puzzle-piece" href="/get-started/safedep-skill">
     Set up your AI coding agent for SafeDep.

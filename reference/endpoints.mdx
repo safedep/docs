@@ -1,10 +1,10 @@
 ---
 title: "API Endpoints"
 sidebarTitle: "Service Hosts"
-description: "Canonical list of SafeDep service hostnames: console, data plane, control plane, identity, community API, and MCP."
+description: "Canonical list of SafeDep service hostnames for the console, data plane, control plane, identity, community API, and MCP."
 ---
 
-These are the public SafeDep hosts you work with directly: the console, the API planes, identity, the community API, and the hosted MCP server. Use this page as the canonical reference for what each host does and how it authenticates. For how to authenticate against the API planes, see [Authentication](/governance/cloud/authentication).
+The public SafeDep hosts that you work with directly are the console, the API planes, identity, the community API, and the hosted MCP server. Use this page as the canonical reference for what each host does and how it authenticates. For how to authenticate against the API planes, see [Authentication](/governance/cloud/authentication).
 
 <Note>
 This list is not a complete egress allowlist. Some integrations reach additional internal hosts. Enabling vet-action's comments proxy, for example, adds `ghcp-integrations.safedep.io`. Check the relevant integration's docs when you configure strict firewall rules.
@@ -33,9 +33,9 @@ You create API keys in the web console at [`app.safedep.io/settings/api-keys`](h
 
 <CardGroup cols={2}>
   <Card title="Authentication" icon="key" href="/governance/cloud/authentication">
-    How to authenticate against the data and control planes.
+    Learn how to authenticate against the data and control planes.
   </Card>
   <Card title="API Specification" icon="book" href="https://buf.build/safedep/api">
-    Canonical gRPC / ConnectRPC schemas and generated SDKs.
+    Get the canonical gRPC / ConnectRPC schemas and generated SDKs.
   </Card>
 </CardGroup>

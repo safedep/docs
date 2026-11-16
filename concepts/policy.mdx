@@ -1,7 +1,7 @@
 ---
 title: Policy
 sidebarTitle: "Policy Types"
-description: "A SafeDep policy decides which packages pass. There are two kinds: the cloud policy of a tenant, and policy as code in a repository."
+description: "A SafeDep policy decides which packages pass. The two kinds are the cloud policy of a tenant and policy as code in a repository."
 ---
 
 A policy turns your supply chain rules into data that SafeDep tools apply to each package. You write a rule once, and the tools apply it the same way on every machine and in every check. SafeDep has two kinds of policy. They differ in where they live, who changes them, and which tools read them.
@@ -12,7 +12,7 @@ The cloud policy is one policy for each [tenant](/concepts/tenant). It lives in 
 
 The cloud policy holds two kinds of content:
 
-- **Policy settings** are typed values, such as the dependency cooldown or the lowest vulnerability severity that fails a pull request check. Settings come in layers: the SafeDep default policy, the policy base of the tenant, and policy overrides for groups of endpoints and projects. See [Policy Resolution](/concepts/policy-resolution).
+- **Policy settings** are typed values, such as the dependency cooldown or the lowest vulnerability severity that fails a pull request check. Settings come in layers. The layers are the SafeDep default policy, the policy base of the tenant, and policy overrides for groups of endpoints and projects. See [Policy Resolution](/concepts/policy-resolution).
 - **Package rules** are block entries and trust entries for packages. See [Package Rules](/concepts/package-rules).
 
 Each publish makes a new [policy revision](/concepts/policy-revisions). Each decision that a tool makes with the cloud policy names the revision and the rule or setting that decided. So you can explain a block, roll back a bad change, and show an auditor which policy applied on a date.

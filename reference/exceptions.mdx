@@ -1,7 +1,7 @@
 ---
 title: "Exceptions"
 sidebarTitle: "Exceptions File"
-description: "Reference for Vet exceptions: the file format, the flags that generate and apply them, and the matching rules."
+description: "Reference for Vet exceptions, with the file format, the flags that generate and apply them, and the matching rules."
 ---
 
 <Info>
@@ -11,7 +11,7 @@ This page is about Vet exceptions in a file. It is not the cloud policy of a Saf
 An exception excludes a package from scan results and reports. Use it for false positives, accepted risks during remediation, or legacy dependencies being migrated. This page is the reference for the exceptions file and the flags that work with it.
 
 <Warning>
-An excepted package is skipped entirely, including any future issues it develops. Every exception must carry an expiry date; permanent exceptions are not allowed. Exceptions also cannot be scoped to a whole manifest, only to specific packages.
+An excepted package is skipped entirely, including any future issues it develops. Every exception must carry an expiry date. Permanent exceptions are not allowed. Exceptions also cannot be scoped to a whole manifest, only to specific packages.
 </Warning>
 
 ## Exceptions file format
@@ -90,10 +90,10 @@ With [vet-action](https://github.com/safedep/vet-action), commit the file (conve
 
 <CardGroup cols={2}>
   <Card title="Filtering" icon="filter" href="/reference/filtering">
-    The CEL expressions used in `--exceptions-filter`.
+    See the CEL expressions that `--exceptions-filter` uses.
   </Card>
   <Card title="Build Your Own Queries" icon="magnifying-glass" href="/governance/vet/build-your-own-queries">
-    The JSON dump and query workflow exceptions build on.
+    Learn the JSON dump and query workflow that exceptions build on.
   </Card>
   <Card title="Policy as Code" icon="file-code" href="/reference/policy-as-code">
     Enforce policy on the packages that remain.

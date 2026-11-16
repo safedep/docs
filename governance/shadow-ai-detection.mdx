@@ -1,7 +1,7 @@
 ---
 title: "Detect Shadow AI in Code"
 sidebarTitle: "Shadow AI Detection"
-description: "Find shadow AI in your code with vet: detect the AI SDKs your application calls, then generate an AI BOM in CycloneDX with file and line evidence."
+description: "Find shadow AI in your code with vet. Detect the AI SDKs your application calls, then generate an AI BOM in CycloneDX with file and line evidence."
 ---
 
 Shadow AI is AI services and SDKs that developers added to the code without a security review. `vet` finds the AI libraries, SDKs, and agent frameworks your application actually calls. It scans source code and matches call sites against signatures for known AI SDKs. Because the results come from call sites, they show what the code calls, not only what the manifests declare.
@@ -15,7 +15,7 @@ Coverage tracks the AI ecosystem in current use:
 - **Frameworks and agent SDKs:** LangChain, LangGraph, LlamaIndex, CrewAI, Vercel AI SDK, OpenAI Agents SDK, Claude Agent SDK, Pydantic AI, Spring AI, Semantic Kernel, and the Model Context Protocol (MCP) SDKs
 - **Languages:** Python, JavaScript, TypeScript, Java, and Go. Each SDK is covered in the languages it supports.
 
-Browse the [full signature set](https://github.com/safedep/vet/tree/main/signatures). AI is one xBOM category: the same scan also detects cryptographic, cloud, network, filesystem, and process usage (see the [vet xBOM documentation](https://github.com/safedep/vet/blob/main/docs/xbom.md)).
+Browse the [full signature set](https://github.com/safedep/vet/tree/main/signatures). AI is one xBOM category. The same scan also detects cryptographic, cloud, network, filesystem, and process usage (see the [vet xBOM documentation](https://github.com/safedep/vet/blob/main/docs/xbom.md)).
 
 ## Prerequisites
 
@@ -164,10 +164,10 @@ Generate the BOM on each build and keep it as an artifact:
     Generate a standard CycloneDX SBOM with vet.
   </Card>
   <Card title="What is an SBOM?" icon="lightbulb" href="/concepts/sbom">
-    How CycloneDX BOMs and xBOMs relate.
+    See how CycloneDX BOMs and xBOMs relate.
   </Card>
   <Card title="Code Analysis" icon="magnifying-glass" href="/governance/vet/code-analysis">
-    The static analysis engine behind the xBOM.
+    Learn about the static analysis engine behind the xBOM.
   </Card>
   <Card title="Policy as Code" icon="shield" href="/reference/policy-as-code">
     Enforce policies on detected components in CI/CD.

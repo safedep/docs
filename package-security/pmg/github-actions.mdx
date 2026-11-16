@@ -47,7 +47,7 @@ In server mode, put the action before the language setup steps, so the proxy see
 
 By default, the action runs the proxy in server mode. On a GitHub hosted runner, it also turns on [kernel enforcement](#enforce-in-the-kernel). Set `server-mode: false` to use the PMG shims instead. `sandbox: true` also selects the shims. With shims, the job has no job summary and no kernel enforcement, and the `safedep/pmg` step goes after `setup-node` or `setup-python`, not before. Set `timeout-minutes` on the job. A proxy that stops serving holds the job until the timeout.
 
-PMG blocks malicious packages using SafeDep's free community intelligence with or without credentials. Add the optional `api-key` and `tenant-id` to connect the run to [SafeDep Cloud](/governance/cloud/overview), so block events sync to [Endpoint Hub](/governance/cloud/endpoint-hub/overview) before the runner is destroyed. Set both inputs or neither: the action fails when you set only one.
+PMG blocks malicious packages using SafeDep's free community intelligence with or without credentials. Add the optional `api-key` and `tenant-id` to connect the run to [SafeDep Cloud](/governance/cloud/overview), so block events sync to [Endpoint Hub](/governance/cloud/endpoint-hub/overview) before the runner is destroyed. Set both inputs or neither. The action fails when you set only one.
 
 The blocks from every job then go to one tenant. To review them across all repositories, see [Review Package Blocks Across CI Pipelines](/governance/cloud/endpoint-hub/ci-package-blocks). This review needs the SafeDep Cloud Team or Enterprise plan. See [pricing](https://safedep.io/pricing).
 
@@ -223,7 +223,7 @@ To run the proxy as a service on the host, see [Kernel Enforcement on Linux](/pa
 
 For each input of the action, its default and the `PMG_*` variable that it sets, see [Inputs](https://github.com/safedep/pmg/blob/main/docs/github-action.md#inputs) in the PMG action documentation. It also covers the inputs that this page does not use, such as `paranoid`, `cooldown-days`, `sandbox` and `config-file`. The description of each input is in [`action.yml`](https://github.com/safedep/pmg/blob/main/action.yml). An input that you set overrides the same key in the `config-file`.
 
-The action has two outputs: `version`, the PMG release that it installed, and `bin-dir`, the directory that holds the `pmg` binary. To read an output, give the step an `id`:
+The action has two outputs. `version` is the PMG release that it installed, and `bin-dir` is the directory that holds the `pmg` binary. To read an output, give the step an `id`:
 
 ```yaml
 - uses: safedep/pmg@v0.34.0

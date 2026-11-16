@@ -3,7 +3,7 @@ title: "xBom"
 description: "xBom generates a Bill of Materials of the AI, cloud and crypto components that it finds in your source code."
 ---
 
-Modern applications reach far beyond declared dependencies: AI SDKs, ML models, and third-party SaaS APIs. Traditional BOM tools only read manifest files like `requirements.txt` or `pom.xml`. [xBom](https://github.com/safedep/xbom) analyzes your source code to find what your application actually uses, and writes it as a BOM. To compare it with an [SBOM](/concepts/sbom), see the concept page.
+Modern applications reach far beyond declared dependencies. They also use AI SDKs, ML models, and third-party SaaS APIs. Traditional BOM tools only read manifest files like `requirements.txt` or `pom.xml`. [xBom](https://github.com/safedep/xbom) analyzes your source code to find what your application actually uses, and writes it as a BOM. To compare it with an [SBOM](/concepts/sbom), see the concept page.
 
 xBom finds evidence of AI SDKs, cloud APIs and cryptography in Python and Java code, with partial JavaScript support, as of v0.0.3. It writes a standard CycloneDX BOM. Community signatures detect each component. The signatures are built into xBom, so to add one, contribute it to the xBom repository.
 

@@ -4,7 +4,7 @@ sidebarTitle: "Shared Hosts and Images"
 description: "Install PMG for all users on Linux or Windows machines, including shared VMs, CI runners, and Linux container images."
 ---
 
-Use a system-wide install when one machine or image should protect every user account: shared VMs, CI runners, and golden Docker images. On Linux and Windows, it installs PATH shims for all users and an authoritative managed config, so any user's `npm install` or `pip install` is checked before it runs.
+Use a system-wide install when one machine or image should protect every user account, such as on shared VMs, CI runners, and golden Docker images. On Linux and Windows, it installs PATH shims for all users and an authoritative managed config, so any user's `npm install` or `pip install` is checked before it runs.
 
 <Info>
   For a single developer machine, use the per-user setup in the [Quickstart](/package-security/pmg/quickstart). For a macOS, Linux, or Windows fleet, [deploy through your MDM](/package-security/pmg/mdm/overview). For a Kubernetes workload, use the [Kubernetes guide](/package-security/pmg/kubernetes). Per-user and system-wide installs can coexist.
@@ -67,7 +67,7 @@ For fleets, the [Windows MDM scripts](/package-security/pmg/mdm/overview) perfor
 
 ## Docker images
 
-PMG must be installed inside the image: PMG on the Docker host cannot see installs that run during `docker build`.
+PMG must be installed inside the image. PMG on the Docker host cannot see installs that run during `docker build`.
 
 Copy the PMG binary from the [published PMG container image](https://github.com/safedep/pmg/pkgs/container/pmg) into your application image. For reproducible builds, pin the image to a release tag in place of `latest`.
 
@@ -137,7 +137,7 @@ Every `RUN npm install` or `RUN pip install` after the `ENV PATH` line now goes 
    ```
 
 <Tip>
-  On a multi-user host where you do not trust every member of the directory's group, tighten the install directory: `sudo chmod g-w /usr/local/bin`. Debian and Ubuntu ship it group-writable for the `staff` group (empty by default).
+  On a multi-user host where you do not trust every member of the directory's group, tighten the install directory with `sudo chmod g-w /usr/local/bin`. Debian and Ubuntu ship it group-writable for the `staff` group (empty by default).
 </Tip>
 
 ## Verify
@@ -159,7 +159,7 @@ On Linux, run these steps in a VM shell or inside a container (`docker run --rm 
 
 ## Configuration
 
-The system config file is authoritative for every user. PMG ignores a per-user `config.yml` while the managed config is active: `/etc/safedep/pmg/config.yml` on Linux or `%PROGRAMDATA%\safedep\pmg\config.yml` on Windows.
+The system config file is authoritative for every user. PMG ignores a per-user `config.yml` while the managed config is active. The managed config is `/etc/safedep/pmg/config.yml` on Linux or `%PROGRAMDATA%\safedep\pmg\config.yml` on Windows.
 
 PMG obeys the managed config only when no account other than the system account can change it:
 
@@ -213,7 +213,7 @@ docker run -e SAFEDEP_API_KEY -e SAFEDEP_TENANT_ID my-image
 
 Compose `environment:` entries and Kubernetes Secret references work the same way. If the container is short-lived, a CI job for example, run `pmg cloud sync` before it exits so buffered events are not destroyed with it.
 
-**During `docker build`**, install steps need no credentials: PMG buffers each event locally. Deliver the buffer in one final `RUN` step, with the credentials mounted as BuildKit secrets. Mount them directly as environment variables so PMG can use its standard `SAFEDEP_API_KEY` and `SAFEDEP_TENANT_ID` credential resolver:
+**During `docker build`**, install steps need no credentials, because PMG buffers each event locally. Deliver the buffer in one final `RUN` step, with the credentials mounted as BuildKit secrets. Mount them directly as environment variables so PMG can use its standard `SAFEDEP_API_KEY` and `SAFEDEP_TENANT_ID` credential resolver:
 
 ```dockerfile
 RUN npm ci
@@ -232,7 +232,7 @@ docker build \
 ```
 
 <Note>
-  A blocked package fails its `RUN` step: later steps never run, including the final sync, so a failed build uploads nothing. The block itself shows in the build output.
+  A blocked package fails its `RUN` step. Later steps never run, including the final sync, so a failed build uploads nothing. The block itself shows in the build output.
 </Note>
 
 <Accordion title="Complete Dockerfile with cloud sync">
@@ -291,9 +291,9 @@ export SAFEDEP_API_KEY="<your-api-key>"
 export SAFEDEP_TENANT_ID="<your-tenant-id>"
 ```
 
-Users who should sync with their own key can set the same variables in their own shell profile instead. One shared key does not blur the picture: every synced event records which OS user ran the install. It does mean every user on the host can read the key.
+Users who should sync with their own key can set the same variables in their own shell profile instead. One shared key does not blur the picture, because every synced event records which OS user ran the install. It does mean every user on the host can read the key.
 
-Installs that ran before the credentials were in place are not lost: PMG buffers those events per user and delivers them on the next sync that finds credentials.
+Installs that ran before the credentials were in place are not lost. PMG buffers those events per user and delivers them on the next sync that finds credentials.
 
 Auto-sync cadence, manual sync, and viewing events are covered in [Package Guard](/governance/cloud/endpoint-hub/package-guard). The full set of cloud keys is in the [PMG configuration reference](https://github.com/safedep/pmg/blob/main/docs/config.md).
 
@@ -312,7 +312,7 @@ For managed fleets, use the [MDM deployment guides](/package-security/pmg/mdm/ov
 
 System install does not set up a MITM certificate authority. For npm and pip on Linux, PMG's default ephemeral CA and environment-variable injection are sufficient. To install a persistent CA into the OS trust store, run `pmg setup cert install --system` as your normal user.
 
-PATH shims protect the commands that go through them. To route every process on a Linux host through PMG, including processes that never read `PATH` or proxy variables, see [Kernel Enforcement on Linux](/package-security/pmg/kernel-enforcement). It needs the same command as root: `sudo pmg setup cert install --system`.
+PATH shims protect the commands that go through them. To route every process on a Linux host through PMG, including processes that never read `PATH` or proxy variables, see [Kernel Enforcement on Linux](/package-security/pmg/kernel-enforcement). It needs the same command run as root, `sudo pmg setup cert install --system`.
 
 ## Uninstall
 
@@ -360,7 +360,7 @@ Try running `pmg setup doctor` first. The cases below apply to Linux. For Window
     sudo chown -R $(id -un) ~/.config/safedep
     ```
 
-    If the path is **inside another user's home**, your environment leaked that user's `HOME` or `XDG_CONFIG_HOME` (common with `sudo -u` on CI runners). Fix the environment. Do not `chown` another user's directory, that breaks PMG for them.
+    If the path is **inside another user's home**, your environment leaked that user's `HOME` or `XDG_CONFIG_HOME` (common with `sudo -u` on CI runners). Fix the environment. Do not `chown` another user's directory. That breaks PMG for them.
 
     ```bash
     export XDG_CONFIG_HOME="$HOME/.config"
@@ -370,9 +370,9 @@ Try running `pmg setup doctor` first. The cases below apply to Linux. For Window
 
 <CardGroup cols={2}>
   <Card title="System Install Reference" icon="github" href="https://github.com/safedep/pmg/blob/main/docs/system-install.md">
-    Full reference in the PMG repo: binary validation rules, user data directories, and limitations.
+    Read the full reference in the PMG repo, with binary validation rules, user data directories, and limitations.
   </Card>
   <Card title="PMG" icon="box" href="/package-security/pmg/overview">
-    How PMG blocks malicious packages at install time.
+    See how PMG blocks malicious packages at install time.
   </Card>
 </CardGroup>

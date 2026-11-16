@@ -30,7 +30,7 @@ Restore one capability, such as `scan_gate`:
 safedep policy change create --from-revision 46 --capability scan_gate -m "Revert fail_on to high"
 ```
 
-- `--capability` names a capability to restore: `scan_gate` or `package_admission`. Give it more than once for more capabilities. Without it, the change restores every capability.
+- `--capability` names a capability to restore. The values are `scan_gate` and `package_admission`. Give it more than once for more capabilities. Without it, the change restores every capability.
 - For each restored capability, the policy base and every policy override take their values from revision 46. A policy override that did not exist then loses the fields of the restored capabilities.
 - Package rules stay as they are now. To restore the set of package rules of revision 46 as well, add `--package-rules revision`. The change then deletes the rules that came after revision 46, and creates again the rules that were removed after it, with new rule ids. A rule whose expiry at revision 46 is now in the past does not come back. The restore never keeps more package rules than the old revision had.
 

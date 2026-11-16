@@ -1,13 +1,13 @@
 ---
 title: Filtering
 sidebarTitle: "Filter Syntax"
-description: "Reference for Vet's CEL filter expressions: the input schema, available fields, and the operators and functions you can use."
+description: "Reference for Vet's CEL filter expressions, with the input schema, available fields, and the operators and functions you can use."
 ---
 
-Vet filters dependencies with [CEL](https://cel.dev/) expressions. A filter is a boolean expression evaluated against each package; a package is included in the results when the expression evaluates to `true`. This page is the reference for the filter input and CEL syntax. For the concept, see [CEL](/concepts/cel).
+Vet filters dependencies with [CEL](https://cel.dev/) expressions. A filter is a boolean expression evaluated against each package. A package is included in the results when the expression evaluates to `true`. This page is the reference for the filter input and CEL syntax. For the concept, see [CEL](/concepts/cel).
 
 <Note>
-The `vet scan --filter` examples below use Vet's original filter interface. Vet also ships a newer `--policy` engine with a different input schema; see the [Vet repository](https://github.com/safedep/vet) for its format.
+The `vet scan --filter` examples below use Vet's original filter interface. Vet also ships a newer `--policy` engine with a different input schema. See the [Vet repository](https://github.com/safedep/vet) for its format.
 </Note>
 
 ## Running a filter
@@ -84,7 +84,7 @@ licenses.size() == 0
 
 <CardGroup cols={2}>
   <Card title="CEL" icon="code" href="/concepts/cel">
-    What CEL is and how SafeDep uses it.
+    Learn what CEL is and how SafeDep uses it.
   </Card>
   <Card title="Policy as Code" icon="file-code" href="/reference/policy-as-code">
     Combine expressions into reusable policy files.
@@ -93,6 +93,6 @@ licenses.size() == 0
     Filter cached scan data with the query workflow.
   </Card>
   <Card title="OpenSSF Scorecard" icon="shield-check" href="https://github.com/ossf/scorecard#checks-1">
-    The scorecard checks referenced in scores.
+    See the scorecard checks referenced in scores.
   </Card>
 </CardGroup>

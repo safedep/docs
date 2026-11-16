@@ -67,7 +67,7 @@ These gaps are accepted in this release:
 
 - PMG keeps its policy cache in the folder of the user. A user can change the cache on a laptop. The same user can also remove PMG.
 - IT can keep a value from the cloud policy only with the PMG `global_lockdown` setting, which keeps every key that the managed config file sets. IT cannot lock one field of the policy alone.
-- No endpoint label is an access boundary: an endpoint can claim the identity of another endpoint and get the policy overrides of that endpoint.
+- No endpoint label is an access boundary. An endpoint can claim the identity of another endpoint and get the policy overrides of that endpoint.
 - PMG fetches the policy in the background after a command, at most once every 5 minutes. The first install after a new block can use the previous policy.
 - Vet does not read the cloud policy. The pull request check does not apply the dependency cooldown, and reports a malware verdict that is not verified without failing on it.
 
@@ -75,9 +75,9 @@ These gaps are accepted in this release:
 
 <CardGroup cols={2}>
   <Card title="Cloud Policy Settings" icon="table" href="/reference/cloud-policy-settings">
-    Each setting and each field of a package rule.
+    See each setting and each field of a package rule.
   </Card>
   <Card title="Labels" icon="tags" href="/concepts/labels">
-    Which labels you can trust.
+    Learn which labels you can trust.
   </Card>
 </CardGroup>

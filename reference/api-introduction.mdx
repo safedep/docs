@@ -1,7 +1,7 @@
 ---
 title: "API Reference"
 sidebarTitle: "API Basics"
-description: "SafeDep Cloud API: transport, request headers, OAuth2/OIDC endpoints, and rate limits"
+description: "SafeDep Cloud API transport, request headers, OAuth2/OIDC endpoints, and rate limits"
 ---
 
 SafeDep supports a [gRPC](https://grpc.io/) API with
@@ -15,7 +15,7 @@ The canonical API specification lives at [buf.build/safedep/api](https://buf.bui
 * Control plane APIs (`cloud.safedep.io`, e.g. creating policy) require OAuth 2.0 authentication (JWT).
 * Data plane APIs (`api.safedep.io`, e.g. package insights) accept API keys or JWTs.
 
-Control plane APIs are for management tooling; data plane APIs are for security tools that use or integrate with SafeDep. For tool-level login flows (safedep CLI, vet, CI/CD), see the [authentication guide](/governance/cloud/authentication).
+Control plane APIs are for management tooling. Data plane APIs are for security tools that use or integrate with SafeDep. For tool-level login flows (safedep CLI, vet, CI/CD), see the [authentication guide](/governance/cloud/authentication).
 
 ## Request headers
 
@@ -49,10 +49,10 @@ These limits are subject to change.
 
 <CardGroup cols={2}>
   <Card title="Authentication" icon="key" href="/governance/cloud/authentication">
-    API key and OAuth/JWT authentication for the safedep CLI, vet, and CI/CD.
+    See API key and OAuth/JWT authentication for the safedep CLI, vet, and CI/CD.
   </Card>
   <Card title="API Hosts" icon="server" href="/reference/endpoints">
-    Control plane, data plane, and other SafeDep hosts.
+    See the control plane, data plane, and other SafeDep hosts.
   </Card>
   <Card title="Insights API with TypeScript" icon="code" href="/reference/insights-api-typescript">
     Query package insights from a TypeScript client.

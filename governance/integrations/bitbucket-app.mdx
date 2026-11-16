@@ -14,26 +14,26 @@ The SafeDep app for Bitbucket Cloud scans pull requests for supply-chain risk di
 
 ## How it works
 
-The Forge app is a thin forwarder: it sends pull request events to SafeDep Cloud, which runs the scan and posts the results back to Bitbucket. The app holds no scan logic and makes no decisions on its own.
+The Forge app is a thin forwarder. It sends pull request events to SafeDep Cloud, which runs the scan and posts the results back to Bitbucket. The app holds no scan logic and makes no decisions on its own.
 
 Two safe defaults apply until you act:
 
 - An installed app does nothing until the workspace is **linked** to a SafeDep tenant.
 - A linked workspace scans nothing until you **enable repositories**. New links start with an empty selection (default deny).
 
-Some actions in this guide run from the SafeDep side. Each shows two paths: the **SafeDep console** at [app.safedep.io](https://app.safedep.io) and the **safedep CLI**.
+Some actions in this guide run from the SafeDep side. Each shows two paths, the **SafeDep console** at [app.safedep.io](https://app.safedep.io) and the **safedep CLI**.
 
 ## Prerequisites
 
 <CardGroup cols={3}>
   <Card title="Bitbucket workspace" icon="bitbucket">
-    A Bitbucket Cloud workspace where you are an admin. Installing a Forge app and linking the workspace need admin access.
+    You need a Bitbucket Cloud workspace where you are an admin. Installing a Forge app and linking the workspace need admin access.
   </Card>
   <Card title="SafeDep Cloud account" icon="cloud">
-    A SafeDep Cloud tenant. Follow the [Cloud Quickstart](/governance/cloud/quickstart) to sign up and create one.
+    You need a SafeDep Cloud tenant. Follow the [Cloud Quickstart](/governance/cloud/quickstart) to sign up and create one.
   </Card>
   <Card title="safedep CLI (optional)" icon="terminal">
-    Needed only for the CLI path. The [`safedep` CLI](/get-started/cli-tools) installed, and logged in with `safedep auth login` ([authentication](/governance/cloud/authentication)).
+    You need it only for the CLI path. Install the [`safedep` CLI](/get-started/cli-tools) and log in with `safedep auth login` ([authentication](/governance/cloud/authentication)).
   </Card>
 </CardGroup>
 
@@ -115,8 +115,8 @@ Linking pairs the Bitbucket workspace with your SafeDep tenant. A short-lived, s
 
 A fresh link scans nothing. The workspace has a scan scope, `selected` (the default) or `all`:
 
-- **`selected`**: only repositories on the allowlist are scanned.
-- **`all`**: every repository in the workspace is scanned.
+- **`selected`**: Only repositories on the allowlist are scanned.
+- **`all`**: Every repository in the workspace is scanned.
 
 <Tabs>
   <Tab title="SafeDep console">
@@ -167,7 +167,7 @@ A fresh link scans nothing. The workspace has a scan scope, `selected` (the defa
       safedep project sync --repository-uuid 9a2b3c4d-0000-0000-0000-000000000001
       ```
 
-      The sync is idempotent: repeating it returns the same project for the same repository. When you sync by name and your tenant has both a GitHub installation and a Bitbucket workspace linked, pass `--source bitbucket` explicitly.
+      The sync is idempotent. Repeating it returns the same project for the same repository. When you sync by name and your tenant has both a GitHub installation and a Bitbucket workspace linked, pass `--source bitbucket` explicitly.
     </Accordion>
   </Tab>
 </Tabs>
@@ -186,7 +186,7 @@ Results appear in the pull request as a comment from the SafeDep app, and the fu
 
 ## Set the gate with the cloud policy
 
-The check reads the [cloud policy](/governance/cloud/policy/overview) of your tenant when the tenant has the Team or Enterprise plan. The policy decides the lowest vulnerability severity and the licenses that fail the check, and its block and trust entries apply to the packages of the pull request. Verified malware always fails the check. With no cloud policy, the SafeDep default policy applies: the check fails on critical and high vulnerabilities and on nine GPL and AGPL licenses. The GitHub App reads the same policy, so one policy covers both forges. To target Bitbucket projects only, select on the `scm/forge=bitbucket` label.
+The check reads the [cloud policy](/governance/cloud/policy/overview) of your tenant when the tenant has the Team or Enterprise plan. The policy decides the lowest vulnerability severity and the licenses that fail the check, and its block and trust entries apply to the packages of the pull request. Verified malware always fails the check. With no cloud policy, the SafeDep default policy applies. The check then fails on critical and high vulnerabilities and on nine GPL and AGPL licenses. The GitHub App reads the same policy, so one policy covers both forges. To target Bitbucket projects only, select on the `scm/forge=bitbucket` label.
 
 The check sets the build status of the commit. A failing check shows a policy block at the top of the pull request comment. The block names the policy revision and the rule or setting that failed each finding. See [Fail Pull Request Checks](/governance/cloud/policy/pull-request-checks).
 
@@ -202,7 +202,7 @@ Unlinking from the SafeDep side (CLI or console) without uninstalling the app is
 
 | Symptom | Cause and fix |
 |---|---|
-| "Could not link" on the settings page | The code is wrong, expired, or already used. Generate a new code and retry: select **Issue a new code** in the console, or run `safedep integration bitbucket link create`. Link codes are single-use and short-lived. |
+| "Could not link" on the settings page | The code is wrong, expired, or already used. Generate a new code and retry. Select **Issue a new code** in the console, or run `safedep integration bitbucket link create`. Link codes are single-use and short-lived. |
 | Settings page says the workspace is already linked | A workspace links to one tenant at a time. Uninstall and reinstall the app to link it to a different tenant. |
 | Repeated failed link attempts are rejected | Redeems are rate limited per workspace. Wait a few minutes and retry with a fresh code. |
 | `repository list` reports the workspace as not accessible | The workspace credential is missing or expired. Open the SafeDep settings page in Bitbucket once to refresh it, then retry. |

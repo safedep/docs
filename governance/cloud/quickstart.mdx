@@ -4,7 +4,7 @@ sidebarTitle: "Quickstart"
 description: "Create a SafeDep Cloud tenant, authenticate the safedep CLI, connect a data source, and run your first query"
 ---
 
-SafeDep Cloud aggregates findings from SafeDep tools into a tenant you can query and govern from one place. The [`safedep` CLI](https://github.com/safedep/cli) is the command line client for your tenant: it handles login, endpoint fleet visibility, and SQL queries over synced data. This guide takes you from a new account to your first query.
+SafeDep Cloud aggregates findings from SafeDep tools into a tenant you can query and govern from one place. The [`safedep` CLI](https://github.com/safedep/cli) is the command line client for your tenant. It handles login, endpoint fleet visibility, and SQL queries over synced data. This guide takes you from a new account to your first query.
 
 ## Create your tenant
 
@@ -82,7 +82,7 @@ safedep endpoint status
 
 ## Query your data
 
-Query your tenant's aggregated inventory and findings with SQL: projects, packages, endpoints, and security findings enriched with threat intelligence (vulnerabilities, EPSS, CISA KEV, OpenSSF Scorecard).
+Query your tenant's aggregated inventory and findings with SQL. The data includes projects, packages, endpoints, and security findings enriched with threat intelligence (vulnerabilities, EPSS, CISA KEV, OpenSSF Scorecard).
 
 For example, find your top remediation targets by critical CVE count:
 
@@ -101,19 +101,19 @@ safedep query exec --sql "
 Prefer a UI? Run the same queries from the web console at [app.safedep.io](https://app.safedep.io).
 </Note>
 
-See the [SQL query guide](/reference/sql-query) for the full schema, query rules, and worked examples: severity breakdowns, EPSS enrichment, malware findings, endpoint audit trails, and more.
+See the [SQL query guide](/reference/sql-query) for the full schema, query rules, and worked examples. The examples cover severity breakdowns, EPSS enrichment, malware findings, endpoint audit trails, and more.
 
 ## Next steps
 
 <CardGroup cols={2}>
   <Card title="Authentication Guide" icon="key" href="/governance/cloud/authentication">
-    Cloud authentication methods and API access patterns
+    See the Cloud authentication methods and API access patterns
   </Card>
   <Card title="Malware Analysis" icon="virus" href="/package-security/scan/malware-lookup">
-    Check your dependencies against the known malicious packages database. Free, no API key.
+    Check your dependencies against the known malicious packages database. It is free and needs no API key.
   </Card>
   <Card title="Cloud FAQ" icon="question-circle" href="/governance/cloud/faq">
-    Answers to common questions
+    Find answers to common questions
   </Card>
   <Card title="API Documentation" icon="code" href="/reference/api-introduction">
     Integrate SafeDep Cloud with your own systems
