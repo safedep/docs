@@ -57,22 +57,20 @@ jobs:
 The action supports the `push`, `pull_request` and `pull_request_target` events.
 
 - **On a push,** the action scans the repository and writes the SARIF report.
-- **On a pull request,** the action scans only the packages that the pull request adds or changes in its manifests. When a package breaks the policy, the check fails and the SARIF upload step does not run. If the pull request changes no manifest, the `report` output is empty, so the upload step does not run.
-
-The [example workflow](https://github.com/safedep/vet-action/blob/main/example/vet-ci.yml) pins `actions/checkout` to a commit SHA.
+- **On a pull request,** the action scans only the packages that the pull request adds or changes in its manifests. When a package breaks the policy, the check fails and the SARIF upload step does not run. You see the findings in the pull request comment, not in Code Scanning. If the pull request changes no manifest, the `report` output is empty, so the upload step does not run.
 
 To report the findings without blocking the merge, for example while you tune the policy, set `continue-on-error: true` on the vet step. The action still adds its pull request comment.
 
 ### Advanced Configuration
 
-To use a custom policy, set `policy-v2` to a policy file in the [v2 format](https://github.com/safedep/vet/blob/main/samples/policy-v2.yml). It takes precedence over `policy`, which takes an older [filter suite](/reference/policy-as-code) file. Without either input, the action uses its default policy.
+To use a custom policy, set `policy-v2` to a policy file in the [v2 format](https://github.com/safedep/vet/blob/main/samples/policy-v2.yml). It takes precedence over `policy`, which takes an older [filter suite](/reference/policy-as-code) file. Use v2 for a new policy, because vet marks the filter suite format as deprecated. Without either input, the action uses its default policy.
 
 ```yaml
 - name: Run vet with custom policy
   id: vet
   uses: safedep/vet-action@v1
   with:
-    policy-v2: '.github/vet/policy.yml'
+    policy-v2: '.github/vet/policy-v2.yml'
   env:
     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 ```
@@ -118,7 +116,7 @@ On each pull request that changes a manifest, the GitHub Action adds a comment w
   </Accordion>
   
   <Accordion title="No Violations Reported">
-    Check that your policy configuration is correct and that violations actually exist. Use `--report-json` locally to debug.
+    Check that your policy configuration is correct and that violations actually exist. Use `--report-json` locally to debug. On a pull request, the action scans only the manifests that the pull request changes. If it changes no manifest, the action reports nothing.
   </Accordion>
 </AccordionGroup>
 

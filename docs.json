@@ -146,10 +146,10 @@
           {
             "group": "Bill of Materials",
             "icon": "list-check",
-            "root": "governance/xbom/overview",
+            "root": "governance/cyclonedx-sbom",
             "pages": [
-              "governance/cyclonedx-sbom",
               "governance/vet/dependency-inventory",
+              "governance/xbom/overview",
               "governance/xbom/quickstart"
             ]
           },

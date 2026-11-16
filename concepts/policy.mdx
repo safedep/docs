@@ -25,7 +25,7 @@ These tools enforce the cloud policy:
 
 ## Policy as code
 
-Policy as code is a Vet filter suite. A filter suite is a YAML file of [CEL](/concepts/cel) rules that you keep in a repository. Vet evaluates each package of a scan against the rules, including transitive dependencies, and you decide what a match does. During a local scan, Vet can exit with a non-zero code when a package matches a rule. In CI/CD, [vet-action](/governance/integrations/github-code-scanning) takes a filter suite in its `policy` input, or a v2 policy file in its `policy-v2` input.
+Policy as code is a Vet filter suite. A filter suite is a YAML file of [CEL](/concepts/cel) rules that you keep in a repository. Vet evaluates each package of a scan against the rules, including transitive dependencies, and you decide what a match does. During a local scan, Vet can exit with a non-zero code when a package matches a rule. In CI/CD, [vet-action](/governance/integrations/github-code-scanning) takes a filter suite in its `policy` input, or a v2 policy file in its `policy-v2` input. Vet marks the filter suite format as deprecated, so use v2 for a new policy.
 
 See [Policy as Code](/reference/policy-as-code) for the syntax and examples.
 

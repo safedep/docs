@@ -1,13 +1,13 @@
 ---
 title: "xBom Quickstart"
 sidebarTitle: "Generate an xBOM"
-description: "Get started with SafeDep xBom, an open source Bill of Materials generator enriched with AI and SaaS usage detected from source code."
+description: "Get started with SafeDep xBom, an open source tool that makes a Bill of Materials of the AI, cloud and crypto components in your code."
 ---
 
 **xBom** generates a Bill of Materials (BOM) of the AI components, cloud services and cryptography that your code uses. It finds them with static code analysis, not from your declared dependencies.
 
 <Note>
-  For an SBOM or an AI BOM, use vet. See [Generate an SBOM](/governance/cyclonedx-sbom) and [Detect Shadow AI in Code](/governance/shadow-ai-detection). Vet uses the same code analysis with more signatures, and writes the AI BOM and the dependency SBOM in one CycloneDX file. Use xBom when you want only the components that code analysis finds, without a dependency scan.
+  For a dependency SBOM, use [vet](/governance/cyclonedx-sbom).
 </Note>
 
 ## Installation
@@ -44,7 +44,7 @@ The output is an SBOM in **[CycloneDX v1.6 JSON format](https://cyclonedx.org/do
 
 ## Supported Languages
 
-xBom supports Python and Java. JavaScript support is partial.
+As of v0.0.3, xBom supports Python and Java. JavaScript support is partial. Go support is on `main` and is not released yet.
 
 ## Supported BOM Types
 
@@ -62,7 +62,7 @@ xBom identifies components beyond traditional libraries:
 
 ## HTML report
 
-The primary output is a CycloneDX JSON file. To browse the detected components in a browser, also write an HTML report:
+The primary output is a CycloneDX JSON file. To browse the detected components in a browser, also write an HTML report. As of v0.0.3, the flag is `--html`. On `main`, the flag is `--report-html`.
 
 ```bash
 xbom generate --dir /path/to/your/code --bom bom.cdx.json --html report.html
