@@ -13,7 +13,7 @@ The key of a label has the form `prefix/name`, as in `custom/criticality`. The p
 |---|---|---|
 | `safedep.io/` | SafeDep Cloud | `safedep.io/endpoint-id` on an endpoint. `safedep.io/project-id` and `safedep.io/project-source` (such as `github`) on a project. |
 | `scm/` | SafeDep Cloud, from the repository that is bound to a project | `scm/forge` (`github` or `bitbucket`), `scm/owner` and `scm/repo`. |
-| `custom/` | An Admin of the tenant | Any name and value that you choose, as `custom/criticality=high`. Set them with `safedep project label set` and `safedep endpoint label set`. |
+| `custom/` | An Owner or an Admin of the tenant | Any name and value that you choose, as `custom/criticality=high`. Set them with `safedep project label set` and `safedep endpoint label set`. |
 | `reported/` | The tool on the endpoint | PMG sends `reported/os` and `reported/arch`, with values such as `darwin` and `arm64`. |
 | `managed/` | A managed file that MDM writes | No tool sends these labels yet. |
 | `scm-property/` | GitHub custom properties | SafeDep Cloud does not store these labels yet. |

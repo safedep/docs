@@ -22,12 +22,12 @@ These are the actions of the cloud policy:
 
 | Action | Resource kind | When |
 |---|---|---|
-| `policy.change.create`, `policy.change.update`, `policy.change.sync`, `policy.change.delete` | `policy_change` | An Admin works on a draft |
-| `policy.change.publish` | `policy_change` | An Admin publishes a change. The details hold the revision and the change direction. |
-| `policy.rule.create`, `policy.rule.update`, `policy.rule.delete` | `package_rule` | An Admin creates, changes or deletes one package rule |
-| `policy.rule.bulk_create` | `policy_change` | An Admin creates block entries from a file. One event covers all of them. |
-| `policy.endpoint_label.set`, `policy.endpoint_label.delete` | `endpoint` | An Admin sets or deletes `custom/` labels on an endpoint |
-| `policy.project_label.set`, `policy.project_label.delete` | `project` | An Admin sets or deletes `custom/` labels on a project |
+| `policy.change.create`, `policy.change.update`, `policy.change.sync`, `policy.change.delete` | `policy_change` | An Owner or Admin works on a draft |
+| `policy.change.publish` | `policy_change` | An Owner or Admin publishes a change. The details hold the revision and the change direction. |
+| `policy.rule.create`, `policy.rule.update`, `policy.rule.delete` | `package_rule` | An Owner or Admin creates, changes or deletes one package rule |
+| `policy.rule.bulk_create` | `policy_change` | An Owner or Admin creates block entries from a file. One event covers all of them. |
+| `policy.endpoint_label.set`, `policy.endpoint_label.delete` | `endpoint` | An Owner or Admin sets or deletes `custom/` labels on an endpoint |
+| `policy.project_label.set`, `policy.project_label.delete` | `project` | An Owner or Admin sets or deletes `custom/` labels on a project |
 
 Filter the list:
 

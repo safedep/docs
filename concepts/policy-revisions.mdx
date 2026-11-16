@@ -24,7 +24,7 @@ The document keeps no YAML comments. Write the reason for a value in the `descri
 - the number of projects and endpoints that the change reaches, counting only the endpoints that synced in the last 30 days
 - policy coverage, which is how many of those subjects enforce each new value, enforce it in part, only report it, or do not support it
 - warnings, for example when:
-  - a block entry selects every package of an ecosystem
+  - a new block entry selects every package of an ecosystem
   - a policy override that loosens selects on a label that an endpoint can send
   - a rollback drops fields of a policy override
   - a change edits or deletes a rule that is not at head
@@ -48,7 +48,7 @@ A change loosens when any part of it loosens.
 
 ## Publish and revisions
 
-`safedep policy change publish` makes a new policy revision from an open change. A revision is immutable, and revision numbers only go up. Every policy write, such as a change, a publish or a rule command, needs the Owner or Admin role. A publish that loosens the policy asks you to confirm. In a script, pass `--yes`. The delete of a block entry asks too.
+`safedep policy change publish` makes a new policy revision from an open change. A revision is immutable, and revision numbers only go up. Every policy write, such as a change, a publish or a rule command, needs the Owner or Admin role. A publish that loosens the policy asks you to confirm. In a script, pass `--yes`. Deleting a block entry also asks you to confirm.
 
 After a publish, each pull request check uses the new revision at once. Each endpoint applies it after its next policy fetch.
 

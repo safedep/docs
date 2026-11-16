@@ -19,7 +19,7 @@ Vet reads CycloneDX 1.0 to 1.6. It cannot read a CycloneDX 1.7 SBOM. Set the bui
 
     ```groovy
     plugins {
-        id 'org.cyclonedx.bom' version '3.6.0'
+        id 'org.cyclonedx.bom' version '3.6.1'
     }
     ```
 
@@ -195,6 +195,8 @@ These examples use Gradle. For another build tool, change the generate step and 
 </Tabs>
 
 To keep a record for audits, store the SBOM with each release, for example as `release-artifacts/sbom-v${VERSION}.json`.
+
+## Next steps
 
 <CardGroup cols={2}>
   <Card title="CycloneDX Gradle Plugin" icon="gradle" href="https://github.com/CycloneDX/cyclonedx-gradle-plugin">

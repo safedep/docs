@@ -9,7 +9,7 @@ Malicious Package Exclusions are deprecated. A trust entry with the scope `malwa
 </Warning>
 
 <Info>
-Malicious Package Exclusions need the SafeDep Cloud **Team** or **Enterprise** plan. See [pricing](https://safedep.io/pricing). If the tenant moves to a lower plan, the exclusions stop applying. In the app, only tenant owners can create, edit or delete an exclusion.
+Malicious Package Exclusions need the SafeDep Cloud **Team** or **Enterprise** plan. See [pricing](https://safedep.io/pricing). If the tenant moves to a lower plan, the exclusions stop applying. In the app, only a tenant owner can create an exclusion. An Owner or an Admin can edit or delete one.
 </Info>
 
 An exclusion suppresses a malicious package finding for one package after your team reviews it. It applies only in your tenant, and it does not mark the package as safe anywhere else. It does not change vulnerability findings or other checks.
@@ -64,7 +64,7 @@ You can also start from a malicious package result. Its header shows **Create Ex
 
 ## Manage Exclusions
 
-The exclusions table shows the ecosystem, name, version, reason, status and expiry date of each exclusion. Filter it by ecosystem, name, version, expiry date or status. The status is **Active**, **Expired** or **Expires Soon**. Use the row menu to edit or delete an exclusion. An edit can change the version, the reason, the expiry date and the package identity.
+The exclusions table shows the ecosystem, name, version, reason, status and expiry date of each exclusion. Filter it by ecosystem, name, version, expiry date or status. The status is **Active**, **Expired**, or **Expires in N days** when the exclusion expires within 7 days. To see only those, filter by **Expires Soon**. Use the row menu to edit or delete an exclusion. An edit can change the version, the reason, the expiry date and the package identity.
 
 <img
   src="/images/exclusions/exclusions-page-row-actions.png"
