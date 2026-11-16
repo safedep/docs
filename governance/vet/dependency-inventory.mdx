@@ -27,7 +27,7 @@ Vet reads CycloneDX 1.0 to 1.6. It cannot read a CycloneDX 1.7 SBOM. Set the bui
     ./gradlew cyclonedxBom
     ```
 
-    The SBOM for the whole build is at `build/reports/cyclonedx/bom.json`. In a multi-project build, the plugin makes one SBOM for each project and adds them to this file.
+    The SBOM for the whole build is at `build/reports/cyclonedx/bom.json`. In a multi-project build, the plugin makes an SBOM for each project and combines them into this file.
 
     To include only the runtime dependencies, for example in a production SBOM, set `includeConfigs` in the root `build.gradle`. To also include test dependencies, add `testRuntimeClasspath`.
 
@@ -45,7 +45,7 @@ Vet reads CycloneDX 1.0 to 1.6. It cannot read a CycloneDX 1.7 SBOM. Set the bui
   </Tab>
 
   <Tab title="Maven">
-    Add the [CycloneDX Maven plugin](https://github.com/CycloneDX/cyclonedx-maven-plugin). Keep `schemaVersion` set to 1.6, because a later version of the plugin can default to 1.7.
+    Add the [CycloneDX Maven plugin](https://github.com/CycloneDX/cyclonedx-maven-plugin). Keep `schemaVersion` set to 1.6, because the next plugin version (2.10) changes the default to 1.7.
 
     ```xml
     <plugin>
@@ -86,7 +86,7 @@ Vet reads CycloneDX 1.0 to 1.6. It cannot read a CycloneDX 1.7 SBOM. Set the bui
   </Tab>
 
   <Tab title="Python">
-    Use [cyclonedx-python](https://github.com/CycloneDX/cyclonedx-python). The subcommand depends on the project type. It is `environment`, `requirements`, `poetry` or `pipenv`.
+    Use [cyclonedx-python](https://github.com/CycloneDX/cyclonedx-python). Use the subcommand for your project type, such as `environment`, `requirements`, `poetry` or `pipenv`.
 
     ```bash
     pip install cyclonedx-bom
