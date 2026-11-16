@@ -22,7 +22,7 @@ vet scan -D /path/to/project \
 
 ## What the SBOM includes
 
-- **Package inventory:** all direct and transitive dependencies, and the dependency graph
+- **Package inventory:** the packages in your manifests and lockfiles, and the dependency graph. For a manifest with no lockfile, such as `pom.xml`, add `--transitive` to include transitive dependencies, to a depth of 2. Set `--transitive-depth` to go deeper.
 - **Vulnerabilities:** known vulnerabilities from OSV and other sources, with CVSS ratings
 - **Licenses:** the license identifiers of each component
 - **Malware:** the results of malicious package analysis, as `vulnerabilities` entries
@@ -88,11 +88,11 @@ vet scan -D /path/to/project \
         expire_in: 30 days
     ```
 
-    The `cyclonedx` report needs GitLab Ultimate. On other tiers, keep only `paths`.
+    GitLab uses the `cyclonedx` report only on GitLab Ultimate.
   </Tab>
 </Tabs>
 
-## Validate and Convert the SBOM
+## Validate and convert the SBOM
 
 Use the [CycloneDX CLI](https://github.com/CycloneDX/cyclonedx-cli) to validate the SBOM or convert it to XML. Install it with `brew install cyclonedx/cyclonedx/cyclonedx-cli`, or run its container image:
 

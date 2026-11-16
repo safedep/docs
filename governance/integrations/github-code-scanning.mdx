@@ -13,7 +13,7 @@ GitHub supports [uploading SARIF](https://docs.github.com/en/code-security/refer
 ### Basic Configuration
 
 <Info>
-The SARIF upload needs GitHub Code Scanning on in your repository. See [Configure code scanning](https://docs.github.com/en/code-security/how-tos/find-and-fix-code-vulnerabilities/configure-code-scanning).
+The SARIF upload needs GitHub Code Scanning turned on in your repository. A private repository also needs GitHub Code Security. See [Configure code scanning](https://docs.github.com/en/code-security/how-tos/find-and-fix-code-vulnerabilities/configure-code-scanning).
 </Info>
 
 Create `.github/workflows/vet.yml` in your repository:
@@ -58,7 +58,7 @@ The action supports the `push`, `pull_request` and `pull_request_target` events.
 
 - **On a push,** the action scans the repository and writes the SARIF report.
 - **On a pull request,** the action scans only the packages that the pull request adds or changes in its manifests.
-- **When a package breaks the policy,** the check fails and the SARIF upload step does not run. You see the findings in the pull request comment, not in Code Scanning.
+- **When a package breaks the policy on a pull request,** the check fails and the SARIF upload step does not run. You see the findings in the pull request comment, not in Code Scanning.
 - **When the pull request changes no manifest,** the `report` output is empty, so the upload step does not run.
 
 To report the findings without blocking the merge, for example while you tune the policy, set `continue-on-error: true` on the vet step. The action still adds its pull request comment.
@@ -82,7 +82,7 @@ Other inputs that you often need:
 - Set `enable-comments-proxy: true` to comment on a pull request from a forked repository. The `GITHUB_TOKEN` of a fork cannot comment.
 - Set `exclude` to a comma-separated list of path patterns that the scan skips.
 - Set `cloud: true`, `cloud-key` and `cloud-tenant` to sync the report to SafeDep Cloud. Malware lookups then use your tenant API key instead of the community API. See [Sync from GitHub Actions](/governance/cloud/sync#sync-from-github-actions).
-- In cloud mode, set `paranoid: true` to also fail on unverified malware findings with medium or high confidence.
+- In cloud mode, set `paranoid: true` to also fail the pull request check on unverified malware findings with medium or high confidence.
 
 For every input, see [Configuration](https://github.com/safedep/vet-action#configuration) in the vet-action README.
 

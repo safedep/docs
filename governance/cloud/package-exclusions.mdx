@@ -27,7 +27,7 @@ Each exclusion has an ecosystem, a package name, a version, a reason and an opti
 
 - **Version:** SafeDep Cloud matches the version exactly. Version `0` is a special value that means all versions, not the literal version `0`. When an exact-version exclusion and an all-versions exclusion both match, the exact version wins.
 - **Expiry:** The expiry date must be in the future. After it, the exclusion stops applying.
-- **Verified malware:** SafeDep Cloud refuses an exclusion for a package that it has verified as malicious. If SafeDep verifies a package after you exclude it, the exclusion stops applying, and so does an all-versions exclusion.
+- **Verified malware:** SafeDep Cloud refuses an exclusion for a package version that it has verified as malicious. If SafeDep verifies a package after you exclude it, the exclusion stops applying, and so does an all-versions exclusion.
 
 ## Create an Exclusion
 
@@ -84,8 +84,8 @@ The exclusions table shows the ecosystem, name, version, reason, status and expi
   <Card title="Trust a Package" icon="shield-check" href="/governance/cloud/policy/trust-a-package">
     Replace an exclusion with a trust entry
   </Card>
-  <Card title="GitHub App" icon="github" href="/governance/integrations/github">
-    See how SafeDep respects exclusions in GitHub pull request checks
+  <Card title="Pull Request Checks" icon="github" href="/governance/cloud/policy/pull-request-checks">
+    See how the pull request check applies exclusions
   </Card>
   <Card title="Malware Analysis" icon="virus" href="/package-security/scan/malware-lookup">
     Learn how SafeDep Cloud analyzes packages for malicious behavior
