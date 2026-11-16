@@ -232,15 +232,14 @@ Common causes:
     ```yaml
     permissions:
       contents: read
-      security-events: write  # For SARIF upload
+      issues: write           # For PR comments
       pull-requests: write    # For PR comments
+      security-events: write  # For SARIF upload
     ```
   </Accordion>
   
   <Accordion title="Secrets Configuration">
-    Verify required secrets are set if using SafeDep Cloud:
-    - `SAFEDEP_CLOUD_API_KEY`
-    - `SAFEDEP_CLOUD_TENANT_DOMAIN`
+    If you use SafeDep Cloud, check that the secrets for the `cloud-key` and `cloud-tenant` inputs are set. If you run vet directly, set `SAFEDEP_API_KEY` and `SAFEDEP_TENANT_ID`.
   </Accordion>
 </AccordionGroup>
 

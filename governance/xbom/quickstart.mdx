@@ -27,7 +27,7 @@ Download a **[pre-built binary](https://github.com/safedep/xbom/releases)** for 
 Mount your code into the container:
 
 ```bash
-docker run --rm -v "$PWD:/src" ghcr.io/safedep/xbom generate --dir /src --bom /src/bom.cdx.json
+docker run --rm -v "$PWD:/src" ghcr.io/safedep/xbom:v0.0.3 generate --dir /src --bom /src/bom.cdx.json
 ```
 
 ## Generating Your First BOM

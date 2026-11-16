@@ -54,7 +54,7 @@
 ## xBom
 
 - **One-liner (repo tagline):** Generate xBOMs enriched with AI, SaaS, Crypto and more using static code analysis. **Caveat:** the latest release (v0.0.3) has signatures for AI SDKs, some cloud services and cryptography. It covers Python and Java, with partial JavaScript. Go signatures are only on `main`. vet has more signatures, so the docs recommend vet for an SBOM or an AI BOM. Verify the current coverage against the xbom release tag before writing.
-- **What it is:** A standalone CLI that generates a Bill of Materials (CycloneDX) from static code analysis, covering not just declared packages but AI and SaaS usage found in source. Separate from vet's own SBOM output (`governance/cyclonedx-sbom`); don't conflate the two.
+- **What it is:** A standalone CLI that generates a Bill of Materials (CycloneDX) from static code analysis, covering the AI SDKs, cloud services and cryptography that code analysis finds, not declared packages. It is separate from vet's own SBOM output (`governance/cyclonedx-sbom`). Do not conflate the two.
 - **Public repo:** `github.com/safedep/xbom`. Installs via `brew install safedep/tap/xbom` or a pre-built binary; **no npm package**.
 - **Docs home:** **Visibility & Governance › Bill of Materials** (`governance/xbom/`).
 - **Key concepts surfaced:** SBOM / xBOM, CycloneDX, dependency inventory.
