@@ -17,7 +17,7 @@ An exclusion suppresses a malicious package finding for one package after your t
 These tools apply exclusions:
 
 - The package analysis views in `app.safedep.io`
-- The GitHub App pull request check
+- The pull request check of the GitHub App and the Bitbucket app
 - `vet` and `vet-action` in cloud mode
 - PMG with SafeDep Cloud credentials, when its cloud policy is off
 
@@ -64,7 +64,7 @@ You can also start from a malicious package result. Its header shows **Create Ex
 
 ## Manage Exclusions
 
-The exclusions table shows the ecosystem, name, version, reason, status and expiry date of each exclusion. Filter it by ecosystem, name, version, expiry date or status. The status is **Active**, **Expired**, or **Expires in N days** when the exclusion expires within 7 days. To see only those, filter by **Expires Soon**. Use the row menu to edit or delete an exclusion. An edit can change the version, the reason, the expiry date and the package identity.
+The exclusions table shows the ecosystem, name, version, reason, status and expiry date of each exclusion. Filter it by ecosystem, name, version, expiry date or status. The status is **Active**, **Expired**, or, within 7 days of the expiry date, **Expires today** or **Expires in N days**. To see only those, filter by **Expires Soon**. Use the row menu to edit or delete an exclusion. An edit can change the version, the reason, the expiry date and the package identity.
 
 <img
   src="/images/exclusions/exclusions-page-row-actions.png"

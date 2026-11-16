@@ -97,7 +97,7 @@ vet scan -D /path/to/project \
 Use the [CycloneDX CLI](https://github.com/CycloneDX/cyclonedx-cli) to validate the SBOM or convert it to XML. Install it with `brew install cyclonedx/cyclonedx/cyclonedx-cli`, or run its container image:
 
 ```bash
-# Validate against CycloneDX 1.6. The CLI defaults to 1.7.
+# Validate against CycloneDX 1.6
 docker run --rm -v "$PWD:/data" cyclonedx/cyclonedx-cli \
   validate --input-file /data/sbom.cdx.json --input-version v1_6 --fail-on-errors
 

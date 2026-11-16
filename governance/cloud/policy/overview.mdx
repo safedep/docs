@@ -31,9 +31,9 @@ A user with the ReadOnly role or a higher role can read the policy, its revision
 
 ## How a change reaches the tools
 
-1. An Admin edits the policy with `safedep policy edit`. The edit makes a draft, a policy change.
-2. The Admin reads the preview with `safedep policy change show`.
-3. The Admin publishes the change. The publish makes a new policy revision.
+1. An Owner or an Admin edits the policy with `safedep policy edit`. The edit makes a draft, a policy change.
+2. They read the preview with `safedep policy change show`.
+3. They publish the change. The publish makes a new policy revision.
 4. The next pull request check of each project uses the new revision. PMG on each endpoint applies it after its next policy fetch.
 
 A package rule skips the draft: `safedep policy rule create` publishes at once. See [Policy Revisions and Changes](/concepts/policy-revisions).
