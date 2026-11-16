@@ -82,7 +82,7 @@ Other inputs that you often need:
 - Set `enable-comments-proxy: true` to comment on a pull request from a forked repository. The `GITHUB_TOKEN` of a fork cannot comment.
 - Set `exclude` to a comma-separated list of path patterns that the scan skips.
 - Set `cloud: true`, `cloud-key` and `cloud-tenant` to sync the report to SafeDep Cloud. Malware lookups then use your tenant API key instead of the community API. See [Sync from GitHub Actions](/governance/cloud/sync#sync-from-github-actions).
-- In cloud mode, set `paranoid: true` to also fail on unverified malware findings with medium or high confidence.
+- In cloud mode, set `paranoid: true` to also fail the pull request check on unverified malware findings with medium or high confidence.
 
 For every input, see [Configuration](https://github.com/safedep/vet-action#configuration) in the vet-action README.
 
