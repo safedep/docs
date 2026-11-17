@@ -95,10 +95,10 @@ The two inputs control different things:
 
 | Input | What it controls |
 | --- | --- |
-| `enforce: true` | Which connections reach the proxy. The Linux kernel sends every process on the runner through the proxy, so a step cannot go around it. |
+| `enforce: true` | Which connections reach the proxy. The Linux kernel sends each TCP connection to an enforced port through the proxy. The enforced ports are 80 and 443 by default. |
 | `network-mode: enforce` | What the proxy does with a destination that the profile does not allow. `enforce` refuses the connection. `audit`, the default, lets it through and records it. |
 
-Use both. Without `enforce: true`, a process that ignores the proxy variables connects directly, and the profile never sees the connection.
+Use both. Without `enforce: true`, a process that ignores the proxy variables connects directly, and the profile never sees the connection. With `enforce: true`, a connection to a port that is not enforced also goes directly. To route more ports, set `enforce-ports`.
 
 To add a host later, run the job with `network-mode: audit` and add the rule that the summary shows. Under `enforce`, the proxy refuses a new destination, so the proposal gets no rule for it.
 
