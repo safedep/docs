@@ -7,7 +7,7 @@ A package rule is one entry in the cloud [policy](/concepts/policy) that decides
 
 ## Block entries
 
-A block entry stops the packages that it selects. PMG blocks the install, and the pull request check fails when a pull request adds the package. A block entry stops new installs. It does not remove copies that are already installed. It also does not stop an install that takes the package file from the package manager cache, because PMG checks a block entry only when the package file downloads through its proxy.
+A block entry stops the packages that it selects. PMG blocks the install, and the pull request check fails when a pull request adds the package. A block entry stops new installs. It does not remove copies that are already installed. It also does not stop an install from the package manager cache. PMG checks a block entry only when the package file downloads through its proxy.
 
 A block entry can select:
 
