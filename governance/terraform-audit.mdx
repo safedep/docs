@@ -188,7 +188,10 @@ terraform-init:
 
 terraform-audit:
   stage: audit
-  image: ghcr.io/safedep/vet:latest
+  image:
+    name: ghcr.io/safedep/vet:latest
+    # The image starts vet. Clear the entrypoint so that GitLab can run the script.
+    entrypoint: [""]
   script:
     - vet scan -D . --report-sync --report-sync-project $CI_PROJECT_PATH --report-sync-project-version $CI_COMMIT_REF_NAME
   dependencies:
@@ -248,6 +251,6 @@ Available fields include:
     Learn about Terraform in the software supply chain
   </Card>
   <Card title="Vet CLI Documentation" icon="terminal" href="https://github.com/safedep/vet">
-    Complete Vet CLI documentation and examples
+    Read the vet CLI docs and examples
   </Card>
 </CardGroup>

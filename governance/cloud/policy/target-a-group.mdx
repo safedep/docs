@@ -7,7 +7,7 @@ description: "Label endpoints and projects, then write a policy override that se
 A policy override sets other values for the endpoints and projects that its label selector matches. This guide labels a group, writes a policy override for it, and checks the result. For the rules of resolution, see [Policy Resolution](/concepts/policy-resolution) and [Labels](/concepts/labels).
 
 <Note>
-  This guide needs the SafeDep Cloud Team or Enterprise plan and the Admin role. See [pricing](https://safedep.io/pricing).
+  This guide needs the SafeDep Cloud Team or Enterprise plan and the Owner or Admin role. See [pricing](https://safedep.io/pricing).
 </Note>
 
 ## Choose the labels
@@ -120,7 +120,7 @@ safedep project policy show acme/payments-api --field scan_gate.fail_on
 
 ## If the publish stops
 
-When another Admin published a change to the policy settings after you created your change, the publish stops, because your change is stale. Sync the change, read the preview again, and publish:
+When another Owner or Admin published a change to the policy settings after you created your change, the publish stops, because your change is stale. Sync the change, read the preview again, and publish:
 
 ```bash
 safedep policy change sync 18
@@ -128,7 +128,7 @@ safedep policy change show 18
 safedep policy change publish 18 -m "payments: fail on medium"
 ```
 
-The sync moves the base of the change to the head revision and keeps your settings as you wrote them. Your settings can undo the change of the other Admin, so read the preview before you publish.
+The sync moves the base of the change to the head revision and keeps your settings as you wrote them. Your settings can undo the other person's change, so read the preview before you publish.
 
 ## Select one endpoint for a short time
 
@@ -160,6 +160,6 @@ The selector takes the full endpoint id that `safedep endpoint list --output jso
     Set the cooldown for a group of endpoints.
   </Card>
   <Card title="Labels" icon="tags" href="/concepts/labels">
-    Prefixes, sources and selectors.
+    See how label prefixes, sources and selectors work.
   </Card>
 </CardGroup>

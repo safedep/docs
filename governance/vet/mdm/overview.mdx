@@ -183,18 +183,18 @@ The current fleet script is [`vet_endpoint_scan.sh`](https://github.com/safedep/
   <Step title="Verify the result">
     Review the MDM job output and confirm that the script found `vet` and scanned the expected users.
 
-    If Cloud sync is enabled, open [SafeDep Cloud](https://app.safedep.io), select **Endpoints**, open the endpoint, and select the **Inventory** tab. Confirm that the endpoint and its discovered items appear.
+    If Cloud sync is enabled, open [SafeDep Cloud](https://app.safedep.io), select **Endpoints**, open the endpoint, and select the **AI Tools** tab. Confirm that the endpoint and its discovered items appear.
   </Step>
 </Steps>
 
 To remove this inventory task, disable the MDM policy and remove the managed script. This does not uninstall `vet`.
 
 <CardGroup cols={2}>
-  <Card title="vet installation options" icon="github" href="https://github.com/safedep/vet#installation">
-    Source of truth for supported installation methods.
+  <Card title="vet installation options" icon="github" href="https://github.com/safedep/vet/blob/main/README.md#installation">
+    See how to install vet.
   </Card>
   <Card title="vet MDM scripts" icon="code" href="https://github.com/safedep/vet/blob/main/scripts/mdm/README.md">
-    Source of truth for current macOS and Linux fleet scripts.
+    Get the current fleet scripts for macOS and Linux.
   </Card>
   <Card title="Endpoints inventory" icon="server" href="/governance/cloud/endpoint-hub/inventory">
     Configure inventory sync and review discovered items.

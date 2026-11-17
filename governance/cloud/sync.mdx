@@ -127,7 +127,10 @@ The pattern is the same on any CI system: provide `SAFEDEP_API_KEY` and `SAFEDEP
 
     security-scan:
       stage: security
-      image: ghcr.io/safedep/vet:latest
+      image:
+        name: ghcr.io/safedep/vet:latest
+        # The image starts vet. Clear the entrypoint so that GitLab can run the script.
+        entrypoint: [""]
       script:
         - vet scan -D . --report-sync --report-sync-project $CI_PROJECT_PATH --report-sync-project-version $CI_COMMIT_REF_NAME
       variables:
@@ -256,12 +259,12 @@ Run `vet auth verify` first. For sync errors and missing data, see [Data Sync Is
     Set up the safedep CLI and run your first query
   </Card>
   <Card title="Authentication Guide" icon="key" href="/governance/cloud/authentication">
-    SafeDep Cloud authentication methods
+    See the ways to sign in to SafeDep Cloud
   </Card>
   <Card title="Endpoint Hub" icon="server" href="/governance/cloud/endpoint-hub/overview">
-    AI tooling and package activity across your endpoints
+    See AI tools and package installs on your endpoints
   </Card>
   <Card title="vet-action Documentation" icon="github" href="https://github.com/safedep/vet-action">
-    Complete GitHub Actions integration guide
+    Read the vet GitHub Action guide
   </Card>
 </CardGroup>

@@ -7,7 +7,7 @@ description: "See who changed the cloud policy, when and how, with audit events,
 SafeDep Cloud keeps three records of each change to the cloud policy: an audit event for each admin action, a policy revision for each publish, and an email to the Owners and Admins for each risky publish. Use them to review changes and to answer an auditor.
 
 <Note>
-  This guide needs the SafeDep Cloud Team or Enterprise plan. See [pricing](https://safedep.io/pricing). Reading audit events needs the Admin role.
+  This guide needs the SafeDep Cloud Team or Enterprise plan. See [pricing](https://safedep.io/pricing). Reading audit events needs the Owner or Admin role.
 </Note>
 
 ## List the audit events
@@ -22,12 +22,12 @@ These are the actions of the cloud policy:
 
 | Action | Resource kind | When |
 |---|---|---|
-| `policy.change.create`, `policy.change.update`, `policy.change.sync`, `policy.change.delete` | `policy_change` | An Admin works on a draft |
-| `policy.change.publish` | `policy_change` | An Admin publishes a change. The details hold the revision and the change direction. |
-| `policy.rule.create`, `policy.rule.update`, `policy.rule.delete` | `package_rule` | An Admin creates, changes or deletes one package rule |
-| `policy.rule.bulk_create` | `policy_change` | An Admin creates block entries from a file. One event covers all of them. |
-| `policy.endpoint_label.set`, `policy.endpoint_label.delete` | `endpoint` | An Admin sets or deletes `custom/` labels on an endpoint |
-| `policy.project_label.set`, `policy.project_label.delete` | `project` | An Admin sets or deletes `custom/` labels on a project |
+| `policy.change.create`, `policy.change.update`, `policy.change.sync`, `policy.change.delete` | `policy_change` | An Owner or Admin works on a draft |
+| `policy.change.publish` | `policy_change` | An Owner or Admin publishes a change. The details hold the revision and the change direction. |
+| `policy.rule.create`, `policy.rule.update`, `policy.rule.delete` | `package_rule` | An Owner or Admin creates, changes or deletes one package rule |
+| `policy.rule.bulk_create` | `policy_change` | An Owner or Admin creates block entries from a file. One event covers all of them. |
+| `policy.endpoint_label.set`, `policy.endpoint_label.delete` | `endpoint` | An Owner or Admin sets or deletes `custom/` labels on an endpoint |
+| `policy.project_label.set`, `policy.project_label.delete` | `project` | An Owner or Admin sets or deletes `custom/` labels on a project |
 
 Filter the list:
 
@@ -73,12 +73,12 @@ SafeDep Cloud keeps audit events for at least one year, and policy revisions and
 
 <CardGroup cols={2}>
   <Card title="Policy Revisions and Changes" icon="code-branch" href="/concepts/policy-revisions">
-    Change direction and notices.
+    Read about change direction and notices.
   </Card>
   <Card title="Roll Back a Change" icon="clock-rotate-left" href="/governance/cloud/policy/roll-back-a-change">
     Undo a publish with a new revision.
   </Card>
   <Card title="Command Reference" icon="terminal" href="https://github.com/safedep/cli/tree/main/docs/cmd">
-    Every flag of `safedep audit event list`.
+    See every flag of `safedep audit event list`.
   </Card>
 </CardGroup>

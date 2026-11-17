@@ -7,7 +7,7 @@ description: "Create a trust entry in the cloud policy to waive a malware, coold
 Use a trust entry when your team reviewed a package and decided that a verdict is wrong for your tenant. A trust entry waives the verdicts of its scopes for one package until it expires. It replaces [Malicious Package Exclusions](/governance/cloud/package-exclusions). PMG with the cloud policy ignores exclusions. The pull request check still applies them.
 
 <Note>
-  This guide needs the SafeDep Cloud Team or Enterprise plan and the Admin role. See [pricing](https://safedep.io/pricing).
+  This guide needs the SafeDep Cloud Team or Enterprise plan and the Owner or Admin role. See [pricing](https://safedep.io/pricing).
 </Note>
 
 ## Create the trust entry
@@ -122,21 +122,21 @@ Trust entries with the scope `malware` replace Malicious Package Exclusions. Saf
 | Reason | `--reason` |
 | Expires At | `--expires`. A trust entry needs an expiry of at most 90 days. |
 
-PMG with `cloud.policy` on ignores the exclusions and applies only the trust entries. The pull request check still applies the exclusions.
+PMG with `cloud.policy` on ignores the exclusions and applies only the trust entries. The pull request check still applies the exclusions. For every tool that applies them, see [Malicious Package Exclusions](/governance/cloud/package-exclusions).
 
 ## Next steps
 
 <CardGroup cols={2}>
   <Card title="Package Rules" icon="list-check" href="/concepts/package-rules">
-    Trust scopes and the verified malware guard.
+    See how trust scopes and the malware guard work.
   </Card>
   <Card title="Explain a Decision" icon="magnifying-glass" href="/governance/cloud/policy/explain-a-decision">
     List the installs that a trust entry allowed.
   </Card>
   <Card title="Malicious Package" icon="shield-virus" href="/concepts/malicious-package">
-    How SafeDep classifies a package as malicious.
+    See how SafeDep marks a package as malicious.
   </Card>
   <Card title="Command Reference" icon="terminal" href="https://github.com/safedep/cli/tree/main/docs/cmd">
-    Every flag of `safedep policy rule`.
+    See every flag of `safedep policy rule`.
   </Card>
 </CardGroup>

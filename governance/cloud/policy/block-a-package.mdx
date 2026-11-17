@@ -7,7 +7,7 @@ description: "Block a malicious package, a version range or a list of packages f
 Use a block entry when a package is a threat to your tenant and you cannot wait for an MDM push. The block reaches every pull request check at once, and each PMG endpoint after its next policy fetch.
 
 <Note>
-  This guide needs the SafeDep Cloud Team or Enterprise plan and the Admin role. See [pricing](https://safedep.io/pricing).
+  This guide needs the SafeDep Cloud Team or Enterprise plan and the Owner or Admin role. See [pricing](https://safedep.io/pricing).
 </Note>
 
 ## Block one package
@@ -94,7 +94,7 @@ The delete loosens the policy and publishes a new revision. The rule stays in th
 
 <CardGroup cols={2}>
   <Card title="Package Rules" icon="list-check" href="/concepts/package-rules">
-    Selectors, prefixes and how a block beats a trust entry.
+    See how selectors work and why a block wins over a trust entry.
   </Card>
   <Card title="Explain a Decision" icon="magnifying-glass" href="/governance/cloud/policy/explain-a-decision">
     Find the rule behind a block.
@@ -103,6 +103,6 @@ The delete loosens the policy and publishes a new revision. The rule stays in th
     See who added or removed a rule.
   </Card>
   <Card title="Command Reference" icon="terminal" href="https://github.com/safedep/cli/tree/main/docs/cmd">
-    Every flag of `safedep policy rule`.
+    See every flag of `safedep policy rule`.
   </Card>
 </CardGroup>

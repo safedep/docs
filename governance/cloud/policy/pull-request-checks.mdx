@@ -7,7 +7,7 @@ description: "Use the cloud policy to choose the vulnerability severities and th
 The pull request check of the [SafeDep GitHub App](/governance/integrations/github) and the [Bitbucket app](/governance/integrations/bitbucket-app) reads the cloud policy of your tenant. Both apps use the same check, so one policy applies to repositories on both forges. There is no separate setting in each app.
 
 <Note>
-  This guide needs the SafeDep Cloud Team or Enterprise plan and the Admin role. See [pricing](https://safedep.io/pricing). The app must scan the repositories for your tenant.
+  This guide needs the SafeDep Cloud Team or Enterprise plan and the Owner or Admin role. See [pricing](https://safedep.io/pricing). The app must scan the repositories for your tenant.
 </Note>
 
 ## What the check reads
@@ -203,7 +203,7 @@ A failed check stops a merge only when the forge requires the check.
     List the checks that a rule or a setting failed.
   </Card>
   <Card title="Target a Group" icon="bullseye" href="/governance/cloud/policy/target-a-group">
-    Labels and selectors for projects.
+    Label projects and select them in a policy override.
   </Card>
   <Card title="GitHub App" icon="github" href="/governance/integrations/github">
     Install the SafeDep GitHub App.

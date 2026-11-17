@@ -137,7 +137,6 @@
             "root": "governance/vet/overview",
             "pages": [
               "governance/vet/quickstart",
-              "governance/vet/dependency-inventory",
               "governance/vet/code-analysis",
               "governance/vet/build-your-own-queries",
               "governance/terraform-audit",
@@ -147,10 +146,11 @@
           {
             "group": "Bill of Materials",
             "icon": "list-check",
-            "root": "governance/xbom/overview",
+            "root": "governance/cyclonedx-sbom",
             "pages": [
-              "governance/xbom/quickstart",
-              "governance/cyclonedx-sbom"
+              "governance/vet/dependency-inventory",
+              "governance/xbom/overview",
+              "governance/xbom/quickstart"
             ]
           },
           {

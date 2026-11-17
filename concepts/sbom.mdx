@@ -1,6 +1,6 @@
 ---
 title: SBOM
-description: "A Software Bill of Materials (SBOM) is a complete inventory of your software's components; an xBOM enriches it with AI, SaaS, and crypto usage."
+description: "An SBOM lists the components of your software. An xBOM adds the AI SDKs, cloud APIs and cryptography that your code calls."
 ---
 
 A Software Bill of Materials (SBOM) is a complete inventory of the components your software depends on, along with security metadata such as known vulnerabilities and licenses. The common interchange format is [CycloneDX](https://cyclonedx.org/).
@@ -8,9 +8,9 @@ A Software Bill of Materials (SBOM) is a complete inventory of the components yo
 ## SBOM and xBOM
 
 - A plain **SBOM** lists the dependencies declared in your manifests and lockfiles. Vet generates a CycloneDX SBOM as part of a scan.
-- An **xBOM** goes further: [xBom](/governance/xbom/overview) analyzes your source code to also surface AI SDKs, SaaS APIs, and cryptographic usage that never appear in a manifest.
+- An **xBOM** goes further. Code analysis finds where your code calls AI SDKs, cloud APIs and cryptography. A manifest does not show these calls.
 
-Use Vet's SBOM for dependency inventory. Reach for xBom when you also need to see the AI, SaaS, and crypto components your code actually uses.
+Vet makes both. `vet code scan --db code.db` analyzes the code, and `vet scan --code code.db` adds the results to the CycloneDX SBOM. [xBom](/governance/xbom/overview) is a standalone generator that writes only the code analysis results, with fewer signatures.
 
 ## Why it matters
 
@@ -22,10 +22,13 @@ An accurate inventory underpins vulnerability management, license compliance, an
   <Card title="CycloneDX SBOM" icon="file-lines" href="/governance/cyclonedx-sbom">
     Generate an SBOM with Vet.
   </Card>
-  <Card title="xBom" icon="list-check" href="/governance/xbom/overview">
-    Enriched BOMs from static code analysis.
+  <Card title="Detect Shadow AI in Code" icon="robot" href="/governance/shadow-ai-detection">
+    Make an AI BOM with vet.
   </Card>
-  <Card title="Dependency Inventory" icon="boxes-stacked" href="/governance/vet/dependency-inventory">
-    Inventory your dependencies with Vet.
+  <Card title="xBom" icon="list-check" href="/governance/xbom/overview">
+    Make a BOM from your code with xBom.
+  </Card>
+  <Card title="Scan an SBOM" icon="boxes-stacked" href="/governance/vet/dependency-inventory">
+    Scan an SBOM that your build tool generates.
   </Card>
 </CardGroup>
