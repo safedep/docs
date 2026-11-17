@@ -244,7 +244,7 @@ The pattern is the same on any CI system. Provide `SAFEDEP_API_KEY` and `SAFEDEP
 
 [PMG](/package-security/pmg/overview) intercepts package manager commands on the endpoint and records each install as an event. With cloud sync enabled, PMG drains its local event log to your tenant automatically after each invocation, and `pmg cloud sync` pushes events immediately.
 
-Setup, login, and auto-sync tuning live on the Package Guard page.
+PMG event sync needs the SafeDep Cloud Team or Enterprise plan. See [pricing](https://safedep.io/pricing). Setup, login, and auto-sync tuning live on the Package Guard page.
 
 <Card title="Package Guard" icon="shield" href="/governance/cloud/endpoint-hub/package-guard" horizontal>
   Enable PMG cloud sync and view package events in Endpoint Hub
@@ -252,7 +252,7 @@ Setup, login, and auto-sync tuning live on the Package Guard page.
 
 ## Sync AI tool inventory
 
-`vet endpoint scan` discovers AI tooling on a machine (coding agents, MCP servers, CLI tools, IDE extensions, Agent Skills) and delivers the inventory to your tenant when vet has credentials configured.
+`vet endpoint scan` discovers AI tooling on a machine (coding agents, MCP servers, CLI tools, IDE extensions, Agent Skills) and delivers the inventory to your tenant when vet has credentials configured. Inventory sync needs the SafeDep Cloud Team or Enterprise plan. See [pricing](https://safedep.io/pricing).
 
 <Card title="Endpoint Inventory" icon="boxes-stacked" href="/governance/cloud/endpoint-hub/inventory" horizontal>
   Enable inventory sync and browse discovered AI tooling in Endpoint Hub
