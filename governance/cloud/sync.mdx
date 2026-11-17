@@ -22,7 +22,7 @@ SafeDep Cloud can also scan the repositories of a linked app. In `app.safedep.io
 From the safedep CLI, you can scan up to 100 projects at a time:
 
 1. For a Bitbucket repository, [enable it for scanning](/governance/integrations/bitbucket-app#step-3-enable-repositories-for-scanning) first.
-2. Sync each repository with `safedep project sync OWNER/REPOSITORY --source github`. Use `--source bitbucket` for a Bitbucket repository.
+2. Sync each repository with `safedep project sync OWNER/REPOSITORY --source github`, or `--source bitbucket` for a Bitbucket repository.
 3. Run `safedep project scan create OWNER/REPOSITORY`.
 
 The results of these scans appear in Projects. Scans from the web app and the CLI count against a monthly quota that depends on your plan.
