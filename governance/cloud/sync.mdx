@@ -17,7 +17,7 @@ Every CLI source needs SafeDep Cloud credentials, a tenant domain and an API key
 
 The GitHub App and the Bitbucket app need no credentials. After you link an app to your tenant, the app sends the result of each pull request scan to your tenant. When you install the GitHub App, SafeDep Cloud asks which tenant to link it to. To link the Bitbucket app, see [Link your workspace](/governance/integrations/bitbucket-app#step-2-link-your-workspace).
 
-SafeDep Cloud can also scan your GitHub repositories directly. In `app.safedep.io`, you can start a scan of up to five repositories at a time. The results appear in Projects. These scans count against a monthly quota that depends on your plan.
+SafeDep Cloud can also scan the repositories of a linked GitHub App installation. In `app.safedep.io`, you can start a scan of up to five repositories at a time. To scan up to 100 projects at a time, run `safedep project scan create` from the safedep CLI. The results appear in Projects. These scans count against a monthly quota that depends on your plan.
 
 This page covers `vet scan` sync in full. PMG and endpoint inventory sync have their own setup guides, summarized below.
 
