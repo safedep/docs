@@ -131,6 +131,8 @@ A fresh link scans nothing. The workspace has a scan scope, `selected` (the defa
        ![Bitbucket repositories panel with the scan scope and per repository toggles](/images/bitbucket/7-select-repositoreis-and-enable-them-for-scaning.png)
 
     Optionally, select **Sync to Projects** to list the enabled repositories under Projects.
+
+    To scan a synced project on demand, open **Projects**. Open the menu of the project, then select **Scan project**.
   </Tab>
   <Tab title="safedep CLI">
     List the workspace's repositories with their UUIDs and current state:
@@ -169,7 +171,11 @@ A fresh link scans nothing. The workspace has a scan scope, `selected` (the defa
 
       The sync is idempotent. Repeating it returns the same project for the same repository. When you sync by name and your tenant has both a GitHub installation and a Bitbucket workspace linked, pass `--source bitbucket` explicitly.
 
-      To scan a synced project on demand, run `safedep project scan create my-workspace/my-repo`.
+      To scan a synced project on demand:
+
+      ```bash
+      safedep project scan create my-workspace/my-repo
+      ```
     </Accordion>
   </Tab>
 </Tabs>
@@ -209,7 +215,18 @@ Unlinking from the SafeDep side (CLI or console) without uninstalling the app is
 | Repeated failed link attempts are rejected | Redeems are rate limited per workspace. Wait a few minutes and retry with a fresh code. |
 | `repository list` reports the workspace as not accessible | The workspace credential is missing or expired. Open the SafeDep settings page in Bitbucket once to refresh it, then retry. |
 | A pull request gets no comment or status | Confirm the repository is enabled. In the console, select **Manage repositories**. In the CLI, `safedep integration bitbucket repository list` shows each repository's state and the workspace scan scope. |
-| `project scan create` fails with "Project not scannable" | The error names the cause. If the project has no linked repository, run `safedep project sync` for it. If the repository is not enabled, enable it in [Step 3](#step-3-enable-repositories-for-scanning). If the workspace link is gone, link the workspace again. If the app token is stale, check that the SafeDep app is installed and enabled in Bitbucket. |
+| `project scan create` fails with "Project not scannable" | The reason follows the error. Find the fix in [Project not scannable reasons](#project-not-scannable-reasons). |
+
+### Project not scannable reasons
+
+The CLI also prints a help line about the GitHub App. For a Bitbucket project, ignore it and read the reason after it.
+
+- **It has no linked source repository**, or **its source integration link was removed**: Run `safedep project sync` for the repository.
+- **Its repository is not enabled for scanning**: Enable it in [Step 3](#step-3-enable-repositories-for-scanning).
+- **Its Bitbucket workspace link is gone**: If you uninstalled the app, install it again. Then link the workspace again, as in [Step 2](#step-2-link-your-workspace).
+- **Its workspace app token is stale**: Check that the SafeDep app is installed and enabled in Bitbucket.
+- **Its repository has no default branch**: Push a first commit to the repository.
+- **Its repository could not be read**: Check that the repository still exists and that the workspace is accessible.
 
 ## Limitations
 
