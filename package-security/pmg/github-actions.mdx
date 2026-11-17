@@ -49,16 +49,26 @@ By default, the action runs the proxy in server mode. On a GitHub hosted runner,
 
 PMG blocks malicious packages using SafeDep's free community intelligence with or without credentials. Add the optional `api-key` and `tenant-id` to connect the run to [SafeDep Cloud](/governance/cloud/overview), so block events sync to [Endpoint Hub](/governance/cloud/endpoint-hub/overview) before the runner is destroyed. Set both inputs or neither. The action fails when you set only one.
 
-In shim mode, no proxy runs to send the block events to SafeDep Cloud. Add a sync step at the end of the job:
+The blocks from every job then go to one tenant. To review them across all repositories, see [Review Package Blocks Across CI Pipelines](/governance/cloud/endpoint-hub/ci-package-blocks). This review needs the SafeDep Cloud Team or Enterprise plan. See [pricing](https://safedep.io/pricing).
+
+On the Team or Enterprise plan, the run also applies the [cloud policy](/package-security/pmg/cloud-policy) of your tenant. In server mode, the proxy fetches the policy 15 seconds after it starts. A new runner has no cached policy, so an install in that time runs without it.
+
+In shim mode, no proxy runs. Run `pmg cloud sync` after the `safedep/pmg` step to fetch the cloud policy before the first install. Add a sync step at the end of the job to send the block events to SafeDep Cloud:
 
 ```yaml
-- run: pmg cloud sync --timeout 60s
+- uses: safedep/pmg@v0.35.0
+  with:
+    server-mode: false
+    api-key: ${{ secrets.SAFEDEP_API_KEY }}
+    tenant-id: ${{ secrets.SAFEDEP_TENANT_ID }}
+
+- run: pmg cloud sync # Fetches the cloud policy
+
+- run: npm ci
+
+- run: pmg cloud sync --timeout 60s # Sends the block events
   if: always()
 ```
-
-The blocks from every job go to one tenant. To review them across all repositories, see [Review Package Blocks Across CI Pipelines](/governance/cloud/endpoint-hub/ci-package-blocks). This review needs the SafeDep Cloud Team or Enterprise plan. See [pricing](https://safedep.io/pricing).
-
-On the Team or Enterprise plan, the run also applies the [cloud policy](/package-security/pmg/cloud-policy) of your tenant. In server mode, the proxy fetches the policy 15 seconds after it starts. A new runner has no cached policy, so an install in that time runs without it. In shim mode, run `pmg cloud sync` after the `safedep/pmg` step and before the first install.
 
 <Note>
   Pin `safedep/pmg` to a release tag, such as `v0.35.0`. Do not use `v1`. It points at an older action.
