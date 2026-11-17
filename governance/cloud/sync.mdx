@@ -1,7 +1,7 @@
 ---
 title: Cloud Sync
 sidebarTitle: "Sync Data"
-description: "How vet, PMG, vet endpoint scan, and the GitHub App send data to your SafeDep Cloud tenant, and how to set up each source"
+description: "How vet, PMG, vet endpoint scan, and the GitHub and Bitbucket apps send data to your SafeDep Cloud tenant, and how to set up each source"
 ---
 
 Your SafeDep Cloud tenant receives data from more than one tool. Each source syncs through its own path and shows up in a different part of the product:
@@ -11,11 +11,13 @@ Your SafeDep Cloud tenant receives data from more than one tool. Each source syn
 | [`vet scan`](#sync-vet-scan-results) | Packages, vulnerabilities, and policy violations per project | Projects and the [SQL query tables](/reference/sql-query) |
 | [PMG](#sync-package-events-from-pmg) | Package install and usage events from endpoints | [Endpoint Hub › Package Guard](/governance/cloud/endpoint-hub/package-guard) |
 | [`vet endpoint scan`](#sync-ai-tool-inventory) | AI tools, coding agents, MCP servers, and Agent Skills found on endpoints | [Endpoint Hub › Inventory](/governance/cloud/endpoint-hub/inventory) |
-| [GitHub App](/governance/integrations/github) | Pull request scan results and on-demand repository scans | Projects |
+| [GitHub App](/governance/integrations/github) and [Bitbucket app](/governance/integrations/bitbucket-app) | Pull request scan results | Projects |
 
 Every CLI source needs SafeDep Cloud credentials, a tenant domain and an API key. New to Cloud? Start with the [quickstart](/governance/cloud/quickstart).
 
-The GitHub App needs no credentials. Install the App. Then link its installation to your tenant. After that, the App sends the result of each pull request scan to your tenant. You can also scan repositories on demand from SafeDep Cloud, up to five at a time.
+The GitHub App and the Bitbucket app need no credentials. After you link an app to your tenant, the app sends the result of each pull request scan to your tenant. When you install the GitHub App, SafeDep Cloud asks which tenant to link it to. To link the Bitbucket app, see [Link your workspace](/governance/integrations/bitbucket-app#step-2-link-your-workspace).
+
+SafeDep Cloud can also scan your GitHub repositories directly. In `app.safedep.io`, you can start a scan of up to five repositories at a time. The results appear in Projects. These scans count against a monthly quota that depends on your plan.
 
 This page covers `vet scan` sync in full. PMG and endpoint inventory sync have their own setup guides, summarized below.
 

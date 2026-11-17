@@ -5,7 +5,7 @@ description: "SafeDep protects developers and AI coding agents against malicious
 
 SafeDep protects developers and AI coding agents against malicious open source components. You can inspect the code you write. You cannot inspect everything you depend on. This includes packages, IDE extensions, Agent Skills, MCP servers, and GitHub repositories. Every one of them can carry a supply chain attack, and campaigns like Shai-Hulud, Miasma, and S1ngularity spread exactly this way. SafeDep closes this blindspot. It blocks malicious components before their code runs, and it gives you visibility and policy over everything else you depend on.
 
-Its core tools ([Vet](/governance/vet/overview), [PMG](/package-security/pmg/overview), [xBom](/governance/xbom/overview), and [Gryph](/ai-security/gryph-overview)) are free, open source, and usable without a SafeDep account. [SafeDep Cloud](/governance/cloud/overview) is the control plane, data lake, and intelligence layer for a team or an organization. Vet, PMG, and the GitHub App send their data to it, and the pull request checks and PMG apply its policy.
+Its core tools ([Vet](/governance/vet/overview), [PMG](/package-security/pmg/overview), [xBom](/governance/xbom/overview), and [Gryph](/ai-security/gryph-overview)) are free, open source, and usable without a SafeDep account. [SafeDep Cloud](/governance/cloud/overview) is the control plane, data lake, and intelligence layer for a team or an organization. Vet, PMG, and the GitHub and Bitbucket apps send their data to it, and the pull request checks and PMG apply its policy.
 
 ## Start free
 
@@ -44,7 +44,7 @@ Add SafeDep Cloud when you protect more than one developer, apply one policy acr
     Create a tenant, sign in with the safedep CLI, connect a source, and run your first query.
   </Card>
   <Card title="Connect your sources" icon="plug" href="/governance/cloud/sync">
-    Send Vet scans, PMG events, AI tool inventory, and GitHub App scan results to your tenant.
+    Send Vet scans, PMG events, AI tool inventory, and pull request scan results to your tenant.
   </Card>
   <Card title="Cloud Policy" icon="scale-balanced" href="/governance/cloud/policy/overview">
     Block and trust packages and set a dependency cooldown for the whole tenant. It needs the Team or Enterprise plan.
