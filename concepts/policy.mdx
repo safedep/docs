@@ -17,17 +17,18 @@ The cloud policy holds two kinds of content:
 
 Each publish makes a new [policy revision](/concepts/policy-revisions). Each decision that a tool makes with the cloud policy names the revision and the rule or setting that decided. So you can explain a block, roll back a bad change, and show an auditor which policy applied on a date.
 
-These tools enforce the cloud policy:
-
-- [PMG](/package-security/pmg/cloud-policy) on developer machines and CI runners applies the package rules and the dependency cooldown.
-- The pull request check of the [SafeDep GitHub App](/governance/integrations/github) and the [Bitbucket app](/governance/integrations/bitbucket-app) applies the scan gate settings and the package rules.
-- Vet does not read the cloud policy yet.
+PMG and the pull request check enforce the cloud policy. Vet does not read it yet. See [Cloud Policy Settings](/reference/cloud-policy-settings) for the tool that enforces each setting.
 
 ## Policy as code
 
-Policy as code is a Vet filter suite. A filter suite is a YAML file of [CEL](/concepts/cel) rules that you keep in a repository. Vet evaluates each package of a scan against the rules, including transitive dependencies, and you decide what a match does. During a local scan, Vet can exit with a non-zero code when a package matches a rule. In CI/CD, [vet-action](/governance/integrations/github-code-scanning) takes a filter suite in its `policy` input, or a v2 policy file in its `policy-v2` input. Vet marks the filter suite format as deprecated, so use v2 for a new policy.
+Policy as code is a YAML file of [CEL](/concepts/cel) rules that you keep in a repository. Vet evaluates each package of a scan against the rules, including transitive dependencies, and you decide what a match does. During a local scan, Vet can exit with a non-zero code when a package matches a rule.
 
-See [Policy as Code](/reference/policy-as-code) for the syntax and examples.
+Vet reads two formats:
+
+- **The v2 policy format** is the current format. Use it for a new policy. The Vet repository has the format, with a [v2 policy sample](https://github.com/safedep/vet/blob/main/samples/policy-v2.yml).
+- **The filter suite format** is the older format. Vet marks it as deprecated. See [Policy as Code](/reference/policy-as-code) for its syntax and examples.
+
+In CI/CD, [vet-action](/governance/integrations/github-code-scanning) takes a v2 policy file in its `policy-v2` input, or a filter suite in its `policy` input.
 
 ## Compare the two kinds
 
@@ -50,15 +51,12 @@ See [Policy as Code](/reference/policy-as-code) for the syntax and examples.
     See how policy layers merge for one endpoint or project.
   </Card>
   <Card title="Policy as Code" icon="file-code" href="/reference/policy-as-code">
-    Write and structure Vet policy files.
+    See the syntax of a Vet filter suite.
   </Card>
   <Card title="CEL" icon="code" href="/concepts/cel">
     Write CEL expressions for policy as code.
   </Card>
   <Card title="Malicious Package" icon="shield-virus" href="/concepts/malicious-package">
     See how SafeDep finds malicious packages.
-  </Card>
-  <Card title="JFrog Xray Blocking" icon="shield-halved" href="/threat-intel/integrations/jfrog-xray">
-    Enforce package blocking in JFrog Xray.
   </Card>
 </CardGroup>

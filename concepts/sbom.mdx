@@ -3,7 +3,7 @@ title: SBOM
 description: "An SBOM lists the components of your software. An xBOM adds the AI SDKs, cloud APIs and cryptography that your code calls."
 ---
 
-A Software Bill of Materials (SBOM) is a complete inventory of the components your software depends on, along with security metadata such as known vulnerabilities and licenses. The common interchange format is [CycloneDX](https://cyclonedx.org/).
+A Software Bill of Materials (SBOM) is a complete inventory of the components your software depends on, along with security metadata such as known vulnerabilities and licenses. Vulnerability management, license compliance and regulatory requirements all start from this inventory. The two common formats are [CycloneDX](https://cyclonedx.org/) and [SPDX](https://spdx.dev/). Vet reads SBOMs in both formats and writes CycloneDX.
 
 ## SBOM and xBOM
 
@@ -11,10 +11,6 @@ A Software Bill of Materials (SBOM) is a complete inventory of the components yo
 - An **xBOM** goes further. Code analysis finds where your code calls AI SDKs, cloud APIs and cryptography. A manifest does not show these calls.
 
 Vet makes both. `vet code scan --db code.db` analyzes the code, and `vet scan --code code.db` adds the results to the CycloneDX SBOM. [xBom](/governance/xbom/overview) is a standalone generator that writes only the code analysis results, with fewer signatures.
-
-## Why it matters
-
-An accurate inventory underpins vulnerability management, license compliance, and regulatory requirements. You cannot secure what you have not inventoried.
 
 ## Related
 

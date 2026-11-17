@@ -137,7 +137,7 @@ Don't mix Diátaxis types within a single page.
 *Human-readable mirror of `docs.json`. Source of truth is `docs.json`.* Regenerated from `docs.json` after the November 2026 sidebar cleanup and page merges. A group's clickable landing (Mintlify `root`) is marked *(landing)*.
 
 **Get Started**
-- Introduction: `introduction`, `get-started/choose-your-path`, `get-started/cli-tools`, `get-started/safedep-skill`
+- Introduction: `introduction`, `get-started/cli-tools`, `get-started/safedep-skill`
 - Core Concepts: `concepts/malicious-package`, `concepts/vulnerability`, `concepts/sbom`, `concepts/tenant`, `concepts/endpoint`, `concepts/policy`, `concepts/cel`
   - Cloud Policy: `concepts/policy-resolution`, `concepts/labels`, `concepts/package-rules`, `concepts/policy-revisions`
 
