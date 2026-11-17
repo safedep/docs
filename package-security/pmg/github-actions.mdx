@@ -47,33 +47,6 @@ In server mode, put the action before the language setup steps, so the proxy see
 
 By default, the action runs the proxy in server mode. On a GitHub hosted runner, it also turns on [kernel enforcement](#enforce-in-the-kernel). Set `server-mode: false` to use the PMG shims instead. `sandbox: true` also selects the shims. With shims, the job has no job summary and no kernel enforcement, and the `safedep/pmg` step goes after `setup-node` or `setup-python`, not before. Set `timeout-minutes` on the job. A proxy that stops serving holds the job until the timeout.
 
-PMG blocks malicious packages using SafeDep's free community intelligence with or without credentials. Add the optional `api-key` and `tenant-id` to connect the run to [SafeDep Cloud](/governance/cloud/overview), so block events sync to [Endpoint Hub](/governance/cloud/endpoint-hub/overview) before the runner is destroyed. This needs the SafeDep Cloud Team or Enterprise plan. See [pricing](https://safedep.io/pricing). Set both inputs or neither. The action fails when you set only one.
-
-The blocks from every job then go to one tenant. To review them across all repositories, see [Review Package Blocks Across CI Pipelines](/governance/cloud/endpoint-hub/ci-package-blocks).
-
-The run also applies the [cloud policy](/package-security/pmg/cloud-policy) of your tenant. In server mode, the proxy fetches the policy 15 seconds after it starts. A new runner has no cached policy, so an install in that time runs without it.
-
-In shim mode, no proxy runs for the whole job, so nothing sends the block events at the end. Add a sync step at the end of the job to send them. Also run `pmg cloud sync` after the `safedep/pmg` step to fetch the cloud policy before the first install:
-
-```yaml
-- uses: actions/setup-node@v6
-  with:
-    node-version: "24"
-
-- uses: safedep/pmg@v0.35.0
-  with:
-    server-mode: false
-    api-key: ${{ secrets.SAFEDEP_API_KEY }}
-    tenant-id: ${{ secrets.SAFEDEP_TENANT_ID }}
-
-- run: pmg cloud sync # Fetches the cloud policy
-
-- run: npm ci
-
-- run: pmg cloud sync --timeout 60s # Sends the block events
-  if: always()
-```
-
 <Note>
   Pin `safedep/pmg` to a release tag, such as `v0.35.0`. Do not use `v1`. It points at an older action.
 </Note>
@@ -107,6 +80,35 @@ Three inputs change the post step:
 <Warning>
   On a public repository, anyone can read the job summary. It lists the hosts that the job reached. Set `baseline: false` to leave them out. A denied connection still shows in the summary, with its host.
 </Warning>
+
+## Connect to SafeDep Cloud
+
+PMG blocks malicious packages using SafeDep's free community intelligence with or without credentials. Add the optional `api-key` and `tenant-id` to connect the run to [SafeDep Cloud](/governance/cloud/overview), so block events sync to [Endpoint Hub](/governance/cloud/endpoint-hub/overview) before the runner is destroyed. This needs the SafeDep Cloud Team or Enterprise plan. See [pricing](https://safedep.io/pricing). Set both inputs or neither. The action fails when you set only one.
+
+The blocks from every job then go to one tenant. To review them across all repositories, see [Review Package Blocks Across CI Pipelines](/governance/cloud/endpoint-hub/ci-package-blocks).
+
+The run also applies the [cloud policy](/package-security/pmg/cloud-policy) of your tenant. In server mode, the proxy fetches the policy 15 seconds after it starts. A new runner has no cached policy, so an install in that time runs without it.
+
+In shim mode, run `pmg cloud sync` after the `safedep/pmg` step to fetch the cloud policy before the first install. No proxy runs for the whole job, so nothing sends the block events at the end. Add a second sync step at the end of the job:
+
+```yaml
+- uses: actions/setup-node@v6
+  with:
+    node-version: "24"
+
+- uses: safedep/pmg@v0.35.0
+  with:
+    server-mode: false
+    api-key: ${{ secrets.SAFEDEP_API_KEY }}
+    tenant-id: ${{ secrets.SAFEDEP_TENANT_ID }}
+
+- run: pmg cloud sync # Fetches the cloud policy
+
+- run: npm ci
+
+- run: pmg cloud sync --timeout 60s # Sends the block events
+  if: always()
+```
 
 ## Enforce in the kernel
 
@@ -151,7 +153,7 @@ The runner is not exempt. Its connections to GitHub go through the proxy, which 
 
 The `enforce-*` inputs set the policy without a config file. Each takes a list, separated by commas or new lines, that adds to the same list in the config. With `enforce: auto`, an `enforce-*` input fails the job where the action cannot enforce, so a runner change does not turn enforcement off without notice. For the policy keys and what enforcement does not cover, see [Kernel Enforcement on Linux](/package-security/pmg/kernel-enforcement).
 
-To refuse every host that the job does not need, add a network policy. See [Allow Only Known Hosts in GitHub Actions](/package-security/pmg/github-actions-network-policy).
+To refuse the hosts that the job does not need on the enforced ports, add a network policy. See [Allow Only Known Hosts in GitHub Actions](/package-security/pmg/github-actions-network-policy).
 
 ### Protect Docker builds and containers
 
@@ -281,7 +283,7 @@ For the proxy lifecycle, certificate trust, bind address, and cloud event sync, 
 
 <CardGroup cols={2}>
   <Card title="Allow Only Known Hosts in GitHub Actions" icon="network-wired" href="/package-security/pmg/github-actions-network-policy">
-    Refuse every host that the job does not need.
+    Refuse unknown hosts on the enforced ports.
   </Card>
   <Card title="Kernel Enforcement on Linux" icon="lock" href="/package-security/pmg/kernel-enforcement">
     Route every process and container on the runner through PMG.

@@ -60,7 +60,7 @@ PMG fetches the policy in the background after each command, also after a comman
 
 PMG keeps the policy in the `cloud-policy/` folder of its config folder. Under `sudo`, PMG reads the cache of the user who ran `sudo` first.
 
-On a short-lived CI runner, run `pmg cloud sync` before the first install. A new runner has no cache, so it applies only the PMG config until the first fetch. With the [`safedep/pmg` action](/package-security/pmg/github-actions) in server mode, the default, a `pmg cloud sync` step does not help. The proxy fetches the policy 15 seconds after it starts. An install before that runs without the policy.
+On a short-lived CI runner, run `pmg cloud sync` before the first install. A new runner has no cache, so it applies only the PMG config until the first fetch. The [`safedep/pmg` action](/package-security/pmg/github-actions#connect-to-safedep-cloud) runs in server mode by default. In server mode, a `pmg cloud sync` step does not apply the policy sooner. The proxy fetches the policy 15 seconds after it starts. An install before that runs without the policy.
 
 ## Offline and failed fetches
 

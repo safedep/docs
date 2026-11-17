@@ -13,7 +13,7 @@ PMG in CI blocks a malicious package and fails the job. One failed job shows one
 ## Prerequisites
 
 - PMG runs in your pipelines and syncs to your tenant:
-  - In GitHub Actions, set the `api-key` and `tenant-id` inputs of the PMG action. See [PMG in GitHub Actions](/package-security/pmg/github-actions).
+  - In GitHub Actions, set the `api-key` and `tenant-id` inputs of the PMG action. See [Connect to SafeDep Cloud](/package-security/pmg/github-actions#connect-to-safedep-cloud).
   - In other CI systems, run `pmg cloud sync` at the end of the job. See [Package Guard](/governance/cloud/endpoint-hub/package-guard#manual-sync). To find these jobs later, set `PMG_CLOUD_ENDPOINT_ID` as shown in [Other CI systems](#other-ci-systems).
 
 ## Review one pipeline
