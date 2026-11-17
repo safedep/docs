@@ -7,7 +7,7 @@ A package rule is one entry in the cloud [policy](/concepts/policy) that decides
 
 ## Block entries
 
-A block entry stops the packages that it selects. PMG blocks the install, and the pull request check fails when a pull request adds the package. A block entry stops new installs. It does not remove copies that are already installed. It also does not stop an install that the package manager serves from its own cache, because PMG does not see that install.
+A block entry stops the packages that it selects. PMG blocks the install, and the pull request check fails when a pull request adds the package. A block entry stops new installs. It does not remove copies that are already installed. It also does not stop an install that takes the package file from the package manager cache, because PMG checks a block entry only when the package file downloads through its proxy.
 
 A block entry can select:
 
@@ -16,7 +16,7 @@ A block entry can select:
 - a version range in the [vers](https://github.com/package-url/vers-spec) form, as `vers:npm/>=1.2.0|<2.0.0`
 - many packages with a prefix that ends with `/*` or `.*`, as `pkg:npm/@acme/*`, `pkg:maven/org.apache.*` or `pkg:nuget/Microsoft.*`
 
-A prefix has no version. To limit a prefix to some versions, add a range. A wide prefix such as `pkg:npm/*` selects every package of an ecosystem, and so stops every install of that ecosystem in the tenant.
+A prefix has no version. To limit a prefix to some versions, add a range. A wide prefix such as `pkg:npm/*` selects every package of an ecosystem, and so stops every new download of that ecosystem in the tenant.
 
 ## Trust entries
 

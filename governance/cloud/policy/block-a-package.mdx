@@ -32,7 +32,7 @@ A block entry can use a prefix that ends with `/*` or `.*`:
 safedep policy rule create --block 'pkg:npm/@evil-scope/*' --reason "IR-2300 hijacked scope"
 ```
 
-A prefix has no version. Use `--vers` to limit it to a range. A prefix such as `pkg:npm/*` selects every package of an ecosystem and stops every install of it, and the command warns you.
+A prefix has no version. Use `--vers` to limit it to a range. A prefix such as `pkg:npm/*` selects every package of an ecosystem and stops every new download of it, and the command warns you.
 
 ## Block a list of packages
 
@@ -80,11 +80,20 @@ Every Owner and Admin of the tenant gets an email about the new block.
 
 A block stops new installs. It does not remove copies that are already installed. To find the endpoints that have the package, see [Find a Malicious Package](/governance/cloud/endpoint-hub/find-malicious-package).
 
-PMG checks only the downloads that go through its proxy. If the package manager serves the package from its own cache, such as the npm cache, the pip cache or the pnpm store, the block does not stop the install. After an urgent block, tell your developers to clear these caches.
-
 ## How fast a block reaches PMG
 
 PMG fetches the policy in the background after a command, at most once every 5 minutes. So the first install after a block can still use the previous policy. To fetch at once on one machine, run `pmg cloud sync`.
+
+## Stop installs from the package manager cache
+
+PMG checks a block entry only when the package file downloads through its proxy. If the package manager takes the package file from its own cache, the block does not stop the install. Examples are the npm cache, the pip cache, the pnpm store, the Go module cache and the Cargo registry cache.
+
+After an urgent block, ask your developers to do these steps in order:
+
+1. Run `pmg cloud sync` to fetch the new policy.
+2. Remove the blocked package from the package manager caches.
+
+If a developer clears the caches first, the next install can download the package with the old policy and put it back in the cache.
 
 ## Remove the block
 
