@@ -51,7 +51,7 @@ PMG blocks malicious packages using SafeDep's free community intelligence with o
 
 The blocks from every job then go to one tenant. To review them across all repositories, see [Review Package Blocks Across CI Pipelines](/governance/cloud/endpoint-hub/ci-package-blocks). This review needs the SafeDep Cloud Team or Enterprise plan. See [pricing](https://safedep.io/pricing).
 
-On the Team or Enterprise plan, the run also applies the [cloud policy](/package-security/pmg/cloud-policy) of your tenant. In server mode, the proxy fetches the policy 15 seconds after it starts. A new runner has no cached policy, so an install in that time runs without it.
+On the Team or Enterprise plan, the run also applies the [cloud policy](/package-security/pmg/cloud-policy) of your tenant. In server mode, the proxy fetches the policy 15 seconds after it starts. A new runner has no cached policy, so an install in that time runs without it. In shim mode, run `pmg cloud sync` after the `safedep/pmg` step and before the first install.
 
 <Note>
   Pin `safedep/pmg` to a release tag, such as `v0.35.0`. Do not use `v1`. It points at an older action.
@@ -99,7 +99,9 @@ Three inputs change the post step:
   allowFullScreen
 ></iframe>
 
-Proxy variables are a request that a process can ignore. A step that runs `env -i`, uses `sudo`, or calls an HTTP client of its own bypasses the proxy. Kernel enforcement makes the Linux kernel send each TCP connection to an enforced port through PMG. By default, the enforced ports are 80, 443 and the ports of your custom registries. `enforce-ports` adds more. A process cannot opt out. Connections to other ports go directly.
+Proxy variables are a request that a process can ignore. A step that runs `env -i`, uses `sudo`, or calls an HTTP client of its own bypasses the proxy.
+
+Kernel enforcement makes the Linux kernel send each TCP connection to an enforced port through PMG. A process cannot opt out. By default, the enforced ports are 80, 443 and the ports of your custom registries. To route more ports, set `enforce-ports`. Connections to other ports go directly.
 
 The `enforce` input is `auto` by default. The action enforces when the job runs on a GitHub hosted runner, on the runner host, with passwordless `sudo`. GitHub hosted Ubuntu runners meet these conditions. In a job container, on a self-hosted runner, or without `sudo`, the action runs the proxy without enforcement and says so in the log.
 
