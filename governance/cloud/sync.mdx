@@ -11,11 +11,11 @@ Your SafeDep Cloud tenant receives data from more than one tool. Each source syn
 | [`vet scan`](#sync-vet-scan-results) | Packages, vulnerabilities, and policy violations per project | Projects and the [SQL query tables](/reference/sql-query) |
 | [PMG](#sync-package-events-from-pmg) | Package install and usage events from endpoints | [Endpoint Hub › Package Guard](/governance/cloud/endpoint-hub/package-guard) |
 | [`vet endpoint scan`](#sync-ai-tool-inventory) | AI tools, coding agents, MCP servers, and Agent Skills found on endpoints | [Endpoint Hub › Inventory](/governance/cloud/endpoint-hub/inventory) |
-| [GitHub App](/governance/integrations/github) | Scans of the repositories that you select in SafeDep Cloud | Projects |
+| [GitHub App](/governance/integrations/github) | Pull request scan results and on-demand repository scans | Projects |
 
 Every CLI source needs SafeDep Cloud credentials, a tenant domain and an API key. New to Cloud? Start with the [quickstart](/governance/cloud/quickstart).
 
-The GitHub App needs no credentials. To link it, connect GitHub in SafeDep Cloud and select the repositories to scan. You can select up to five repositories at a time. The pull request checks of the App stay in GitHub and do not go to your tenant.
+The GitHub App needs no credentials. Install the App. Then link its installation to your tenant. After that, the App sends the result of each pull request scan to your tenant. You can also scan repositories on demand from SafeDep Cloud, up to five at a time.
 
 This page covers `vet scan` sync in full. PMG and endpoint inventory sync have their own setup guides, summarized below.
 
