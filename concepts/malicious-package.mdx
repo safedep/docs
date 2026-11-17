@@ -18,7 +18,7 @@ SafeDep monitors public package registries and extension marketplaces. It analyz
 
 - **Static analysis** of the package's code, such as suspicious code patterns and obfuscation.
 - **Dynamic analysis** of its runtime behavior, such as network, file system, and process activity.
-- **Metadata analysis** of the package and its publisher, such as who published a release and with which provenance.
+- **Metadata analysis** of the package and its publisher.
 
 The verdicts go into SafeDep's known malicious packages database. Vet, PMG, the pull request check and the SafeDep MCP server query this database.
 
@@ -48,7 +48,7 @@ Vet reports each analyzed package at one of three levels:
 
 - **SAFE:** the analysis found no malicious behavior.
 - **SUSPICIOUS:** the package has an automated verdict.
-- **MALICIOUS:** the package has a verified verdict.
+- **MALICIOUS:** by default, the package has a verified verdict.
 
 ## Blocking malicious packages
 

@@ -46,7 +46,7 @@ A change loosens when any part of it loosens.
 
 ## Publish and revisions
 
-A publish makes a new policy revision from an open change. A revision is immutable, and revision numbers only go up. Every policy write, such as a change, a publish or a rule command, needs the Owner or Admin role. The safedep CLI asks for a confirmation before a publish that loosens the policy, and before the delete of a block entry.
+A publish makes a new policy revision from an open change. A revision is immutable, and revision numbers only go up. Every policy write, such as a change, a publish or a rule command, needs the Owner or Admin role. The safedep CLI asks for a confirmation before a publish that loosens the policy, and before the delete of a block entry. In a script, pass `--yes`.
 
 After a publish, each pull request check uses the new revision at once. Each endpoint applies it after its next policy fetch.
 

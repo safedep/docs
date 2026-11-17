@@ -5,7 +5,7 @@ description: "SafeDep protects developers and AI coding agents against malicious
 
 SafeDep protects developers and AI coding agents against malicious open source components. You can inspect the code you write. You cannot inspect everything you depend on. This includes packages, IDE extensions, Agent Skills, MCP servers, and GitHub repositories. Every one of them can carry a supply chain attack, and campaigns like Shai-Hulud, Miasma, and S1ngularity spread exactly this way. SafeDep closes this blindspot. It blocks malicious components before their code runs, and it gives you visibility and policy over everything else you depend on.
 
-Its core tools ([Vet](/governance/vet/overview), [PMG](/package-security/pmg/overview), [xBom](/governance/xbom/overview), and [Gryph](/ai-security/gryph-overview)) are free, open source, and usable without a SafeDep account. [SafeDep Cloud](/governance/cloud/overview) is the control plane, data lake, and intelligence layer for a team or an organization. Vet and PMG send their data to it, and PMG and the pull request checks apply its policy.
+Its core tools ([Vet](/governance/vet/overview), [PMG](/package-security/pmg/overview), [xBom](/governance/xbom/overview), and [Gryph](/ai-security/gryph-overview)) are free, open source, and usable without a SafeDep account. [SafeDep Cloud](/governance/cloud/overview) is the control plane, data lake, and intelligence layer for a team or an organization. Vet and PMG send their data to it, and the pull request checks and PMG apply its policy.
 
 ## Start free
 
@@ -25,7 +25,7 @@ Pick a task. You can start each one for free.
     Query SafeDep's known malicious packages database for a specific package through Vet. It is a free cloud service and needs no account.
   </Card>
   <Card title="Secure your AI coding agent" icon="robot" href="/ai-security/overview">
-    Audit what agents read, write, and run, and find the AI tools on a machine, with open source tools. The SafeDep MCP server checks packages for agents and has a free tier.
+    Audit what agents read, write, and run, and find the AI tools on a machine, with open source tools. The SafeDep MCP server checks packages for agents. It has a free tier and needs a SafeDep Cloud account.
   </Card>
   <Card title="Generate an SBOM" icon="boxes-stacked" href="/governance/cyclonedx-sbom">
     Vet writes a CycloneDX SBOM of your dependencies, and can add the AI SDKs that your code calls. It is open source and needs no account.
@@ -39,15 +39,18 @@ Pick a task. You can start each one for free.
 
 Add SafeDep Cloud when you protect more than one developer, apply one policy across your organization, or answer questions from one place. For example, see which machines run PMG and what PMG blocked last week. The open source tools keep working without Cloud. See the [pricing page](https://safedep.io/pricing) for what each plan includes.
 
-<CardGroup cols={3}>
+<CardGroup cols={2}>
   <Card title="Cloud Quickstart" icon="rocket" href="/governance/cloud/quickstart">
-    Create a tenant, sign in the safedep CLI, connect a source, and run your first query.
+    Create a tenant, sign in with the safedep CLI, connect a source, and run your first query.
   </Card>
   <Card title="Connect your sources" icon="plug" href="/governance/cloud/sync">
     Send vet scans, PMG events and AI tool inventory to your tenant.
   </Card>
   <Card title="Cloud Policy" icon="scale-balanced" href="/governance/cloud/policy/overview">
     Block and trust packages and set a dependency cooldown for the whole tenant. It needs the Team or Enterprise plan.
+  </Card>
+  <Card title="Endpoint Hub" icon="server" href="/governance/cloud/endpoint-hub/overview">
+    See package activity and AI tooling across developer machines, CI runners, and agent sandboxes.
   </Card>
 </CardGroup>
 

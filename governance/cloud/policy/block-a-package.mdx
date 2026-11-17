@@ -68,6 +68,8 @@ safedep policy rule create --block pkg:npm/legacy-sdk --reason "Not allowed in p
    safedep endpoint list --applied-revision '<48'
    ```
 
+   This list leaves out an endpoint whose PMG has no cloud policy. A block entry does not reach such an endpoint. See [Where a rule applies](/concepts/package-rules#where-a-rule-applies).
+
 2. List the decisions of the rule:
 
    ```bash
