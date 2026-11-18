@@ -222,7 +222,7 @@ Then wire it up with your OS's native scheduler:
     On macOS, `cron` can't reach the keychain where `safedep auth login`
     stores its OAuth token, so scheduled `safedep query exec` calls fail
     with `not authenticated`. Use a **launchd user agent** instead. It runs
-    in your logged-in user session and inherits keychain access.
+    in the session of your signed-in user and inherits keychain access.
 
     Save this as `~/Library/LaunchAgents/io.safedep.alerts.plist`:
 

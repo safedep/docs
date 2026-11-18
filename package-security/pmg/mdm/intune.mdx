@@ -97,7 +97,7 @@ PMG blocking works without Cloud. For a local-only deployment, use the [prebuilt
      </Tab>
    </Tabs>
 
-3. Assign the policy to a device group. On macOS and Linux, use a recurring install frequency if new users can be added later. On Windows, only logged-on users receive credentials and sync during a run. Windows platform scripts do not run on a recurring schedule after success. Update the script or policy to rerun the installer when credentials are needed for later sign-ins.
+3. Assign the policy to a device group. On macOS and Linux, use a recurring install frequency if new users can be added later. On Windows, only signed-in users receive credentials and sync during a run. Windows platform scripts do not run on a recurring schedule after success. Update the script or policy to rerun the installer when credentials are needed for later sign-ins.
 
    A direct standalone upload in Intune cannot pass `--cloud-sync-only` to the script. Run the normal installer again when you need to sync or configure later users.
 

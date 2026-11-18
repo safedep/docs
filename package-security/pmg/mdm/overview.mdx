@@ -36,7 +36,7 @@ For managed config, ship `config.yml` beside the scripts or embed it with the st
 
 ## Cloud sync
 
-PMG blocks packages without Cloud credentials. MDM deploys can also sync data to [SafeDep Cloud](/governance/cloud/quickstart). With Cloud credentials configured, the install script attempts `pmg cloud sync` after setup. On Windows, this runs for logged-on users only. A successful sync adds the device to [Endpoint Hub](/governance/cloud/endpoint-hub/overview) without waiting for a package manager event. Installs sync to [Package Guard](/governance/cloud/endpoint-hub/package-guard).
+PMG blocks packages without Cloud credentials. MDM deploys can also sync data to [SafeDep Cloud](/governance/cloud/quickstart). With Cloud credentials configured, the install script attempts `pmg cloud sync` after setup. On Windows, this runs for signed-in users only. A successful sync adds the device to [Endpoint Hub](/governance/cloud/endpoint-hub/overview) without waiting for a package manager event. Installs sync to [Package Guard](/governance/cloud/endpoint-hub/package-guard).
 
 Cloud sync from an MDM fleet needs the SafeDep Cloud Enterprise plan. See [pricing](https://safedep.io/pricing). To use Cloud sync, you need an API key and Tenant ID from [app.safedep.io/settings/api-keys](https://app.safedep.io/settings/api-keys).
 
@@ -47,7 +47,7 @@ For Windows standalone scripts with runtime credentials, keep `--config` and omi
 To repeat the sync without installing or configuring PMG again, pass `--cloud-sync-only` to the install script. Use this option only for users who already have PMG and cloud sync enabled. Run the normal installer to configure new users. On Windows, run it after those users sign in to store their Cloud credentials.
 
 <Note>
-  A successful MDM install status does not confirm Cloud sync. If a Windows endpoint does not appear in Endpoint Hub, check `pmg config get cloud.enabled` and run `pmg cloud sync` in a logged-on user's session with credentials configured. Cloud login and sync failures do not fail the normal installer.
+  A successful MDM install status does not confirm Cloud sync. If a Windows endpoint does not appear in Endpoint Hub, check `pmg config get cloud.enabled` and run `pmg cloud sync` in the session of a signed-in user with credentials configured. Cloud sign-in and sync failures do not fail the normal installer.
 </Note>
 
 ## Certificates

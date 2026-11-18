@@ -166,7 +166,7 @@ The current fleet script is [`vet_endpoint_scan.sh`](https://github.com/safedep/
   <Step title="Choose the execution context">
     Run the script as root to scan every local human account on the machine. Use this mode for shared devices or when you want endpoint-wide coverage.
 
-    Run the script as the logged-in user to scan only that user. Use this mode when you want the user's full `PATH`, especially for CLI tool discovery on macOS.
+    Run the script as the signed-in user to scan only that user. Use this mode when you want the user's full `PATH`, especially for CLI tool discovery on macOS.
   </Step>
   <Step title="Add optional scan flags">
     Pass extra flags at the end when you want to narrow the inventory or reduce output. The script forwards them to `vet endpoint scan`.

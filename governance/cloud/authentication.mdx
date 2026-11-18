@@ -6,7 +6,7 @@ description: "How SafeDep Cloud authentication works and how to authenticate the
 Every tool that talks to SafeDep Cloud authenticates with two values, a **tenant domain** (for example `your-team.your-org.safedep.io`, shown by the **Tenant ID** button on the [API keys settings page](https://app.safedep.io/settings/api-keys)) and a credential. The credential type depends on which API plane the tool calls:
 
 - **Data plane** (`api.safedep.io`): package insights, known-malicious package queries, and sync. Authenticates with an **API key**.
-- **Control plane** (`cloud.safedep.io`): tenant, policy, and management operations, including SQL queries and [on-demand package scans](/package-security/scan/overview). Authenticates with a **JWT** from an OAuth2 login.
+- **Control plane** (`cloud.safedep.io`): tenant, policy, and management operations, including SQL queries and [on-demand package scans](/package-security/scan/overview). Authenticates with a **JWT** from an OAuth2 sign-in.
 
 Generate API keys at [app.safedep.io/settings/api-keys](https://app.safedep.io/settings/api-keys). For request headers, OAuth2/OIDC endpoints, and rate limits, see the [API reference](/reference/api-introduction). For the full hostname list, see the [endpoints reference](/reference/endpoints).
 
@@ -19,7 +19,7 @@ safedep auth login
 safedep auth status
 ```
 
-For non-interactive environments, log in with a static API key instead of the device flow:
+For non-interactive environments, sign in with a static API key instead of the device flow:
 
 ```bash
 safedep auth login --api-key --tenant your-team.your-org.safedep.io
@@ -28,7 +28,7 @@ safedep auth login --api-key --tenant your-team.your-org.safedep.io
 The key is read from `--api-key-value`, stdin (with `--from-stdin`), the `SAFEDEP_API_KEY` environment variable, or an interactive prompt, in that order. Work with multiple tenants using `--profile` and `safedep auth profile list`. See the [CLI command reference](https://github.com/safedep/cli/tree/main/docs/cmd) for all flags.
 
 <Note>
-API-key login covers data-plane commands only. [On-demand package scanning](/package-security/scan/overview) is a control-plane operation. It requires the OAuth2 device-flow session, and an API key cannot submit scans, by design. See [Scanning from CI and AI Agents](/package-security/scan/automation) for the reasoning and what this means for automation.
+API-key sign-in covers data-plane commands only. [On-demand package scanning](/package-security/scan/overview) is a control-plane operation. It requires the OAuth2 device-flow session, and an API key cannot submit scans, by design. See [Scanning from CI and AI Agents](/package-security/scan/automation) for the reasoning and what this means for automation.
 </Note>
 
 ## vet
@@ -56,7 +56,7 @@ To log out, delete the stored credentials with `rm ~/.safedep/vet-auth.yml`.
 
 ## CI/CD pipelines
 
-Tools read credentials from environment variables, so pipelines need no interactive login:
+Tools read credentials from environment variables, so pipelines need no interactive sign-in:
 
 ```bash
 export SAFEDEP_API_KEY=your-api-key
@@ -84,7 +84,7 @@ vet cloud whoami      # vet OAuth identity and tenants
     See transport, request headers, OAuth2/OIDC, and rate limits
   </Card>
   <Card title="Cloud Quickstart" icon="rocket" href="/governance/cloud/quickstart">
-    Create a tenant and log in with the safedep CLI
+    Create a tenant and sign in with the safedep CLI
   </Card>
   <Card title="Cloud Sync" icon="arrows-rotate" href="/governance/cloud/sync">
     Send data to your tenant from vet, PMG, and endpoint scans
