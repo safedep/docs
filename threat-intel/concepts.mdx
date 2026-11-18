@@ -1,7 +1,7 @@
 ---
 title: "Concepts"
 sidebarTitle: "Feed Data Model"
-description: "The Threat Intel Feed data model: reports, verdicts, confidence, withdrawal, indicators, campaigns, and the change cursor."
+description: "The Threat Intel Feed data model, which covers reports, verdicts, confidence, withdrawal, indicators, campaigns, and the change cursor."
 ---
 
 ## Report
@@ -44,4 +44,4 @@ Reports and campaigns come back when they change. A change cursor orders them. T
 - A **report** comes back when its verdict, indicators, or campaign links change. Its cursor is `(updatedAt, reportId)`. `updatedAt` moves only on a real change, never on a no-op refresh.
 - A **campaign** comes back when it changes, for example when a member report is added or removed. Its cursor is `(lastActivityAt, campaignId)`.
 
-Keep the default ascending order and store the highest cursor value you have seen; that is your at-least-once change stream. Process a report again each time it returns, keyed by `reportId`. See [Pagination & sync](/threat-intel/pagination).
+Keep the default ascending order and store the highest cursor value you have seen. That is your at-least-once change stream. Process a report again each time it returns, keyed by `reportId`. See [Pagination & sync](/threat-intel/pagination).

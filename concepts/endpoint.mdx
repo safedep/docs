@@ -11,28 +11,31 @@ An endpoint here is a machine, not an API endpoint. For SafeDep's service hostna
 
 ## Why it matters
 
-Endpoints give a team visibility into what runs across its development infrastructure: AI coding agents, MCP servers, CLI tools, IDE extensions, and the packages developers install. That inventory is what you govern.
+Endpoints give a team visibility into what runs across its development infrastructure, such as AI coding agents, MCP servers, CLI tools, IDE extensions, and the packages developers install. That inventory is what you govern.
 
 ## What an endpoint reports
 
-- AI tooling discovered by `vet endpoint scan`: coding agents, MCP servers, CLI tools, IDE extensions, and Agent Skills.
+- The AI tooling, Agent Skills, IDE extensions and Neovim plugins that `vet endpoint scan` finds. AI tooling covers coding agents, MCP servers and CLI tools.
 - Package install activity captured by [PMG](/package-security/pmg/overview) through Package Guard.
+- The packages that AI coding agents check through the SafeDep MCP server. They appear per endpoint in [MCP Advisor](/governance/cloud/endpoint-hub/mcp-advisor). This works only if you set up the agent with the safedep CLI.
 
-Each endpoint appears by hostname in Endpoint Hub, where you browse its inventory and package events. Reporting requires SafeDep Cloud credentials; without them, scans run locally only.
+Each endpoint appears by hostname in Endpoint Hub, where you browse its inventory and package events. Reporting requires SafeDep Cloud credentials. Without them, scans run locally only.
+
+An endpoint is also a subject of the cloud policy. With the cloud policy turned on, PMG on the endpoint sends its `reported/` [labels](/concepts/labels) and fetches its resolved policy. See [Policy Resolution](/concepts/policy-resolution).
 
 ## Related
 
 <CardGroup cols={2}>
   <Card title="Endpoint Hub" icon="server" href="/governance/cloud/endpoint-hub/overview">
-    The console view of your endpoints.
+    See your endpoints in the console.
   </Card>
   <Card title="Package Guard" icon="box" href="/governance/cloud/endpoint-hub/package-guard">
-    Package activity from each endpoint.
+    See package activity from each endpoint.
   </Card>
   <Card title="Tenant" icon="building" href="/concepts/tenant">
-    The org boundary endpoints report into.
+    See the org boundary that endpoints report into.
   </Card>
   <Card title="API Endpoints" icon="server" href="/reference/endpoints">
-    SafeDep's service hostnames (different meaning).
+    See SafeDep's service hostnames, which are a different kind of endpoint.
   </Card>
 </CardGroup>

@@ -4,7 +4,7 @@ sidebarTitle: "Generate an SBOM"
 description: "Generate a Software Bill of Materials (SBOM) with security metadata using Vet"
 ---
 
-`vet` supports [CycloneDX v1.6](https://cyclonedx.org/docs/1.6/json) SBOM generation. The generated SBOM lists all packages and their dependencies, including security metadata: detected vulnerabilities, malware, and license information.
+`vet` supports [CycloneDX v1.6](https://cyclonedx.org/docs/1.6/json) SBOM generation. The generated SBOM lists all packages and their dependencies. It also includes security metadata about detected vulnerabilities, malware, and license information.
 
 Vet writes CycloneDX, not SPDX. To scan an SBOM that another tool wrote, including SPDX, see [Scan an SBOM](/governance/vet/dependency-inventory).
 

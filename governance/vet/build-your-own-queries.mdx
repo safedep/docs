@@ -3,7 +3,7 @@ title: Build Your Own Queries
 description: "Speed up filtering and reporting by working with enriched JSON data dumps"
 ---
 
-Scanning package manifests is resource-intensive: `vet` must enrich each package by querying the Insights API. Because filtering and reporting can run many times on the same manifest, you can dump the enriched data as JSON once and reload it for subsequent operations.
+Scanning package manifests is resource-intensive, because `vet` must enrich each package by querying the Insights API. Because filtering and reporting can run many times on the same manifest, you can dump the enriched data as JSON once and reload it for subsequent operations.
 
 ## Query Workflow
 
@@ -96,7 +96,7 @@ vet query --from /tmp/dump \
 
 <CardGroup cols={2}>
   <Card title="Filtering" icon="filter" href="/reference/filtering">
-    The CEL filter input schema and syntax.
+    See the CEL filter input schema and syntax.
   </Card>
   <Card title="Policy as Code" icon="file-code" href="/reference/policy-as-code">
     Turn these filters into reusable policy files.

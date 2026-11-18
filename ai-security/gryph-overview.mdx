@@ -4,7 +4,7 @@ sidebarTitle: "Audit Agents (Gryph)"
 description: "Gryph records each file read, file write and command of your AI coding agents to a local audit log, and can block risky actions with a policy."
 ---
 
-AI coding agents can read any file, write anywhere and run commands on your machine. **Gryph** hooks into your agents and records each action to a local audit log. You can query the log and review each session step by step. With a policy turned on, Gryph can also block a risky action before it runs. Gryph is not a sandbox: it does not isolate the agent process.
+AI coding agents can read any file, write anywhere and run commands on your machine. **Gryph** hooks into your agents and records each action to a local audit log. You can query the log and review each session step by step. With a policy turned on, Gryph can also block a risky action before it runs. Gryph is not a sandbox. It does not isolate the agent process.
 
 <Note>
 Gryph runs fully locally. All data stays on your machine. There is no cloud component, no telemetry, and no SafeDep account or API key.
@@ -78,7 +78,7 @@ Use them together. MCP helps the agent make safer suggestions, and Gryph keeps a
 
 <CardGroup cols={2}>
   <Card title="Gryph on GitHub" icon="github" href="https://github.com/safedep/gryph">
-    Full documentation, configuration, and source.
+    Read the full documentation, configuration, and source.
   </Card>
   <Card title="SafeDep MCP server" icon="robot" href="/ai-security/mcp-server">
     Give your AI coding tools access to SafeDep package intelligence.

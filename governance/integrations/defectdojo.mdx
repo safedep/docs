@@ -61,7 +61,7 @@ The steps below use Docker Compose to run DefectDojo locally and scan the [demo-
   </Step>
   
   <Step title="Access DefectDojo">
-    Navigate to `http://localhost:8080` and login with:
+    Navigate to `http://localhost:8080` and sign in with these credentials:
     - **Username**: `admin`
     - **Password**: (from previous step)
     
@@ -104,7 +104,7 @@ vet scan --github https://github.com/safedep/demo-client-python \
   --defect-dojo-product-id <your-product-id>
 ```
 
-Each scan creates a new engagement in DefectDojo; policy violations are reported as findings and visible in DefectDojo's dashboard.
+Each scan creates a new engagement in DefectDojo. Policy violations are reported as findings and visible in DefectDojo's dashboard.
 
 <Warning>
 Currently, Vet reports only policy violations to DefectDojo. Support for reporting vulnerabilities and malicious package information is planned in [GitHub issue #430](https://github.com/safedep/vet/issues/430).

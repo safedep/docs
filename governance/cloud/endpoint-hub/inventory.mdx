@@ -61,7 +61,7 @@ Endpoint inventory shows what AI tooling is active across your endpoints (develo
     └────────────────┴──────────────────┴───────────────┴─────────┴──────────────────────────────────────────────────┘
     ```
 
-    `vet endpoint scan` delivers discovered items to SafeDep Cloud in the background. The command waits up to 30 seconds for delivery; if the timeout is reached, any undelivered items are retried automatically on the next run.
+    `vet endpoint scan` delivers discovered items to SafeDep Cloud in the background. The command waits up to 30 seconds for delivery. If the timeout is reached, any undelivered items are retried automatically on the next run.
 
     <Tip>
       Without credentials, `vet endpoint scan` still runs and prints the local table. No data leaves the machine.
@@ -85,13 +85,13 @@ Endpoint inventory shows what AI tooling is active across your endpoints (develo
 
 ## Common scan options
 
-- **Project scope only:** `vet endpoint scan --scope project -D /path/to/repo`: limits discovery to project-level configs (e.g. `.mcp.json`, `CLAUDE.md`).
-- **System scope only:** `vet endpoint scan --scope system`: skips project configs; faster on large repositories.
-- **AI tools only:** `vet endpoint scan --kind ai-tool`: discovers coding agents, MCP servers, CLI tools, IDE extensions, and project config files; skips skill directories.
-- **Agent skills only:** `vet endpoint scan --kind agent-skill`: discovers agent skill directories only.
-- **JSON report:** `vet endpoint scan --report-json inventory.json`: writes a local file in addition to syncing.
-- **CI/CD:** Set `SAFEDEP_API_KEY` and `SAFEDEP_TENANT_ID` as pipeline secrets. Ephemeral runners (e.g. GitHub-hosted) register as a new endpoint per run; self-hosted runners on a persistent host update the same endpoint.
-- **Suppress table output:** `vet endpoint scan --silent`: runs and syncs without printing the local table.
+- **Project scope only:** `vet endpoint scan --scope project -D /path/to/repo` limits discovery to project-level configs (e.g. `.mcp.json`, `CLAUDE.md`).
+- **System scope only:** `vet endpoint scan --scope system` skips project configs. It is faster on large repositories.
+- **AI tools only:** `vet endpoint scan --kind ai-tool` discovers coding agents, MCP servers, CLI tools, IDE extensions, and project config files. It skips skill directories.
+- **Agent skills only:** `vet endpoint scan --kind agent-skill` discovers agent skill directories only.
+- **JSON report:** `vet endpoint scan --report-json inventory.json` writes a local file in addition to syncing.
+- **CI/CD:** Set `SAFEDEP_API_KEY` and `SAFEDEP_TENANT_ID` as pipeline secrets. Ephemeral runners (e.g. GitHub-hosted) register as a new endpoint per run. Self-hosted runners on a persistent host update the same endpoint.
+- **Suppress table output:** `vet endpoint scan --silent` runs and syncs without printing the local table.
 
 ## Review AI tools across your team
 

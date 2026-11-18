@@ -4,7 +4,7 @@ sidebarTitle: "Explain a Decision"
 description: "Find the package rule or the setting that blocked an install in PMG or failed a pull request check, with the decision log and the citation."
 ---
 
-Each decision that PMG or the pull request check makes with the cloud policy carries a citation: the policy revision, the revision of the SafeDep default policy, and the package rule or the setting that decided. Use the citation to answer "why was this package blocked?" for one endpoint or one pull request.
+Each decision that PMG or the pull request check makes with the cloud policy carries a citation. The citation names the policy revision, the revision of the SafeDep default policy, and the package rule or the setting that decided. Use the citation to answer "why was this package blocked?" for one endpoint or one pull request.
 
 <Note>
   This guide needs the SafeDep Cloud Team or Enterprise plan. See [pricing](https://safedep.io/pricing). A user with the ReadOnly role or a higher role can read the decision log.
@@ -60,7 +60,7 @@ Other filters:
 | `--tool pmg` or `--tool pull-request-check` | The decisions of one tool |
 | `--outcome blocked`, `failed` or `allowed` | Blocked installs, failed checks, or packages that a trust entry allowed |
 | `--revision N` | The decisions that applied revision N |
-| `--override NAME` | The decisions of one policy override: a field that it set, or a rule that attaches to it |
+| `--override NAME` | The decisions from a field that one policy override set, or from a rule that attaches to that override |
 | `--project ID` | The decisions of the checks of one project |
 | `--since` and `--until` | A time window, as `7d` or `12h` |
 
@@ -68,7 +68,7 @@ The `--package` filter takes a PURL with no version. The name must match the sto
 
 ## What is not in the decision log
 
-- A decision with no citation: a block by the malware analysis alone, a block by the PMG `blocked_packages` list, and a cooldown block when the cooldown came from the PMG config and not from the cloud policy.
+- A decision with no citation, such as a block by the malware analysis alone, a block by the PMG `blocked_packages` list, or a cooldown block when the cooldown came from the PMG config and not from the cloud policy.
 - A PMG decision that PMG did not sync yet. PMG syncs its events to SafeDep Cloud with `cloud.enabled` on. See [Package Guard](/governance/cloud/endpoint-hub/package-guard).
 
 ## Show the policy of one subject
@@ -86,12 +86,12 @@ The output also shows the revision that each tool applied, and the exceptions th
 
 <CardGroup cols={2}>
   <Card title="Policy Resolution" icon="layer-group" href="/concepts/policy-resolution">
-    Layers, policy overrides and the resolved policy.
+    Read about layers, policy overrides and the resolved policy.
   </Card>
   <Card title="Trust a Package" icon="circle-check" href="/governance/cloud/policy/trust-a-package">
     Act on a block that was wrong.
   </Card>
   <Card title="Command Reference" icon="terminal" href="https://github.com/safedep/cli/tree/main/docs/cmd">
-    Every flag of `safedep policy decision list`.
+    See every flag of `safedep policy decision list`.
   </Card>
 </CardGroup>

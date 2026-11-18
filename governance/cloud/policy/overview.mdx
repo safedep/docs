@@ -1,6 +1,6 @@
 ---
 title: "Cloud Policy"
-description: "Set one policy for your tenant in SafeDep Cloud: block and trust packages, set the dependency cooldown, and choose what fails a pull request check."
+description: "Set one policy for your tenant in SafeDep Cloud to block and trust packages, set the dependency cooldown, and choose what fails a pull request check."
 ---
 
 The cloud policy is one [policy](/concepts/policy) for your tenant in SafeDep Cloud. A security admin changes it with the [safedep CLI](/get-started/cli-tools), and PMG and the pull request checks apply it. You change the policy of the whole fleet with no new MDM package.
@@ -36,7 +36,7 @@ A user with the ReadOnly role or a higher role can read the policy, its revision
 3. They publish the change. The publish makes a new policy revision.
 4. The next pull request check of each project uses the new revision. PMG on each endpoint applies it after its next policy fetch.
 
-A package rule skips the draft: `safedep policy rule create` publishes at once. See [Policy Revisions and Changes](/concepts/policy-revisions).
+A package rule skips the draft. `safedep policy rule create` publishes at once. See [Policy Revisions and Changes](/concepts/policy-revisions).
 
 ## Set up the tools
 

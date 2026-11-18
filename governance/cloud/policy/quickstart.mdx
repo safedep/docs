@@ -14,16 +14,16 @@ In this tutorial you publish the first policy of your tenant with the safedep CL
 
 - You have the Owner or Admin role in a SafeDep Cloud tenant.
 - The [safedep CLI](/get-started/cli-tools) v0.11.0 or later is installed.
-- To see the effect in PMG: [PMG](/package-security/pmg/quickstart) is installed on a machine, and you have an API key of the tenant from [app.safedep.io/settings/api-keys](https://app.safedep.io/settings/api-keys).
-- To see the effect in a pull request check: the [GitHub App](/governance/integrations/github) or the [Bitbucket app](/governance/integrations/bitbucket-app) scans a repository for your tenant.
+- To see the effect in PMG, you need [PMG](/package-security/pmg/quickstart) v0.35.0 or later on a machine and an API key of the tenant from [app.safedep.io/settings/api-keys](https://app.safedep.io/settings/api-keys).
+- To see the effect in a pull request check, you need the [GitHub App](/governance/integrations/github) or the [Bitbucket app](/governance/integrations/bitbucket-app) to scan a repository for your tenant.
 
 <Steps>
-  <Step title="Log in">
+  <Step title="Sign in">
     ```bash
     safedep auth login
     ```
 
-    The command opens a login page in your browser. If you have access to more than one tenant, it asks you to pick one. Run `safedep auth status` to see the tenant of the session.
+    The command opens a sign-in page in your browser. If you have access to more than one tenant, it asks you to pick one. Run `safedep auth status` to see the tenant of the session.
   </Step>
 
   <Step title="Show the policy">

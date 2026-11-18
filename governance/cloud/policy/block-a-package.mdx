@@ -32,7 +32,7 @@ A block entry can use a prefix that ends with `/*` or `.*`:
 safedep policy rule create --block 'pkg:npm/@evil-scope/*' --reason "IR-2300 hijacked scope"
 ```
 
-A prefix has no version. Use `--vers` to limit it to a range. A prefix such as `pkg:npm/*` selects every package of an ecosystem and stops every install of it, and the command warns you.
+A prefix has no version. Use `--vers` to limit it to a range. A prefix such as `pkg:npm/*` selects every package of an ecosystem and stops every new download of it, and the command warns you.
 
 ## Block a list of packages
 
@@ -68,6 +68,8 @@ safedep policy rule create --block pkg:npm/legacy-sdk --reason "Not allowed in p
    safedep endpoint list --applied-revision '<48'
    ```
 
+   This list leaves out an endpoint whose PMG has no cloud policy. A block entry does not reach such an endpoint. See [Where a rule applies](/concepts/package-rules#where-a-rule-applies).
+
 2. List the decisions of the rule:
 
    ```bash
@@ -81,6 +83,17 @@ A block stops new installs. It does not remove copies that are already installed
 ## How fast a block reaches PMG
 
 PMG fetches the policy in the background after a command, at most once every 5 minutes. So the first install after a block can still use the previous policy. To fetch at once on one machine, run `pmg cloud sync`.
+
+## Stop installs from the package manager cache
+
+PMG checks a block entry only when the package file downloads through its proxy. If the package manager takes the package file from its own cache, the block does not stop the install. Examples are the npm cache, the pip cache, the pnpm store, the Go module cache and the Cargo registry cache.
+
+After an urgent block, ask your developers to do these steps in order:
+
+1. Run `pmg cloud sync` to fetch the new policy.
+2. Remove the blocked package from the package manager caches.
+
+If a developer clears the caches first, the next install can download the package with the old policy and put it back in the cache.
 
 ## Remove the block
 

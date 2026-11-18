@@ -7,13 +7,13 @@ A tenant has one cloud [policy](/concepts/policy), but its endpoints and project
 
 ## Subjects
 
-A subject is a thing that the policy resolves for: an [endpoint](/concepts/endpoint) or a project. A repository is a project. Each subject has [labels](/concepts/labels), and the labels decide which policy overrides apply to it.
+A subject is an [endpoint](/concepts/endpoint) or a project that the policy resolves for. A repository is a project. Each subject has [labels](/concepts/labels), and the labels decide which policy overrides apply to it.
 
 ## The three layers
 
 Resolution stacks three layers of policy settings, from low to high:
 
-1. **The SafeDep default policy.** SafeDep defines it and gives it its own revision number. No tenant can change it. It holds policy settings only, never package rules. Today it sets `scan_gate.fail_on` to `high` and `scan_gate.fail_on_attacks` to `fail`, the gate that the pull request check used before the cloud policy existed. Its license gate denies nine GPL and AGPL license ids, sets no allow list, and allows a package with an unknown license.
+1. **The SafeDep default policy.** SafeDep defines it and gives it its own revision number. No tenant can change it. It holds policy settings only, never package rules. Its scan gate is the gate that the pull request check used before the cloud policy existed. See [Cloud Policy Settings](/reference/cloud-policy-settings) for each value.
 2. **The policy base.** It applies to every endpoint and every project of the tenant.
 3. **Policy overrides.** Each policy override has a name, a label selector, a unique priority, and the settings that it changes. It applies only to the subjects that its selector matches. A policy override can also have an expiry, after which it matches no subject.
 
@@ -55,15 +55,15 @@ A new revision, a label change or an expiry changes the result at the next fetch
 
 <CardGroup cols={2}>
   <Card title="Labels" icon="tags" href="/concepts/labels">
-    How a policy override selects endpoints and projects.
+    See how a policy override selects endpoints and projects.
   </Card>
   <Card title="Package Rules" icon="list-check" href="/concepts/package-rules">
-    Block and trust entries.
+    See how block entries and trust entries work.
   </Card>
   <Card title="Target a Group" icon="bullseye" href="/governance/cloud/policy/target-a-group">
     Write a policy override for a group of endpoints or projects.
   </Card>
   <Card title="Cloud Policy Settings" icon="table" href="/reference/cloud-policy-settings">
-    Each setting and its value in the default policy.
+    See each setting and its value in the default policy.
   </Card>
 </CardGroup>

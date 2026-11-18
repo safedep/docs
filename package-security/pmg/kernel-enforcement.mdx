@@ -6,7 +6,7 @@ description: "Make the Linux kernel route every package install through PMG, on 
 
 PMG's persistent proxy serves every package manager on a host through proxy environment variables. A variable is a request. A process can drop it with `env -i` or `sudo`, and an install script with its own HTTP client never reads it. Kernel enforcement closes that gap on Linux. The kernel sends every TCP connection to ports 80 and 443 from every eligible process to the PMG proxy. A process cannot opt out.
 
-This page covers a Linux host you operate: a VM, a shared build machine, or a self-hosted CI runner for GitHub Actions, GitLab, CircleCI, Jenkins, or any other CI system. It also covers the containers that host starts. For GitHub hosted runners, the `safedep/pmg` action does these steps for you. See [PMG in GitHub Actions](/package-security/pmg/github-actions#enforce-in-the-kernel).
+This page covers a Linux host you operate, such as a VM, a shared build machine, or a self-hosted CI runner for GitHub Actions, GitLab, CircleCI, Jenkins, or any other CI system. It also covers the containers that host starts. For GitHub hosted runners, the `safedep/pmg` action does these steps for you. See [PMG in GitHub Actions](/package-security/pmg/github-actions#enforce-in-the-kernel).
 
 <Note>
   Kernel enforcement and the container redirect are in PMG v0.31.0 and later. Kernel enforcement is Linux only. On macOS and Windows, `pmg proxy start --enforce` fails with an error that names the platform.
@@ -17,7 +17,7 @@ This page covers a Linux host you operate: a VM, a shared build machine, or a se
 - Linux 5.15 or later with kernel BTF (`CONFIG_DEBUG_INFO_BTF`) and cgroup v2.
 - Root. Attaching the kernel programs needs `CAP_BPF`, `CAP_NET_ADMIN`, and `CAP_PERFMON`.
 - The PMG CA in the system trust store. Install it with `sudo pmg setup cert install --system`. The daemon refuses to start without it.
-- For containers: nf_tables and conntrack. Every Docker host has them.
+- nf_tables and conntrack, for containers. Every Docker host has them.
 
 Run `pmg setup doctor` to check whether a host can enforce. The `Kernel enforcement` line names what is missing.
 
@@ -47,7 +47,7 @@ Every `pmg proxy` command runs with `sudo` and an explicit `--state` path, becau
     sudo pmg proxy env --state /run/pmg/proxy-state.json
     ```
 
-    Under enforcement this prints no proxy variables. It prints the variables that point tools at the system trust store: `NODE_USE_SYSTEM_CA=1`, `UV_NATIVE_TLS=1`, `REQUESTS_CA_BUNDLE`, and `PMG_CA_BUNDLE`. Put them in the environment of the processes that install packages. On a CI runner, that is the runner's environment file.
+    Under enforcement this prints no proxy variables. It prints the variables that point tools at the system trust store, which are `NODE_USE_SYSTEM_CA=1`, `UV_NATIVE_TLS=1`, `REQUESTS_CA_BUNDLE`, and `PMG_CA_BUNDLE`. Put them in the environment of the processes that install packages. On a CI runner, that is the runner's environment file.
   </Step>
 
   <Step title="Check the status">
@@ -75,9 +75,9 @@ Every `pmg proxy` command runs with `sudo` and an explicit `--state` path, becau
 
 On a host that stays up, such as a self-hosted runner, a `systemd` unit starts the daemon at boot and restarts it on failure. The PMG repository ships an [example unit](https://github.com/safedep/pmg/blob/main/examples/systemd/pmg-proxy.service). It runs the daemon as root, keeps the state file under `/run/pmg`, and starts before the runner service, so the runner's own connections are enforced too.
 
-1. Install the PMG CA as root: `sudo pmg setup cert install --system`.
+1. Install the PMG CA as root with `sudo pmg setup cert install --system`.
 2. Put the policy in `/etc/safedep/pmg/config.yml`, with `proxy.server.listen_port` fixed and `proxy.server.enforce.enabled: true`.
-3. Install and start the unit: `sudo cp pmg-proxy.service /etc/systemd/system/ && sudo systemctl enable --now pmg-proxy`.
+3. Install and start the unit with `sudo cp pmg-proxy.service /etc/systemd/system/ && sudo systemctl enable --now pmg-proxy`.
 4. Give the runner the trust variables from `pmg proxy env` through its environment file, such as the `.env` file of a GitHub Actions runner.
 
 A job cannot stop a root daemon, so the daemon serves every job until an operator stops it. `pmg proxy status` shows that it still enforces.
@@ -119,7 +119,7 @@ proxy:
 | `eligible_users` | Limits enforcement to these users. Empty means every user. |
 | `skip_destinations` | CIDR prefixes the kernel never routes, in addition to loopback, link-local, and the Azure host address `168.63.129.16`. |
 | `deny_udp` | Refuses UDP to the enforced ports, so a QUIC client falls back to TCP. On by default. |
-| `namespaces.mode` | What happens to containers: `ignore`, `redirect`, or `auto`. See [Containers](#containers). |
+| `namespaces.mode` | What happens to containers. Set `ignore`, `redirect`, or `auto`. See [Containers](#containers). |
 
 <Warning>
   Never exempt an interpreter such as `node`, `python3`, or `sh`, an HTTP client such as `curl` or `wget`, or a CI runner. An install script can run any of them. An exemption covers a file, so a user who can write its folder can add a matching file.
@@ -265,9 +265,9 @@ Known limits:
     Allow only the hosts that installs need.
   </Card>
   <Card title="Persistent proxy reference" icon="book" href="https://github.com/safedep/pmg/blob/main/docs/persistent-proxy.md">
-    How the kernel programs and the container redirect work, with every policy key.
+    See how the kernel programs and the container redirect work, with every policy key.
   </Card>
   <Card title="PMG" icon="box" href="/package-security/pmg/overview">
-    How PMG blocks malicious packages at install time.
+    See how PMG blocks malicious packages at install time.
   </Card>
 </CardGroup>

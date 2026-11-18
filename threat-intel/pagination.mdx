@@ -52,7 +52,7 @@ A composite change cursor sets the order. You choose the direction:
 
 ## Incremental pull: keep a mirror in sync
 
-A report re-surfaces when its verdict, indicators, or campaign links change; a campaign re-surfaces when it changes. The cursor moves only on a real change, never on a no-op refresh.
+A report re-surfaces when its verdict, indicators, or campaign links change. A campaign re-surfaces when it changes. The cursor moves only on a real change, never on a no-op refresh.
 
 To pull only what changed since your last sync:
 
@@ -76,7 +76,7 @@ curl -sS "$TI/ListPackageReports" \
 </Step>
 </Steps>
 
-You may see the same report more than once. Store reports by `reportId` and upsert, so a repeat just overwrites. A withdrawal is a change too: when `withdrawn: true` arrives, remove that report on your side.
+You may see the same report more than once. Store reports by `reportId` and upsert, so a repeat just overwrites. A withdrawal is a change too. When `withdrawn: true` arrives, remove that report on your side.
 
 <Tip>
 Use `since` to start or restart a pull from a known watermark. Use `pageToken` to continue within one run. A full backfill is the first run with no `since`.

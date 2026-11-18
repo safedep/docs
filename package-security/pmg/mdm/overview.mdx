@@ -11,13 +11,13 @@ Install or remove PMG on macOS, Linux, and Windows fleets through your MDM. On m
 
 <CardGroup cols={3}>
   <Card title="Jamf" icon="apple" href="/package-security/pmg/mdm/jamf">
-    Multi-file scripts for macOS. Pass Cloud credentials as script parameters.
+    Use multi-file scripts for macOS. Pass Cloud credentials as script parameters.
   </Card>
   <Card title="JumpCloud" icon="cloud" href="/package-security/pmg/mdm/jumpcloud">
-    Multi-file scripts for macOS, Linux, or Windows.
+    Use multi-file scripts for macOS, Linux, or Windows.
   </Card>
   <Card title="Intune" icon="microsoft" href="/package-security/pmg/mdm/intune">
-    Standalone scripts for all three platforms, or a Windows Win32 app.
+    Use standalone scripts for all three platforms, or a Windows Win32 app.
   </Card>
 </CardGroup>
 
@@ -27,8 +27,8 @@ Mosyle and Kandji use the [macOS scripts](https://github.com/safedep/pmg/tree/ma
 
 Run the scripts as root on macOS and Linux, or as SYSTEM or an administrator on Windows. Windows deployment requires PMG v0.29.0 or later. See the [MDM scripts README](https://github.com/safedep/pmg/blob/main/scripts/mdm/README.md) for platform requirements and cleanup limitations.
 
-- **Multi-file** (Jamf, JumpCloud, Intune Win32 apps): deploy the shared lib for your platform alongside the install or uninstall script. The entry scripts source the shared lib at runtime and fail without it. Use them when your MDM can ship sibling files.
-- **Standalone** (Intune): use a prebuilt installer, or generate one with managed config and optional Cloud credentials embedded, then upload that one script. Use them when your MDM accepts one script per policy.
+- **Multi-file** (Jamf, JumpCloud, Intune Win32 apps): Deploy the shared lib for your platform alongside the install or uninstall script. The entry scripts source the shared lib at runtime and fail without it. Use them when your MDM can ship sibling files.
+- **Standalone** (Intune): Use a prebuilt installer, or generate one with managed config and optional Cloud credentials embedded, then upload that one script. Use them when your MDM accepts one script per policy.
 
 Do not assign an install policy and an uninstall policy to the same devices at the same time.
 
@@ -36,7 +36,7 @@ For managed config, ship `config.yml` beside the scripts or embed it with the st
 
 ## Cloud sync
 
-PMG blocks packages without Cloud credentials. MDM deploys can also sync data to [SafeDep Cloud](/governance/cloud/quickstart). With Cloud credentials configured, the install script attempts `pmg cloud sync` after setup. On Windows, this runs for logged-on users only. A successful sync adds the device to [Endpoint Hub](/governance/cloud/endpoint-hub/overview) without waiting for a package manager event. Installs sync to [Package Guard](/governance/cloud/endpoint-hub/package-guard).
+PMG blocks packages without Cloud credentials. MDM deploys can also sync data to [SafeDep Cloud](/governance/cloud/quickstart). With Cloud credentials configured, the install script attempts `pmg cloud sync` after setup. On Windows, this runs for signed-in users only. A successful sync adds the device to [Endpoint Hub](/governance/cloud/endpoint-hub/overview) without waiting for a package manager event. Installs sync to [Package Guard](/governance/cloud/endpoint-hub/package-guard).
 
 Cloud sync from an MDM fleet needs the SafeDep Cloud Enterprise plan. See [pricing](https://safedep.io/pricing). To use Cloud sync, you need an API key and Tenant ID from [app.safedep.io/settings/api-keys](https://app.safedep.io/settings/api-keys).
 
@@ -47,12 +47,12 @@ For Windows standalone scripts with runtime credentials, keep `--config` and omi
 To repeat the sync without installing or configuring PMG again, pass `--cloud-sync-only` to the install script. Use this option only for users who already have PMG and cloud sync enabled. Run the normal installer to configure new users. On Windows, run it after those users sign in to store their Cloud credentials.
 
 <Note>
-  A successful MDM install status does not confirm Cloud sync. If a Windows endpoint does not appear in Endpoint Hub, check `pmg config get cloud.enabled` and run `pmg cloud sync` in a logged-on user's session with credentials configured. Cloud login and sync failures do not fail the normal installer.
+  A successful MDM install status does not confirm Cloud sync. If a Windows endpoint does not appear in Endpoint Hub, check `pmg config get cloud.enabled` and run `pmg cloud sync` in the session of a signed-in user with credentials configured. Cloud sign-in and sync failures do not fail the normal installer.
 </Note>
 
 ## Certificates
 
-The MDM scripts do not install a persistent MITM CA (`pmg setup cert install`). On macOS this needs interactive Keychain authorization, so it cannot run through MDM: have each user run it in their own session when needed. On Linux, PMG's ephemeral CA is usually enough. Run `pmg setup cert install --system` as your normal user only if a tool needs a persistent CA in the system trust store. Windows package managers use the injected ephemeral CA, except Go, which needs a user-run `pmg setup cert install`.
+The MDM scripts do not install a persistent MITM CA (`pmg setup cert install`). On macOS this needs interactive Keychain authorization, so it cannot run through MDM. Have each user run it in their own session when needed. On Linux, PMG's ephemeral CA is usually enough. Run `pmg setup cert install --system` as your normal user only if a tool needs a persistent CA in the system trust store. Windows package managers use the injected ephemeral CA, except Go, which needs a user-run `pmg setup cert install`.
 
 ## Manage settings from the cloud policy
 

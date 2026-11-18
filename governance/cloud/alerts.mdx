@@ -12,9 +12,9 @@ alert. The recipe stays the same for every destination:
 3. Format the rows into your destination's payload shape.
 4. `POST` to the webhook.
 
-The rest of this page is a **worked example**: PMG block events, formatted
-as a Slack message, sent to a Slack Incoming Webhook, every 5 minutes.
-Everything below is a stand-in: swap the query, the formatter, or the
+The rest of this page is a **worked example**. It sends PMG block events,
+formatted as a Slack message, to a Slack Incoming Webhook every 5 minutes.
+Everything below is a stand-in. Swap the query, the formatter, or the
 `curl` target for your own destination.
 
 ## Example: Slack alert for PMG blocks
@@ -32,8 +32,8 @@ Endpoint: MacBook-Pro.local
 Endpoint: runnervmkkn4f
 ```
 
-Both the package and endpoint are clickable: the package links to its
-SafeDep community report, the endpoint links to its page in SafeDep Cloud.
+Both the package and endpoint are clickable. The package links to its
+SafeDep community report, and the endpoint links to its page in SafeDep Cloud.
 
 ## Prerequisites
 
@@ -86,7 +86,7 @@ Two things to notice:
   some developer machine or CI runner. Joining `endpoints` gives you the
   endpoint's human-readable name (`endpoints.identifier`) and its ID
   (`endpoints.id`, used to build the Cloud deep-link). The `ON` clause is a
-  required placeholder: SafeDep Cloud applies the real join from its
+  required placeholder, because SafeDep Cloud applies the real join from its
   catalog. See the [SQL reference](/reference/sql-query).
 
 Run it once to see the shape of the data:
@@ -96,7 +96,7 @@ safedep query exec -o json --sql-file blocks.sql --limit 5
 ```
 
 Enum columns (like `package_action` and `package_ecosystem`) return numeric
-ordinals in JSON; the formatter decodes them in Step 2. For the full schema,
+ordinals in JSON. The formatter decodes them in Step 2. For the full schema,
 tables, and enum values, see the [SafeDep Cloud SQL reference](/reference/sql-query).
 
 ## Step 2: Format events for Slack
@@ -148,7 +148,7 @@ payload = {"blocks": [
 json.dump(payload, sys.stdout)
 ```
 
-Add ecosystems you use to the `ECOSYSTEM` dict; nothing else needs to change.
+Add ecosystems you use to the `ECOSYSTEM` dict. Nothing else needs to change.
 
 ## Step 3: Post to Slack
 
@@ -221,8 +221,8 @@ Then wire it up with your OS's native scheduler:
   <Tab title="macOS (launchd)">
     On macOS, `cron` can't reach the keychain where `safedep auth login`
     stores its OAuth token, so scheduled `safedep query exec` calls fail
-    with `not authenticated`. Use a **launchd user agent** instead: it runs
-    in your logged-in user session and inherits keychain access.
+    with `not authenticated`. Use a **launchd user agent** instead. It runs
+    in the session of your signed-in user and inherits keychain access.
 
     Save this as `~/Library/LaunchAgents/io.safedep.alerts.plist`:
 
@@ -295,8 +295,8 @@ Then wire it up with your OS's native scheduler:
   </Tab>
 </Tabs>
 
-The design is stateless: no cursor file to keep in sync, no drift across
-restarts.
+The design is stateless. There is no cursor file to keep in sync, and no
+drift across restarts.
 
 `--limit 10` is set for Slack's 50-block ceiling. Events beyond the limit in
 a single window are silently dropped. For burstier traffic, raise `--limit`
@@ -305,7 +305,7 @@ sending one Slack message per page.
 
 ## Send to other destinations
 
-Only the last two things change: the payload shape (in `format.py`) and the
+Only two things change. They are the payload shape (in `format.py`) and the
 URL (in `curl`). Any JSON-accepting HTTP endpoint works.
 
 <CardGroup cols={3}>
@@ -325,10 +325,10 @@ URL (in `curl`). Any JSON-accepting HTTP endpoint works.
 
 Swap `blocks.sql` for any question you can ask SafeDep Cloud:
 
-- **Insecure bypasses:** filter `package_guard_events` on `event_type = 'PMG_EVENT_TYPE_INSECURE_BYPASS'`.
+- **Insecure bypasses:** Filter `package_guard_events` on `event_type = 'PMG_EVENT_TYPE_INSECURE_BYPASS'`.
 - **Endpoint activity:** `JOIN endpoints` and group by
   `endpoints.identifier` to see which machines produced the most events.
-- **Malicious packages across projects:** query `component_malicious_packages`
+- **Malicious packages across projects:** Query `component_malicious_packages`
   with `is_verified = true`.
 
 See the [SafeDep Cloud SQL guide](/reference/sql-query) for the full schema,

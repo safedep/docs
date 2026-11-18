@@ -14,11 +14,11 @@ The pull request check of the [SafeDep GitHub App](/governance/integrations/gith
 
 | Part of the policy | What the check does |
 |---|---|
-| `scan_gate.fail_on` | Fails on a vulnerability at or above this severity: `critical`, `high`, `medium`, `low` or `info`. |
+| `scan_gate.fail_on` | Fails on a vulnerability at or above this severity. The values are `critical`, `high`, `medium`, `low` or `info`. |
 | `scan_gate.fail_on_attacks` | With `report`, the check reports a malware verdict that is not verified and does not fail on it. With `fail`, the check also reports it and does not fail on it yet. |
 | `scan_gate.licenses.deny` | Fails on a package whose license is on the list. |
 | `scan_gate.licenses.allow` | With entries, fails on a package whose known license is not on the list. With no entries, the allow list is off. |
-| `scan_gate.licenses.unknown` | What the check does with a package whose license is unknown: `allow`, `report` or `fail`. |
+| `scan_gate.licenses.unknown` | What the check does with a package whose license is unknown. The values are `allow`, `report` or `fail`. |
 | Package rules | A block entry fails the check. A trust entry waives the findings of its scopes. |
 
 For the SafeDep default of each setting and the scopes that the check applies, see [Cloud Policy Settings](/reference/cloud-policy-settings).
@@ -27,7 +27,7 @@ Verified malware always fails the check. No setting and no trust entry changes t
 
 The check still applies the [Malicious Package Exclusions](/governance/cloud/package-exclusions) of your tenant. When an exclusion selects a package version, the check does not report an unverified malware verdict for that version. Verified malware still fails the check. PMG with `cloud.policy` on ignores exclusions.
 
-`info` is a partial value: the vulnerability data has no info grade, so the check ranks a vulnerability with no severity as info.
+`info` is a partial value. The vulnerability data has no info grade, so the check ranks a vulnerability with no severity as info.
 
 ## Fail on medium for a group of projects
 

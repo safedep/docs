@@ -33,6 +33,8 @@ For npm and PyPI, the cooldown does not apply when the package manager downloads
 
 For Go and Cargo, PMG also checks each download against the window, so a version from `go.mod` or `Cargo.lock` is checked too. PMG does not change the version list for Go. The `go` command picks the version, and PMG blocks the download when that version is inside the window.
 
+For every ecosystem, the cooldown does not apply when the package manager serves a package from its own cache without a registry request.
+
 ## Exempt a package
 
 For a package that you must install as soon as it is published, such as your own SDK, add it to the skip list. Open the config file with `pmg config edit` and add an entry:

@@ -14,10 +14,10 @@ The Threat Intel Feed is a paid add-on. To enable it, see the [pricing page](htt
 
 <CardGroup cols={2}>
   <Card title="Package reports" icon="box" href="/threat-intel/package-reports">
-    One malicious package each, with verdict, confidence, affected versions, indicators, and campaign links.
+    See one report per malicious package, with its verdict, confidence, affected versions, indicators, and campaign links.
   </Card>
   <Card title="Campaigns" icon="diagram-project" href="/threat-intel/campaigns">
-    Named groups of related reports that share an actor, a technique, or one coordinated intent.
+    See named groups of related reports that share an actor, a technique, or one coordinated intent.
   </Card>
 </CardGroup>
 
@@ -25,7 +25,7 @@ The Threat Intel Feed is a paid add-on. To enable it, see the [pricing page](htt
 
 The feed is a [ConnectRPC](https://connectrpc.com) service on the SafeDep Cloud data plane at `https://api.safedep.io`. You can call it as plain JSON over HTTP, as gRPC, or as gRPC-Web. All three use one URL. Any HTTP client works, and you do not need generated code to start.
 
-The feed is built for incremental pulls: the list endpoints re-serve a record whenever it changes (a new verdict, new indicators, or a withdrawal). You fetch changes with a cursor and a timestamp.
+The feed is built for incremental pulls. The list endpoints re-serve a record whenever it changes (a new verdict, new indicators, or a withdrawal). You fetch changes with a cursor and a timestamp.
 
 ## Where to go next
 
@@ -34,12 +34,12 @@ The feed is built for incremental pulls: the list endpoints re-serve a record wh
     Set your credentials and run your first query.
   </Card>
   <Card title="Concepts" icon="lightbulb" href="/threat-intel/concepts">
-    Reports, verdicts, campaigns, indicators, and how the change feed works.
+    Learn about reports, verdicts, campaigns, indicators, and how the change feed works.
   </Card>
   <Card title="Pagination & sync" icon="database" href="/threat-intel/pagination">
     Keep a local mirror current with the incremental cursor.
   </Card>
   <Card title="Schema reference" icon="table-list" href="/threat-intel/schema">
-    JSON conventions, and where the message and enum definitions live.
+    See the JSON conventions and where the message and enum definitions live.
   </Card>
 </CardGroup>

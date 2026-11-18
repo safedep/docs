@@ -1,7 +1,7 @@
 ---
 title: Cloud Sync
 sidebarTitle: "Sync Data"
-description: "How vet, PMG, and vet endpoint scan send data to your SafeDep Cloud tenant, and how to set up each source"
+description: "How vet, PMG, vet endpoint scan, and the GitHub and Bitbucket apps send data to your SafeDep Cloud tenant, and how to set up each source"
 ---
 
 Your SafeDep Cloud tenant receives data from more than one tool. Each source syncs through its own path and shows up in a different part of the product:
@@ -11,11 +11,11 @@ Your SafeDep Cloud tenant receives data from more than one tool. Each source syn
 | [`vet scan`](#sync-vet-scan-results) | Packages, vulnerabilities, and policy violations per project | Projects and the [SQL query tables](/reference/sql-query) |
 | [PMG](#sync-package-events-from-pmg) | Package install and usage events from endpoints | [Endpoint Hub › Package Guard](/governance/cloud/endpoint-hub/package-guard) |
 | [`vet endpoint scan`](#sync-ai-tool-inventory) | AI tools, coding agents, MCP servers, and Agent Skills found on endpoints | [Endpoint Hub › Inventory](/governance/cloud/endpoint-hub/inventory) |
-| [GitHub App](/governance/integrations/github) | Pull request scan results from repositories it is installed on | Projects |
+| [GitHub App and Bitbucket app](#sync-results-from-the-github-and-bitbucket-apps) | Pull request scan results and on-demand repository scans | Projects |
 
-Every source needs SafeDep Cloud credentials: a tenant domain and an API key. New to Cloud? Start with the [quickstart](/governance/cloud/quickstart).
+Every CLI source needs a tenant domain and an API key from SafeDep Cloud. New to Cloud? Start with the [quickstart](/governance/cloud/quickstart).
 
-This page covers `vet scan` sync in full. PMG and endpoint inventory sync have their own setup guides, summarized below.
+This page covers `vet scan` sync and the app scans in full. PMG and endpoint inventory sync have their own setup guides, summarized below.
 
 ## Sync vet scan results
 
@@ -88,7 +88,7 @@ vet scan -D . \
   --report-sync-project-version main
 ```
 
-`--policy-suite` takes a v2 policy file (see the [example in the vet repository](https://github.com/safedep/vet/blob/main/samples/policy-v2.yml)); `--filter-fail` exits non-zero on a violation. The older `--filter-suite` format is documented in the [policy reference](/reference/policy-as-code).
+`--policy-suite` takes a v2 policy file (see the [example in the vet repository](https://github.com/safedep/vet/blob/main/samples/policy-v2.yml)). `--filter-fail` exits non-zero on a violation. The older `--filter-suite` format is documented in the [policy reference](/reference/policy-as-code).
 
 ### Review violations across projects
 
@@ -113,11 +113,11 @@ Select **Policy Violations** in [app.safedep.io](https://app.safedep.io). The pa
     cloud-tenant: ${{ secrets.SAFEDEP_CLOUD_TENANT_DOMAIN }}
 ```
 
-vet-action sets project identification from the repository: the project name is `${{ github.repository }}` and the version is `${{ github.ref_name }}`.
+vet-action sets project identification from the repository. The project name is `${{ github.repository }}` and the version is `${{ github.ref_name }}`.
 
 ### Sync from other CI systems
 
-The pattern is the same on any CI system: provide `SAFEDEP_API_KEY` and `SAFEDEP_TENANT_ID` as environment variables and run `vet scan` with the `--report-sync` flags. See [CI/CD Integrations](/governance/integrations/overview) for the full GitLab and Bitbucket guides.
+The pattern is the same on any CI system. Provide `SAFEDEP_API_KEY` and `SAFEDEP_TENANT_ID` as environment variables and run `vet scan` with the `--report-sync` flags. See [CI/CD Integrations](/governance/integrations/overview) for the full GitLab and Bitbucket guides.
 
 <Tabs>
   <Tab title="GitLab CI">
@@ -232,7 +232,7 @@ The pattern is the same on any CI system: provide `SAFEDEP_API_KEY` and `SAFEDEP
 
 [PMG](/package-security/pmg/overview) intercepts package manager commands on the endpoint and records each install as an event. With cloud sync enabled, PMG drains its local event log to your tenant automatically after each invocation, and `pmg cloud sync` pushes events immediately.
 
-Setup, login, and auto-sync tuning live on the Package Guard page:
+PMG event sync needs the SafeDep Cloud Team or Enterprise plan. See [pricing](https://safedep.io/pricing). Setup, sign-in, and auto-sync tuning live on the Package Guard page.
 
 <Card title="Package Guard" icon="shield" href="/governance/cloud/endpoint-hub/package-guard" horizontal>
   Enable PMG cloud sync and view package events in Endpoint Hub
@@ -240,11 +240,36 @@ Setup, login, and auto-sync tuning live on the Package Guard page:
 
 ## Sync AI tool inventory
 
-`vet endpoint scan` discovers AI tooling on a machine (coding agents, MCP servers, CLI tools, IDE extensions, Agent Skills) and delivers the inventory to your tenant when vet has credentials configured.
+`vet endpoint scan` discovers AI tooling on a machine (coding agents, MCP servers, CLI tools, IDE extensions, Agent Skills) and delivers the inventory to your tenant when vet has credentials configured. Inventory sync needs the SafeDep Cloud Team or Enterprise plan. See [pricing](https://safedep.io/pricing).
 
 <Card title="Endpoint Inventory" icon="boxes-stacked" href="/governance/cloud/endpoint-hub/inventory" horizontal>
   Enable inventory sync and browse discovered AI tooling in Endpoint Hub
 </Card>
+
+## Sync results from the GitHub and Bitbucket apps
+
+The [GitHub App](/governance/integrations/github) and the [Bitbucket app](/governance/integrations/bitbucket-app) need no credentials. After you link an app to your tenant, the app sends the result of each pull request scan to your tenant. When you install the GitHub App, SafeDep Cloud asks which tenant to link it to. To link the Bitbucket app, see [Link your workspace](/governance/integrations/bitbucket-app#step-2-link-your-workspace).
+
+### Scan repositories of a linked app
+
+SafeDep Cloud can also scan the repositories of a linked app on demand. The results appear in Projects. Each scan counts against a monthly quota that depends on your plan.
+
+- **Up to five GitHub repositories:** In the SafeDep console, open **Setup**, then **Integrations**. On the **GitHub App** card, select **Scan repositories**.
+- **One synced project:** Open **Projects**, select the **⋯** menu in the row of the project, then select **Scan project**, then **Start scan**.
+- **Up to 100 projects:** Use the safedep CLI.
+
+For a Bitbucket repository, [enable it for scanning](/governance/integrations/bitbucket-app#step-3-enable-repositories-for-scanning) first. Then see [Scan a repository on demand](/governance/integrations/bitbucket-app#scan-a-repository-on-demand).
+
+To scan GitHub repositories from the safedep CLI:
+
+1. Sync each repository with `safedep project sync OWNER/REPOSITORY --source github`.
+2. Pass the names of all the projects to one command:
+
+   ```bash
+   safedep project scan create OWNER/REPOSITORY-1 OWNER/REPOSITORY-2
+   ```
+
+SafeDep Cloud accepts the projects of one command as a unit. If one project is not scannable, no scan starts.
 
 ## Query synced data
 

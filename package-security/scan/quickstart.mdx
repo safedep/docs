@@ -31,7 +31,7 @@ For what on-demand scanning is and when to use it, see the [overview](/package-s
     safedep auth login
     ```
 
-    This opens a browser-based device login. If you are new to SafeDep, it also sets up your account. The CLI keeps your session refreshed after this one sign-in.
+    This opens a device sign-in in the browser. If you are new to SafeDep, it also sets up your account. The CLI keeps your session refreshed after this one sign-in.
   </Step>
 
   <Step title="Check your plan">
@@ -53,7 +53,7 @@ For what on-demand scanning is and when to use it, see the [overview](/package-s
     safedep package scan run pkg:npm/express@4.18.2
     ```
 
-    The CLI submits the scan and waits, showing status as the analysis progresses. When the scan completes you get a verdict panel: `benign`, `malware`, or `inconclusive`, with a confidence score. On a `malware` verdict the full evidence report is printed inline.
+    The CLI submits the scan and waits, showing status as the analysis progresses. When the scan completes you get a verdict panel that shows `benign`, `malware`, or `inconclusive`, with a confidence score. On a `malware` verdict the full evidence report is printed inline.
 
     The target can be a purl (as above), a GitHub URL, or an explicit triple:
 
@@ -100,7 +100,7 @@ Re-running `scan run` for the same package version returns the existing scan ins
 
 <CardGroup cols={2}>
   <Card title="Scanning from CI and AI Agents" icon="robot" href="/package-security/scan/automation">
-    JSON output, verdict gating, polling, and the authentication model for automation.
+    See JSON output, verdict gating, polling, and the authentication model for automation.
   </Card>
   <Card title="Usage & On-Demand Billing" icon="coins" href="/governance/cloud/usage-billing">
     Check your scan allowance and enable usage-based billing beyond it.

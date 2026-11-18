@@ -46,11 +46,11 @@ To preview the feed without JFrog credentials, run it with [`--dry-run`](#dry-ru
     # or pass token via environment variable (see Environment Variables below)
     ```
 
-    The daemon polls SafeDep continuously (default: every 5 minutes) and pushes any newly
+    The daemon polls SafeDep continuously (every 5 minutes by default) and pushes any newly
     verified malicious packages to Xray.
 
     On the first run the daemon starts from the current time and does not pull older reports.
-    To seed history, pass `--backfill` with a duration: `--backfill 168h` covers the last 7 days.
+    To seed history, pass `--backfill` with a duration. For example, `--backfill 168h` covers the last 7 days.
     Later runs resume from the saved cursor, so `--backfill` is ignored after the first run.
 
     ```text Output
@@ -112,8 +112,8 @@ Add `-o json` (or `--output json`) to stream results to `stdout` as JSONL, one e
 
 The daemon emits two event types:
 
-- `package_pushed`: a malicious package was pushed to Xray as a Custom Issue.
-- `package_deleted`: a previously pushed package was withdrawn and removed from Xray.
+- `package_pushed`: A malicious package was pushed to Xray as a Custom Issue.
+- `package_deleted`: A previously pushed package was withdrawn and removed from Xray.
 
 ```bash
 safedep integration jfrog run \
@@ -146,7 +146,7 @@ safedep integration jfrog run \
 | Flag | Required | Default | Description |
 |---|---|---|---|
 | `--instance-url` | Yes* | None | JFrog instance base URL. Must use `https://`. |
-| `--insecure-instance-access-token` | Yes* | None | JFrog access token scoped to Xray. Prefer the environment variable; a value passed here can stay in your shell history and the process list. |
+| `--insecure-instance-access-token` | Yes* | None | JFrog access token scoped to Xray. Prefer the environment variable. A value passed here can stay in your shell history and the process list. |
 | `--poll-interval` | No | `5m` | Duration between poll cycles (`30s`, `5m`, `1h`). |
 | `--backfill` | No | `0` | First-run window to seed history (e.g. `24h`, `168h`). `0` starts from now. |
 | `--dry-run` | No | `false` | Preview the feed and print what would be pushed, without sending to JFrog. See [Dry run](#dry-run). |
@@ -186,7 +186,7 @@ safedep integration jfrog cursor remove
 ```
 </Tip>
 
-A dry-run does everything a real run does, except the final step: it prints each finding instead of sending it to JFrog.
+A dry-run does everything a real run does, except the final step. It prints each finding instead of sending it to JFrog.
 
 <Warning>
 Dry-run advances the same saved cursor. Run [`cursor remove`](#clear-the-cursor) before the first real run, or that run skips what the preview consumed.

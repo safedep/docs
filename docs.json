@@ -34,7 +34,6 @@
             "icon": "book-open",
             "pages": [
               "introduction",
-              "get-started/choose-your-path",
               "get-started/cli-tools",
               "get-started/safedep-skill"
             ]
@@ -378,6 +377,10 @@
     }
   },
   "redirects": [
+    {
+      "source": "/get-started/choose-your-path",
+      "destination": "/introduction"
+    },
     {
       "source": "/changelog",
       "destination": "/changelog/2026"
