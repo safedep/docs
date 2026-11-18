@@ -13,7 +13,7 @@ The tenant identifier is a domain with three parts in the form `<team>.<organiza
 - configure Vet with `vet auth configure --tenant your-team.your-org.safedep.io`,
 - set the `SAFEDEP_TENANT_ID` environment variable.
 
-The safedep CLI selects the tenant when you run `safedep auth login`. If you can access more than one tenant, it asks you to select one. It stores the tenant in the active credential profile. To use a second tenant, log in again with another profile, such as `safedep auth login --profile staging`, and pass `--profile` on each command.
+The safedep CLI selects the tenant when you run `safedep auth login`. If you can access more than one tenant, it asks you to select one. It stores the tenant in the active credential profile. To use a second tenant, sign in again with another profile, such as `safedep auth login --profile staging`, and pass `--profile` on each command.
 
 ## Why it matters
 

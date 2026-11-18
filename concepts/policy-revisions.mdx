@@ -10,7 +10,7 @@ Each change to the cloud [policy](/concepts/policy) goes through the same steps.
 
 A policy change is a draft on the server. It starts from a base revision, the head revision when you created it. It can edit the policy settings document, add package rule operations, or both. Nothing applies until an Owner or an Admin publishes it.
 
-The policy settings document holds the policy base and every policy override. It holds no package rules. It keeps no YAML comments, so write the reason for a value in the `description` of the policy override, or in `base_description` for the policy base. A command that creates a package rule skips the draft and publishes at once.
+The policy settings document holds the policy base and every policy override. It holds no package rules. It keeps no YAML comments, so write the reason for a value in the `description` of the policy override, or in `base_description` for the policy base. A command that creates a package rule skips the draft and publishes at once. To edit the document, see [Write the policy override](/governance/cloud/policy/target-a-group#write-the-policy-override).
 
 ## The preview
 
@@ -46,7 +46,7 @@ A change loosens when any part of it loosens.
 
 ## Publish and revisions
 
-A publish makes a new policy revision from an open change. A revision is immutable, and revision numbers only go up. Every policy write, such as a change, a publish or a rule command, needs the Owner or Admin role. The safedep CLI asks for a confirmation before a publish that loosens the policy, and before the delete of a block entry. In a script, pass `--yes`.
+A publish makes a new policy revision from an open change. A revision is immutable, and revision numbers only go up. Every policy write, such as a change, a publish or a rule command, needs the Owner or Admin role. The safedep CLI asks for a confirmation before a publish that loosens the policy, and before it deletes a block entry. In a script, pass `--yes`.
 
 After a publish, each pull request check uses the new revision at once. Each endpoint applies it after its next policy fetch.
 
@@ -59,7 +59,7 @@ Two Admins can work on the policy at the same time. A publish checks that the pa
 
 A new block entry does not touch the settings document. So a block that an on-call responder adds does not make an open settings change stale.
 
-A stale change needs a sync before its publish. A sync moves the base revision of the change to head and keeps the settings as the admin wrote them. SafeDep Cloud never merges two changes, so the settings of a synced change can undo the other change. See [If the publish stops](/governance/cloud/policy/target-a-group#if-the-publish-stops).
+Sync a stale change before you publish it. A sync moves the base revision of the change to head and keeps the settings as the admin wrote them. SafeDep Cloud never merges two changes, so the settings of a synced change can undo the other change. See [If the publish stops](/governance/cloud/policy/target-a-group#if-the-publish-stops).
 
 ## Rollback
 

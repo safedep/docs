@@ -40,7 +40,7 @@ A malware verdict is one of two kinds:
 - An **automated verdict** comes from the analysis alone. No one has verified it yet, so the package is suspicious.
 - A **verified verdict** is confirmed by a human review or a trusted source. The package is malicious.
 
-Tools act on both kinds. On a developer machine, PMG asks you to confirm before it installs a package with an automated verdict. With `--paranoid`, PMG blocks the package instead. PMG blocks a package with a verified verdict.
+Tools act on both kinds. On a developer machine, PMG blocks a package with a verified verdict. For a package with an automated verdict, PMG asks you to confirm before it installs. With `--paranoid`, PMG blocks it instead.
 
 ### Classification levels
 
@@ -48,7 +48,7 @@ Vet reports each analyzed package at one of three levels:
 
 - **SAFE:** the analysis found no malicious behavior.
 - **SUSPICIOUS:** the package has an automated verdict.
-- **MALICIOUS:** by default, the package has a verified verdict.
+- **MALICIOUS:** the package has a verified verdict. With `vet scan --malware-trust-tool-result`, an automated verdict with high confidence is also MALICIOUS.
 
 ## Blocking malicious packages
 

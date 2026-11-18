@@ -54,8 +54,15 @@ projects -> project_versions -> boms -> packages -> component_vulnerabilities ->
 
 Every query must filter on an indexed column or a bounded time range. The schema marks which columns are indexed.
 
-Subqueries, CTEs (`WITH`), `UNION` and set operations, window functions,
-casts, arbitrary functions, and multiple statements are not supported.
+The query language does not support these features:
+
+- Subqueries
+- CTEs (`WITH`)
+- `UNION` and set operations
+- Window functions
+- Casts
+- Arbitrary functions
+- Multiple statements
 
 ## Discovering the schema
 

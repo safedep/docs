@@ -9,11 +9,11 @@ SafeDep ships several command-line tools. Each one solves a different supply-cha
 
 | Tool | Solves | Needs an account? | Open source |
 |---|---|---|---|
-| **Vet** | Detect malicious and vulnerable dependencies in code and CI/CD | No (Cloud optional) | Yes |
-| **PMG** | Block malicious packages at install time on the dev machine. It also has a [dependency cooldown](/package-security/pmg/dependency-cooldown), an opt-in [sandbox](/package-security/pmg/sandbox), and a [GitHub Action](/package-security/pmg/github-actions) for CI | No | Yes |
-| **Gryph** | Local audit trail for AI coding agents. A policy can also block, warn, or guide an agent action | No (fully local) | Yes |
+| [**Vet**](/governance/vet/overview) | Detect malicious and vulnerable dependencies in code and CI/CD | No (Cloud optional) | Yes |
+| [**PMG**](/package-security/pmg/overview) | Block malicious packages at install time, on the dev machine and in CI | No | Yes |
+| [**Gryph**](/ai-security/gryph-overview) | Local audit trail for AI coding agents. A policy can also block, warn, or guide an agent action | No (fully local) | Yes |
 | [**xBom**](/governance/xbom/overview) | A standalone tool that generates a BOM of the AI, cloud and crypto components found in source code | No | Yes |
-| **safedep** | Manage SafeDep Cloud from the terminal. This covers sign-in, the cloud policy, projects and labels, the audit log, endpoint telemetry queries, on-demand package scanning, AI agent protection, and integrations | Yes (SafeDep Cloud) | Yes |
+| [**safedep**](/governance/cloud/quickstart#install-the-safedep-cli) | Manage SafeDep Cloud from the terminal | Yes (SafeDep Cloud) | Yes |
 
 <Note>
 Vet, PMG, Gryph, and xBom are free, open source, and work with no SafeDep account. The **safedep** CLI is the client for SafeDep Cloud's hosted features. See [pricing](https://safedep.io/pricing).
@@ -22,7 +22,7 @@ Vet, PMG, Gryph, and xBom are free, open source, and work with no SafeDep accoun
 ## How they relate
 
 - **Vet** is the scanning engine. It analyzes dependencies and produces risk reports, queries, and SBOMs. It runs standalone, or in CI through [vet-action](https://github.com/safedep/vet-action) and the [pipeline integrations](/governance/integrations/overview). It can sync results to SafeDep Cloud.
-- **PMG** and **Gryph** are standalone, single-purpose guards. PMG works at package-install time, Gryph around AI coding agents. Neither needs Vet or a SafeDep account.
+- **PMG** and **Gryph** are standalone, single-purpose guards. PMG works at package-install time, Gryph around AI coding agents. Neither needs Vet or a SafeDep account. PMG also has a [dependency cooldown](/package-security/pmg/dependency-cooldown), an opt-in [sandbox](/package-security/pmg/sandbox), and a [GitHub Action](/package-security/pmg/github-actions) for CI.
 - **safedep** is the CLI for SafeDep Cloud. It brings Cloud workflows to the terminal (sign-in, cloud policy, projects and labels, audit, [on-demand package scanning](/package-security/scan/overview), endpoint telemetry, AI agent protection, and integrations). It does not re-implement local scanning. Repository analysis stays in Vet, and on-demand package analysis runs in SafeDep Cloud.
 
 <Info>
@@ -31,7 +31,7 @@ These tools have no "v1 to v2" relationship. `safedep` is a Cloud-focused CLI, n
 
 ## Install
 
-Each tool is on the SafeDep Homebrew tap. Vet, PMG, Gryph, and safedep are also published to npm. Vet, PMG, Gryph, xBom, and safedep ship as pre-built binaries. The most common installs:
+Each tool is on the SafeDep Homebrew tap. Vet, PMG, Gryph, and safedep are also published to npm. All five tools ship as pre-built binaries. The most common installs:
 
 <Tabs>
   <Tab title="Homebrew">
