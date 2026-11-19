@@ -8,10 +8,6 @@ description: "Block malicious packages in the job steps of self-hosted GitHub Ac
 
 Add PMG to the image of your self-hosted GitHub Actions runners on Kubernetes. PMG then blocks the malicious packages that job steps install in each runner Pod.
 
-<Warning>
-  PMG does not check the containers that a job starts, such as `docker build`, `docker run`, job containers, and service containers. Read the [limits](/package-security/pmg/kubernetes-ci-runners-how-it-works#limits) before you start.
-</Warning>
-
 ## Requirements
 
 - Kubernetes nodes with Linux 5.15 or later, kernel BTF, and cgroup v2.
@@ -23,6 +19,8 @@ Add PMG to the image of your self-hosted GitHub Actions runners on Kubernetes. P
 <Note>
   PMG blocks malicious packages without SafeDep Cloud. The cloud policy and the event sync to SafeDep Cloud need the Team or Enterprise plan. See [pricing](https://safedep.io/pricing).
 </Note>
+
+PMG does not check the containers that a job starts, such as `docker build`, `docker run`, job containers, and service containers. For all the limits, see [Limits](/package-security/pmg/kubernetes-ci-runners-how-it-works#limits).
 
 ## Set up PMG in a runner pool
 
