@@ -115,6 +115,7 @@ See `products.md` in this skill for: per-product one-liner, source repo path, do
 6. **Write the page** in the right voice for the mode. No em-dashes (run `stop-slop`). Add frontmatter (`title`, `description` < 160 chars). No H1 — Mintlify renders the title.
 7. **Update `docs.json`** under the correct tab/group; add a `redirects[]` entry if you moved a page.
 8. **Verify:** run `bunx -b mintlify broken-links` (or `node_modules/.bin/mintlify broken-links`) from the repo root; only the three pre-existing `essentials/` failures are expected. broken-links does **not** catch wrong commands, bad in-page anchors, or dropped content — check those by hand.
+   It also passes when a mermaid diagram renders badly. Open each page with a diagram in the local preview (`mintlify dev`) and look at the diagram. Keep node labels short, because Mintlify cuts long labels.
 9. **If you added a concept page**, also update `docs-ia.md` §7 and the Notion mirror.
 
 ## Workflow: reviewing / refactoring an existing page
