@@ -79,7 +79,9 @@ Do the setup on one pilot pool first. Move the other pools when the pilot pool w
       --from-literal=SAFEDEP_TENANT_ID=<tenant-id>
     ```
 
-    The next step mounts the Secret at `/etc/pmg-secret` with mode `0400`. The script reads the keys from the files and gives them only to PMG. Job steps do not get the keys. To use another path, set `PMG_SECRET_DIR` on the runner container.
+    The next step mounts the Secret at `/etc/pmg-secret` with mode `0400`. Keep this mode. With the default mode `0644`, a job step on a runner image without `sudo` can read the keys.
+
+    The script reads the keys from the files and gives them only to PMG. Job steps do not get the keys. To use another path, set `PMG_SECRET_DIR` on the runner container.
   </Step>
 
   <Step title="Use the image in a pilot pool">
@@ -194,11 +196,11 @@ env:
     value: "10.0.0.0/8,172.16.0.0/12,192.168.0.0/16,100.64.0.0/10,203.0.113.10/32"
 ```
 
-The variable takes a comma-separated list. It replaces the list in the config. Include the four private ranges in the value, or PMG routes them. See the [PMG configuration reference](https://github.com/safedep/pmg/blob/main/docs/config.md) for the other keys.
+The variable takes a comma-separated list. It replaces the list in the config. Include the four private ranges in the value, or PMG routes them. `PMG_PROXY_SERVER_ENFORCE_PORTS` sets the enforced ports. See the [PMG configuration reference](https://github.com/safedep/pmg/blob/main/docs/config.md) for the other keys.
 
 ### Use your own config file
 
-Put your file at `/etc/safedep/pmg/config.yml`. The script then uses your file and does not write one. For example, mount the file from a ConfigMap with `subPath`:
+Put your file at `/etc/safedep/pmg/config.yml`. The script then uses your file and does not write one. The script always starts PMG with kernel enforcement, so your file needs only your own settings, such as `cloud.enabled` and block lists. For example, mount the file from a ConfigMap with `subPath`:
 
 ```yaml
 volumeMounts:

@@ -65,6 +65,7 @@ SafeDep Cloud is on only when both keys are present. Without them, PMG blocks ma
 ## Limits
 
 - **PMG does not check nested containers.** This includes `docker build`, `docker run`, job containers, and service containers. They work as before, with no PMG check.
+- **PMG does not check registries on private addresses or traffic on other ports.** With the default config, PMG checks only ports 80 and 443, and it does not route the private address ranges. So PMG does not check a registry or mirror on a private address, such as Artifactory or Nexus in the cluster. PMG also does not check a job that sends its traffic to a forward proxy on another port, such as 3128. To change this, see [Change one setting](/package-security/pmg/kubernetes-ci-runners#change-one-setting).
 - **The runner container must be privileged.** PMG needs a privileged container to attach to the cgroup and to load the kernel programs.
 - **The nodes need cgroup v2.** On a node with cgroup v1 only, PMG cannot enforce.
 - **A step that does not trust the PMG CA cannot reach the registries.** The step fails closed. It cannot go around PMG.
