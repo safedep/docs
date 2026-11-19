@@ -6,16 +6,16 @@ description: "Block malicious packages in the job steps of self-hosted GitHub Ac
 
 {/* TODO: replace <pmg-version> with the first PMG release that ships /opt/safedep/pmg. */}
 
-PMG blocks malicious packages that a job step installs on a self-hosted runner in Kubernetes. You copy PMG into your runner image. A script in the PMG image starts PMG with kernel enforcement before the runner starts. Your workflows do not change, except that you remove the `safedep/pmg` action.
+Add PMG to the image of your self-hosted GitHub Actions runners on Kubernetes. PMG then blocks the malicious packages that job steps install in each runner Pod.
 
-PMG checks the job steps that run in the runner container. It does not check the containers that a job starts, such as `docker build`, `docker run`, job containers, and service containers. Those containers work as before, with no PMG check. For the architecture and the limits, see [How PMG Works on Kubernetes CI Runners](/package-security/pmg/kubernetes-ci-runners-how-it-works).
-
-This method uses kernel enforcement, so the runner container must be privileged. Runner Pods that run Docker are privileged already. For a workload that cannot run privileged, such as an application Pod or a development workspace, use [PMG in Kubernetes](/package-security/pmg/kubernetes). That method uses the PMG shims and needs no extra rights.
+<Warning>
+  PMG does not check the containers that a job starts, such as `docker build`, `docker run`, job containers, and service containers. Read the [limits](/package-security/pmg/kubernetes-ci-runners-how-it-works#limits) before you start.
+</Warning>
 
 ## Requirements
 
 - Kubernetes nodes with Linux 5.15 or later, kernel BTF, and cgroup v2.
-- A privileged runner container.
+- A privileged runner container. For a Pod that cannot run privileged, use [PMG in Kubernetes](/package-security/pmg/kubernetes) instead.
 - A runner image that you build. The image needs `bash`. It also needs `sudo` when it does not run as root.
 - PMG `<pmg-version>` or later.
 - A SafeDep Cloud API key and tenant ID, only if you use SafeDep Cloud.
@@ -59,9 +59,15 @@ Do the setup on one pilot pool first. Move the other pools when the pilot pool w
       </Tab>
     </Tabs>
 
-    `CMD` is the start command of the base image. The PMG script starts PMG, and then it runs that command. When the Pod stops, the script stops that command first and PMG last. With another base image, put the start command of that image in `CMD`.
+    These lines do three things:
 
-    If your image starts with your own entrypoint script, give that script to the PMG script:
+    - `COPY` adds PMG and the PMG entrypoint script, `pmg-entrypoint.sh`, to your image.
+    - `ENTRYPOINT` runs `pmg-entrypoint.sh` when the runner container starts.
+    - `CMD` keeps the runner start command of the base image.
+
+    `pmg-entrypoint.sh` starts PMG first. Then it runs the runner start command from `CMD`. When the Pod stops, `pmg-entrypoint.sh` stops the runner first and PMG last.
+
+    If you use another base image, put the runner start command of that image in `CMD`. If your image starts the runner with your own entrypoint script, put that script after `pmg-entrypoint.sh`:
 
     ```dockerfile
     ENTRYPOINT ["/opt/safedep/pmg/bin/pmg-entrypoint.sh", "/path/to/your-entrypoint.sh"]
@@ -71,7 +77,7 @@ Do the setup on one pilot pool first. Move the other pools when the pilot pool w
   </Step>
 
   <Step title="Add your SafeDep Cloud keys (optional)">
-    Skip this step if you do not use SafeDep Cloud. Without the keys, PMG still blocks malicious packages, and the script turns off cloud sync.
+    Skip this step if you do not use SafeDep Cloud. Without the keys, PMG still blocks malicious packages, and `pmg-entrypoint.sh` turns off cloud sync.
 
     With the keys, PMG applies the policy of your SafeDep Cloud tenant and sends its events to SafeDep Cloud. Create a Secret in the namespace of your runners:
 
@@ -83,7 +89,7 @@ Do the setup on one pilot pool first. Move the other pools when the pilot pool w
 
     The next step mounts the Secret at `/etc/pmg-secret` with mode `0400`. Keep this mode. With the default mode `0644`, a job step on a runner image without `sudo` can read the keys.
 
-    The script reads the keys from the files and gives them only to PMG. Job steps do not get the keys. To use another path, set `PMG_SECRET_DIR` on the runner container.
+    `pmg-entrypoint.sh` reads the keys from the files and gives them only to PMG. Job steps do not get the keys. To use another path, set `PMG_SECRET_DIR` on the runner container.
   </Step>
 
   <Step title="Use the image in a pilot pool">
@@ -117,7 +123,7 @@ Do the setup on one pilot pool first. Move the other pools when the pilot pool w
         A runner with `dockerdWithinRunnerContainer: true` is privileged.
       </Tab>
       <Tab title="ARC runner scale sets">
-        The `gha-runner-scale-set` chart sets the command of the runner container. So the values must put the PMG script in front of the runner command. The runner container must also be privileged.
+        The `gha-runner-scale-set` chart sets the command of the runner container. So the values must put `pmg-entrypoint.sh` in front of the runner start command. The runner container must also be privileged.
 
         ```yaml
         runnerScaleSetName: pmg-pilot
@@ -157,9 +163,9 @@ Do the setup on one pilot pool first. Move the other pools when the pilot pool w
 
 ## Start PMG from your own entrypoint script
 
-Use this form if your own entrypoint script must start PMG, and you cannot put the PMG script in `ENTRYPOINT`. Add the `COPY` line from step 1 to the image, and keep your own `ENTRYPOINT`. On ARC runner scale sets, set `command` in the values to your own entrypoint script.
+Use this form if your own entrypoint script must start PMG, and you cannot put `pmg-entrypoint.sh` in `ENTRYPOINT`. Add the `COPY` line from step 1 to the image, and keep your own `ENTRYPOINT`. On ARC runner scale sets, set `command` in the values to your own entrypoint script.
 
-In your entrypoint script, add these two lines before the script starts the runner. With summerwind ARC, also put them before the script starts dockerd:
+In your entrypoint script, add these two lines before your script starts the runner. With summerwind ARC, also put them before your script starts dockerd:
 
 ```sh
 /opt/safedep/pmg/bin/pmg-entrypoint.sh start
@@ -178,7 +184,7 @@ This line is optional. Without it, PMG runs until Kubernetes kills the Pod. PMG 
 
 ## Change the PMG settings
 
-The script writes the PMG config to `/etc/safedep/pmg/config.yml` only when no file is at that path. The config that the script writes has these settings:
+`pmg-entrypoint.sh` writes the PMG config to `/etc/safedep/pmg/config.yml` only when no file is at that path. The config that it writes has these settings:
 
 | Setting | Value |
 | --- | --- |
@@ -187,6 +193,8 @@ The script writes the PMG config to `/etc/safedep/pmg/config.yml` only when no f
 | UDP to the enforced ports | Denied |
 | Destinations that PMG does not route | `10.0.0.0/8`, `172.16.0.0/12`, `192.168.0.0/16`, `100.64.0.0/10` |
 | SafeDep Cloud | On only when the Secret holds both keys |
+
+With these settings, PMG does not check a registry or a mirror on a private address, such as Artifactory or Nexus in the cluster. PMG also does not check traffic that a job sends to a forward proxy on another port, such as 3128. To check this traffic, change the destinations or the ports with the variables in [Change one setting](#change-one-setting).
 
 ### Change one setting
 
@@ -198,11 +206,11 @@ env:
     value: "10.0.0.0/8,172.16.0.0/12,192.168.0.0/16,100.64.0.0/10,203.0.113.10/32"
 ```
 
-The variable takes a comma-separated list. It replaces the list in the config. Include the four private ranges in the value, or PMG routes them. `PMG_PROXY_SERVER_ENFORCE_PORTS` sets the enforced ports. See the [PMG configuration reference](https://github.com/safedep/pmg/blob/main/docs/config.md) for the other keys.
+The variable takes a comma-separated list. It replaces the list in the config. Include the four private ranges in the value, or PMG routes them. `PMG_PROXY_SERVER_ENFORCE_PORTS` sets the enforced ports. For the other variables, see [Environment Variables](https://github.com/safedep/pmg/blob/main/docs/config.md#environment-variables) in the PMG configuration reference.
 
 ### Use your own config file
 
-Put your file at `/etc/safedep/pmg/config.yml`. The script then uses your file and does not write one. The script always starts PMG with kernel enforcement, so your file needs only your own settings, such as `cloud.enabled` and block lists. For example, mount the file from a ConfigMap with `subPath`:
+Put your file at `/etc/safedep/pmg/config.yml`. `pmg-entrypoint.sh` then uses your file and does not write one. It always starts PMG with kernel enforcement, so your file needs only your own settings, such as `cloud.enabled` and block lists. For example, mount the file from a ConfigMap with `subPath`:
 
 ```yaml
 volumeMounts:
@@ -214,7 +222,7 @@ volumes:
 
 Mount only the file. Do not mount the directory, because PMG writes its CA files into `/etc/safedep/pmg/`. You can also add the file to the runner image at that path.
 
-With your own file, the script does not set `cloud.enabled` from the Secret. To use SafeDep Cloud, set `cloud.enabled: true` in your file.
+With your own file, `pmg-entrypoint.sh` does not set `cloud.enabled` from the Secret. To use SafeDep Cloud, set `cloud.enabled: true` in your file.
 
 ## Check the setup (optional)
 

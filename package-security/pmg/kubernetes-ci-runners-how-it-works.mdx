@@ -17,20 +17,20 @@ graph LR
             STEPS[Runner and job steps]
             PMG[PMG]
         end
-        DOCKERD["dockerd, in the runner container or a dind sidecar"]
-        NESTED[Containers that dockerd starts]
+        DOCKERD[dockerd]
+        NESTED[Nested containers]
     end
     STEPS -->|kernel enforcement| PMG
     PMG -->|checked| REG[Package registries]
-    DOCKERD --> NESTED
+    DOCKERD -->|starts| NESTED
     NESTED -->|no PMG check| REG
 ```
 
-With summerwind ARC, dockerd runs in the runner container. With ARC runner scale sets in `dind` mode, dockerd runs in a separate `dind` sidecar container. In both cases, the containers that dockerd starts are in other cgroups. PMG does not route them, so they reach the registries directly.
+With summerwind ARC, dockerd runs in the runner container. With ARC runner scale sets in `dind` mode, dockerd runs in a separate `dind` sidecar container. In both cases, the nested containers that dockerd starts are in other cgroups. PMG does not route them, so they reach the registries directly.
 
-## What the entrypoint script does
+## What the PMG entrypoint script does
 
-The PMG image ships the script at `/opt/safedep/pmg/bin/pmg-entrypoint.sh`. When the Pod starts, the script does these steps before the runner starts:
+The PMG image ships the PMG entrypoint script at `/opt/safedep/pmg/bin/pmg-entrypoint.sh`. When the Pod starts, `pmg-entrypoint.sh` does these steps before the runner starts:
 
 1. It moves the processes of the runner container into a child cgroup. PMG attaches to this cgroup. The runner and every job step start in it. With summerwind ARC, dockerd also starts in it.
 2. It writes the PMG config to `/etc/safedep/pmg/config.yml` if no file is there.
@@ -38,11 +38,11 @@ The PMG image ships the script at `/opt/safedep/pmg/bin/pmg-entrypoint.sh`. When
 4. It starts PMG with kernel enforcement.
 5. It gives job steps the trust variables `NODE_USE_SYSTEM_CA`, `NODE_EXTRA_CA_CERTS`, `REQUESTS_CA_BUNDLE`, `UV_NATIVE_TLS`, and `PMG_CA_BUNDLE`. These variables make the package managers trust the PMG CA.
 6. It starts a supervisor. The supervisor starts PMG again if PMG stops.
-7. It runs the start command of the image.
+7. It runs the runner start command from `CMD`, such as `entrypoint-dind.sh` or `/home/runner/run.sh`. This command starts the runner.
 
-When the Pod stops, the script stops the start command first. Then it stops PMG.
+When the Pod stops, Kubernetes sends a stop signal to `pmg-entrypoint.sh`. `pmg-entrypoint.sh` stops the runner first. Then it stops PMG, so PMG checks installs until the runner stops.
 
-An image that starts PMG from its own entrypoint script calls the script with an argument. With `start`, the script starts PMG, writes the trust variables to `/run/pmg/env`, and returns. With `stop`, the script stops PMG.
+An image that starts PMG from its own entrypoint script calls `pmg-entrypoint.sh` with an argument. With `start`, `pmg-entrypoint.sh` starts PMG, writes the trust variables to `/run/pmg/env`, and returns. With `stop`, it stops PMG.
 
 ## What PMG covers
 
@@ -58,27 +58,17 @@ PMG decrypts only the connections to package registries. Other hosts keep their 
 
 ## Where the SafeDep Cloud keys go
 
-The script reads `SAFEDEP_API_KEY` and `SAFEDEP_TENANT_ID` from the files of the mounted Secret. It gives them only to PMG. They are not in the environment of the runner or the job steps.
+`pmg-entrypoint.sh` reads `SAFEDEP_API_KEY` and `SAFEDEP_TENANT_ID` from the files of the mounted Secret. It gives them only to PMG. They are not in the environment of the runner or the job steps.
 
 SafeDep Cloud is on only when both keys are present. Without them, PMG blocks malicious packages with no cloud policy and no event sync. PMG sends its events to SafeDep Cloud every 15 seconds while it runs.
 
 ## Limits
 
 - **PMG does not check nested containers.** This includes `docker build`, `docker run`, job containers, and service containers. They work as before, with no PMG check.
-- **PMG does not check registries on private addresses or traffic on other ports.** With the default config, PMG checks only ports 80 and 443, and it does not route the private address ranges. So PMG does not check a registry or mirror on a private address, such as Artifactory or Nexus in the cluster. PMG also does not check a job that sends its traffic to a forward proxy on another port, such as 3128. To change this, see [Change one setting](/package-security/pmg/kubernetes-ci-runners#change-one-setting).
-- **The runner container must be privileged.** PMG needs a privileged container to attach to the cgroup and to load the kernel programs.
-- **The nodes need cgroup v2.** On a node with cgroup v1 only, PMG cannot enforce.
 - **A step that does not trust the PMG CA cannot reach the registries.** The step fails closed. It cannot go around PMG.
-- **If PMG stops, installs pass with no check until PMG starts again.** The kernel hook stops with PMG. The supervisor starts PMG again. In a test, PMG ran again within 6 seconds.
+- **If PMG stops, installs pass with no check until PMG starts again.** The kernel hook stops with PMG. The supervisor starts PMG again.
 - **A job step with root access can stop PMG.** For example, a step that uses `sudo`. PMG blocks malicious packages. It does not stop a workflow that is written to turn PMG off.
 - **PMG does not support the `safedep/pmg` GitHub Action on these runners.** The action and kernel enforcement cannot run on the same runner.
-
-## Tested setups
-
-SafeDep tested this setup on Azure Kubernetes Service (AKS) with:
-
-- summerwind ARC, with a `RunnerDeployment` on `summerwind/actions-runner-dind:ubuntu-22.04`. With SafeDep Cloud, PMG applied the tenant policy in the first job and synced its events.
-- ARC runner scale sets 0.15.1 in `dind` mode, on `ghcr.io/actions/actions-runner:2.338.2`.
 
 <CardGroup cols={2}>
   <Card title="PMG on Self-Hosted CI Runners in Kubernetes" icon="dharmachakra" href="/package-security/pmg/kubernetes-ci-runners">

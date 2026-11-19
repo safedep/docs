@@ -238,13 +238,17 @@ The action needs a POSIX shell and common tools in the image, such as busybox, p
 
 ## Self-hosted runners
 
+<Info>
+  For self-hosted runner Pods on Kubernetes, see [PMG on Self-Hosted CI Runners in Kubernetes](/package-security/pmg/kubernetes-ci-runners).
+</Info>
+
 `enforce: auto` does not enforce on a self-hosted runner. Kernel enforcement adds the PMG CA to the trust store of the host, and the CA stays after the job. A host that more than one repository shares then trusts the PMG CA for every job. Set `enforce: true` on an ephemeral runner, or on a host that only trusted jobs use.
 
 <Warning>
   Deploy PMG one way on a runner host. Either use the `safedep/pmg` action in each workflow, or install PMG for the whole system and run the proxy as a service on the host. PMG does not support both on one host.
 </Warning>
 
-For runner Pods on Kubernetes, see [PMG on Self-Hosted CI Runners in Kubernetes](/package-security/pmg/kubernetes-ci-runners). To run the proxy as a service on the host, see [Kernel Enforcement on Linux](/package-security/pmg/kernel-enforcement). On that host, remove the `safedep/pmg` step from the workflows. One host proxy serves all jobs, so the jobs get no post step, no job summary, and no verdict for each job. The host proxy routes only the processes on the host. A job container, a Docker action, or a `docker run` step goes around it unless the proxy redirects containers and each container trusts the PMG CA. See [Kernel Enforcement on Linux](/package-security/pmg/kernel-enforcement).
+To run the proxy as a service on the host, see [Kernel Enforcement on Linux](/package-security/pmg/kernel-enforcement). On that host, remove the `safedep/pmg` step from the workflows. One host proxy serves all jobs, so the jobs get no post step, no job summary, and no verdict for each job. The host proxy routes only the processes on the host. A job container, a Docker action, or a `docker run` step goes around it unless the proxy redirects containers and each container trusts the PMG CA. See [Kernel Enforcement on Linux](/package-security/pmg/kernel-enforcement).
 
 ## Inputs and outputs
 
