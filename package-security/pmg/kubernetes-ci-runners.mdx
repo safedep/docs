@@ -10,6 +10,8 @@ PMG blocks malicious packages that a job step installs on a self-hosted runner i
 
 PMG checks the job steps that run in the runner container. It does not check the containers that a job starts, such as `docker build`, `docker run`, job containers, and service containers. Those containers work as before, with no PMG check. For the architecture and the limits, see [How PMG Works on Kubernetes CI Runners](/package-security/pmg/kubernetes-ci-runners-how-it-works).
 
+This method uses kernel enforcement, so the runner container must be privileged. Runner Pods that run Docker are privileged already. For a workload that cannot run privileged, such as an application Pod or a development workspace, use [PMG in Kubernetes](/package-security/pmg/kubernetes). That method uses the PMG shims and needs no extra rights.
+
 ## Requirements
 
 - Kubernetes nodes with Linux 5.15 or later, kernel BTF, and cgroup v2.
