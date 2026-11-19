@@ -57,13 +57,7 @@ Do the setup on one pilot pool first. Move the other pools when the pilot pool w
       </Tab>
     </Tabs>
 
-    These lines do three things:
-
-    - `COPY` adds PMG and the PMG entrypoint script, `pmg-entrypoint.sh`, to your image.
-    - `ENTRYPOINT` runs `pmg-entrypoint.sh` when the runner container starts.
-    - `CMD` keeps the runner start command of the base image.
-
-    `pmg-entrypoint.sh` starts PMG first. Then it runs the runner start command from `CMD`. When the Pod stops, `pmg-entrypoint.sh` stops the runner first and PMG last.
+    `CMD` holds the runner start command of the base image. `pmg-entrypoint.sh` starts PMG first. Then it runs the command in `CMD`. When the Pod stops, `pmg-entrypoint.sh` stops the runner first and PMG last.
 
     If you use another base image, put the runner start command of that image in `CMD`. If your image starts the runner with your own entrypoint script, put that script after `pmg-entrypoint.sh`:
 

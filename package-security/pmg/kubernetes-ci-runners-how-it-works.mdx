@@ -67,7 +67,7 @@ SafeDep Cloud is on only when both keys are present. Without them, PMG blocks ma
 - **PMG does not check nested containers.** This includes `docker build`, `docker run`, job containers, and service containers. They work as before, with no PMG check.
 - **A step that does not trust the PMG CA cannot reach the registries.** The step fails closed. It cannot go around PMG.
 - **If PMG stops, installs pass with no check until PMG starts again.** The kernel hook stops with PMG. The supervisor starts PMG again.
-- **A job step with root access can stop PMG.** For example, a step that uses `sudo`. PMG blocks malicious packages. It does not stop a workflow that is written to turn PMG off.
+- **A job step with root access can stop PMG.** The kernel still sends an install that runs with `sudo`, such as `sudo npm install`, through PMG. But a step with root access can also stop the PMG process. PMG protects against malicious packages, not against a workflow that is written to turn PMG off.
 - **PMG does not support the `safedep/pmg` GitHub Action on these runners.** The action and kernel enforcement cannot run on the same runner.
 
 <CardGroup cols={2}>
