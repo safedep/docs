@@ -69,7 +69,7 @@ SafeDep Cloud is on only when both keys are present. Without them, PMG blocks ma
 - **The runner container must be privileged.** PMG needs a privileged container to attach to the cgroup and to load the kernel programs.
 - **The nodes need cgroup v2.** On a node with cgroup v1 only, PMG cannot enforce.
 - **A step that does not trust the PMG CA cannot reach the registries.** The step fails closed. It cannot go around PMG.
-- **If PMG stops, installs pass with no check until PMG starts again.** The supervisor starts PMG again in about 2 seconds.
+- **If PMG stops, installs pass with no check until PMG starts again.** The kernel hook stops with PMG. The supervisor starts PMG again. In a test, PMG ran again within 6 seconds.
 - **A job step with root access can stop PMG.** For example, a step that uses `sudo`. PMG blocks malicious packages. It does not stop a workflow that is written to turn PMG off.
 - **PMG does not support the `safedep/pmg` GitHub Action on these runners.** The action and kernel enforcement cannot run on the same runner.
 
