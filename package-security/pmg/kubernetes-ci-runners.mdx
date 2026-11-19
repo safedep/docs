@@ -174,11 +174,7 @@ This line is optional. Without it, PMG runs until Kubernetes kills the Pod. PMG 
 
 ## Change the PMG settings
 
-{/* DRAFT: the PMG_* override behavior is still under test. Confirm the variable format before this page goes live. */}
-
-The script writes the PMG config to `/etc/safedep/pmg/config.yml` only when no file is at that path. To use your own config, add the file to the runner image at that path.
-
-The config that the script writes has these settings:
+The script writes the PMG config to `/etc/safedep/pmg/config.yml` only when no file is at that path. The config that the script writes has these settings:
 
 | Setting | Value |
 | --- | --- |
@@ -188,7 +184,33 @@ The config that the script writes has these settings:
 | Destinations that PMG does not route | `10.0.0.0/8`, `172.16.0.0/12`, `192.168.0.0/16`, `100.64.0.0/10` |
 | SafeDep Cloud | On only when the Secret holds both keys |
 
-To change one setting, set a `PMG_*` environment variable on the runner container. For example, `PMG_PROXY_SERVER_ENFORCE_SKIP_DESTINATIONS` changes the destinations that PMG does not route. See the [PMG configuration reference](https://github.com/safedep/pmg/blob/main/docs/config.md) for the keys.
+### Change one setting
+
+Set a `PMG_*` environment variable on the runner container. For example, this variable adds the address of an internal service to the destinations that PMG does not route:
+
+```yaml
+env:
+  - name: PMG_PROXY_SERVER_ENFORCE_SKIP_DESTINATIONS
+    value: "10.0.0.0/8,172.16.0.0/12,192.168.0.0/16,100.64.0.0/10,203.0.113.10/32"
+```
+
+The variable takes a comma-separated list. It replaces the list in the config. Include the four private ranges in the value, or PMG routes them. See the [PMG configuration reference](https://github.com/safedep/pmg/blob/main/docs/config.md) for the other keys.
+
+### Use your own config file
+
+Put your file at `/etc/safedep/pmg/config.yml`. The script then uses your file and does not write one. For example, mount the file from a ConfigMap with `subPath`:
+
+```yaml
+volumeMounts:
+  - {name: pmg-config, mountPath: /etc/safedep/pmg/config.yml, subPath: config.yml}
+volumes:
+  - name: pmg-config
+    configMap: {name: pmg-config}
+```
+
+Mount only the file. Do not mount the directory, because PMG writes its CA files into `/etc/safedep/pmg/`. You can also add the file to the runner image at that path.
+
+With your own file, the script does not set `cloud.enabled` from the Secret. To use SafeDep Cloud, set `cloud.enabled: true` in your file.
 
 ## Check the setup (optional)
 
