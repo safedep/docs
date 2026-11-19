@@ -1,0 +1,230 @@
+---
+title: "PMG on Self-Hosted CI Runners in Kubernetes"
+sidebarTitle: "Kubernetes CI Runners"
+description: "Block malicious packages in the job steps of self-hosted GitHub Actions runners on Kubernetes. Add PMG to the runner image and start it with the PMG entrypoint script."
+---
+
+{/* TODO: replace <pmg-version> with the first PMG release that ships /opt/safedep/pmg. */}
+
+PMG blocks malicious packages that a job step installs on a self-hosted runner in Kubernetes. You copy PMG into your runner image. A script in the PMG image starts PMG with kernel enforcement before the runner starts. Your workflows do not change, except that you remove the `safedep/pmg` action.
+
+PMG checks the job steps that run in the runner container. It does not check the containers that a job starts, such as `docker build`, `docker run`, job containers, and service containers. Those containers work as before, with no PMG check. For the architecture and the limits, see [How PMG Works on Kubernetes CI Runners](/package-security/pmg/kubernetes-ci-runners-how-it-works).
+
+## Requirements
+
+- Kubernetes nodes with Linux 5.15 or later, kernel BTF, and cgroup v2.
+- A privileged runner container.
+- A runner image that you build. The image needs `bash`. It also needs `sudo` when it does not run as root.
+- PMG `<pmg-version>` or later.
+- A SafeDep Cloud API key and tenant ID, only if you use SafeDep Cloud.
+
+<Note>
+  PMG blocks malicious packages without SafeDep Cloud. The cloud policy and the event sync to SafeDep Cloud need the Team or Enterprise plan. See [pricing](https://safedep.io/pricing).
+</Note>
+
+## Set up PMG in a runner pool
+
+Do the setup on one pilot pool first. Move the other pools when the pilot pool works.
+
+<Steps>
+  <Step title="Add PMG to the runner image">
+    Start from the runner image that you build today. Add the `COPY` line, the `ENTRYPOINT`, and the `CMD`. Keep your own additions as they are.
+
+    <Tabs>
+      <Tab title="summerwind ARC">
+        ```dockerfile
+        FROM summerwind/actions-runner-dind:ubuntu-22.04
+
+        # Your own additions stay here.
+
+        # Use a PMG release tag, not latest.
+        COPY --from=ghcr.io/safedep/pmg:<pmg-version> /opt/safedep/pmg /opt/safedep/pmg
+        ENTRYPOINT ["/opt/safedep/pmg/bin/pmg-entrypoint.sh"]
+        CMD ["entrypoint-dind.sh"]
+        ```
+      </Tab>
+      <Tab title="ARC runner scale sets">
+        ```dockerfile
+        FROM ghcr.io/actions/actions-runner:<runner-version>
+
+        # Your own additions stay here.
+
+        # Use a PMG release tag, not latest.
+        COPY --from=ghcr.io/safedep/pmg:<pmg-version> /opt/safedep/pmg /opt/safedep/pmg
+        ENTRYPOINT ["/opt/safedep/pmg/bin/pmg-entrypoint.sh"]
+        CMD ["/home/runner/run.sh"]
+        ```
+      </Tab>
+    </Tabs>
+
+    `CMD` is the start command of the base image. The PMG script starts PMG, and then it runs that command. When the Pod stops, the script stops that command first and PMG last. With another base image, put the start command of that image in `CMD`.
+
+    If your image starts with your own entrypoint script, give that script to the PMG script:
+
+    ```dockerfile
+    ENTRYPOINT ["/opt/safedep/pmg/bin/pmg-entrypoint.sh", "/path/to/your-entrypoint.sh"]
+    ```
+
+    Build the image and push it to your registry.
+  </Step>
+
+  <Step title="Add your SafeDep Cloud keys (optional)">
+    Skip this step if you do not use SafeDep Cloud. Without the keys, PMG still blocks malicious packages, and the script turns off cloud sync.
+
+    With the keys, PMG applies the policy of your SafeDep Cloud tenant and sends its events to SafeDep Cloud. Create a Secret in the namespace of your runners:
+
+    ```bash
+    kubectl -n <runner-namespace> create secret generic pmg-cloud \
+      --from-literal=SAFEDEP_API_KEY=<api-key> \
+      --from-literal=SAFEDEP_TENANT_ID=<tenant-id>
+    ```
+
+    The next step mounts the Secret at `/etc/pmg-secret` with mode `0400`. The script reads the keys from the files and gives them only to PMG. Job steps do not get the keys. To use another path, set `PMG_SECRET_DIR` on the runner container.
+  </Step>
+
+  <Step title="Use the image in a pilot pool">
+    Point one pool at the new image. Give the pool its own label, so only the jobs that ask for that label run on it.
+
+    <Tabs>
+      <Tab title="summerwind ARC">
+        Use a `RunnerDeployment` with the new image and `dockerdWithinRunnerContainer: true`:
+
+        ```yaml
+        apiVersion: actions.summerwind.dev/v1alpha1
+        kind: RunnerDeployment
+        metadata:
+          name: pmg-pilot
+        spec:
+          replicas: 1
+          template:
+            spec:
+              organization: <your-org>
+              labels: [pmg-pilot]
+              image: <your-registry>/actions-runner-dind-pmg:<tag>
+              dockerdWithinRunnerContainer: true
+              # Only if you added the SafeDep Cloud keys:
+              volumeMounts:
+                - {name: pmg-secret, mountPath: /etc/pmg-secret, readOnly: true}
+              volumes:
+                - name: pmg-secret
+                  secret: {secretName: pmg-cloud, defaultMode: 0400}
+        ```
+
+        A runner with `dockerdWithinRunnerContainer: true` is privileged.
+      </Tab>
+      <Tab title="ARC runner scale sets">
+        The `gha-runner-scale-set` chart sets the command of the runner container. So the values must put the PMG script in front of the runner command. The runner container must also be privileged.
+
+        ```yaml
+        runnerScaleSetName: pmg-pilot
+        containerMode:
+          type: dind
+        template:
+          spec:
+            containers:
+              - name: runner
+                image: <your-registry>/actions-runner-pmg:<tag>
+                command: ["/opt/safedep/pmg/bin/pmg-entrypoint.sh", "/home/runner/run.sh"]
+                securityContext:
+                  privileged: true
+                # Only if you added the SafeDep Cloud keys:
+                volumeMounts:
+                  - {name: pmg-secret, mountPath: /etc/pmg-secret, readOnly: true}
+            volumes:
+              - name: pmg-secret
+                secret: {secretName: pmg-cloud, defaultMode: 0400}
+        ```
+
+        Install the scale set with these values. Jobs use the name of the scale set in `runs-on`.
+      </Tab>
+    </Tabs>
+
+    Keep the other settings of your pool.
+
+    <Warning>
+      Remove the `safedep/pmg` GitHub Action from the workflows that run on this pool. PMG does not support the action and kernel enforcement on the same runner.
+    </Warning>
+  </Step>
+
+  <Step title="Move the other pools">
+    When the pilot pool works, change the image of each other pool. Move one pool at a time.
+  </Step>
+</Steps>
+
+## Start PMG from your own entrypoint script
+
+Use this form if your own entrypoint script must start PMG, and you cannot put the PMG script in `ENTRYPOINT`. Add the `COPY` line from step 1 to the image, and keep your own `ENTRYPOINT`. On ARC runner scale sets, set `command` in the values to your own entrypoint script.
+
+In your entrypoint script, add these two lines before the script starts the runner. With summerwind ARC, also put them before the script starts dockerd:
+
+```sh
+/opt/safedep/pmg/bin/pmg-entrypoint.sh start
+. /run/pmg/env
+```
+
+The first line starts PMG. The second line loads the trust variables into your script, so the runner and the job steps get them.
+
+To stop PMG when the Pod stops, add this line to the stop handler of your script:
+
+```sh
+/opt/safedep/pmg/bin/pmg-entrypoint.sh stop
+```
+
+This line is optional. Without it, PMG runs until Kubernetes kills the Pod. PMG sends its events to SafeDep Cloud every 15 seconds. So the Pod loses only the events of the last 15 seconds or less.
+
+## Change the PMG settings
+
+{/* DRAFT: the PMG_* override behavior is still under test. Confirm the variable format before this page goes live. */}
+
+The script writes the PMG config to `/etc/safedep/pmg/config.yml` only when no file is at that path. To use your own config, add the file to the runner image at that path.
+
+The config that the script writes has these settings:
+
+| Setting | Value |
+| --- | --- |
+| Kernel enforcement | On |
+| Enforced ports | 80 and 443 |
+| UDP to the enforced ports | Denied |
+| Destinations that PMG does not route | `10.0.0.0/8`, `172.16.0.0/12`, `192.168.0.0/16`, `100.64.0.0/10` |
+| SafeDep Cloud | On only when the Secret holds both keys |
+
+To change one setting, set a `PMG_*` environment variable on the runner container. For example, `PMG_PROXY_SERVER_ENFORCE_SKIP_DESTINATIONS` changes the destinations that PMG does not route. See the [PMG configuration reference](https://github.com/safedep/pmg/blob/main/docs/config.md) for the keys.
+
+## Check the setup (optional)
+
+Run this workflow on the pilot pool. `pmg-pilot` is the label of the summerwind pool and the name of the scale set.
+
+```yaml
+name: check-pmg
+on: workflow_dispatch
+jobs:
+  check:
+    runs-on: pmg-pilot
+    steps:
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: npm installs a normal package
+        run: cd "$(mktemp -d)" && npm install is-number@7.0.0
+      - name: PMG blocks the test package
+        run: cd "$(mktemp -d)" && npm install safedep-test-pkg@0.1.3 2>&1 | tee out.log; grep -q E403 out.log
+```
+
+The two `npm` steps must pass. `safedep-test-pkg` is a harmless package that SafeDep marks as malicious for tests. PMG blocks it, and npm fails with `E403`.
+
+If a step fails with a certificate error on a registry, the tool in that step does not trust the PMG CA. Point the tool at the file in `PMG_CA_BUNDLE`.
+
+<CardGroup cols={2}>
+  <Card title="How PMG Works on Kubernetes CI Runners" icon="diagram-project" href="/package-security/pmg/kubernetes-ci-runners-how-it-works">
+    See the architecture, what PMG covers, and the limits.
+  </Card>
+  <Card title="Kernel Enforcement on Linux" icon="microchip" href="/package-security/pmg/kernel-enforcement">
+    See how the kernel routes package installs through PMG on a Linux host.
+  </Card>
+  <Card title="PMG in Kubernetes" icon="dharmachakra" href="/package-security/pmg/kubernetes">
+    Add PMG to the image of a Kubernetes workload that installs packages.
+  </Card>
+  <Card title="Cloud Policy in PMG" icon="cloud" href="/package-security/pmg/cloud-policy">
+    See how PMG applies the policy of your SafeDep Cloud tenant.
+  </Card>
+</CardGroup>

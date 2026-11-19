@@ -8,6 +8,8 @@ Use PMG in a Kubernetes workload that installs packages at run time. Common exam
 
 PMG protects only the containers that include it. It does not protect other Pods in the cluster. It also does not scan packages that are already in an image.
 
+To protect self-hosted GitHub Actions runner Pods, see [PMG on Self-Hosted CI Runners in Kubernetes](/package-security/pmg/kubernetes-ci-runners).
+
 <Info>
   Use the [Docker image guide](/package-security/pmg/system-install#docker-images) to protect package installs during an image build. This guide adds Kubernetes workload identity and cloud reporting to a PMG-enabled image.
 </Info>

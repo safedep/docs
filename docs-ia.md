@@ -144,7 +144,7 @@ Don't mix Diátaxis types within a single page.
 **Package Security** *(tab landing: `package-security/overview`)*
 - Block at Install: `package-security/pmg/overview` *(landing)*, `package-security/pmg/quickstart`, `package-security/pmg/dependency-cooldown`, `package-security/pmg/sandbox`, `package-security/pmg/network-policy`, `package-security/pmg/private-registries`, `package-security/pmg/cloud-policy`
 - Deploy to a Fleet: `package-security/pmg/mdm/overview` *(landing)*, `package-security/pmg/mdm/jamf`, `package-security/pmg/mdm/jumpcloud`, `package-security/pmg/mdm/intune`
-- Block in CI and Servers: `package-security/pmg/github-actions` *(landing)*, `package-security/pmg/github-actions-network-policy`, `package-security/pmg/kernel-enforcement`, `package-security/pmg/system-install`, `package-security/pmg/kubernetes`
+- Block in CI and Servers: `package-security/pmg/github-actions` *(landing)*, `package-security/pmg/github-actions-network-policy`, `package-security/pmg/kernel-enforcement`, `package-security/pmg/system-install`, `package-security/pmg/kubernetes`, `package-security/pmg/kubernetes-ci-runners`, `package-security/pmg/kubernetes-ci-runners-how-it-works`
 - Scan Before Use: `package-security/scan/overview` *(landing)*, `package-security/scan/quickstart`, `package-security/scan/automation`, `package-security/scan/malware-lookup`
 
 **AI Agent Security** *(tab landing: `ai-security/overview`)*
