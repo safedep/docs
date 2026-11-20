@@ -99,7 +99,9 @@
               "package-security/pmg/github-actions-network-policy",
               "package-security/pmg/kernel-enforcement",
               "package-security/pmg/system-install",
-              "package-security/pmg/kubernetes"
+              "package-security/pmg/kubernetes",
+              "package-security/pmg/kubernetes-ci-runners",
+              "package-security/pmg/kubernetes-ci-runners-how-it-works"
             ]
           },
           {

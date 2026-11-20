@@ -238,6 +238,10 @@ The action needs a POSIX shell and common tools in the image, such as busybox, p
 
 ## Self-hosted runners
 
+<Info>
+  For self-hosted runner Pods on Kubernetes, see [PMG on Self-Hosted CI Runners in Kubernetes with ARC](/package-security/pmg/kubernetes-ci-runners).
+</Info>
+
 `enforce: auto` does not enforce on a self-hosted runner. Kernel enforcement adds the PMG CA to the trust store of the host, and the CA stays after the job. A host that more than one repository shares then trusts the PMG CA for every job. Set `enforce: true` on an ephemeral runner, or on a host that only trusted jobs use.
 
 <Warning>
