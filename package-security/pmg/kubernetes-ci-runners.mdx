@@ -1,10 +1,12 @@
 ---
-title: "PMG on Self-Hosted CI Runners in Kubernetes"
-sidebarTitle: "Kubernetes CI Runners"
-description: "Block malicious packages in the job steps of self-hosted GitHub Actions runners on Kubernetes. Add PMG to the runner image and start it with the PMG entrypoint script."
+title: "PMG on Self-Hosted CI Runners with ARC"
+sidebarTitle: "CI Runners with ARC"
+description: "Block malicious packages in the job steps of self-hosted GitHub Actions runners that Actions Runner Controller (ARC) runs on Kubernetes."
 ---
 
-Add PMG to the image of your self-hosted GitHub Actions runners on Kubernetes. PMG then blocks the malicious packages that job steps install in each runner Pod.
+Use this guide if you run self-hosted GitHub Actions runners on Kubernetes with Actions Runner Controller (ARC). It covers summerwind ARC and ARC runner scale sets.
+
+At the end of this guide, PMG runs in each runner Pod of your pool. It checks each package that a job step installs, and it blocks a malicious package before the install completes. You do not add a PMG step to your workflows.
 
 ## Requirements
 
@@ -57,11 +59,17 @@ Do the setup on one pilot pool first. Move the other pools when the pilot pool w
 
     `CMD` holds the runner start command of the base image. `pmg-entrypoint.sh` starts PMG first. Then it runs the command in `CMD`. When the Pod stops, `pmg-entrypoint.sh` stops the runner first and PMG last.
 
-    If you use another base image, put the runner start command of that image in `CMD`. If your image starts the runner with your own entrypoint script, put that script after `pmg-entrypoint.sh`:
+    If you use another base image, put the runner start command of that image in `CMD`.
 
-    ```dockerfile
-    ENTRYPOINT ["/opt/safedep/pmg/bin/pmg-entrypoint.sh", "/path/to/your-entrypoint.sh"]
-    ```
+    If your image has its own entrypoint script, do not move it to `CMD`. Use one of these two forms:
+
+    - Put your script after `pmg-entrypoint.sh` in `ENTRYPOINT`. `pmg-entrypoint.sh` starts PMG and then runs your script.
+
+      ```dockerfile
+      ENTRYPOINT ["/opt/safedep/pmg/bin/pmg-entrypoint.sh", "/path/to/your-entrypoint.sh"]
+      ```
+
+    - Keep your own `ENTRYPOINT`, and call `pmg-entrypoint.sh` from your script. See [Start PMG from your own entrypoint script](#start-pmg-from-your-own-entrypoint-script).
 
     Build the image and push it to your registry.
   </Step>
@@ -276,7 +284,7 @@ The two `npm` steps must pass. `safedep-test-pkg` is a harmless package that Saf
 If a step fails with a certificate error on a registry, the tool in that step does not trust the PMG CA. Point the tool at the file in `PMG_CA_BUNDLE`.
 
 <CardGroup cols={2}>
-  <Card title="How PMG Works on Kubernetes CI Runners" icon="diagram-project" href="/package-security/pmg/kubernetes-ci-runners-how-it-works">
+  <Card title="How PMG Works on ARC Runners" icon="diagram-project" href="/package-security/pmg/kubernetes-ci-runners-how-it-works">
     See the architecture, what PMG covers, and the limits.
   </Card>
   <Card title="Kernel Enforcement on Linux" icon="microchip" href="/package-security/pmg/kernel-enforcement">
