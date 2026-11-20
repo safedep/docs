@@ -79,9 +79,11 @@ Do the setup on one pilot pool first. Move the other pools when the pilot pool w
       --from-literal=SAFEDEP_TENANT_ID=<tenant-id>
     ```
 
-    The next step mounts the Secret at `/etc/pmg-secret` with mode `0400`. Keep this mode. With the default mode `0644`, a job step on a runner image without `sudo` can read the keys.
+    The next step mounts the Secret at `/etc/pmg-secret` with mode `0400`. Keep this mode. With the default mode `0644`, every job step can read the keys.
 
-    `pmg-entrypoint.sh` reads the keys from the files and gives them only to PMG. Job steps do not get the keys. To use another path, set `PMG_SECRET_DIR` on the runner container.
+    `pmg-entrypoint.sh` reads the keys from the files and gives them only to PMG. The keys are not in the environment of job steps. But a job step with `sudo` can read the files. The summerwind and GitHub runner images give the runner user `sudo` with no password. So add the keys only to pools that run workflows you trust.
+
+    To use another path, set `PMG_SECRET_DIR` on the runner container.
   </Step>
 
   <Step title="Use the image in a pilot pool">
@@ -183,10 +185,14 @@ This line is optional. Without it, PMG runs until Kubernetes kills the Pod. PMG 
 | Kernel enforcement | On |
 | Enforced ports | 80 and 443 |
 | UDP to the enforced ports | Denied |
-| Destinations that PMG does not route | `10.0.0.0/8`, `172.16.0.0/12`, `192.168.0.0/16`, `100.64.0.0/10` |
+| Destinations that PMG does not route | The Kubernetes API server address, from `KUBERNETES_SERVICE_HOST` |
 | SafeDep Cloud | On only when the Secret holds both keys |
 
-With these settings, PMG does not check a registry or a mirror on a private address, such as Artifactory or Nexus in the cluster. PMG also does not check traffic that a job sends to a forward proxy on another port, such as 3128. To check this traffic, change the destinations or the ports with the variables in [Change one setting](#change-one-setting).
+PMG does not route the API server address, because in-cluster `kubectl` and `helm` connect to it by IP address. Such a TLS connection has no server name, and PMG drops a TLS connection without one.
+
+PMG checks the public registries, such as `registry.npmjs.org` and `pypi.org`, and the registries in `proxy.registries`. If your jobs install through a mirror, such as Artifactory or Nexus, add the mirror to `proxy.registries` in [your own config file](#use-your-own-config-file). PMG does not check a mirror that is not in this list. It only logs the host of the mirror.
+
+PMG also does not route traffic that a job sends to a forward proxy on another port, such as 3128. To route it, add the port with `PMG_PROXY_SERVER_ENFORCE_PORTS`.
 
 ### Change one setting
 
@@ -195,14 +201,31 @@ Set a `PMG_*` environment variable on the runner container. For example, this va
 ```yaml
 env:
   - name: PMG_PROXY_SERVER_ENFORCE_SKIP_DESTINATIONS
-    value: "10.0.0.0/8,172.16.0.0/12,192.168.0.0/16,100.64.0.0/10,203.0.113.10/32"
+    value: "$(KUBERNETES_SERVICE_HOST)/32,203.0.113.10/32"
 ```
 
-The variable takes a comma-separated list. It replaces the list in the config. Include the four private ranges in the value, or PMG routes them. `PMG_PROXY_SERVER_ENFORCE_PORTS` sets the enforced ports. For the other variables, see [Environment Variables](https://github.com/safedep/pmg/blob/main/docs/config.md#environment-variables) in the PMG configuration reference.
+The variable takes a comma-separated list. It replaces the list in the config, so keep the API server address in the value. Kubernetes puts the address in place of `$(KUBERNETES_SERVICE_HOST)`. Do not add the address of a registry or a mirror, because PMG does not check a destination in this list. `PMG_PROXY_SERVER_ENFORCE_PORTS` sets the enforced ports. For the other variables, see [Environment Variables](https://github.com/safedep/pmg/blob/main/docs/config.md#environment-variables) in the PMG configuration reference.
 
 ### Use your own config file
 
-Put your file at `/etc/safedep/pmg/config.yml`. `pmg-entrypoint.sh` then uses your file and does not write one. It always starts PMG with kernel enforcement, so your file needs only your own settings, such as `cloud.enabled` and block lists. For example, mount the file from a ConfigMap with `subPath`:
+Put your file at `/etc/safedep/pmg/config.yml`. `pmg-entrypoint.sh` then uses your file and does not write one. It always starts PMG with kernel enforcement, so your file needs only your own settings, such as `cloud.enabled`, block lists and mirrors. For example, this file turns on SafeDep Cloud and adds an npm mirror:
+
+```yaml
+cloud:
+  enabled: true
+proxy:
+  registries:
+    - name: npm-mirror
+      ecosystem: npm
+      endpoints:
+        - url: https://packages.example.com/artifactory/api/npm/npm-virtual
+```
+
+For the format of `proxy.registries`, see [Custom Registries](https://github.com/safedep/pmg/blob/main/docs/proxy-mode.md#custom-registries) in the PMG reference.
+
+Your file has no destinations that PMG does not route. If your jobs use `kubectl` or `helm` in the cluster, set `PMG_PROXY_SERVER_ENFORCE_SKIP_DESTINATIONS` to `$(KUBERNETES_SERVICE_HOST)/32`, as in [Change one setting](#change-one-setting).
+
+Mount the file from a ConfigMap with `subPath`:
 
 ```yaml
 volumeMounts:
@@ -215,6 +238,20 @@ volumes:
 Mount only the file. Do not mount the directory, because PMG writes its CA files into `/etc/safedep/pmg/`. You can also add the file to the runner image at that path.
 
 With your own file, `pmg-entrypoint.sh` does not set `cloud.enabled` from the Secret. To use SafeDep Cloud, set `cloud.enabled: true` in your file.
+
+### Name the pool in SafeDep Cloud
+
+PMG gives the runner Pods of a pool one endpoint in SafeDep Cloud. It names the endpoint from the namespace and a workload name that it derives from the Pod name. A derived name can change when the pool changes. To keep one name, set the name of the pool and the cluster on the runner container:
+
+```yaml
+env:
+  - name: KUBE_WORKLOAD_NAME
+    value: pmg-pilot
+  - name: KUBE_CLUSTER_NAME
+    value: <cluster-name>
+```
+
+`KUBE_CLUSTER_NAME` keeps the pools of two clusters apart. For the other identity variables, see [How PMG names the endpoint](/package-security/pmg/kubernetes#how-pmg-names-the-endpoint).
 
 ## Check the setup (optional)
 
