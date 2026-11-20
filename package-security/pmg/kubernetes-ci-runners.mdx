@@ -4,8 +4,6 @@ sidebarTitle: "Kubernetes CI Runners"
 description: "Block malicious packages in the job steps of self-hosted GitHub Actions runners on Kubernetes. Add PMG to the runner image and start it with the PMG entrypoint script."
 ---
 
-{/* TODO: replace <pmg-version> with the first PMG release that ships /opt/safedep/pmg. */}
-
 Add PMG to the image of your self-hosted GitHub Actions runners on Kubernetes. PMG then blocks the malicious packages that job steps install in each runner Pod.
 
 ## Requirements
@@ -13,7 +11,7 @@ Add PMG to the image of your self-hosted GitHub Actions runners on Kubernetes. P
 - Kubernetes nodes with Linux 5.15 or later, kernel BTF, and cgroup v2.
 - A privileged runner container. For a Pod that cannot run privileged, use [PMG in Kubernetes](/package-security/pmg/kubernetes) instead.
 - A runner image that you build. The image needs `bash`. It also needs `sudo` when it does not run as root.
-- PMG `<pmg-version>` or later.
+- PMG `v0.36.0` or later.
 - A SafeDep Cloud API key and tenant ID, only if you use SafeDep Cloud.
 
 <Note>
@@ -38,7 +36,7 @@ Do the setup on one pilot pool first. Move the other pools when the pilot pool w
         # Your own additions stay here.
 
         # Use a PMG release tag, not latest.
-        COPY --from=ghcr.io/safedep/pmg:<pmg-version> /opt/safedep/pmg /opt/safedep/pmg
+        COPY --from=ghcr.io/safedep/pmg:v0.36.0 /opt/safedep/pmg /opt/safedep/pmg
         ENTRYPOINT ["/opt/safedep/pmg/bin/pmg-entrypoint.sh"]
         CMD ["entrypoint-dind.sh"]
         ```
@@ -50,7 +48,7 @@ Do the setup on one pilot pool first. Move the other pools when the pilot pool w
         # Your own additions stay here.
 
         # Use a PMG release tag, not latest.
-        COPY --from=ghcr.io/safedep/pmg:<pmg-version> /opt/safedep/pmg /opt/safedep/pmg
+        COPY --from=ghcr.io/safedep/pmg:v0.36.0 /opt/safedep/pmg /opt/safedep/pmg
         ENTRYPOINT ["/opt/safedep/pmg/bin/pmg-entrypoint.sh"]
         CMD ["/home/runner/run.sh"]
         ```
