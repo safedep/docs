@@ -1,5 +1,5 @@
 ---
-title: "PMG on Self-Hosted CI Runners with ARC"
+title: "PMG on Self-Hosted CI Runners in Kubernetes with ARC"
 sidebarTitle: "CI Runners with ARC"
 description: "Block malicious packages in the job steps of self-hosted GitHub Actions runners that Actions Runner Controller (ARC) runs on Kubernetes."
 ---
@@ -284,7 +284,7 @@ The two `npm` steps must pass. `safedep-test-pkg` is a harmless package that Saf
 If a step fails with a certificate error on a registry, the tool in that step does not trust the PMG CA. Point the tool at the file in `PMG_CA_BUNDLE`.
 
 <CardGroup cols={2}>
-  <Card title="How PMG Works on ARC Runners" icon="diagram-project" href="/package-security/pmg/kubernetes-ci-runners-how-it-works">
+  <Card title="How PMG Works on ARC Runners in Kubernetes" icon="diagram-project" href="/package-security/pmg/kubernetes-ci-runners-how-it-works">
     See the architecture, what PMG covers, and the limits.
   </Card>
   <Card title="Kernel Enforcement on Linux" icon="microchip" href="/package-security/pmg/kernel-enforcement">

@@ -10,7 +10,7 @@ PMG protects only the containers that include it. It does not protect other Pods
 
 This page uses the PMG shims. The shims need no extra rights, so they work in a Pod that cannot run privileged. They check only the package manager commands that go through the shims.
 
-For self-hosted CI runner Pods, use [PMG on Self-Hosted CI Runners with ARC](/package-security/pmg/kubernetes-ci-runners). That method uses kernel enforcement. It checks every process in the runner container, but it needs a privileged container and cgroup v2.
+For self-hosted CI runner Pods, use [PMG on Self-Hosted CI Runners in Kubernetes with ARC](/package-security/pmg/kubernetes-ci-runners). That method uses kernel enforcement. It checks every process in the runner container, but it needs a privileged container and cgroup v2.
 
 <Info>
   Use the [Docker image guide](/package-security/pmg/system-install#docker-images) to protect package installs during an image build. This guide adds Kubernetes workload identity and cloud reporting to a PMG-enabled image.

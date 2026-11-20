@@ -1,10 +1,10 @@
 ---
-title: "How PMG Works on ARC Runners"
+title: "How PMG Works on ARC Runners in Kubernetes"
 sidebarTitle: "How It Works with ARC"
 description: "The architecture of PMG in a self-hosted runner Pod on Kubernetes: what the entrypoint script does, what PMG covers, and the limits."
 ---
 
-This page explains how PMG protects a self-hosted CI runner Pod that ARC runs on Kubernetes. To set it up, see [PMG on Self-Hosted CI Runners with ARC](/package-security/pmg/kubernetes-ci-runners).
+This page explains how PMG protects a self-hosted CI runner Pod that ARC runs on Kubernetes. To set it up, see [PMG on Self-Hosted CI Runners in Kubernetes with ARC](/package-security/pmg/kubernetes-ci-runners).
 
 ## Architecture
 
@@ -71,7 +71,7 @@ SafeDep Cloud is on only when both keys are present. Without them, PMG blocks ma
 - **PMG does not support the `safedep/pmg` GitHub Action on these runners.** The action and kernel enforcement cannot run on the same runner.
 
 <CardGroup cols={2}>
-  <Card title="PMG on Self-Hosted CI Runners with ARC" icon="dharmachakra" href="/package-security/pmg/kubernetes-ci-runners">
+  <Card title="PMG on Self-Hosted CI Runners in Kubernetes with ARC" icon="dharmachakra" href="/package-security/pmg/kubernetes-ci-runners">
     Add PMG to your runner image and start it in each runner Pod.
   </Card>
   <Card title="Kernel Enforcement on Linux" icon="microchip" href="/package-security/pmg/kernel-enforcement">
