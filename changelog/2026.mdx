@@ -7,6 +7,49 @@ rss: true
 
 SafeDep is open core. The open source tools [PMG](/package-security/pmg/overview), [vet](/governance/vet/overview) and [Gryph](/ai-security/gryph-overview) are the core. [SafeDep Cloud](/governance/cloud/overview) is the intelligence layer that makes them work: it gives the tools real-time threat intelligence about [malicious packages](/concepts/malicious-package), and it runs them across a team. Each entry covers half a month and lists the open source releases first. A release heading links to its full release notes.
 
+<Update label="2026-11-15" description="November 1 to 15, 2026" tags={["Open Source", "SafeDep Cloud", "PMG", "vet", "Cloud Policy", "Endpoint Hub", "Threat Intel", "Web app", "SafeDep CLI"]}>
+
+{/* sources: pmg@v0.34.0 vet@v2.0.0-alpha.20261104152357 cli@v0.11.0 control-tower@c564038 app.safedep.io@b266476 malysis@f6531da */}
+
+## Open Source
+
+### PMG [v0.34.0](https://github.com/safedep/pmg/releases/tag/v0.34.0)
+
+- **New:** PMG sends its sandbox violation reports to SafeDep Cloud.
+- **Breaking:** PMG ignores a managed config that an account other than root can change. Lockdown then has no effect, and `pmg setup doctor` fails. To fix it, run `sudo chown root <path>` and `sudo chmod go-w <path>`. See [System-wide install](/package-security/pmg/system-install#configuration).
+- **Breaking:** The `github-actions` network profile allows only the GitHub storage accounts for logs, artifacts and caches, not every Azure storage account. To write to another storage account, add its host to `network.allow_outbound`. See [Allow Only Known Hosts in GitHub Actions](/package-security/pmg/github-actions-network-policy).
+
+### vet v2 [alpha of November 4](https://github.com/safedep/vet/releases/tag/v2.0.0-alpha.20261104152357)
+
+- **New:** `vet endpoint audit` sends the inventory of the machine to SafeDep Cloud when vet has credentials. To stop it, set `plugins.cloud-inventory.enabled: false`. See [endpoint audit](https://github.com/safedep/vet/blob/v2/docs/cmd/endpoint-audit.md).
+- **Improved:** `vet endpoint audit` finds 15 more AI coding agents, such as Codex, Gemini CLI, Copilot CLI, Kiro, Goose and Cline.
+- **Improved:** Reachability covers Python dependencies in a virtual environment, and Go modules that your code does not import.
+
+## SafeDep Cloud
+
+### Cloud Policy
+
+- **New:** Set one cloud policy for your tenant. It blocks or trusts packages, sets the dependency cooldown, and chooses what fails a pull request check. Needs the Team or Enterprise plan. See [Cloud Policy](/governance/cloud/policy/overview).
+- **New:** Pull request checks on GitHub and Bitbucket decide on the cloud policy, with a license gate and waived named vulnerabilities. See [Pull request checks](/governance/cloud/policy/pull-request-checks).
+
+### Endpoint Hub
+
+- **Improved:** In SafeDep Cloud SQL queries, `endpoints.endpoint_type` tells a developer machine, a CI runner and a Kubernetes workload apart. PMG sends the type in its session. See [SQL query](/reference/sql-query).
+
+### Threat Intel
+
+- **Improved:** Reports and campaigns show only active indicators. **Show all** shows the others with their disposition. **Copy all** copies only active indicators. See [Read the indicators](/threat-intel/quickstart#read-the-indicators).
+
+### Web app
+
+- **New:** Scan a branch or a tag of a GitHub or Bitbucket project, not only the default branch.
+
+### SafeDep CLI [v0.11.0](https://github.com/safedep/cli/releases/tag/v0.11.0)
+
+- **New:** `safedep policy` edits and publishes the cloud policy and its package rules. `safedep policy decision list` shows the rule behind each decision, and `safedep audit event list` shows who changed the policy. See [Explain a decision](/governance/cloud/policy/explain-a-decision).
+
+</Update>
+
 <Update label="2026-10-31" description="October 16 to 31, 2026" tags={["Open Source", "SafeDep Cloud", "PMG", "vet", "Endpoint Hub", "Threat Intel", "Web app"]}>
 
 {/* sources: pmg@v0.33.0 vet@v2.0.0-alpha.20261023182239 control-tower@2e2842d app.safedep.io@684e8bd malysis@656baf5 */}

@@ -20,7 +20,7 @@ Two product lines. Every entry lists Open Source first, because it is the core.
 | Open Source | PMG | `safedep/pmg` | A stable GitHub release (not `-edge`) is published |
 | Open Source | vet v2 | `safedep/vet`, branch `v2` | A `v2.0.0-alpha.*` (later beta or stable) release is published. v1 is out of scope |
 | Open Source | Gryph | `safedep/gryph` | A GitHub release is published |
-| SafeDep Cloud | Endpoint Hub, Threat Intel, Web app | `safedep/control-tower`, `safedep/app.safedep.io`, `safedep/malysis` | The pull request is merged into `main` |
+| SafeDep Cloud | Cloud Policy, Endpoint Hub, Threat Intel, Web app | `safedep/control-tower`, `safedep/app.safedep.io`, `safedep/malysis` | The pull request is merged into `main` |
 | SafeDep Cloud | SafeDep CLI | `safedep/cli` | A GitHub release is published |
 
 Rules for the scope:
@@ -105,11 +105,13 @@ never change it after you publish it. A period with no user-facing change gets n
 ```
 
 - **Tags:** `Open Source` and `SafeDep Cloud` for each product line in the entry, then one tag for
-  each section: `PMG`, `vet`, `Gryph`, `Endpoint Hub`, `Threat Intel`, `Web app`, `SafeDep CLI`.
+  each section: `PMG`, `vet`, `Gryph`, `Cloud Policy`, `Endpoint Hub`, `Threat Intel`, `Web app`,
+  `SafeDep CLI`.
   Use no other tags.
 - **Sources comment:** the last tag or commit that the entry covers in each repository. The next
   run starts after it.
-- **Section order:** PMG, vet v2, Gryph, then Endpoint Hub, Threat Intel, Web app, SafeDep CLI.
+- **Section order:** PMG, vet v2, Gryph, then Cloud Policy, Endpoint Hub, Threat Intel, Web app,
+  SafeDep CLI.
   Leave out a section with no change.
 - **Section heading of a tool:** the tool and each release in the period. Each version links to
   its GitHub release, as `### PMG [v0.30.0](…), [v0.31.0](…)`. The link lets the entry leave out
