@@ -27,7 +27,7 @@ The proxy records every destination that a job reaches. At the end of the job, t
 <Steps>
   <Step title="Run the job with the action">
     ```yaml
-    - uses: safedep/pmg@v0.35.0
+    - uses: safedep/pmg@v2
       with:
         enforce: true
 
@@ -43,7 +43,7 @@ The proxy records every destination that a job reaches. At the end of the job, t
     Save the proposal as `.pmg/network.yml`, commit it, and set `network-profile` on the action:
 
     ```yaml
-    - uses: safedep/pmg@v0.35.0
+    - uses: safedep/pmg@v2
       with:
         enforce: true
         network-profile: .pmg/network.yml
@@ -80,7 +80,7 @@ network:
 Set `network-mode: enforce`:
 
 ```yaml
-- uses: safedep/pmg@v0.35.0
+- uses: safedep/pmg@v2
   with:
     enforce: true
     network-profile: .pmg/network.yml
