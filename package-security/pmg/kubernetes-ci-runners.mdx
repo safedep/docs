@@ -38,7 +38,7 @@ Do the setup on one pilot pool first. Move the other pools when the pilot pool w
         # Your own additions stay here.
 
         # Use a PMG release tag, not latest.
-        COPY --from=ghcr.io/safedep/pmg:v0.36.0 /opt/safedep/pmg /opt/safedep/pmg
+        COPY --from=ghcr.io/safedep/pmg:v0.36.1 /opt/safedep/pmg /opt/safedep/pmg
         ENTRYPOINT ["/opt/safedep/pmg/bin/pmg-entrypoint.sh"]
         CMD ["entrypoint-dind.sh"]
         ```
@@ -50,7 +50,7 @@ Do the setup on one pilot pool first. Move the other pools when the pilot pool w
         # Your own additions stay here.
 
         # Use a PMG release tag, not latest.
-        COPY --from=ghcr.io/safedep/pmg:v0.36.0 /opt/safedep/pmg /opt/safedep/pmg
+        COPY --from=ghcr.io/safedep/pmg:v0.36.1 /opt/safedep/pmg /opt/safedep/pmg
         ENTRYPOINT ["/opt/safedep/pmg/bin/pmg-entrypoint.sh"]
         CMD ["/home/runner/run.sh"]
         ```
@@ -258,6 +258,20 @@ env:
 ```
 
 `KUBE_CLUSTER_NAME` keeps the pools of two clusters apart. For the other identity variables, see [How PMG names the endpoint](/package-security/pmg/kubernetes#how-pmg-names-the-endpoint).
+
+### Turn off the post-quantum key exchange
+
+PMG connects to a registry with TLS. By default, PMG offers a post-quantum key exchange, X25519MLKEM768, in this connection. The first TLS message is then about 1,500 bytes. Some network paths lose packets of that size, and the connection stops. The install then hangs until it times out. For example, `pip install` hangs on `pypi.org`.
+
+If installs from one registry hang in a pool, set `GODEBUG` on the runner container:
+
+```yaml
+env:
+  - name: GODEBUG
+    value: tlsmlkem=0
+```
+
+PMG then uses a classical key exchange, such as X25519. `pmg-entrypoint.sh` passes `GODEBUG` to PMG from PMG `v0.36.1`. The variable also applies to the other Go programs in the job steps.
 
 ## Check the setup (optional)
 
