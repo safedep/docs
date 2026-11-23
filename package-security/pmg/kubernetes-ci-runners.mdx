@@ -38,7 +38,7 @@ Do the setup on one pilot pool first. Move the other pools when the pilot pool w
         # Your own additions stay here.
 
         # Use a PMG release tag, not latest.
-        COPY --from=ghcr.io/safedep/pmg:v0.36.0 /opt/safedep/pmg /opt/safedep/pmg
+        COPY --from=ghcr.io/safedep/pmg:v0.36.1 /opt/safedep/pmg /opt/safedep/pmg
         ENTRYPOINT ["/opt/safedep/pmg/bin/pmg-entrypoint.sh"]
         CMD ["entrypoint-dind.sh"]
         ```
@@ -50,7 +50,7 @@ Do the setup on one pilot pool first. Move the other pools when the pilot pool w
         # Your own additions stay here.
 
         # Use a PMG release tag, not latest.
-        COPY --from=ghcr.io/safedep/pmg:v0.36.0 /opt/safedep/pmg /opt/safedep/pmg
+        COPY --from=ghcr.io/safedep/pmg:v0.36.1 /opt/safedep/pmg /opt/safedep/pmg
         ENTRYPOINT ["/opt/safedep/pmg/bin/pmg-entrypoint.sh"]
         CMD ["/home/runner/run.sh"]
         ```
@@ -261,8 +261,6 @@ env:
 
 ### Turn off the post-quantum key exchange
 
-{/* TODO: before merge, set <pmg-version> to the PMG release with the GODEBUG passthrough, and update the two COPY lines and the requirement line. */}
-
 PMG connects to a registry with TLS. By default, PMG offers a post-quantum key exchange, X25519MLKEM768, in this connection. The first TLS message is then about 1,500 bytes. Some network paths lose packets of that size, and the connection stops. The install then hangs until it times out. For example, `pip install` hangs on `pypi.org`.
 
 If installs from one registry hang in a pool, set `GODEBUG` on the runner container:
@@ -273,7 +271,7 @@ env:
     value: tlsmlkem=0
 ```
 
-PMG then uses a classical key exchange, such as X25519. `pmg-entrypoint.sh` passes `GODEBUG` to PMG from PMG `<pmg-version>`. The variable also applies to the other Go programs in the job steps.
+PMG then uses a classical key exchange, such as X25519. `pmg-entrypoint.sh` passes `GODEBUG` to PMG from PMG `v0.36.1`. The variable also applies to the other Go programs in the job steps.
 
 ## Check the setup (optional)
 
