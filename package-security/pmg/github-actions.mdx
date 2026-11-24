@@ -117,9 +117,9 @@ When you set both inputs, the action uses `api-key`.
 
 ### Apply the cloud policy
 
-The run also applies the [cloud policy](/package-security/pmg/cloud-policy) of your tenant. In server mode, the proxy fetches the policy 15 seconds after it starts. A new runner has no cached policy, so an install in that time runs without it. If the first install must apply the policy, use shim mode with a `pmg cloud sync` step, as below.
+The run also applies the [cloud policy](/package-security/pmg/cloud-policy) of your tenant. The `safedep/pmg` step fetches the policy before it ends, so the first install of the job applies it. The step fails when no cloud policy applies after the fetch. When your SafeDep plan does not include the cloud policy, the step prints a warning and continues.
 
-In shim mode, run `pmg cloud sync` after the `safedep/pmg` step to fetch the cloud policy before the first install. No proxy runs for the whole job, so nothing sends the block events at the end. Add a second sync step at the end of the job:
+In shim mode, no proxy runs for the whole job, so nothing sends the block events at the end. Add a sync step at the end of the job:
 
 ```yaml
 - uses: actions/setup-node@v6
@@ -131,8 +131,6 @@ In shim mode, run `pmg cloud sync` after the `safedep/pmg` step to fetch the clo
     server-mode: false
     api-key: ${{ secrets.SAFEDEP_API_KEY }}
     tenant-id: ${{ secrets.SAFEDEP_TENANT_ID }}
-
-- run: pmg cloud sync # Fetches the cloud policy
 
 - run: npm ci
 
