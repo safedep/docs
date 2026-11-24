@@ -4,31 +4,36 @@ sidebarTitle: "GitHub Actions Without a Key"
 description: "Let PMG and vet in GitHub Actions sync with SafeDep Cloud through GitHub OIDC, with no SafeDep API key in your GitHub secrets."
 ---
 
-PMG and vet in GitHub Actions can call SafeDep Cloud with a short-lived credential instead of an API key. The job trades its GitHub OIDC ID token for the credential, so GitHub stores no SafeDep secret. For how the exchange works and what the credential can do, see [Workload Identity](/concepts/workload-identity).
+PMG and vet in GitHub Actions can call SafeDep Cloud with a short-lived credential instead of an API key. The job exchanges its GitHub OIDC ID token for the credential, so GitHub stores no SafeDep secret. The tools call this OIDC mode. For how the exchange works and what the credential can do, see [Workload Identity](/concepts/workload-identity).
 
 <Note>
-  This guide needs the SafeDep Cloud Team or Enterprise plan and the Owner or Admin role. See [pricing](https://safedep.io/pricing).
+  This guide needs the SafeDep Cloud Team or Enterprise plan. See [pricing](https://safedep.io/pricing).
 </Note>
 
 ## Prerequisites
 
-- The [safedep CLI](/get-started/cli-tools) `{{CLI_VERSION}}` or later, signed in with `safedep auth login`.
-- An organization owner of your GitHub organization, for step 1.
-- The `safedep/pmg` action `{{PMG_VERSION}}` or later, and PMG `{{PMG_VERSION}}` or later in its `version` input. `safedep/pmg@v2` with the default `version: latest` meets this.
-- For vet, the vet v2 GitHub Action.
+- **An owner of your GitHub organization**, for step 1.
+- **A SafeDep Cloud Owner or Admin** of your tenant, for steps 2 and 3.
+- **Your tenant domain**, such as `your-team.your-org.safedep.io`. The `tenant-id` input of the action takes this value. `safedep auth status` shows it in the tenant field. The **Tenant ID** button on the [API keys settings page](https://app.safedep.io/settings/api-keys) also shows it.
+- **The [safedep CLI](/get-started/cli-tools)** `{{CLI_VERSION}}` or later, signed in with `safedep auth login`.
+- **For PMG:** the `safedep/pmg` action `{{PMG_VERSION}}` or later, which installs PMG `{{PMG_VERSION}}` or later. `safedep/pmg@v2` with the default `version: latest` meets this.
+- **For vet:** the vet v2 GitHub Action. `safedep/vet-action@v1` has no OIDC mode and needs an API key.
 
 ## Set up the tenant
 
 <Steps>
-  <Step title="Link the SafeDep GitHub App as an organization owner">
-    An organization owner installs the [SafeDep GitHub App](/governance/integrations/github) and links the installation to your tenant. SafeDep Cloud asks which tenant to link it to. SafeDep Cloud checks with GitHub that the person is an owner of the organization. For a personal account, the account itself links the installation.
+  <Step title="Link the SafeDep GitHub App">
+    An owner of the GitHub organization installs the [SafeDep GitHub App](/governance/integrations/github), and links the installation to your tenant when SafeDep Cloud asks.
 
-    The link of a user who is not an owner still runs the pull request scans and the project sync, but it gives no workload identity.
+    If the app is already installed:
 
-    If the app is already installed, the installation must have the permission **Members: read**. An organization owner accepts the new permission of the SafeDep GitHub App in the organization settings on GitHub. Then an organization owner links the installation to the tenant again, as at install time.
+    1. An owner of the GitHub organization accepts the new permission **Members: read** of the SafeDep GitHub App in the organization settings on GitHub.
+    2. An owner of the GitHub organization links the installation to your tenant again, as at install time.
+
+    SafeDep Cloud checks with GitHub that the person is an owner of the organization. A link by a user who is not an owner still runs the pull request scans and the project sync. It creates no provider, so jobs get no credential. For a personal account, the account itself links the installation.
   </Step>
   <Step title="Check the provider">
-    The link of an owner creates a workload identity provider for the GitHub account:
+    A provider is the record in your tenant that accepts the GitHub OIDC tokens of one GitHub account. The link of an owner creates it. List the providers:
 
     ```bash
     safedep workload provider list
@@ -41,26 +46,28 @@ PMG and vet in GitHub Actions can call SafeDep Cloud with a short-lived credenti
     1 provider
     ```
 
-    `LINK` must be `active`. If the list has no provider for your account, the link is not verified. SafeDep Cloud shows no error in that case. Make sure that the installation has **Members: read**, and that an organization owner links it again. If your organization uses SAML single sign-on, the owner needs an active SSO session on GitHub.
+    `LINK` must be `active`. If your account has no row, see [Troubleshoot](#troubleshoot).
   </Step>
   <Step title="Create the org-wide rule">
-    Create one rule for every repository of the GitHub account. Replace `acme` with the account in the `PROVIDER` column:
+    Replace `acme` with the account in the `PROVIDER` column:
 
     ```bash
     safedep workload rule create org --provider github-actions:acme --grant tool
     ```
 
-    The command warns that the rule covers every repository of the account, also the repositories that the installation does not select. `--provider` is required. The CLI never picks a provider for you.
+    `--grant tool` lets a job make only the calls that PMG and vet use. For the list, see [What the credential can do](/concepts/workload-identity#what-the-credential-can-do).
 
-    The rule covers only the default events: `push`, `pull_request`, `merge_group`, `schedule`, `workflow_dispatch` and `release`. The first tool session of a repository with no project creates its project, if the installation selects the repository.
+    <Warning>
+      A rule with no `--repository` covers every repository of the GitHub account. This includes the repositories that the app installation does not select. The command prints the same warning.
+    </Warning>
+
+    The rule covers only the [default events](#events-that-a-rule-covers). When a repository has no project, its first run that publishes scan results creates the project. This works only when the app installation selects the repository.
   </Step>
 </Steps>
 
-To limit the rule to some repositories, refs or events, see [Narrow the rule](#narrow-the-rule).
-
 ## Change the workflow
 
-Give the job `id-token: write`, set `tenant-id`, and remove `api-key`. Store the tenant domain as a GitHub Actions variable, because it is not a secret. This example uses a variable named `SAFEDEP_CLOUD_TENANT_DOMAIN`.
+Give the job `id-token: write`, set `tenant-id`, and remove `api-key`. Store the tenant domain as a GitHub Actions variable, because it is not a secret. These examples use a variable with the name `SAFEDEP_CLOUD_TENANT_DOMAIN`.
 
 <Tabs>
   <Tab title="PMG">
@@ -81,7 +88,7 @@ Give the job `id-token: write`, set `tenant-id`, and remove `api-key`. Store the
           - run: npm ci
     ```
 
-    The action exchanges the ID token before it starts the proxy. The post step stops the proxy and revokes the credential, also when the job fails or is cancelled. In OIDC mode the action ignores the `endpoint-id` input and prints a warning. For each case that changes the result of the step, see [Use GitHub OIDC instead of an API key](https://github.com/safedep/pmg/blob/main/docs/github-action.md#use-github-oidc-instead-of-an-api-key) in the PMG action documentation.
+    The action gets the credential before it starts the proxy. Its post step revokes the credential. See [What happens at the end of the job](/package-security/pmg/github-actions#what-happens-at-the-end-of-the-job). In OIDC mode, the action ignores the `endpoint-id` input and prints a warning. For the result of each failure case, see [Use GitHub OIDC instead of an API key](https://github.com/safedep/pmg/blob/main/docs/github-action.md#use-github-oidc-instead-of-an-api-key) in the PMG action documentation.
   </Tab>
   <Tab title="vet v2">
     ```yaml
@@ -89,30 +96,70 @@ Give the job `id-token: write`, set `tenant-id`, and remove `api-key`. Store the
       contents: read
       pull-requests: write
       id-token: write
-    steps:
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
-        with:
-          persist-credentials: false
-      - uses: safedep/vet@<commit SHA> # <release tag>
-        with:
-          tenant-id: ${{ vars.SAFEDEP_CLOUD_TENANT_DOMAIN }}
+
+    jobs:
+      vet:
+        runs-on: ubuntu-latest
+        steps:
+          - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+            with:
+              persist-credentials: false
+          - uses: safedep/vet@<commit SHA> # <release tag>
+            with:
+              tenant-id: ${{ vars.SAFEDEP_CLOUD_TENANT_DOMAIN }}
     ```
 
-    vet exchanges the ID token and revokes the credential when the scan ends. When SafeDep Cloud refuses the exchange, the scan continues with no SafeDep Cloud data, and the `workload_exchange_failed` diagnostic gives the reason. See [SafeDep Cloud](https://github.com/safedep/vet/blob/v2/docs/github-action.md#safedep-cloud) in the vet v2 action documentation. `safedep/vet-action@v1` has no OIDC mode and needs an API key.
+    Replace `<commit SHA>` with the commit of a v2 release tag from the [vet releases](https://github.com/safedep/vet/releases) page. vet gets the credential and revokes it when the scan ends. See [SafeDep Cloud](https://github.com/safedep/vet/blob/v2/docs/github-action.md#safedep-cloud) in the vet v2 action documentation.
   </Tab>
 </Tabs>
 
-GitHub gives no ID token to a `pull_request` run from a fork of a public repository. PMG and vet then warn and run without SafeDep Cloud.
+## Check the credential
 
-Check that the job got a credential:
+1. Run the workflow.
+2. List the exchanges of the last day:
 
-```bash
-safedep workload exchange list --since 1d
-```
+   ```bash
+   safedep workload exchange list --since 1d
+   ```
+
+Each tool that got a credential shows one row with the outcome `issued`. After the job ends, the `DETAIL` column of a revoked credential says `revoked`.
+
+If the list is empty, no exchange reached your provider. Read the log of the PMG or vet step, and see [Troubleshoot](#troubleshoot).
+
+## Move from an API key
+
+While the job sets `api-key`, the PMG action and the vet action use the API key. So you can move one workflow at a time.
+
+<Warning>
+  In OIDC mode, the endpoint of a job is `gh:<owner>/<repo>`. The PMG action uses the same default with an API key, so that endpoint and its history stay the same. A job that used another endpoint ID reports under a new endpoint. This applies to a job with an `endpoint-id` input, and to a job on an older action that used `gha/<owner>/<repo>`. The history stays on the old endpoint. Labels on the old endpoint do not move.
+</Warning>
+
+<Steps>
+  <Step title="Add the permission">
+    Add `id-token: write` to the permissions of the job.
+  </Step>
+  <Step title="Remove the API key input">
+    Remove the `api-key` input. Keep `tenant-id`.
+  </Step>
+  <Step title="Run the workflow">
+    Run the workflow, and [check the credential](#check-the-credential).
+  </Step>
+  <Step title="Change the other workflows">
+    Do steps 1 to 3 for each other workflow that uses the API key.
+  </Step>
+  <Step title="Delete the secret">
+    When no workflow uses the API key, delete its secret from GitHub.
+  </Step>
+  <Step title="Delete the API key">
+    Delete the API key on the [API keys settings page](https://app.safedep.io/settings/api-keys).
+  </Step>
+</Steps>
 
 ## Narrow the rule
 
-A job gets a credential when any rule matches it. A narrower rule does not limit the org-wide rule. To give credentials to some repositories only, delete the org-wide rule and create rules that name the repositories:
+For each flag, see the [`safedep workload` command reference](https://github.com/safedep/cli/tree/main/docs/cmd).
+
+A job gets a credential when any rule matches it. A narrower rule does not limit the org-wide rule. To give credentials to some repositories only, delete the org-wide rule. Then create rules that name the repositories:
 
 ```bash
 safedep workload rule delete org
@@ -120,73 +167,50 @@ safedep workload rule create web-release --provider github-actions:acme --grant 
   --repository acme/web --ref 'refs/heads/release/*'
 ```
 
-When more than one rule matches a job, the rule with the most conditions applies, for example its `--max-lifetime`.
-
-- `--repository` names a repository of the account. The server stores its numeric id, so a rename does not change the rule. Repeat the flag for more repositories.
+- `--repository` names a repository of the account. The server stores its numeric ID, so a rename does not change the rule. Repeat the flag for more repositories.
 - `--ref` takes a full ref, such as `refs/heads/main`, or a prefix that ends with `/*`, such as `refs/heads/release/*`.
-- `--event` lists the events that the rule covers. A rule with `--event` covers only the events that it lists.
-- `--max-lifetime` sets the longest life of a credential, from `1m` to `6h`. The default is `6h`. PMG cannot refresh a credential, so give PMG jobs a life longer than the job.
-- `--project-binding manual` makes a repository with no project fail its tool session until a member adds the repository as a project. The default is `auto` for a rule with no repository and `manual` for a rule with repositories.
+- `--event` lists the events that the rule covers. See [Events that a rule covers](#events-that-a-rule-covers).
+- `--max-lifetime` sets the longest life of a credential, from `1m` to `6h`. The default is `6h`. PMG cannot refresh its credential, so give a PMG job a maximum life that is longer than the job.
+- `--project-binding manual` stops a run from creating a project for a repository. A member adds the repository as a project first. The default is `auto` for a rule with no `--repository`, and `manual` for a rule with `--repository`.
 
-The `safedep` CLI sets conditions on the repository, the ref and the event. It has no flag for the `environment`, `workflow_ref`, `job_workflow_ref` or `runner_environment` claims, so a rule from the CLI covers jobs on self-hosted runners too.
+Each of `--repository`, `--ref` and `--event` adds one condition to the rule. When more than one rule matches a job, SafeDep Cloud uses the rule with the most conditions. Its `--max-lifetime` and `--project-binding` apply. When two such rules have the same number of conditions, the older rule applies.
 
-### Allow an event outside the defaults
+The CLI has no condition on the runner. For self-hosted runners, see [Self-hosted runners](/concepts/workload-identity#self-hosted-runners).
 
-A workflow on `pull_request_target`, `workflow_run` or `issue_comment` runs with the claims of the base branch, and an outsider can start it. The org-wide rule refuses these events. To allow one, create a rule that lists it, and limit the rule to the repositories that need it:
+### Events that a rule covers
+
+A rule with no `--event` covers only these default events: `push`, `pull_request`, `merge_group`, `schedule`, `workflow_dispatch` and `release`.
+
+An outsider can start most other events, so a rule must list them. For the reason, see [Which events a rule covers](/concepts/workload-identity#which-events-a-rule-covers). To allow an event such as `pull_request_target`, create a rule that lists it, and name the repositories that need it:
 
 ```bash
 safedep workload rule create web-prt --provider github-actions:acme --grant tool \
   --repository acme/web --event pull_request_target
 ```
 
-A run of such an event can fetch the policy, check in and sync events. It creates no tool session, so vet results of the run do not go to a project.
-
-For the full flags of each command, see the [`safedep workload` command reference](https://github.com/safedep/cli/tree/main/docs/cmd).
-
-## Move from an API key
-
-Both inputs work at the same time, and `api-key` takes precedence when you set it. Move one workflow at a time:
-
-<Steps>
-  <Step title="Prepare the tenant">
-    Do the steps in [Set up the tenant](#set-up-the-tenant).
-  </Step>
-  <Step title="Change one workflow">
-    Add `id-token: write`, keep `tenant-id`, and remove the `api-key` line. Run the workflow.
-  </Step>
-  <Step title="Check the exchanges">
-    Run `safedep workload exchange list`. Each run of the workflow shows one exchange with the outcome `issued`. Change the other workflows the same way.
-  </Step>
-  <Step title="Remove the API key">
-    When no workflow uses the key, delete the secret from GitHub. Then delete the API key on the [API keys settings page](https://app.safedep.io/settings/api-keys).
-  </Step>
-</Steps>
-
-In OIDC mode, the endpoint of a job is `gh:<owner>/<repo>`. The PMG action uses the same default with an API key, so the endpoint and its history stay the same. A job that used another endpoint ID reports under a new endpoint. This applies to a job with an `endpoint-id` input, or a job on an older action that used `gha/<owner>/<repo>`. Its history stays on the old endpoint, and labels on the old endpoint do not move.
+A rule with `--event` covers only the events that it lists. A run of an event outside the defaults can fetch the policy, check in and send events. It publishes no scan results to a project.
 
 ## Troubleshoot
 
-The PMG action writes the refusal reason to the job summary and runs PMG with its local config. vet writes it in the `workload_exchange_failed` diagnostic. To see the denied exchanges of the tenant:
+When SafeDep Cloud refuses the exchange, the job continues. PMG runs with its local config and writes the reason to the job summary. vet scans with no SafeDep Cloud data and writes the reason in the `workload_exchange_failed` diagnostic. To see the refused exchanges of your tenant, run `safedep workload exchange list --denied --since 1d`.
 
-```bash
-safedep workload exchange list --denied --since 1d
-```
+The rows are in the order that a PMG job meets them. The last row is for the admin who creates rules.
 
-| Message | Fix |
-|---|---|
-| `no workload trust rule gives TOOL to acme/web on refs/heads/feature-x` | No rule matches the repository and the ref. Create a rule, or remove a condition. |
-| `... for the event issues` at the end of the reason | The event is not a default event. See [Allow an event outside the defaults](#allow-an-event-outside-the-defaults). |
-| `no workload identity provider of the tenant trusts the owner of the token` | The tenant has no provider with an active link for the GitHub account of the repository, or the tenant domain is wrong. See [Set up the tenant](#set-up-the-tenant). This denial does not show in `safedep workload exchange list`. |
-| `the plan of the tenant does not include workload identity` | The tenant needs the Team or Enterprise plan. |
-| The step fails and names `permissions: id-token: write` | Add `id-token: write` to the permissions of the job. |
-| `OIDC mode needs a PMG release with "pmg cloud workload exchange"` | Set the `version` input of the PMG action to `{{PMG_VERSION}}` or later, or remove it. |
-| `the endpoint gh:acme/web belongs to another repository that once had this name` | A new repository took the name of a deleted or renamed one. An admin deletes the old endpoint, or the job uses an API key with its own endpoint ID. |
-
-After you uninstall and install the SafeDep GitHub App again, the new link gets a new provider. The rules of the old provider do not apply to it. Create the rules again. While the old provider shows as `unlinked`, `--provider github-actions:acme` names two providers, so pass the provider ID from `safedep workload provider list`. The projects of your repositories stay linked to the new installation.
+| Message | Cause | Fix |
+|---|---|---|
+| PMG: `This pull_request run comes from a fork, and GitHub gives it no ID token`. vet: `GitHub gives no ID token to a pull request from a fork` | GitHub gives no ID token to a pull request from a fork. The tool runs without SafeDep Cloud. | No fix. See [Fork pull requests](/concepts/workload-identity#fork-pull-requests). |
+| `OIDC mode needs a PMG release with "pmg cloud workload exchange"` | The `version` input names an older PMG release. | Set `version` to `{{PMG_VERSION}}` or later, or remove it. |
+| PMG: `PMG cannot get a SafeDep Cloud credential, because the job has no ID token`. vet: `The tenant-id input with no api-key input needs an ID token of GitHub` | The job has no `id-token: write`. The step fails. | Add `id-token: write` to the permissions of the job. |
+| `no workload identity provider of the tenant trusts the owner of the token` | The tenant has no provider with an active link for the GitHub account, or `tenant-id` is wrong. SafeDep Cloud records no exchange, so `exchange list` shows nothing. | Check `tenant-id`. Then do [Set up the tenant](#set-up-the-tenant) again: the installation needs **Members: read**, and an owner of the GitHub organization must link it. If the organization uses SAML single sign-on, the owner needs an active SSO session on GitHub. |
+| `the plan of the tenant does not include workload identity` | The tenant is not on the Team or Enterprise plan. | Change the plan. See [pricing](https://safedep.io/pricing). |
+| `no workload trust rule gives TOOL to acme/web on refs/heads/feature-x` | No rule matches the repository and the ref. | Create a rule, or remove a condition. |
+| `no workload trust rule gives TOOL to acme/web on refs/heads/main for the event issues` | The event is not a default event. | See [Events that a rule covers](#events-that-a-rule-covers). |
+| `the endpoint gh:acme/web belongs to another repository that once had this name` | A new repository took the name of a deleted or renamed repository. | An admin deletes the old endpoint, or the job uses an API key with its own endpoint ID. |
+| `--provider github-actions:acme names more than one provider` | You uninstalled and installed the SafeDep GitHub App again. The new link has a new provider, and the rules of the old provider do not apply to it. | Run `safedep workload provider list`. Create the rules again with the ID of the provider whose `LINK` is `active`. |
 
 <CardGroup cols={2}>
   <Card title="Workload Identity" icon="id-badge" href="/concepts/workload-identity">
-    See how the exchange works and its security model.
+    See how the exchange works and what a compromised step can do.
   </Card>
   <Card title="PMG in GitHub Actions" icon="github" href="/package-security/pmg/github-actions">
     Block malicious packages in GitHub Actions.
