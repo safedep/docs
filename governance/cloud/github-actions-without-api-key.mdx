@@ -192,7 +192,7 @@ A rule with `--event` covers only the events that it lists. A run of an event ou
 
 ## Troubleshoot
 
-When SafeDep Cloud refuses the exchange, the job continues. PMG runs with its local config and writes the reason to the job summary. vet scans with no SafeDep Cloud data and writes the reason in the `workload_exchange_failed` diagnostic. To see the refused exchanges of your tenant, run `safedep workload exchange list --denied --since 1d`.
+When SafeDep Cloud refuses the exchange, the PMG step fails. The error and the job summary name the tenant and the reason that SafeDep Cloud gives. vet scans with no SafeDep Cloud data and writes the reason in the `workload_exchange_failed` diagnostic. To see the refused exchanges of your tenant, run `safedep workload exchange list --denied --since 1d`.
 
 The rows are in the order that a PMG job meets them. The last row is for the admin who creates rules.
 
