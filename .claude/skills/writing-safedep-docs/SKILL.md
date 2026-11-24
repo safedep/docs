@@ -25,7 +25,7 @@ You may not work around these without updating `docs-ia.md` first.
 | R1 | One primary entry point | A landing page that just lists tools instead of explaining SafeDep |
 | R2 | Capability ladder, not persona gate | Splitting nav by "individual / team / org" or "free / paid" |
 | R3 | Organize by solution, not by tool | A new tab named after a product (e.g. "vet", "pmg") |
-| R4 | Concepts are first-class, atomic, linkable | Re-defining CEL / Policy / SBOM inside a guide. The concepts: malicious package, vulnerability, policy, policy resolution, labels, package rules, policy revisions, CEL, SBOM, tenant, endpoint |
+| R4 | Concepts are first-class, atomic, linkable | Re-defining CEL / Policy / SBOM inside a guide. The concepts: malicious package, vulnerability, policy, policy resolution, labels, package rules, policy revisions, CEL, SBOM, tenant, endpoint, workload identity |
 | R5 | Progressive disclosure | Splitting a tab because it has many pages (groups handle that) |
 | R6 | docs.safedep.io is the guide layer | Adding exhaustive CLI flag tables here (those live in product repos) |
 | R7 | AI-agent consumability is first-class | Mixing two concepts on one page; unstable URLs |

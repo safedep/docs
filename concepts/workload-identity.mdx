@@ -1,0 +1,67 @@
+---
+title: Workload Identity
+description: "A workload identity lets a GitHub Actions job get a short-lived SafeDep Cloud credential from its GitHub OIDC token, with no API key in the CI secrets."
+---
+
+A workload identity is the identity of a CI job that SafeDep Cloud verifies from a token that the CI platform signs. In GitHub Actions, the token is the OIDC ID token that GitHub gives a job with `permissions: id-token: write`. The job is not a user. It has no role in your tenant and no API key.
+
+The job trades the token for a **workload credential**: a short-lived credential for one tenant. PMG and vet then call SafeDep Cloud with that credential, and GitHub stores no SafeDep secret. A leaked repository secret can no longer give long access to your tenant.
+
+To set it up, see [Connect GitHub Actions Without an API Key](/governance/cloud/github-actions-without-api-key).
+
+## How a job gets a credential
+
+Four records decide whether a job gets a credential:
+
+1. **Verified GitHub App link.** An organization owner links the [SafeDep GitHub App](/governance/integrations/github) installation to the tenant. SafeDep Cloud checks with GitHub that the person is an owner of the account, so a user who can only read one repository cannot tie your organization to a tenant. For a personal account, the account itself links the installation.
+2. **Workload identity provider.** A verified link creates one provider for its GitHub account, such as `github-actions:acme`. The provider trusts the GitHub Actions tokens of that account only. It matches the immutable account id, never the account name.
+3. **Workload trust rule.** A tenant Admin creates a rule that gives a credential grant to the jobs of the provider whose claims meet every condition of the rule. SafeDep Cloud never creates a rule by itself.
+4. **Workload exchange.** At the start of the job, the tool sends the token and your tenant domain to SafeDep Cloud. SafeDep Cloud checks the signature, the audience and the expiry of the token, and accepts each token one time only. Then it finds the provider and the rule, and returns the credential. When SafeDep Cloud finds the provider, it records the exchange, issued or denied, for 30 days.
+
+## What the credential can do
+
+- **One grant.** The credential carries the grant `TOOL`. It lets the job fetch the [cloud policy](/concepts/policy), check in, sync events, query malware analysis, read package insights and publish tool results. It cannot call admin calls, such as a policy change or an API key create.
+- **A short life.** The credential lives at most 6 hours. A rule can set a shorter maximum. The PMG action and vet revoke the credential when they finish.
+- **Identity from the token.** SafeDep Cloud takes the tenant, the project, the [endpoint](/concepts/endpoint) and the CI context from the verified claims, not from the tool. A job writes only into the project of its own repository. The endpoint of a job is `gh:<owner>/<repo>`, and the tool cannot rename it.
+- **Revocation.** When an Admin deletes the rule, or the GitHub App is unlinked or suspended, each credential that depends on it stops working within 30 seconds.
+
+## Which events a rule covers
+
+A rule with no event condition covers only the default events: `push`, `pull_request`, `merge_group`, `schedule`, `workflow_dispatch` and `release`. In each of these events, code that a writer of the repository chose runs.
+
+Every other event matches only a rule that lists it. This includes `pull_request_target`, `workflow_run`, `issue_comment` and `issues`. An outsider can start most of these events, for example with a comment or a pull request from a fork. The run then has the claims of the base branch. Without this check, code that an outsider starts would get a credential of your tenant.
+
+Only a run of a default event creates a tool session, which records a scan in a project. A run of another event can still fetch the policy, check in and sync events.
+
+## Security considerations
+
+**Any step of the job can get a token.** GitHub gives `id-token: write` to the whole job, not to one step. Each step of the job can ask GitHub for an ID token for any audience. SafeDep Cloud accepts only its own audience, `sts.safedep.io`, and a step that exchanges such a token gets the same `TOOL` grant as the tool. With an API key, the same step can read the key from `$GITHUB_ENV`. The key has the role of the user who created it and lives up to 365 days.
+
+The token also works for other audiences. If a cloud account trusts GitHub OIDC tokens, for example an AWS IAM role, a step of the job can ask for a token for that cloud. Pin the trust policy of such a role to the `job_workflow_ref` or `environment` claim, so that only the workflow or the environment that needs the role can assume it.
+
+**Fork pull requests.** GitHub gives no ID token to a `pull_request` run from a fork of a public repository. The tool then runs without SafeDep Cloud. For a private repository, the GitHub settings for workflows from fork pull requests decide, such as **Send write tokens to workflows from pull requests**.
+
+**Self-hosted runners.** A rule matches jobs on self-hosted runners and on GitHub-hosted runners. The `runner_environment` claim of the token says which kind of runner the job uses. The `safedep workload rule create` command has no condition on this claim, so a rule that you create with the CLI covers both kinds.
+
+**When to keep an API key.** An API key stays supported. Keep it for these cases:
+
+- A job that must not hold `id-token: write`.
+- A long-lived PMG proxy that many jobs share on a self-hosted runner. No single job identity fits such a proxy.
+- A team that needs its own endpoint names, its own project versions, or more than one endpoint for each repository.
+
+## Related
+
+<CardGroup cols={2}>
+  <Card title="Connect GitHub Actions Without an API Key" icon="github" href="/governance/cloud/github-actions-without-api-key">
+    Link the GitHub App, create a rule and change the workflow.
+  </Card>
+  <Card title="Authentication" icon="key" href="/governance/cloud/authentication">
+    See the other ways that tools sign in to SafeDep Cloud.
+  </Card>
+  <Card title="Tenant" icon="building" href="/concepts/tenant">
+    See the boundary that a workload credential belongs to.
+  </Card>
+  <Card title="Endpoint" icon="server" href="/concepts/endpoint">
+    See how a CI job appears in Endpoint Hub.
+  </Card>
+</CardGroup>

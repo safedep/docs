@@ -13,14 +13,14 @@ PMG in CI blocks a malicious package and fails the job. One failed job shows one
 ## Prerequisites
 
 - PMG runs in your pipelines and syncs to your tenant:
-  - In GitHub Actions, set the `api-key` and `tenant-id` inputs of the PMG action. See [Connect to SafeDep Cloud](/package-security/pmg/github-actions#connect-to-safedep-cloud).
+  - In GitHub Actions, set the `tenant-id` input of the PMG action, with `api-key` or with no API key. See [Connect to SafeDep Cloud](/package-security/pmg/github-actions#connect-to-safedep-cloud).
   - In other CI systems, run `pmg cloud sync` at the end of the job. See [Package Guard](/governance/cloud/endpoint-hub/package-guard#manual-sync). To find these jobs later, set `PMG_CLOUD_ENDPOINT_ID` as shown in [Other CI systems](#other-ci-systems).
 
 ## Review one pipeline
 
 <Steps>
   <Step title="Open the endpoint list">
-    Sign in to [app.safedep.io](https://app.safedep.io) and select **Endpoints**. In GitHub Actions, each repository is one endpoint by default. Set the `endpoint-id` input of the PMG action to change it.
+    Sign in to [app.safedep.io](https://app.safedep.io) and select **Endpoints**. In GitHub Actions, each repository is one endpoint by default. With an API key, set the `endpoint-id` input of the PMG action to change it. With no API key, SafeDep Cloud names the endpoint `gh:<owner>/<repo>`.
   </Step>
   <Step title="Open the endpoint">
     Select the endpoint, then select **Package Events**. Each session shows the install command and its outcome, such as **Blocked** or **Success**. Each package row shows its action, such as **Blocked** or **Cooldown**.

@@ -47,6 +47,7 @@
               "concepts/sbom",
               "concepts/tenant",
               "concepts/endpoint",
+              "concepts/workload-identity",
               "concepts/policy",
               "concepts/cel",
               {
@@ -186,6 +187,7 @@
                 "pages": [
                   "governance/cloud/quickstart",
                   "governance/cloud/authentication",
+                  "governance/cloud/github-actions-without-api-key",
                   "governance/cloud/sync",
                   "governance/cloud/faq"
                 ]

@@ -67,6 +67,10 @@ Store both as CI secrets. Across SafeDep docs, the secret names are `SAFEDEP_CLO
 
 For working pipeline configurations (GitHub Actions, GitLab, Jenkins, Azure DevOps), see [Cloud Sync](/governance/cloud/sync#sync-from-github-actions).
 
+### GitHub Actions with no API key
+
+In GitHub Actions, the PMG action and the vet v2 action need no API key. Set the tenant domain only, and give the job `permissions: id-token: write`. The tool exchanges the GitHub OIDC ID token of the job for a short-lived credential. See [Connect GitHub Actions Without an API Key](/governance/cloud/github-actions-without-api-key) and [Workload Identity](/concepts/workload-identity).
+
 ## Troubleshooting
 
 For the fix of each error, such as `No user: record not found` or `failed to resolve tenant`, see [Cloud Troubleshooting](/governance/cloud/faq#authentication-errors).
