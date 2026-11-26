@@ -38,7 +38,7 @@ Do the setup on one pilot pool first. Move the other pools when the pilot pool w
         # Your own additions stay here.
 
         # Use a PMG release tag, not latest.
-        COPY --from=ghcr.io/safedep/pmg:v0.36.1 /opt/safedep/pmg /opt/safedep/pmg
+        COPY --from=ghcr.io/safedep/pmg:v0.37.0 /opt/safedep/pmg /opt/safedep/pmg
         ENTRYPOINT ["/opt/safedep/pmg/bin/pmg-entrypoint.sh"]
         CMD ["entrypoint-dind.sh"]
         ```
@@ -50,7 +50,7 @@ Do the setup on one pilot pool first. Move the other pools when the pilot pool w
         # Your own additions stay here.
 
         # Use a PMG release tag, not latest.
-        COPY --from=ghcr.io/safedep/pmg:v0.36.1 /opt/safedep/pmg /opt/safedep/pmg
+        COPY --from=ghcr.io/safedep/pmg:v0.37.0 /opt/safedep/pmg /opt/safedep/pmg
         ENTRYPOINT ["/opt/safedep/pmg/bin/pmg-entrypoint.sh"]
         CMD ["/home/runner/run.sh"]
         ```
@@ -261,9 +261,9 @@ env:
 
 ### Turn off the post-quantum key exchange
 
-PMG `<pmg-version>` and later use a classical key exchange. You need this section only for an earlier version.
+PMG `v0.37.0` and later use a classical key exchange. You need this section only for an earlier version.
 
-PMG connects to a registry with TLS. Before `<pmg-version>`, PMG offers a post-quantum key exchange, X25519MLKEM768, in this connection. The first TLS message is then about 1,500 bytes. Some network paths lose packets of that size, and the connection stops. The install then hangs until it times out. For example, `pip install` hangs on `pypi.org`.
+PMG connects to a registry with TLS. Before `v0.37.0`, PMG offers a post-quantum key exchange, X25519MLKEM768, in this connection. The first TLS message is then about 1,500 bytes. Some network paths lose packets of that size, and the connection stops. The install then hangs until it times out. For example, `pip install` hangs on `pypi.org`.
 
 If installs from one registry hang in a pool, set `GODEBUG` on the runner container:
 
@@ -277,7 +277,7 @@ PMG then uses a classical key exchange, such as X25519. `pmg-entrypoint.sh` pass
 
 ## Check the containers that a job starts
 
-By default, PMG does not check `docker build`, `docker run`, job containers, and service containers. From PMG `<pmg-version>`, PMG can check them when dockerd runs in the runner container, as with summerwind ARC. Set this variable on the runner container:
+By default, PMG does not check `docker build`, `docker run`, job containers, and service containers. From PMG `v0.37.0`, PMG can check them when dockerd runs in the runner container, as with summerwind ARC. Set this variable on the runner container:
 
 ```yaml
 env:
