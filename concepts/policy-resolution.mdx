@@ -3,7 +3,7 @@ title: Policy Resolution
 description: "How SafeDep Cloud merges the default policy, the policy base and the policy overrides into the resolved policy of one endpoint or project."
 ---
 
-A tenant has one cloud [policy](/concepts/policy), but its endpoints and projects do not all need the same values. A CI runner can need a longer dependency cooldown than a laptop. A payment service can need a stricter pull request check than an internal tool. Policy resolution is how SafeDep Cloud computes the values for one of them.
+A tenant has one cloud [policy](/concepts/policy), but its endpoints and projects do not all need the same values. A CI runner can need a longer dependency cooldown than a developer machine. A payment service can need a stricter pull request check than an internal tool. Policy resolution is how SafeDep Cloud computes the values for one of them.
 
 ## Subjects
 
@@ -37,8 +37,8 @@ The policy base sets a cooldown of 48 hours. Two policy overrides change it:
 | Subject | Matches | Cooldown | `scan_gate.fail_on` |
 |---|---|---|---|
 | A Linux CI runner with no `custom/` labels | none | 48h, from the policy base | `high`, from the default policy |
-| A macOS laptop | `macs` | 120h, from `macs` | `high`, from the default policy |
-| A macOS laptop with `custom/criticality=high` | `payments` and `macs` | 168h, from `payments` (higher priority) | `medium`, from `payments` |
+| A macOS developer machine | `macs` | 120h, from `macs` | `high`, from the default policy |
+| A macOS developer machine with `custom/criticality=high` | `payments` and `macs` | 168h, from `payments` (higher priority) | `medium`, from `payments` |
 
 ## The resolved policy
 

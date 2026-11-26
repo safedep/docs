@@ -54,7 +54,7 @@ The sections below use the safedep CLI.
 1. Find the endpoints:
 
    ```bash
-   safedep endpoint list --search laptop
+   safedep endpoint list --search mbp
    ```
 
 2. Set the label. An endpoint is its id, a unique prefix of the id, or a hostname that `safedep endpoint list` showed:
@@ -152,7 +152,7 @@ A selector can name one endpoint by `safedep.io/endpoint-id`. Such a policy over
 overrides:
   - name: debug-arjun
     priority: 900
-    description: No cooldown on one laptop while we debug a build (S-102)
+    description: No cooldown on one developer machine while we debug a build (S-102)
     expires_at: 2026-12-01T00:00:00Z
     selector:
       matchLabels: {safedep.io/endpoint-id: 01KR0EKN6PMW0ZRFRN992H1PKX}
