@@ -19,6 +19,20 @@ Each subject already has some labels:
 
 For any other group, set a `custom/` label. For a policy override that loosens the policy, select on `custom/`, `scm/` or `safedep.io/` labels only. An endpoint sends its own `reported/` labels, so SafeDep Cloud cannot check them.
 
+## Target a group in SafeDep Cloud
+
+1. Open **Endpoints & Projects** and select **Endpoints** or **Projects**.
+2. Select a row, add a `custom/` label in its panel, and select **Save Labels**. To label many rows at once, select their checkboxes and use **Set Label**.
+3. On the **Policy** page, open the **Configuration** tab and select **Add** next to **Policy Overrides**.
+4. Enter the name, the priority and a description.
+5. Under **Selects**, add a condition on the label, such as `custom/criticality` is one of `high`.
+6. Set the values that the policy override changes.
+7. Select **Preview & Publish**. The preview counts the endpoints and projects that the change reaches.
+
+<img src="/images/cloud/policy/configuration-override.png" alt="Configuration tab with the payments policy override: its name, priority, description and the condition custom/criticality is one of high" />
+
+The sections below use the safedep CLI.
+
 ## Label projects
 
 1. Find the projects. A repository is a project:

@@ -12,6 +12,17 @@ The [PMG dependency cooldown](/package-security/pmg/dependency-cooldown) holds b
 
 The setting is `package_admission.cooldown.min_age`. PMG applies it. The pull request check does not apply a cooldown yet.
 
+## Set the cooldown in SafeDep Cloud
+
+1. On the **Policy** page, open the **Configuration** tab.
+2. Select **Policy Base** for the whole tenant, or select a policy override for its group.
+3. Set **Dependency cooldown** in days. **Off** turns the cooldown off.
+4. Select **Preview & Publish**, read the preview, and publish the change.
+
+<img src="/images/cloud/policy/configuration.png" alt="Configuration tab of the Policy page with the policy base open and the dependency cooldown set to 7 days" />
+
+The sections below use the safedep CLI.
+
 ## Set the cooldown for the tenant
 
 1. Open the policy settings document:

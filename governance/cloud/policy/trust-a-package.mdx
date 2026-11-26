@@ -10,6 +10,19 @@ Use a trust entry when your team reviewed a package and decided that a verdict i
   This guide needs the SafeDep Cloud Team or Enterprise plan and the Owner or Admin role. See [pricing](https://safedep.io/pricing).
 </Note>
 
+## Trust a package in SafeDep Cloud
+
+1. On the **Policy** page, open the **Package Rules** tab and select **Trust a Package**.
+2. Select the ecosystem and enter the package name, or paste a PURL. A trust entry selects one package, not a prefix.
+3. Select the versions.
+4. Under **Checks to waive**, select the narrowest scope. See [Choose the scope](#choose-the-scope).
+5. Enter the reason and select the expiry. A trust entry lasts at most 90 days.
+6. Confirm that you reviewed the package, then select **Trust & Publish**.
+
+<img src="/images/cloud/policy/trust-dialog.png" width="500" alt="Trust a Package dialog in SafeDep Cloud with the checks to waive: unverified malware, dependency cooldown, all vulnerabilities, specific vulnerabilities and license findings" />
+
+The sections below use the safedep CLI.
+
 ## Create the trust entry
 
 ```bash
