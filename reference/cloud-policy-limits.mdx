@@ -65,7 +65,7 @@ A holder of the key can also report an applied policy revision for any endpoint.
 
 These gaps are accepted in this release:
 
-- PMG keeps its policy cache in the folder of the user. A user can change the cache on a laptop. The same user can also remove PMG.
+- PMG keeps its policy cache in the folder of the user. A user can change the cache on a developer machine. The same user can also remove PMG.
 - IT can keep a value from the cloud policy only with the PMG `global_lockdown` setting, which keeps every key that the managed config file sets. IT cannot lock one field of the policy alone.
 - No endpoint label is an access boundary. An endpoint can claim the identity of another endpoint and get the policy overrides of that endpoint.
 - PMG fetches the policy in the background after a command, at most once every 5 minutes. The first install after a new block can use the previous policy.
