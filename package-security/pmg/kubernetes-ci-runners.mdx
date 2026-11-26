@@ -20,7 +20,7 @@ At the end of this guide, PMG runs in each runner Pod of your pool. It checks ea
   PMG blocks malicious packages without SafeDep Cloud. The cloud policy and the event sync to SafeDep Cloud need the Team or Enterprise plan. See [pricing](https://safedep.io/pricing).
 </Note>
 
-By default, PMG does not check the containers that a job starts, such as `docker build`, `docker run`, job containers, and service containers. When dockerd runs in the runner container, you can turn on this check. See [Check the containers that a job starts](#check-the-containers-that-a-job-starts). For all the limits, see [Limits](/package-security/pmg/kubernetes-ci-runners-how-it-works#limits).
+PMG also checks the containers that a job starts, such as `docker build`, `docker run`, job containers, and service containers. To turn this on, see [Check the containers that a job starts](#check-the-containers-that-a-job-starts). For all the limits, see [Limits](/package-security/pmg/kubernetes-ci-runners-how-it-works#limits).
 
 ## Set up PMG in a runner pool
 
@@ -272,7 +272,7 @@ The variable also applies to the other Go programs in the job steps.
 
 ## Check the containers that a job starts
 
-By default, PMG does not check `docker build`, `docker run`, job containers, and service containers. From PMG `v0.37.0`, PMG can check them when dockerd runs in the runner container, as with summerwind ARC. Set this variable on the runner container:
+PMG checks the containers that a job starts: `docker build`, `docker run`, job containers, and service containers. This needs PMG `v0.37.0` or later, and dockerd in the runner container, as with summerwind ARC. To turn it on, set this variable on the runner container:
 
 ```yaml
 env:
@@ -280,20 +280,14 @@ env:
     value: "1"
 ```
 
-PMG then routes the registry connections of each container that dockerd starts, including the `RUN` steps of `docker build`. It also makes each container trust the PMG CA. The container keeps the CAs of its image.
+PMG then checks each package that a container installs, including in the `RUN` steps of `docker build`. Each container trusts the PMG CA and keeps the CAs of its image.
 
 `pmg-entrypoint.sh` stops with an error, and the runner does not start, in these cases:
 
 - `DOCKER_HOST` is set. dockerd then runs in another container, such as the `dind` sidecar of an ARC runner scale set.
 - The image has its real `runc` in `/usr/local/sbin`, or in a folder that comes before `/usr/local/sbin` on `PATH`. Move it to `/usr/bin/runc`.
 
-Do not set the variable on a pool where dockerd runs in a sidecar container. A sidecar that shares its socket with no `DOCKER_HOST` passes the check, and the installs in its containers fail on the certificate. A pool without the variable works as before.
-
-These containers get no check, or fail on the certificate:
-
-- A container with `--network host` gets no PMG check.
-- A container with `-v /dev:/dev`, or a container of a dockerd that runs in a container, does not trust the PMG CA. Its installs fail on the certificate.
-- Java, wget with GnuTLS, and Bun 1.2 do not read the trust variables. They fail on the certificate of a registry.
+Do not set the variable on a pool where dockerd runs in a sidecar container.
 
 If an install in a container fails on the certificate, read `/var/log/pmg-runc.log` in the runner container.
 

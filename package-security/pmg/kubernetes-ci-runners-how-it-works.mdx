@@ -21,12 +21,12 @@ graph LR
         NESTED[Nested containers]
     end
     STEPS -->|kernel enforcement| PMG
-    PMG -->|checked| REG[Package registries]
     DOCKERD -->|starts| NESTED
-    NESTED -->|no PMG check| REG
+    NESTED -->|container redirect| PMG
+    PMG -->|checked| REG[Package registries]
 ```
 
-With summerwind ARC, dockerd runs in the runner container. With ARC runner scale sets in `dind` mode, dockerd runs in a separate `dind` sidecar container. In both cases, the nested containers that dockerd starts are in other cgroups. By default, PMG does not route them, so they reach the registries directly. To check them, see [How PMG checks nested containers](#how-pmg-checks-nested-containers).
+With summerwind ARC, dockerd runs in the runner container. With `PMG_CONTAINER_TRUST=1`, PMG also checks the nested containers that dockerd starts. See [How PMG checks nested containers](#how-pmg-checks-nested-containers). With ARC runner scale sets in `dind` mode, dockerd runs in a separate `dind` sidecar container, and PMG does not check its containers.
 
 ## What the PMG entrypoint script does
 
@@ -50,8 +50,8 @@ An image that starts PMG from its own entrypoint script calls `pmg-entrypoint.sh
 | --- | --- |
 | A job step in the runner container, such as `run: npm ci` | Yes |
 | A process that `kubectl exec` starts in the runner container | Yes |
-| `docker build` or `docker run` in a job step | Only with `PMG_CONTAINER_TRUST=1`. Without it, it works as before. |
-| A job with `container:`, or a service container | Only with `PMG_CONTAINER_TRUST=1`. Without it, it works as before. |
+| `docker build` or `docker run` in a job step | Yes, with `PMG_CONTAINER_TRUST=1` |
+| A job with `container:`, or a service container | Yes, with `PMG_CONTAINER_TRUST=1` |
 | Another Pod on the same node | No. PMG does not change it. |
 
 PMG decrypts only the connections to package registries. Other hosts keep their real certificates.
@@ -73,7 +73,9 @@ SafeDep Cloud is on only when both keys are present. Without them, PMG blocks ma
 
 ## Limits
 
-- **By default, PMG does not check nested containers.** This includes `docker build`, `docker run`, job containers, and service containers. They work as before, with no PMG check. `PMG_CONTAINER_TRUST=1` turns on the check when dockerd runs in the runner container. With a `dind` sidecar, PMG cannot check them.
+- **PMG checks nested containers only when dockerd runs in the runner container.** PMG does not check the containers of a `dind` sidecar. `pmg-entrypoint.sh` finds a sidecar through `DOCKER_HOST`. It does not find a sidecar that shares its socket with no `DOCKER_HOST`. With `PMG_CONTAINER_TRUST=1`, the installs in the containers of that sidecar fail on the certificate.
+- **A nested container with `--network host` gets no PMG check.**
+- **Some nested containers do not trust the PMG CA.** A container with `-v /dev:/dev`, or a container of a dockerd that runs in a container, gets no CA. Java, wget with GnuTLS, and Bun 1.2 do not read the trust variables. Installs in these fail on the certificate.
 - **A step that does not trust the PMG CA cannot reach the registries.** The step fails closed. It cannot go around PMG.
 - **If PMG stops, installs pass with no check until PMG starts again.** The kernel hook stops with PMG. The supervisor starts PMG again.
 - **A job step with root access can stop PMG.** The kernel still sends an install that runs with `sudo`, such as `sudo npm install`, through PMG. But a step with root access can also stop the PMG process. PMG protects against malicious packages, not against a workflow that is written to turn PMG off.
