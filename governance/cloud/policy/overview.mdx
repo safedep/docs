@@ -1,9 +1,9 @@
 ---
 title: "Cloud Policy"
-description: "Set one policy for your tenant in SafeDep Cloud to block and trust packages, set the dependency cooldown, and choose what fails a pull request check."
+description: "Set one policy for your tenant in SafeDep Cloud or with the safedep CLI to block and trust packages, set a cooldown, and choose what fails a check."
 ---
 
-The cloud policy is one [policy](/concepts/policy) for your tenant in SafeDep Cloud. A security admin changes it with the [safedep CLI](/get-started/cli-tools), and PMG and the pull request checks apply it. You change the policy of the whole fleet with no new MDM package.
+The cloud policy is one [policy](/concepts/policy) for your tenant in SafeDep Cloud. A security admin changes it in SafeDep Cloud at [app.safedep.io](https://app.safedep.io) or with the [safedep CLI](/get-started/cli-tools), and PMG and the pull request checks apply it. You change the policy of the whole fleet with no new MDM package.
 
 <Note>
   The cloud policy needs the SafeDep Cloud Team or Enterprise plan. See [pricing](https://safedep.io/pricing).
@@ -25,18 +25,58 @@ You can set a value for the whole tenant, or for a group of endpoints or project
 
 For each setting and each trust scope, and the exceptions, see the [settings reference](/reference/cloud-policy-settings).
 
+## Where to manage the policy
+
+SafeDep Cloud and the safedep CLI change the same policy. A change that you make in one shows in the other.
+
+In SafeDep Cloud, the **Cloud Policy** group of the settings sidebar has three pages:
+
+| Page | What it shows |
+|---|---|
+| **Policy** | The policy, in five tabs: **Overview**, **Configuration**, **Package Rules**, **Changes** and **Revisions** |
+| **Endpoints & Projects** | The labels of each endpoint and project, the policy overrides that match it, and the policy that it resolves to |
+| **Decisions** | The decisions that PMG and the pull request checks made with the policy, and the rule or setting behind each one |
+
+The **Block Package** button is on each Cloud Policy page. Owners also see the **Audit Log** page in the **Tenant** group.
+
+The **Overview** tab shows the value of each setting for the endpoints and projects that no policy override matches, and the layer that set it. It also shows the policy overrides, the number of package rules, and the recent revisions.
+
+<img src="/images/cloud/policy/overview.png" alt="Overview tab of the Policy page in SafeDep Cloud, with the values in force, the package rule counts and two policy overrides" />
+
+The **Configuration** tab edits the policy base and the policy overrides. SafeDep Cloud saves each edit to a draft, a policy change. The draft shows on the **Changes** tab until you publish or delete it.
+
+<img src="/images/cloud/policy/configuration-override.png" alt="Configuration tab with the payments policy override open: its name, priority, description and the label selector custom/criticality=high" />
+
+**Preview & Publish** on the **Configuration** tab, or **Review** on the **Changes** tab, opens the preview. The preview shows each field that changes, its change direction, and the endpoints and projects that the change reaches. A change that loosens the policy asks you to confirm it.
+
+<img src="/images/cloud/policy/change-review.png" alt="Preview and Publish dialog: the base cooldown goes from 7 days to 5 days and loosens, the payments cooldown goes from 14 days to 21 days and tightens" />
+
+On the **Endpoints & Projects** page, select a row to set its `custom/` labels and to see its resolved policy. To set or remove one label on many rows, select them and use **Set Label** or **Remove Label**.
+
+<img src="/images/cloud/policy/project-drawer.png" width="500" alt="The acme/payments-api project on the Endpoints and Projects page, with its custom labels, the payments policy override that matches it, and the layer of each value" />
+
 ## Who can change the policy
 
 A user with the ReadOnly role or a higher role can read the policy, its revisions and its decisions. Only an Owner or an Admin can create, edit, publish or delete a policy change, create or change a package rule, or set a label. Only an Owner or an Admin can read the audit events.
 
 ## How a change reaches the tools
 
-1. An Owner or an Admin edits the policy with `safedep policy edit`. The edit makes a draft, a policy change.
-2. They read the preview with `safedep policy change show`.
-3. They publish the change. The publish makes a new policy revision.
-4. The next pull request check of each project uses the new revision. PMG on each endpoint applies it after its next policy fetch.
+<Tabs>
+  <Tab title="SafeDep Cloud">
+    1. An Owner or an Admin edits the policy on the **Configuration** tab. The edit makes a draft, a policy change.
+    2. They select **Preview & Publish** to read the preview.
+    3. They publish the change. The publish makes a new policy revision.
+    4. The next pull request check of each project uses the new revision. PMG on each endpoint applies it after its next policy fetch.
+  </Tab>
+  <Tab title="safedep CLI">
+    1. An Owner or an Admin edits the policy with `safedep policy edit`. The edit makes a draft, a policy change.
+    2. They read the preview with `safedep policy change show`.
+    3. They publish the change with `safedep policy change publish`. The publish makes a new policy revision.
+    4. The next pull request check of each project uses the new revision. PMG on each endpoint applies it after its next policy fetch.
+  </Tab>
+</Tabs>
 
-A package rule skips the draft. `safedep policy rule create` publishes at once. See [Policy Revisions and Changes](/concepts/policy-revisions).
+A package rule skips the draft. A block or trust entry that you create in SafeDep Cloud, or with `safedep policy rule create`, publishes at once. See [Policy Revisions and Changes](/concepts/policy-revisions).
 
 ## Set up the tools
 

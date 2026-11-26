@@ -54,7 +54,7 @@ When a tool cannot order a version, a block entry with a range still selects it,
 
 A rule attaches to the policy base, and then it applies to every endpoint and project of the tenant. Or it attaches to one policy override, and then it applies only to the subjects that the policy override matches.
 
-Package rules are not in the policy settings document. Each rule command of the safedep CLI publishes at once, as one new [policy revision](/concepts/policy-revisions). So a run that publishes the settings document cannot delete a block that an on-call responder added. A rule never changes its selector, effect, scopes or vulnerability ids. To change them, delete the rule and create another.
+Package rules are not in the policy settings document. Each rule that you create, change or delete, in SafeDep Cloud or with the safedep CLI, publishes at once as one new [policy revision](/concepts/policy-revisions). So a run that publishes the settings document cannot delete a block that an on-call responder added. A rule never changes its selector, effect, scopes or vulnerability ids. To change them, delete the rule and create another.
 
 The tools apply package rules on the endpoint and in the pull request check. The malware analysis does not apply them, because it gives the same verdict to every tenant and holds no tenant data.
 

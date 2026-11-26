@@ -8,7 +8,7 @@ A policy turns your supply chain rules into data that SafeDep tools apply to eac
 
 ## The cloud policy
 
-The cloud policy is one policy for each [tenant](/concepts/tenant). It lives in SafeDep Cloud, and an Owner or an Admin of the tenant changes it with the [safedep CLI](/get-started/cli-tools). A change reaches every endpoint and every pull request check of the tenant with no new MDM package.
+The cloud policy is one policy for each [tenant](/concepts/tenant). It lives in SafeDep Cloud, and an Owner or an Admin of the tenant changes it in SafeDep Cloud or with the [safedep CLI](/get-started/cli-tools). A change reaches every endpoint and every pull request check of the tenant with no new MDM package.
 
 The cloud policy holds two kinds of content:
 
@@ -35,7 +35,7 @@ In CI/CD, [vet-action](/governance/integrations/github-code-scanning) takes a v2
 | | Cloud policy | Policy as code |
 |---|---|---|
 | Where it lives | SafeDep Cloud, one for each tenant | A YAML file in a repository |
-| Who changes it | An Owner or an Admin of the tenant, with the safedep CLI | Each person who can change the file |
+| Who changes it | An Owner or an Admin of the tenant, in SafeDep Cloud or with the safedep CLI | Each person who can change the file |
 | What it holds | Policy settings and package rules | CEL rules over package data |
 | History | Policy revisions and audit events | The history of the repository |
 | What enforces it | PMG and the pull request check | Vet and vet-action |

@@ -10,6 +10,17 @@ A rollback does not delete a revision. It makes a new policy change that takes v
   This guide needs the SafeDep Cloud Team or Enterprise plan and the Owner or Admin role. See [pricing](https://safedep.io/pricing).
 </Note>
 
+## Roll back in SafeDep Cloud
+
+1. On the **Policy** page, open the **Revisions** tab.
+2. Select **Restore** on the revision that you want back.
+3. Select the capabilities to restore. Package rules stay as they are now.
+4. Read the preview of the new change, and publish it.
+
+<img src="/images/cloud/policy/revisions.png" alt="Revisions tab of the Policy page with each revision, its change direction, its author and a Restore action" />
+
+To restore the package rules of an old revision too, use the safedep CLI, as in the sections below.
+
 ## Find the revision to restore
 
 ```bash

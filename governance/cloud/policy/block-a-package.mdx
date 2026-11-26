@@ -1,7 +1,7 @@
 ---
 title: "Block a Package During an Incident"
 sidebarTitle: "Block a Package"
-description: "Block a malicious package, a version range or a list of packages for every endpoint and project of your tenant with the safedep CLI."
+description: "Block a malicious package, a version range or a list of packages for every endpoint and project of your tenant, in SafeDep Cloud or with the CLI."
 ---
 
 Use a block entry when a package is a threat to your tenant and you cannot wait for an MDM push. The block reaches every pull request check at once, and each PMG endpoint after its next policy fetch.
@@ -9,6 +9,19 @@ Use a block entry when a package is a threat to your tenant and you cannot wait 
 <Note>
   This guide needs the SafeDep Cloud Team or Enterprise plan and the Owner or Admin role. See [pricing](https://safedep.io/pricing).
 </Note>
+
+## Block a package in SafeDep Cloud
+
+1. Select **Block Package** on any Cloud Policy page.
+2. Select the ecosystem and enter the package name, or paste a PURL. To block a namespace, select **Everything under a prefix**.
+3. Select the versions: **All versions**, **One version** or **Range**.
+4. In **Applies to**, keep **Everyone**, or select one policy override.
+5. Enter the **Reason**. PMG shows it in the block message.
+6. Select **Block & Publish**. The block publishes at once as a new policy revision.
+
+<img src="/images/cloud/policy/block-dialog.png" width="500" alt="Block a Package dialog in SafeDep Cloud with the package, versions, applies to, reason, expiry and ticket fields" />
+
+The sections below use the safedep CLI. Use it to block a list of packages from a file.
 
 ## Block one package
 
