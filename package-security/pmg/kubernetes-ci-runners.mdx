@@ -20,7 +20,7 @@ At the end of this guide, PMG runs in each runner Pod of your pool. It checks ea
   PMG blocks malicious packages without SafeDep Cloud. The cloud policy and the event sync to SafeDep Cloud need the Team or Enterprise plan. See [pricing](https://safedep.io/pricing).
 </Note>
 
-PMG does not check the containers that a job starts, such as `docker build`, `docker run`, job containers, and service containers. For all the limits, see [Limits](/package-security/pmg/kubernetes-ci-runners-how-it-works#limits).
+PMG also checks the containers that a job starts, such as `docker build`, `docker run`, job containers, and service containers. To turn this on, see [Check the containers that a job starts](#check-the-containers-that-a-job-starts). For all the limits, see [Limits](/package-security/pmg/kubernetes-ci-runners-how-it-works#limits).
 
 ## Set up PMG in a runner pool
 
@@ -38,7 +38,7 @@ Do the setup on one pilot pool first. Move the other pools when the pilot pool w
         # Your own additions stay here.
 
         # Use a PMG release tag, not latest.
-        COPY --from=ghcr.io/safedep/pmg:v0.36.1 /opt/safedep/pmg /opt/safedep/pmg
+        COPY --from=ghcr.io/safedep/pmg:v0.37.0 /opt/safedep/pmg /opt/safedep/pmg
         ENTRYPOINT ["/opt/safedep/pmg/bin/pmg-entrypoint.sh"]
         CMD ["entrypoint-dind.sh"]
         ```
@@ -50,7 +50,7 @@ Do the setup on one pilot pool first. Move the other pools when the pilot pool w
         # Your own additions stay here.
 
         # Use a PMG release tag, not latest.
-        COPY --from=ghcr.io/safedep/pmg:v0.36.1 /opt/safedep/pmg /opt/safedep/pmg
+        COPY --from=ghcr.io/safedep/pmg:v0.37.0 /opt/safedep/pmg /opt/safedep/pmg
         ENTRYPOINT ["/opt/safedep/pmg/bin/pmg-entrypoint.sh"]
         CMD ["/home/runner/run.sh"]
         ```
@@ -259,19 +259,39 @@ env:
 
 `KUBE_CLUSTER_NAME` keeps the pools of two clusters apart. For the other identity variables, see [How PMG names the endpoint](/package-security/pmg/kubernetes#how-pmg-names-the-endpoint).
 
-### Turn off the post-quantum key exchange
+### Post-quantum key exchange
 
-PMG connects to a registry with TLS. By default, PMG offers a post-quantum key exchange, X25519MLKEM768, in this connection. The first TLS message is then about 1,500 bytes. Some network paths lose packets of that size, and the connection stops. The install then hangs until it times out. For example, `pip install` hangs on `pypi.org`.
+Some network paths drop the large first TLS message of the post-quantum key exchange, and installs hang. Set `GODEBUG` on the runner container to choose the key exchange:
 
-If installs from one registry hang in a pool, set `GODEBUG` on the runner container:
+| PMG version | Default | To change it |
+| --- | --- | --- |
+| `v0.36.1` | Post-quantum | Set `GODEBUG` to `tlsmlkem=0` if installs hang. |
+| `v0.37.0` and later | Classical | Set `GODEBUG` to `tlsmlkem=1` if you need post-quantum. |
+
+The variable also applies to the other Go programs in the job steps.
+
+## Check the containers that a job starts
+
+PMG checks the containers that a job starts: `docker build`, `docker run`, job containers, and service containers. This needs PMG `v0.37.0` or later, and dockerd in the runner container, as with summerwind ARC. To turn it on, set this variable on the runner container:
 
 ```yaml
 env:
-  - name: GODEBUG
-    value: tlsmlkem=0
+  - name: PMG_CONTAINER_TRUST
+    value: "1"
 ```
 
-PMG then uses a classical key exchange, such as X25519. `pmg-entrypoint.sh` passes `GODEBUG` to PMG from PMG `v0.36.1`. The variable also applies to the other Go programs in the job steps.
+PMG then checks each package that a container installs, including in the `RUN` steps of `docker build`. Each container trusts the PMG CA and keeps the CAs of its image.
+
+`pmg-entrypoint.sh` stops with an error, and the runner does not start, in these cases:
+
+- `DOCKER_HOST` is set. dockerd then runs in another container, such as the `dind` sidecar of an ARC runner scale set.
+- The image has its real `runc` in `/usr/local/sbin`, or in a folder that comes before `/usr/local/sbin` on `PATH`. Move it to `/usr/bin/runc`.
+
+Do not set the variable on a pool where dockerd runs in a sidecar container.
+
+If an install in a container fails on the certificate, read `/var/log/pmg-runc.log` in the runner container.
+
+With the variable on, PMG adds the address `169.254.200.1` to `lo`. A runner process that connects to a forward proxy on `172.17.0.1` then uses this source address. Allow `169.254.200.1` in the access list of that proxy.
 
 ## Check the setup (optional)
 
