@@ -106,7 +106,7 @@ The blocks from every job then go to one tenant. To review them across all repos
 
 ### Connect with no API key
 
-In OIDC mode, set `tenant-id` without `api-key`, and give the job `id-token: write`. The action exchanges the GitHub OIDC ID token of the job for a short-lived credential. Your GitHub secrets then hold no SafeDep API key. This needs the action and PMG `{{PMG_VERSION}}` or later.
+In OIDC mode, set `tenant-id` without `api-key`, and give the job `id-token: write`. The action exchanges the GitHub OIDC ID token of the job for a short-lived credential. Your GitHub secrets then hold no SafeDep API key. This needs the action and PMG `v0.37.0` or later.
 
 Before the first run, an owner of the GitHub organization links the SafeDep GitHub App to your tenant. Then a SafeDep Cloud Owner or Admin creates a workload trust rule. See [Connect GitHub Actions Without an API Key](/governance/cloud/github-actions-without-api-key).
 

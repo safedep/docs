@@ -16,7 +16,7 @@ PMG and vet in GitHub Actions can call SafeDep Cloud with a short-lived credenti
 - **A SafeDep Cloud Owner or Admin** of your tenant, for steps 2 and 3.
 - **Your tenant domain**, such as `your-team.your-org.safedep.io`. The `tenant-id` input of the action takes this value. `safedep auth status` shows it in the tenant field. The **Tenant ID** button on the [API keys settings page](https://app.safedep.io/settings/api-keys) also shows it.
 - **The [safedep CLI](/get-started/cli-tools)** `{{CLI_VERSION}}` or later, signed in with `safedep auth login`.
-- **For PMG:** the `safedep/pmg` action `{{PMG_VERSION}}` or later, which installs PMG `{{PMG_VERSION}}` or later. `safedep/pmg@v2` with the default `version: latest` meets this.
+- **For PMG:** the `safedep/pmg` action `v0.37.0` or later, which installs PMG `v0.37.0` or later. `safedep/pmg@v2` with the default `version: latest` meets this.
 - **For vet:** the vet v2 GitHub Action. `safedep/vet-action@v1` has no OIDC mode and needs an API key.
 
 ## Set up the tenant
@@ -199,7 +199,7 @@ The rows are in the order that a PMG job meets them. The last row is for the adm
 | Message | Cause | Fix |
 |---|---|---|
 | PMG: `This pull_request run comes from a fork, and GitHub gives it no ID token`. vet: `GitHub gives no ID token to a pull request from a fork` | GitHub gives no ID token to a pull request from a fork. The tool runs without SafeDep Cloud. | No fix. See [Fork pull requests](/concepts/workload-identity#fork-pull-requests). |
-| `OIDC mode needs a PMG release with "pmg cloud workload exchange"` | The `version` input names an older PMG release. | Set `version` to `{{PMG_VERSION}}` or later, or remove it. |
+| `OIDC mode needs a PMG release with "pmg cloud workload exchange"` | The `version` input names an older PMG release. | Set `version` to `v0.37.0` or later, or remove it. |
 | PMG: `PMG cannot get a SafeDep Cloud credential, because the job has no ID token`. vet: `The tenant-id input with no api-key input needs an ID token of GitHub` | The job has no `id-token: write`. The step fails. | Add `id-token: write` to the permissions of the job. |
 | `no workload identity provider of the tenant trusts the owner of the token` | The tenant has no provider with an active link for the GitHub account, or `tenant-id` is wrong. SafeDep Cloud records no exchange, so `exchange list` shows nothing. | Check `tenant-id`. Then do [Set up the tenant](#set-up-the-tenant) again: the installation needs **Members: read**, and an owner of the GitHub organization must link it. If the organization uses SAML single sign-on, the owner needs an active SSO session on GitHub. |
 | `the plan of the tenant does not include workload identity` | The tenant is not on the Team or Enterprise plan. | Change the plan. See [pricing](https://safedep.io/pricing). |
