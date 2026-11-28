@@ -1,0 +1,38 @@
+---
+title: Workload Identity
+description: "A workload identity lets a CI job get a short-lived SafeDep Cloud credential from the OIDC token of its CI platform, with no API key in the CI secrets."
+---
+
+A workload identity is the identity of a CI job that SafeDep Cloud verifies from an OIDC token that the CI platform signs. The job is not a user of your tenant, and it holds no API key.
+
+The job exchanges the token for a **workload credential**: a short-lived credential for one tenant. PMG and vet then call SafeDep Cloud with that credential. The tools call this OIDC mode. When you delete the API key, the CI platform holds no long-lived SafeDep secret.
+
+Three records in your tenant control the exchange:
+
+- **Workload identity provider.** A provider accepts the OIDC tokens of one CI account, such as one GitHub organization.
+- **Workload trust rule.** A rule names the jobs of a provider that get a credential, and what the credential can do. An Admin creates each rule.
+- **Workload exchange.** SafeDep Cloud records each exchange, issued or denied.
+
+## What SafeDep supports
+
+The model does not depend on one CI platform. Each provider has a kind, and the kind fixes the token issuer, the audience and the claims that a rule can match. GitHub Actions is the only kind today:
+
+- **CI platform:** GitHub Actions, through the [SafeDep GitHub App](/governance/integrations/github).
+- **Tools:** the PMG action and the vet v2 action.
+
+## Related
+
+<CardGroup cols={2}>
+  <Card title="Connect GitHub Actions Without an API Key" icon="github" href="/governance/cloud/github-actions-without-api-key">
+    Link the GitHub App, create a rule and change the workflow.
+  </Card>
+  <Card title="Workload identity details" icon="key" href="/governance/cloud/authentication#workload-identity">
+    See how a job gets a credential, what it can do and its security limits.
+  </Card>
+  <Card title="Tenant" icon="building" href="/concepts/tenant">
+    See the boundary that a workload credential belongs to.
+  </Card>
+  <Card title="Endpoint" icon="server" href="/concepts/endpoint">
+    See how a CI job appears in Endpoint Hub.
+  </Card>
+</CardGroup>

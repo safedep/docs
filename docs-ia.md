@@ -34,7 +34,7 @@ Every structural decision derives from these rules. Full rationale in `docs-ia-p
 
 - **R3 — Organize by solution, not by tool.** Tabs name the security outcome SafeDep delivers. Tools appear one level deeper, inside groups. Grammar test: "SafeDep solves ___" must complete naturally with the tab name. Imperative verbs ("Scan & Analyze") fail; solution nouns ("Package Security") pass.
 
-- **R4: Concepts are first-class, atomic, linkable.** Each concept (Malicious Package, Vulnerability, Policy, Policy Resolution, Labels, Package Rules, Policy Revisions, CEL, SBOM, Tenant, Endpoint) gets one dedicated page under Get Started › Core Concepts. Policy and CEL are flat pages. The four cloud policy concepts (Policy Resolution, Labels, Package Rules, Policy Revisions) sit in a nested Cloud Policy group, the last entry of Core Concepts. **Malicious-package *protection* is a solution (the Package Security tab), not a concept**: the concept is the malicious package itself, and `concepts/malicious-package` carries the user-facing detection story (how SafeDep classifies a package as malicious). The Malysis/Malbase *pipeline* is internal infrastructure, never a concept page, product tab, or sidebar group. If SafeDep's threat-intelligence offering productizes, the user-facing *product* gets a docs home under the planned Threat Intelligence tab (§8); the pipeline stays invisible. The distinction this rule protects is pipeline vs product, not "intelligence never gets a tab."
+- **R4: Concepts are first-class, atomic, linkable.** Each concept (Malicious Package, Vulnerability, Policy, Policy Resolution, Labels, Package Rules, Policy Revisions, CEL, SBOM, Tenant, Endpoint, Workload Identity) gets one dedicated page under Get Started › Core Concepts. Policy and CEL are flat pages. The four cloud policy concepts (Policy Resolution, Labels, Package Rules, Policy Revisions) sit in a nested Cloud Policy group, the last entry of Core Concepts. **Malicious-package *protection* is a solution (the Package Security tab), not a concept**: the concept is the malicious package itself, and `concepts/malicious-package` carries the user-facing detection story (how SafeDep classifies a package as malicious). The Malysis/Malbase *pipeline* is internal infrastructure, never a concept page, product tab, or sidebar group. If SafeDep's threat-intelligence offering productizes, the user-facing *product* gets a docs home under the planned Threat Intelligence tab (§8); the pipeline stays invisible. The distinction this rule protects is pipeline vs product, not "intelligence never gets a tab."
 
 - **R5 — Progressive disclosure.** Tab depth is unlimited; groups handle it. A tab splits only when it covers fundamentally different security outcomes. The Reference tab is the technical lookup layer — CLI flags, filter syntax, API specs — and is the only place exhaustive lookup content belongs.
 
@@ -138,7 +138,7 @@ Don't mix Diátaxis types within a single page.
 
 **Get Started**
 - Introduction: `introduction`, `get-started/cli-tools`, `get-started/safedep-skill`
-- Core Concepts: `concepts/malicious-package`, `concepts/vulnerability`, `concepts/sbom`, `concepts/tenant`, `concepts/endpoint`, `concepts/policy`, `concepts/cel`
+- Core Concepts: `concepts/malicious-package`, `concepts/vulnerability`, `concepts/sbom`, `concepts/tenant`, `concepts/endpoint`, `concepts/workload-identity`, `concepts/policy`, `concepts/cel`
   - Cloud Policy: `concepts/policy-resolution`, `concepts/labels`, `concepts/package-rules`, `concepts/policy-revisions`
 
 **Package Security** *(tab landing: `package-security/overview`)*
@@ -156,7 +156,7 @@ Don't mix Diátaxis types within a single page.
 - AI Visibility: `governance/ai-governance` *(landing)*, `governance/shadow-ai-detection`
 - CI/CD Integrations: `governance/integrations/overview` *(landing)*, `governance/integrations/github`, `governance/integrations/github-code-scanning`, `governance/integrations/gitlab`, `governance/integrations/bitbucket-app`, `governance/integrations/bitbucket`, `governance/integrations/defectdojo`
 - SafeDep Cloud: `governance/cloud/overview` *(landing)*
-  - Set Up: `governance/cloud/quickstart`, `governance/cloud/authentication`, `governance/cloud/sync`, `governance/cloud/faq`
+  - Set Up: `governance/cloud/quickstart`, `governance/cloud/authentication`, `governance/cloud/github-actions-without-api-key`, `governance/cloud/sync`, `governance/cloud/faq`
   - Endpoint Hub: `governance/cloud/endpoint-hub/overview` *(landing)*, `governance/cloud/endpoint-hub/inventory`, `governance/cloud/endpoint-hub/package-guard`, `governance/cloud/endpoint-hub/find-malicious-package`, `governance/cloud/endpoint-hub/ci-package-blocks`, `governance/cloud/endpoint-hub/mcp-advisor`
   - Investigate: `governance/cloud/endpoint-hub/agentic-investigation`, `governance/cloud/query-with-sql`
   - Integrate: `governance/cloud/alerts`, `governance/cloud/crowdstrike-siem`
@@ -184,7 +184,7 @@ Notes:
 - AI Agent Security is scoped to securing AI coding *agents*. AI SDKs inside your application are a supply-chain concern, so Shadow AI Detection (which also covers the AI BOM) sits in Visibility & Governance › AI Visibility. It keeps its own page and URL because people search for "shadow AI".
 - Threat Intel is the subscription-gated feed API (`FEATURE_THREAT_INTEL_FEED`). `threat-intel/schema` links out to the public `buf.build/safedep/api` module instead of restating field tables (R6). JFrog Xray stays here because it is gated on the feed add-on (see §8).
 
-Total: **114 pages** (counted from `docs.json`).
+Total: **116 pages** (counted from `docs.json`).
 
 ---
 

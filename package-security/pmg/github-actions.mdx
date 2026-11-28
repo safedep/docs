@@ -76,7 +76,7 @@ A job that keeps its own stop step must set `auto-stop: false`. Otherwise the po
 
 The action has a post step. GitHub runs it at the end of the job, also when an earlier step fails and when the job is cancelled. The post step:
 
-1. Stops the proxy. With `api-key`, the proxy sends its last events to SafeDep Cloud.
+1. Stops the proxy. When the job is connected to SafeDep Cloud, the proxy sends its last events. In OIDC mode, the post step then revokes the credential of the action.
 2. Proposes a network profile from the hosts that the job reached. See [Allow Only Known Hosts in GitHub Actions](/package-security/pmg/github-actions-network-policy).
 3. Writes the job summary. The summary shows the verdict, the number of blocked packages, each denied connection, and each destination host. The run also gets an annotation when PMG blocked a package, and one for each denial.
 4. Fails the job when PMG blocked a package or the network policy denied a connection.
@@ -93,13 +93,40 @@ Three inputs change the post step:
 
 ## Connect to SafeDep Cloud
 
-PMG blocks malicious packages using SafeDep's free community intelligence with or without credentials. Add the optional `api-key` and `tenant-id` to connect the run to [SafeDep Cloud](/governance/cloud/overview), so block events sync to [Endpoint Hub](/governance/cloud/endpoint-hub/overview) before the runner is destroyed. This needs the SafeDep Cloud Team or Enterprise plan. See [pricing](https://safedep.io/pricing). Set both inputs or neither. The action fails when you set only one.
+PMG blocks malicious packages using SafeDep's free community intelligence with or without credentials. Set the optional `tenant-id` input to connect the run to [SafeDep Cloud](/governance/cloud/overview), so block events sync to [Endpoint Hub](/governance/cloud/endpoint-hub/overview) before the runner is destroyed. This needs the SafeDep Cloud Team or Enterprise plan. See [pricing](https://safedep.io/pricing).
+
+The action gets a credential in one of two ways:
+
+- With `api-key` and `tenant-id`, it uses the API key. The action fails when you set `api-key` alone.
+- With `tenant-id` and no `api-key`, it uses OIDC mode. See [Connect with no API key](#connect-with-no-api-key).
+
+When you set both inputs, the action uses `api-key`.
 
 The blocks from every job then go to one tenant. To review them across all repositories, see [Review Package Blocks Across CI Pipelines](/governance/cloud/endpoint-hub/ci-package-blocks).
 
-The run also applies the [cloud policy](/package-security/pmg/cloud-policy) of your tenant. In server mode, the proxy fetches the policy 15 seconds after it starts. A new runner has no cached policy, so an install in that time runs without it. If the first install must apply the policy, use shim mode with a `pmg cloud sync` step, as below.
+### Connect with no API key
 
-In shim mode, run `pmg cloud sync` after the `safedep/pmg` step to fetch the cloud policy before the first install. No proxy runs for the whole job, so nothing sends the block events at the end. Add a second sync step at the end of the job:
+In OIDC mode, set `tenant-id` without `api-key`, and give the job `id-token: write`. The action exchanges the GitHub OIDC ID token of the job for a short-lived credential. Your GitHub secrets then hold no SafeDep API key. This needs the action and PMG `v0.37.0` or later.
+
+Before the first run, an owner of the GitHub organization links the SafeDep GitHub App to your tenant. Then a SafeDep Cloud Owner or Admin creates a workload trust rule. See [Connect GitHub Actions Without an API Key](/governance/cloud/github-actions-without-api-key).
+
+```yaml
+permissions:
+  contents: read
+  id-token: write
+
+# ...
+
+- uses: safedep/pmg@v2
+  with:
+    tenant-id: ${{ vars.SAFEDEP_CLOUD_TENANT_DOMAIN }}
+```
+
+### Apply the cloud policy
+
+The run also applies the [cloud policy](/package-security/pmg/cloud-policy) of your tenant. The `safedep/pmg` step fetches the policy before it ends, so the first install of the job applies it. The step fails when no cloud policy applies after the fetch. When your SafeDep plan does not include the cloud policy, the step prints a warning and continues.
+
+In shim mode, no proxy runs for the whole job, so nothing sends the block events at the end. Add a sync step at the end of the job:
 
 ```yaml
 - uses: actions/setup-node@v6
@@ -111,8 +138,6 @@ In shim mode, run `pmg cloud sync` after the `safedep/pmg` step to fetch the clo
     server-mode: false
     api-key: ${{ secrets.SAFEDEP_API_KEY }}
     tenant-id: ${{ secrets.SAFEDEP_TENANT_ID }}
-
-- run: pmg cloud sync # Fetches the cloud policy
 
 - run: npm ci
 
@@ -258,7 +283,7 @@ The action needs a POSIX shell and common tools in the image, such as busybox, p
   Deploy PMG one way on a runner host. Either use the `safedep/pmg` action in each workflow, or install PMG for the whole system and run the proxy as a service on the host. PMG does not support both on one host.
 </Warning>
 
-To run the proxy as a service on the host, see [Kernel Enforcement on Linux](/package-security/pmg/kernel-enforcement). On that host, remove the `safedep/pmg` step from the workflows. One host proxy serves all jobs, so the jobs get no post step, no job summary, and no verdict for each job. The host proxy routes only the processes on the host. A job container, a Docker action, or a `docker run` step goes around it unless the proxy redirects containers and each container trusts the PMG CA. See [Kernel Enforcement on Linux](/package-security/pmg/kernel-enforcement).
+To run the proxy as a service on the host, see [Kernel Enforcement on Linux](/package-security/pmg/kernel-enforcement). On that host, remove the `safedep/pmg` step from the workflows. One host proxy serves all jobs, so the jobs get no post step, no job summary, and no verdict for each job. Such a proxy connects to SafeDep Cloud with an API key, because no single job identity fits it. See [When to keep an API key](/governance/cloud/authentication#when-to-keep-an-api-key). The host proxy routes only the processes on the host. A job container, a Docker action, or a `docker run` step goes around it unless the proxy redirects containers and each container trusts the PMG CA. See [Kernel Enforcement on Linux](/package-security/pmg/kernel-enforcement).
 
 ## Inputs and outputs
 
