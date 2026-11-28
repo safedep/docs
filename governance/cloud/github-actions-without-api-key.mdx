@@ -15,7 +15,7 @@ PMG and vet in GitHub Actions can call SafeDep Cloud with a short-lived credenti
 - **An owner of your GitHub organization**, for step 1.
 - **A SafeDep Cloud Owner or Admin** of your tenant, for steps 2 and 3.
 - **Your tenant domain**, such as `your-team.your-org.safedep.io`. The `tenant-id` input of the action takes this value. `safedep auth status` shows it in the tenant field. The **Tenant ID** button on the [API keys settings page](https://app.safedep.io/settings/api-keys) also shows it.
-- **The [safedep CLI](/get-started/cli-tools)** `{{CLI_VERSION}}` or later, signed in with `safedep auth login`.
+- **The [safedep CLI](/get-started/cli-tools)** `v0.12.0` or later, signed in with `safedep auth login`.
 - **For PMG:** the `safedep/pmg` action `v0.37.0` or later, which installs PMG `v0.37.0` or later. `safedep/pmg@v2` with the default `version: latest` meets this.
 - **For vet:** the vet v2 GitHub Action. `safedep/vet-action@v1` has no OIDC mode and needs an API key.
 
