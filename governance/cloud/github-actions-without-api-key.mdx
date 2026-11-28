@@ -4,7 +4,7 @@ sidebarTitle: "GitHub Actions Without a Key"
 description: "Let PMG and vet in GitHub Actions sync with SafeDep Cloud through GitHub OIDC, with no SafeDep API key in your GitHub secrets."
 ---
 
-PMG and vet in GitHub Actions can call SafeDep Cloud with a short-lived credential instead of an API key. The job exchanges its GitHub OIDC ID token for the credential, so GitHub stores no SafeDep secret. The tools call this OIDC mode. For how the exchange works and what the credential can do, see [Workload Identity](/concepts/workload-identity).
+PMG and vet in GitHub Actions can call SafeDep Cloud with a short-lived credential instead of an API key. The job exchanges its GitHub OIDC ID token for the credential, so GitHub stores no SafeDep secret. The tools call this OIDC mode. For how the exchange works and what the credential can do, see [Workload identity](/governance/cloud/authentication#workload-identity).
 
 <Note>
   This guide needs the SafeDep Cloud Team or Enterprise plan. See [pricing](https://safedep.io/pricing).
@@ -55,7 +55,7 @@ PMG and vet in GitHub Actions can call SafeDep Cloud with a short-lived credenti
     safedep workload rule create org --provider github-actions:acme --grant tool
     ```
 
-    `--grant tool` lets a job make only the calls that PMG and vet use. For the list, see [What the credential can do](/concepts/workload-identity#what-the-credential-can-do).
+    `--grant tool` lets a job make only the calls that PMG and vet use. For the list, see [What the credential can do](/governance/cloud/authentication#what-the-credential-can-do).
 
     <Warning>
       A rule with no `--repository` covers every repository of the GitHub account. This includes the repositories that the app installation does not select. The command prints the same warning.
@@ -175,13 +175,13 @@ safedep workload rule create web-release --provider github-actions:acme --grant 
 
 Each of `--repository`, `--ref` and `--event` adds one condition to the rule. When more than one rule matches a job, SafeDep Cloud uses the rule with the most conditions. Its `--max-lifetime` and `--project-binding` apply. When two such rules have the same number of conditions, the older rule applies.
 
-The CLI has no condition on the runner. For self-hosted runners, see [Self-hosted runners](/concepts/workload-identity#self-hosted-runners).
+The CLI has no condition on the runner. For self-hosted runners, see [Self-hosted runners](/governance/cloud/authentication#self-hosted-runners).
 
 ### Events that a rule covers
 
 A rule with no `--event` covers only these default events: `push`, `pull_request`, `merge_group`, `schedule`, `workflow_dispatch` and `release`.
 
-An outsider can start most other events, so a rule must list them. For the reason, see [Which events a rule covers](/concepts/workload-identity#which-events-a-rule-covers). To allow an event such as `pull_request_target`, create a rule that lists it, and name the repositories that need it:
+An outsider can start most other events, so a rule must list them. For the reason, see [Which events a rule covers](/governance/cloud/authentication#which-events-a-rule-covers). To allow an event such as `pull_request_target`, create a rule that lists it, and name the repositories that need it:
 
 ```bash
 safedep workload rule create web-prt --provider github-actions:acme --grant tool \
@@ -198,7 +198,7 @@ The rows are in the order that a PMG job meets them. The last row is for the adm
 
 | Message | Cause | Fix |
 |---|---|---|
-| PMG: `This pull_request run comes from a fork, and GitHub gives it no ID token`. vet: `GitHub gives no ID token to a pull request from a fork` | GitHub gives no ID token to a pull request from a fork. The tool runs without SafeDep Cloud. | No fix. See [Fork pull requests](/concepts/workload-identity#fork-pull-requests). |
+| PMG: `This pull_request run comes from a fork, and GitHub gives it no ID token`. vet: `GitHub gives no ID token to a pull request from a fork` | GitHub gives no ID token to a pull request from a fork. The tool runs without SafeDep Cloud. | No fix. See [Fork pull requests](/governance/cloud/authentication#fork-pull-requests). |
 | `OIDC mode needs a PMG release with "pmg cloud workload exchange"` | The `version` input names an older PMG release. | Set `version` to `v0.37.0` or later, or remove it. |
 | PMG: `PMG cannot get a SafeDep Cloud credential, because the job has no ID token`. vet: `The tenant-id input with no api-key input needs an ID token of GitHub` | The job has no `id-token: write`. The step fails. | Add `id-token: write` to the permissions of the job. |
 | `no workload identity provider of the tenant trusts the owner of the token` | The tenant has no provider with an active link for the GitHub account, or `tenant-id` is wrong. SafeDep Cloud records no exchange, so `exchange list` shows nothing. | Check `tenant-id`. Then do [Set up the tenant](#set-up-the-tenant) again: the installation needs **Members: read**, and an owner of the GitHub organization must link it. If the organization uses SAML single sign-on, the owner needs an active SSO session on GitHub. |

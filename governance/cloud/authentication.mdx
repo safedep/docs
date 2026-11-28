@@ -1,6 +1,6 @@
 ---
 title: Authentication
-description: "How SafeDep Cloud authentication works and how to authenticate the safedep CLI, vet, and CI/CD pipelines"
+description: "How SafeDep Cloud authentication works and how to authenticate the safedep CLI, vet, CI/CD pipelines and GitHub Actions jobs with workload identity"
 ---
 
 Every tool that talks to SafeDep Cloud authenticates with two values, a **tenant domain** (for example `your-team.your-org.safedep.io`, shown by the **Tenant ID** button on the [API keys settings page](https://app.safedep.io/settings/api-keys)) and a credential. The credential type depends on which API plane the tool calls:
@@ -67,9 +67,63 @@ Store both as CI secrets. Across SafeDep docs, the secret names are `SAFEDEP_CLO
 
 For working pipeline configurations (GitHub Actions, GitLab, Jenkins, Azure DevOps), see [Cloud Sync](/governance/cloud/sync#sync-from-github-actions).
 
-### GitHub Actions with no API key
+## Workload identity
 
-In GitHub Actions, the PMG action and the vet v2 action need no API key. Set the tenant domain only, and give the job `permissions: id-token: write`. The tool exchanges the GitHub OIDC ID token of the job for a short-lived credential. See [Connect GitHub Actions Without an API Key](/governance/cloud/github-actions-without-api-key) and [Workload Identity](/concepts/workload-identity).
+In GitHub Actions, the PMG action and the vet v2 action need no API key. Set the tenant domain only, and give the job `permissions: id-token: write`. The tool exchanges the GitHub OIDC ID token of the job for a short-lived credential. For the concept, see [Workload Identity](/concepts/workload-identity). To set it up, see [Connect GitHub Actions Without an API Key](/governance/cloud/github-actions-without-api-key).
+
+### How a job gets a credential
+
+Four records decide whether a job gets a credential:
+
+1. **Verified GitHub App link.** An owner of the GitHub organization links the [SafeDep GitHub App](/governance/integrations/github) installation to the tenant. SafeDep Cloud checks with GitHub that the person is an owner of the organization. A user who can only read one repository cannot link your organization to a tenant. For a personal account, the account itself links the installation.
+2. **Workload identity provider.** A provider is the record in your tenant that accepts the GitHub OIDC tokens of one GitHub account. A verified link creates one provider for its account, such as `github-actions:acme`. The provider matches the immutable account id, never the account name.
+3. **Workload trust rule.** A tenant Admin creates a rule. The rule gives a grant to the jobs of the provider whose token claims meet every condition of the rule. SafeDep Cloud never creates a rule by itself.
+4. **Workload exchange.** At the start of the job, the tool sends the token and your tenant domain to SafeDep Cloud. SafeDep Cloud checks the signature, the audience and the expiry of the token. It accepts each token one time only. Then it finds the provider and the rule, and returns the credential. When SafeDep Cloud finds the provider, it records the exchange, issued or denied, for 30 days.
+
+### What the credential can do
+
+- **One grant.** A grant is the set of SafeDep Cloud calls that a credential can make. The only grant is `tool`. It lets the job fetch the [cloud policy](/concepts/policy), check in, send events, query malware analysis, read package insights and publish scan results.
+- **A short life.** The credential lives at most 6 hours. A rule can set a shorter maximum. The PMG action and vet revoke their credential when they finish.
+- **Identity from the token.** SafeDep Cloud takes the tenant, the project, the [endpoint](/concepts/endpoint) and the CI context from the verified claims. It does not take them from the tool. A job writes only into the project of its own repository. The endpoint of a job is `gh:<owner>/<repo>`, and the tool cannot rename it.
+- **Revocation.** A credential stops working within 30 seconds after an Admin deletes its rule. The same applies when the GitHub App is unlinked or suspended.
+
+### Which events a rule covers
+
+A rule with no event condition covers only the default events. In each default event, code that a writer of the repository chose runs. For the list, see [Events that a rule covers](/governance/cloud/github-actions-without-api-key#events-that-a-rule-covers).
+
+Every other event matches only a rule that lists it. An outsider can start most of these events, for example with an issue comment or a pull request from a fork. Events such as `pull_request_target` and `workflow_run` then run with the claims of the base branch. Without this check, code that an outsider starts gets a credential of your tenant.
+
+### What a compromised step can do
+
+GitHub gives `id-token: write` to the whole job, not to one step. While the job runs, each step can ask GitHub for an ID token. A compromised step can exchange such a token for a credential of its own. That credential has these limits:
+
+- **Grant.** It has the grant `tool`. It cannot make admin calls, such as a policy change or an API key create.
+- **Reach.** It writes only into the project and the endpoint of its own repository. It reads the cloud policy of that endpoint, malware analysis and package insights. It cannot read the data of other projects or endpoints.
+- **Life.** It lives until the maximum life of the matched rule, 6 hours by default. The post step of the PMG action revokes only the credential of the action. A credential that the step gets for itself stays valid after the job ends, until it expires or an Admin deletes the rule.
+
+A step can also read the credential of the PMG action while the job runs. The post step revokes that credential at the end of the job.
+
+Compare this with an API key in `$GITHUB_ENV`. A compromised step can read the key. The key has the role of the user who created it and lives up to 365 days.
+
+### Other cloud accounts
+
+A step of the job can also ask GitHub for an ID token for another audience. SafeDep Cloud accepts only its own audience, `sts.safedep.io`. A cloud account that trusts GitHub OIDC tokens, such as an AWS IAM role, accepts its own audience. If its trust policy does not pin the `job_workflow_ref` or `environment` claim, any step of a job with `id-token: write` can assume that role.
+
+### Fork pull requests
+
+GitHub gives no ID token to a `pull_request` run from a fork of a public repository. PMG and vet then warn and run without SafeDep Cloud. For a private repository, the GitHub settings for workflows from fork pull requests decide, such as **Send write tokens to workflows from pull requests**.
+
+### Self-hosted runners
+
+A rule matches jobs on self-hosted runners and on GitHub-hosted runners. The `runner_environment` claim of the token says which kind of runner the job uses. The `safedep workload rule create` command has no condition on this claim. A rule that you create with the CLI covers both kinds of runner.
+
+### When to keep an API key
+
+An API key stays supported. Keep it in these cases:
+
+- A job that must not hold `id-token: write`.
+- A long-lived PMG proxy that many jobs share on a self-hosted runner. No single job identity fits such a proxy.
+- A team that needs its own endpoint names or project versions, or more than one endpoint for each repository.
 
 ## Troubleshooting
 
